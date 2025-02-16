@@ -1,0 +1,7 @@
+PLAN FOR 2/15/25:
+Get basic project setup
+Create the blank scene
+Setup the camera movement script
+Setup/Port the mouse movement script
+Use a placeholder keybind to set up tile placement
+Setup JSON based UI elements for easy prototyping.
