@@ -18,6 +18,9 @@ namespace PlusLevelStudio.Editor
 
         //public Material tileAlphaMaterial;
         public Material gridMaterial;
+        public Material selectMaterial;
+
+        public GameObject testQuad;
 
         public GameCamera cameraPrefab;
         public GameCamera camera;
@@ -106,6 +109,11 @@ namespace PlusLevelStudio.Editor
             UpdateMouseRay();
             PlaySongIfNecessary();
             UpdateCamera();
+            Vector3? pos = CastRayToPlane(currentFloorPlane, false);
+            if (pos.HasValue)
+            {
+                testQuad.transform.position = IntVectorToWorld(WorldToIntVector(pos.Value)) + (Vector3.up * 0.01f);
+            }
         }
 
         protected virtual void PlaySongIfNecessary()
@@ -161,9 +169,10 @@ namespace PlusLevelStudio.Editor
             {
                 for (int y = 0; y < 50; y++)
                 {
-                    CreateQuad("TestQuad", gridMaterial, IntVectorToWorld(new IntVector2(x,y)), new Vector3(90f, 0f, 0f));
+                    CreateQuad("Grid", gridMaterial, IntVectorToWorld(new IntVector2(x,y)), new Vector3(90f, 0f, 0f));
                 }
             }
+            testQuad = CreateQuad("TestQuad", selectMaterial, Vector3.zero, new Vector3(90f, 0f, 0f));
             canvas.transform.SetParent(null);
             UpdateUI();
         }

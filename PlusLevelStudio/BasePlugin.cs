@@ -86,6 +86,10 @@ namespace PlusLevelStudio
             gridMat.name = "EditorGridMaterial";
             gridMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "FloorGrid.png"));
             gridMat.SetTexture("_LightMap", lightmaps["white"]);
+
+            Material selectMat = new Material(gridMat);
+            selectMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "FloorSelect.png"));
+            selectMat.name = "EditorSelectMaterial";
             yield return "Setting up Editor Controller...";
             GameObject editorControllerObject = new GameObject("StandardEditorController");
             editorControllerObject.ConvertToPrefab(true);
@@ -101,6 +105,7 @@ namespace PlusLevelStudio
             standardEditorController.cameraPrefab = assetMan.Get<GameCamera>("gameCam");
             standardEditorController.canvas = editorCanvas;
             standardEditorController.gridMaterial = gridMat;
+            standardEditorController.selectMaterial = selectMat;
 
             assetMan.Add<EditorController>("MainEditorController", standardEditorController);
         }
