@@ -76,7 +76,10 @@ namespace PlusLevelStudio
 
         IEnumerator FindObjectsAndSetupEditor()
         {
-            yield return 5;
+            List<Direction> directions = Directions.All();
+
+
+            yield return 6;
             yield return "Grabbing necessary resources...";
             assetMan.Add<Mesh>("Quad", Resources.FindObjectsOfTypeAll<Mesh>().First(x => x.GetInstanceID() >= 0 && x.name == "Quad"));
             Material[] materials = Resources.FindObjectsOfTypeAll<Material>().Where(x => x.GetInstanceID() >= 0).ToArray();
@@ -97,6 +100,31 @@ namespace PlusLevelStudio
             arrowMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "FloorArrow.png"));
             arrowMat.name = "EditorArrowMaterial";
 
+            Material gridArrowMat = new Material(gridMat);
+            gridArrowMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "GridArrow.png"));
+            gridArrowMat.name = "GridArrowMaterial";
+
+            yield return "Setting up GridManager...";
+            GameObject gridManagerObject = new GameObject("GridManager");
+            gridManagerObject.ConvertToPrefab(true);
+            GridManager gridManager = gridManagerObject.AddComponent<GridManager>();
+
+            gridManager.gridCellTemplate = CreateQuad("GridCell", gridMat, Vector3.zero, new Vector3(90f, 0f, 0f));
+            gridManager.gridCellTemplate.ConvertToPrefab(true);
+
+            for (int i = 0; i < directions.Count; i++)
+            {
+                GameObject dirQuad = CreateQuad("GridSelect_" + directions[i].ToString(), gridArrowMat, directions[i].ToVector3() * 10f, new Vector3(90f, directions[i].ToDegrees(), 0f));
+                dirQuad.transform.localScale *= 2f;
+                dirQuad.transform.SetParent(gridManager.transform, true);
+                dirQuad.layer = editorInteractableLayer;
+                dirQuad.AddComponent<MeshCollider>();
+                GridArrow arrow = dirQuad.AddComponent<GridArrow>();
+                arrow.direction = directions[i];
+                arrow.grid = gridManager;
+                gridManager.arrowObjects[i] = dirQuad;
+            }
+
             yield return "Setting up selector...";
             GameObject selectorObject = new GameObject("Selector");
             selectorObject.ConvertToPrefab(true);
@@ -107,7 +135,6 @@ namespace PlusLevelStudio
             Selector selector = selectorObject.AddComponent<Selector>();
             selector.tileSelector = tileQuad;
 
-            List<Direction> directions = Directions.All();
             for (int i = 0; i < directions.Count; i++)
             {
                 GameObject dirQuad = CreateQuad("DirSelect_" + directions[i].ToString(), arrowMat, directions[i].ToVector3() * 10f, new Vector3(90f, directions[i].ToDegrees(), 0f));
@@ -137,8 +164,8 @@ namespace PlusLevelStudio
             standardEditorController.ReflectionSetVariable("destroyOnLoad", true);
             standardEditorController.cameraPrefab = assetMan.Get<GameCamera>("gameCam");
             standardEditorController.canvas = editorCanvas;
-            standardEditorController.gridMaterial = gridMat;
             standardEditorController.selectorPrefab = selector;
+            standardEditorController.gridManagerPrefab = gridManager;
 
             assetMan.Add<EditorController>("MainEditorController", standardEditorController);
         }

@@ -18,12 +18,13 @@ namespace PlusLevelStudio.Editor
         public Canvas canvas;
 
         //public Material tileAlphaMaterial;
-        public Material gridMaterial;
 
         public Selector selector;
         public Selector selectorPrefab;
 
-        public Transform gridTransform;
+        public GridManager gridManagerPrefab;
+        public GridManager gridManager;
+
         public GameCamera cameraPrefab;
         public GameCamera camera;
         public Vector3 cameraRotation = new Vector3(0f, 0f, 0f);
@@ -31,6 +32,8 @@ namespace PlusLevelStudio.Editor
         public float calculatedScaleFactor = 1f;
         public Plane currentFloorPlane = new Plane(Vector3.up, 0f);
         public Ray mouseRay;
+        public Vector3 mousePlanePosition = Vector3.zero;
+        public IntVector2 mouseGridPosition => mousePlanePosition.ToCellVector();
 
         protected IEditorInteractable heldInteractable = null;
 
@@ -93,6 +96,11 @@ namespace PlusLevelStudio.Editor
         {
             Vector3 pos = new Vector3((CursorController.Instance.LocalPosition.x / screenSize.x) * Screen.width, Screen.height + ((CursorController.Instance.LocalPosition.y / screenSize.y) * Screen.height));
             mouseRay = camera.camCom.ScreenPointToRay(pos);
+            Vector3? pPos = CastRayToPlane(currentFloorPlane, false);
+            if (pPos.HasValue)
+            {
+                mousePlanePosition = pPos.Value;
+            }
         }
 
         void Update()
@@ -141,15 +149,9 @@ namespace PlusLevelStudio.Editor
                         }
                     }
                 }
-                // If no other important collisions have been found, assume we want to click on a tile
-                Vector3? pos = CastRayToPlane(currentFloorPlane, false);
-                if (pos.HasValue)
+                if (mouseGridPosition.x >= 0 && mouseGridPosition.z >= 0 && mouseGridPosition.x < levelData.mapSize.x && mouseGridPosition.z < levelData.mapSize.z)
                 {
-                    IntVector2 cellPosition = pos.Value.ToCellVector();
-                    if (cellPosition.x >= 0 && cellPosition.z >= 0 && cellPosition.x < levelData.mapSize.x && cellPosition.z < levelData.mapSize.z)
-                    {
-                        SelectTile(cellPosition);
-                    }
+                    SelectTile(mouseGridPosition);
                 }
             }
         }
@@ -182,38 +184,16 @@ namespace PlusLevelStudio.Editor
             transform.position += transform.right * analogMove.x * Time.deltaTime * moveSpeed;
         }
 
-        private GameObject[] gridObjects = new GameObject[0];
-
-
-        protected void RegenerateGrid()
-        {
-            // todo: make it so it doesn't delete the entire grid everytime it needs to be regenerated
-            for (int i = 0; i < gridObjects.Length; i++)
-            {
-                GameObject.Destroy(gridObjects[i]);
-            }
-            gridObjects = new GameObject[levelData.mapSize.x * levelData.mapSize.z];
-            int count = 0;
-            for (int x = 0; x < levelData.mapSize.x; x++)
-            {
-                for (int y = 0; y < levelData.mapSize.z; y++)
-                {
-                    gridObjects[count] = LevelStudioPlugin.CreateQuad("Grid", gridMaterial, new IntVector2(x, y).ToWorld(), new Vector3(90f, 0f, 0f));
-                    gridObjects[count].transform.SetParent(gridTransform, true);
-                    count++;
-                }
-            }
-        }
-
         protected override void AwakeFunction()
         {
             levelData = new EditorLevelData();
-            gridTransform = new GameObject("Grid").transform;
+            gridManager = GameObject.Instantiate(gridManagerPrefab);
+            gridManager.editor = this;
             camera = GameObject.Instantiate(cameraPrefab);
             camera.UpdateTargets(transform,0);
-            RegenerateGrid();
             canvas.transform.SetParent(null);
             UpdateUI();
+            gridManager.RegenerateGrid();
             selector = GameObject.Instantiate(selectorPrefab);
         }
     }
