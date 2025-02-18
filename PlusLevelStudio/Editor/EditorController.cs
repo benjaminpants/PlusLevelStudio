@@ -21,11 +21,9 @@ namespace PlusLevelStudio.Editor
         public Material gridMaterial;
 
         public Selector selector;
-
         public Selector selectorPrefab;
 
         public Transform gridTransform;
-
         public GameCamera cameraPrefab;
         public GameCamera camera;
         public Vector3 cameraRotation = new Vector3(0f, 0f, 0f);
@@ -33,6 +31,8 @@ namespace PlusLevelStudio.Editor
         public float calculatedScaleFactor = 1f;
         public Plane currentFloorPlane = new Plane(Vector3.up, 0f);
         public Ray mouseRay;
+
+        protected IEditorInteractable heldInteractable = null;
 
         /// <summary>
         /// Casts the current mouse ray to the specified plane
@@ -105,10 +105,42 @@ namespace PlusLevelStudio.Editor
             {
                 return;
             }
+            HandleClicking();
+        }
+
+        protected void HandleClicking()
+        {
+            if (heldInteractable != null)
+            {
+                if (Singleton<InputManager>.Instance.GetDigitalInput("Interact", false))
+                {
+                    // cancel the hold if our current interactable requests it
+                    if (!heldInteractable.OnHeld())
+                    {
+                        heldInteractable.OnReleased();
+                        heldInteractable = null;
+                    }
+                }
+                else
+                {
+                    heldInteractable.OnReleased();
+                    heldInteractable = null;
+                }
+                return;
+            }
             if (Singleton<InputManager>.Instance.GetDigitalInput("Interact", true))
             {
-                // TODO: Put standard raycast here
-
+                if (Physics.Raycast(mouseRay, out RaycastHit info, 1000f, LevelStudioPlugin.editorInteractableLayerMask))
+                {
+                    if (info.transform.TryGetComponent(out IEditorInteractable interactable))
+                    {
+                        if (interactable.OnClicked())
+                        {
+                            heldInteractable = interactable;
+                            return;
+                        }
+                    }
+                }
                 // If no other important collisions have been found, assume we want to click on a tile
                 Vector3? pos = CastRayToPlane(currentFloorPlane, false);
                 if (pos.HasValue)

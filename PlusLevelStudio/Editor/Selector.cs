@@ -14,15 +14,37 @@ namespace PlusLevelStudio.Editor
         Object
     }
 
+    public class SelectorArrow : MonoBehaviour, IEditorInteractable
+    {
+        public Selector selector;
+        public Direction direction;
+
+        public bool OnClicked()
+        {
+            return selector.TileArrowClicked(direction);
+        }
+
+        public bool OnHeld()
+        {
+            return selector.TileArrowHeld();
+        }
+
+        public void OnReleased()
+        {
+            selector.TileArrowReleased();
+        }
+    }
+
     public class Selector : MonoBehaviour
     {
         public GameObject tileSelector;
-
+        public GameObject[] tileArrows = new GameObject[4];
 
         public IntVector2 selectedTile { get; private set; } = new IntVector2(0, 0);
 
         public bool dragging = false;
 
+        protected Direction currentArrow = Direction.Null;
         protected SelectorState state;
 
         /// <summary>
@@ -47,6 +69,24 @@ namespace PlusLevelStudio.Editor
         }
 
 
+        public bool TileArrowClicked(Direction d)
+        {
+            currentArrow = d;
+            return true;
+        }
+
+        public bool TileArrowHeld()
+        {
+            // todo: implement logic SelectorState.Area
+            return true;
+        }
+
+        public void TileArrowReleased()
+        {
+            currentArrow = Direction.Null;
+            // todo: implement logic for SelectorState.Area
+        }
+
         void Update()
         {
             switch (state)
@@ -54,7 +94,7 @@ namespace PlusLevelStudio.Editor
                 case SelectorState.None:
                     break;
                 case SelectorState.Tile:
-                    tileSelector.transform.position = selectedTile.ToWorld() + (Vector3.up * 0.01f);
+                    transform.position = selectedTile.ToWorld() + (Vector3.up * 0.01f);
                     break;
             }
         }
@@ -62,6 +102,10 @@ namespace PlusLevelStudio.Editor
         protected void UpdateSelectionObjects()
         {
             tileSelector.SetActive(false);
+            for (int i = 0; i < tileArrows.Length; i++)
+            {
+                tileArrows[i].SetActive(false);
+            }
             switch (state)
             {
                 case SelectorState.None:

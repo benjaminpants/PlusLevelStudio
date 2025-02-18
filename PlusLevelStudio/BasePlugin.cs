@@ -25,6 +25,8 @@ namespace PlusLevelStudio
         public AssetManager assetMan = new AssetManager();
         public List<string> editorTracks = new List<string>();
         public Dictionary<string, Texture2D> lightmaps = new Dictionary<string, Texture2D>();
+        public const int editorInteractableLayer = 13; // CollidableEntities
+        public const int editorInteractableLayerMask = 1 << editorInteractableLayer;
 
         void Awake()
         {
@@ -91,6 +93,10 @@ namespace PlusLevelStudio
             selectMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "FloorSelect.png"));
             selectMat.name = "EditorSelectMaterial";
 
+            Material arrowMat = new Material(gridMat);
+            arrowMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "FloorArrow.png"));
+            arrowMat.name = "EditorArrowMaterial";
+
             yield return "Setting up selector...";
             GameObject selectorObject = new GameObject("Selector");
             selectorObject.ConvertToPrefab(true);
@@ -100,6 +106,20 @@ namespace PlusLevelStudio
 
             Selector selector = selectorObject.AddComponent<Selector>();
             selector.tileSelector = tileQuad;
+
+            List<Direction> directions = Directions.All();
+            for (int i = 0; i < directions.Count; i++)
+            {
+                GameObject dirQuad = CreateQuad("DirSelect_" + directions[i].ToString(), arrowMat, directions[i].ToVector3() * 10f, new Vector3(90f, directions[i].ToDegrees(), 0f));
+                dirQuad.transform.SetParent(selectorObject.transform, true);
+                dirQuad.gameObject.SetActive(false);
+                dirQuad.layer = editorInteractableLayer;
+                dirQuad.AddComponent<MeshCollider>();
+                SelectorArrow arrow = dirQuad.AddComponent<SelectorArrow>();
+                arrow.direction = directions[i];
+                arrow.selector = selector;
+                selector.tileArrows[i] = dirQuad;
+            }
 
 
 
