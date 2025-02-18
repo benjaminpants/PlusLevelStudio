@@ -74,7 +74,7 @@ namespace PlusLevelStudio
 
         IEnumerator FindObjectsAndSetupEditor()
         {
-            yield return 4;
+            yield return 5;
             yield return "Grabbing necessary resources...";
             assetMan.Add<Mesh>("Quad", Resources.FindObjectsOfTypeAll<Mesh>().First(x => x.GetInstanceID() >= 0 && x.name == "Quad"));
             Material[] materials = Resources.FindObjectsOfTypeAll<Material>().Where(x => x.GetInstanceID() >= 0).ToArray();
@@ -90,6 +90,19 @@ namespace PlusLevelStudio
             Material selectMat = new Material(gridMat);
             selectMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "FloorSelect.png"));
             selectMat.name = "EditorSelectMaterial";
+
+            yield return "Setting up selector...";
+            GameObject selectorObject = new GameObject("Selector");
+            selectorObject.ConvertToPrefab(true);
+            GameObject tileQuad = CreateQuad("TileSelection", selectMat, Vector3.zero, new Vector3(90f, 0f, 0f));
+            tileQuad.transform.SetParent(selectorObject.transform, false);
+            tileQuad.gameObject.SetActive(false);
+
+            Selector selector = selectorObject.AddComponent<Selector>();
+            selector.tileSelector = tileQuad;
+
+
+
             yield return "Setting up Editor Controller...";
             GameObject editorControllerObject = new GameObject("StandardEditorController");
             editorControllerObject.ConvertToPrefab(true);
@@ -101,13 +114,24 @@ namespace PlusLevelStudio
             editorCanvas.renderMode = RenderMode.ScreenSpaceCamera;
             UIHelpers.AddCursorInitiatorToCanvas(editorCanvas).useRawPosition = true;
             EditorController standardEditorController = editorControllerObject.AddComponent<EditorController>();
-            standardEditorController.ReflectionSetVariable("destroyOnLoad", false);
+            standardEditorController.ReflectionSetVariable("destroyOnLoad", true);
             standardEditorController.cameraPrefab = assetMan.Get<GameCamera>("gameCam");
             standardEditorController.canvas = editorCanvas;
             standardEditorController.gridMaterial = gridMat;
-            standardEditorController.selectMaterial = selectMat;
+            standardEditorController.selectorPrefab = selector;
 
             assetMan.Add<EditorController>("MainEditorController", standardEditorController);
+        }
+
+        public static GameObject CreateQuad(string name, Material mat, Vector3 position, Vector3 rotation)
+        {
+            GameObject newQuad = new GameObject(name);
+            newQuad.gameObject.AddComponent<MeshFilter>().mesh = LevelStudioPlugin.Instance.assetMan.Get<Mesh>("Quad");
+            newQuad.AddComponent<MeshRenderer>().material = mat;
+            newQuad.transform.position = position;
+            newQuad.transform.eulerAngles = rotation;
+            newQuad.transform.localScale *= 10f;
+            return newQuad;
         }
 
         IEnumerator LoadAssets()
