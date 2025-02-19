@@ -1,4 +1,8 @@
-PLAN FOR 2/15/25:
+PLAN:
+
+Make grid re-sizable
+Implement dummy environment controller to create tiles
+Make sure grid resizing fails if it would cut off any areas
 
 Figure out specifics for how the editor level format works
 

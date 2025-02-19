@@ -6,6 +6,6 @@ namespace PlusLevelStudio.Editor
 {
     public class EditorLevelData
     {
-        public IntVector2 mapSize = new IntVector2(10,10);
+        public IntVector2 mapSize = new IntVector2(50,50);
     }
 }
