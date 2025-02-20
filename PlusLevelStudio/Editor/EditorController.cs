@@ -103,6 +103,27 @@ namespace PlusLevelStudio.Editor
             }
         }
 
+        public void TriggerError(string errorString)
+        {
+            Debug.LogWarning("Encountered error: " + errorString + "!");
+        }
+
+        public void ResizeGrid(IntVector2 posDif, IntVector2 sizeDif)
+        {
+            IntVector2 targetSize = levelData.mapSize + sizeDif;
+            if (targetSize.x > 256 || targetSize.z > 256) { TriggerError("LevelTooBig"); return; }
+            if (targetSize.x < 1 || targetSize.z < 1) { TriggerError("LevelTooSmall"); return; }
+            // TODO: INSERT LOGIC FOR HANDLING AREAS AND OBJECTS
+            // IF A RESIZE WOULD CUT OFF AN AREA IT SHOULD TRIGGER A "AREA IN THE WAY" ERROR
+            // IF POSDIF IS ZERO THEN SKIP ALL THAT LOGIC BECAUSE ITS UNNECESSARY
+
+            levelData.mapSize += sizeDif;
+
+            gridManager.RegenerateGrid();
+            // move camera so the change isn't noticable
+            transform.position -= new Vector3(posDif.x * 10f, 0f, posDif.z * 10f);
+        }
+
         void Update()
         {
             canvas.scaleFactor = calculatedScaleFactor;

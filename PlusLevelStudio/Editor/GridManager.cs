@@ -34,6 +34,7 @@ namespace PlusLevelStudio.Editor
         private GameObject[] gridObjects = new GameObject[0];
         public GameObject gridCellTemplate;
         protected Direction currentArrow = Direction.Null;
+        protected IntVector2 currentStartPosition = new IntVector2();
 
 
         public GameObject[] arrowObjects = new GameObject[4];
@@ -44,17 +45,31 @@ namespace PlusLevelStudio.Editor
         public bool TileArrowClicked(Direction d)
         {
             currentArrow = d;
+            currentStartPosition = Singleton<EditorController>.Instance.mouseGridPosition;
+            Singleton<EditorController>.Instance.selector.DisableSelection(); // deselect whatever we had before
             return true;
         }
 
         public bool TileArrowHeld()
         {
+            PositionArrow(currentArrow, (Singleton<EditorController>.Instance.mouseGridPosition - currentStartPosition).DistanceInDirection(currentArrow) * 10f);
             return true;
         }
 
         public void TileArrowReleased()
         {
+            //Debug.Log("Got distance of: " + (currentStartPosition - Singleton<EditorController>.Instance.mouseGridPosition).GetValueForDirection(currentArrow));
+            EditorExtensions.CalculateDifferencesForHandleDrag(currentArrow, (Singleton<EditorController>.Instance.mouseGridPosition - currentStartPosition).DistanceInDirection(currentArrow), out IntVector2 sizeDif, out IntVector2 posDif);
+            Singleton<EditorController>.Instance.ResizeGrid(posDif, sizeDif);
+            PositionArrow(currentArrow);
             currentArrow = Direction.Null;
+        }
+
+
+        void PositionArrow(Direction d, float additionalDistanceFromEdge = 0f)
+        {
+            Vector3 movement = d.ToVector3();
+            arrowObjects[(int)d].transform.position = center + (movement * 5f * (editor.levelData.mapSize.GetValueForDirection(d) + 2f)) + (movement * additionalDistanceFromEdge);
         }
 
         public void RegenerateGrid()
@@ -79,8 +94,7 @@ namespace PlusLevelStudio.Editor
             List<Direction> directions = Directions.All(); 
             for (int i = 0; i < directions.Count; i++)
             {
-                Vector3 movement = directions[i].ToVector3();
-                arrowObjects[i].transform.position = center + (movement * 5f * (((directions[i] == Direction.North || directions[i] == Direction.South) ? editor.levelData.mapSize.z : editor.levelData.mapSize.x) + 2f));
+                PositionArrow((Direction)i);
             }
         }
     }
