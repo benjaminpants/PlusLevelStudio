@@ -77,12 +77,11 @@ namespace PlusLevelStudio
         IEnumerator FindObjectsAndSetupEditor()
         {
             List<Direction> directions = Directions.All();
-
-
             yield return 6;
             yield return "Grabbing necessary resources...";
             assetMan.Add<Mesh>("Quad", Resources.FindObjectsOfTypeAll<Mesh>().First(x => x.GetInstanceID() >= 0 && x.name == "Quad"));
             Material[] materials = Resources.FindObjectsOfTypeAll<Material>().Where(x => x.GetInstanceID() >= 0).ToArray();
+            EnvironmentController ecPrefab = Resources.FindObjectsOfTypeAll<EnvironmentController>().First(x => x.GetInstanceID() >= 0);
             assetMan.Add<Material>("tileAlpha", materials.First(x => x.name == "TileBase_Alpha"));
             yield return "Finding GameCamera...";
             assetMan.Add<GameCamera>("gameCam", Resources.FindObjectsOfTypeAll<GameCamera>().First());
@@ -166,6 +165,7 @@ namespace PlusLevelStudio
             standardEditorController.canvas = editorCanvas;
             standardEditorController.selectorPrefab = selector;
             standardEditorController.gridManagerPrefab = gridManager;
+            standardEditorController.ecPrefab = ecPrefab;
 
             assetMan.Add<EditorController>("MainEditorController", standardEditorController);
         }

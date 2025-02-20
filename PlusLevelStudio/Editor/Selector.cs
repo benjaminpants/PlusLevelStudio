@@ -61,6 +61,7 @@ namespace PlusLevelStudio.Editor
         public void DisableSelection()
         {
             state = SelectorState.None;
+            resizeAction = null;
             UpdateSelectionObjects();
         }
 

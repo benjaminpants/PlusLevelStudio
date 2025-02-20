@@ -1,6 +1,5 @@
 PLAN:
 
-Make grid re-sizable
 Implement dummy environment controller to create tiles
 Make sure grid resizing fails if it would cut off any areas
 

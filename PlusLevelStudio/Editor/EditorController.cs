@@ -17,6 +17,11 @@ namespace PlusLevelStudio.Editor
         public EditorLevelData levelData;
         public Canvas canvas;
 
+        public Tile[][] tiles = new Tile[0][];
+
+        public EnvironmentController workerEc;
+        public EnvironmentController ecPrefab;
+
         //public Material tileAlphaMaterial;
 
         public Selector selector;
@@ -134,7 +139,7 @@ namespace PlusLevelStudio.Editor
             {
                 selector.SelectArea(new RectInt(new Vector2Int(0,0), new Vector2Int(3,7)), (sizeDif, posDif) =>
                 {
-                    
+                    selector.DisableSelection();
                 });
                 return;
             }
@@ -220,6 +225,9 @@ namespace PlusLevelStudio.Editor
             UpdateUI();
             gridManager.RegenerateGrid();
             selector = GameObject.Instantiate(selectorPrefab);
+            workerEc = GameObject.Instantiate(ecPrefab);
+            workerEc.gameObject.SetActive(false);
+            workerEc.name = "WorkerEnvironmentController";
         }
     }
 }
