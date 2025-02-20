@@ -116,7 +116,7 @@ namespace PlusLevelStudio.Editor
         public void ResizeGrid(IntVector2 posDif, IntVector2 sizeDif)
         {
             IntVector2 targetSize = levelData.mapSize + sizeDif;
-            if (targetSize.x > 256 || targetSize.z > 256) { TriggerError("LevelTooBig"); return; }
+            if (targetSize.x > 255 || targetSize.z > 255) { TriggerError("LevelTooBig"); return; }
             if (targetSize.x < 1 || targetSize.z < 1) { TriggerError("LevelTooSmall"); return; }
             // TODO: INSERT LOGIC FOR HANDLING AREAS AND OBJECTS
             // IF A RESIZE WOULD CUT OFF AN AREA IT SHOULD TRIGGER A "AREA IN THE WAY" ERROR
