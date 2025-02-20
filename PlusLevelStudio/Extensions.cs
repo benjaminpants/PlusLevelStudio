@@ -21,6 +21,11 @@ namespace PlusLevelStudio
             return new IntVector2(Mathf.RoundToInt(x), Mathf.RoundToInt(y));
         }
 
+        public static IntVector2 ToMystVector(this Vector2Int me)
+        {
+            return new IntVector2(me.x, me.y);
+        }
+
         /// <summary>
         /// Converts a given IntVector to a world position
         /// </summary>

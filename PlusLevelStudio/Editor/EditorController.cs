@@ -130,8 +130,12 @@ namespace PlusLevelStudio.Editor
             UpdateMouseRay();
             PlaySongIfNecessary();
             UpdateCamera();
-            if (selector.dragging)
+            if (Singleton<InputManager>.Instance.GetDigitalInput("Item1", true))
             {
+                selector.SelectArea(new RectInt(new Vector2Int(0,0), new Vector2Int(3,7)), (sizeDif, posDif) =>
+                {
+                    
+                });
                 return;
             }
             HandleClicking();

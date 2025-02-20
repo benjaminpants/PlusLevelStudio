@@ -42,10 +42,13 @@ namespace PlusLevelStudio.Editor
 
         public IntVector2 selectedTile { get; private set; } = new IntVector2(0, 0);
 
-        public bool dragging = false;
+        public RectInt selectedArea { get; private set; } = new RectInt(new Vector2Int(0,0), new Vector2Int(0, 0));
 
         protected Direction currentArrow = Direction.Null;
+        protected IntVector2 currentStartPosition = new IntVector2();
         protected SelectorState state;
+
+        protected Action<IntVector2, IntVector2> resizeAction;
 
         /// <summary>
         /// The current state of the selector.
@@ -68,23 +71,54 @@ namespace PlusLevelStudio.Editor
             UpdateSelectionObjects();
         }
 
+        public void SelectArea(RectInt rect, Action<IntVector2, IntVector2> resizeAction)
+        {
+            selectedArea = rect;
+            state = SelectorState.Area;
+            this.resizeAction = resizeAction;
+            UpdateSelectionObjects();
+            for (int i = 0; i < tileArrows.Length; i++)
+            {
+                PositionArrow((Direction)i, 0f);
+            }
+        }
+
 
         public bool TileArrowClicked(Direction d)
         {
             currentArrow = d;
+            currentStartPosition = Singleton<EditorController>.Instance.mouseGridPosition;
             return true;
         }
 
+
         public bool TileArrowHeld()
         {
-            // todo: implement logic SelectorState.Area
+            switch (state)
+            {
+                default:
+                    break;
+                case SelectorState.Area:
+                    PositionArrow(currentArrow, (Singleton<EditorController>.Instance.mouseGridPosition - currentStartPosition).DistanceInDirection(currentArrow) * 10f);
+                    break;
+            }
             return true;
+        }
+
+        void PositionArrow(Direction d, float additionalDistanceFromEdge)
+        {
+            Vector3 movement = d.ToVector3();
+            Vector3 center = (new Vector3(selectedArea.center.x, 0f, selectedArea.center.y) * 10f);
+
+            tileArrows[(int)d].transform.position = center + (movement * 5f * (selectedArea.size.ToMystVector().GetValueForDirection(d) + 1)) + (movement * additionalDistanceFromEdge) + (Vector3.up * 0.01f);
         }
 
         public void TileArrowReleased()
         {
+            EditorExtensions.CalculateDifferencesForHandleDrag(currentArrow, (Singleton<EditorController>.Instance.mouseGridPosition - currentStartPosition).DistanceInDirection(currentArrow), out IntVector2 sizeDif, out IntVector2 posDif);
+            PositionArrow(currentArrow, 0f);
+            resizeAction.Invoke(sizeDif, posDif);
             currentArrow = Direction.Null;
-            // todo: implement logic for SelectorState.Area
         }
 
         void Update()
@@ -112,6 +146,12 @@ namespace PlusLevelStudio.Editor
                     break;
                 case SelectorState.Tile:
                     tileSelector.SetActive(true);
+                    break;
+                case SelectorState.Area:
+                    for (int i = 0; i < tileArrows.Length; i++)
+                    {
+                        tileArrows[i].SetActive(true);
+                    }
                     break;
             }
         }

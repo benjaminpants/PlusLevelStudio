@@ -69,7 +69,7 @@ namespace PlusLevelStudio.Editor
         void PositionArrow(Direction d, float additionalDistanceFromEdge = 0f)
         {
             Vector3 movement = d.ToVector3();
-            arrowObjects[(int)d].transform.position = center + (movement * 5f * (editor.levelData.mapSize.GetValueForDirection(d) + 2f)) + (movement * additionalDistanceFromEdge);
+            arrowObjects[(int)d].transform.position = center + (movement * 5f * (editor.levelData.mapSize.GetValueForDirection(d) + 2f)) + (movement * additionalDistanceFromEdge) + (Vector3.up * 0.01f);
         }
 
         public void RegenerateGrid()
