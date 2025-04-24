@@ -78,12 +78,13 @@ namespace PlusLevelStudio.UI
             StandardMenuButton button = b.GetComponentInChildren<StandardMenuButton>();
             button.OnHighlight.AddListener(() =>
             {
-                itmImage.sprite = GetSprite("ObjectLockerOpen");
+                itmImage.sprite = GetSprite("ObjectBoxOpen");
             });
             button.OffHighlight.AddListener(() =>
             {
-                itmImage.sprite = GetSprite("ObjectLockerShut");
+                itmImage.sprite = GetSprite("ObjectBoxClosed");
             });
+            itmImage.sprite = GetSprite("ObjectBoxClosed");
 
             return b;
         }
