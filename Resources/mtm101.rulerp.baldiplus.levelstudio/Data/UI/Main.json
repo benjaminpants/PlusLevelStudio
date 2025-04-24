@@ -1,0 +1,15 @@
+{
+	"defines":{
+		"iconSize":[64,64]
+	},
+	"elements":[
+		{
+			"type":"image",
+			"graphic":"backButton",
+			"anchoredPosition":[0,0],
+			"size":"#iconSize",
+			"anchorMin":[0.5,0.5],
+			"anchorMax":[0.5,0.5]
+		}
+	]
+}

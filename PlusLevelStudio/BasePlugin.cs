@@ -23,6 +23,10 @@ namespace PlusLevelStudio
         public static LevelStudioPlugin Instance;
         public bool isFucked = false;
         public AssetManager assetMan = new AssetManager();
+        // a rare sight, seeing two asset mans. Usually, I'd combine these into one asset manager.
+        // however, I want the code for creating UI to be as simple as possible to write
+        // and having to prepend some prefix like "UI/" would be really annoying
+        public AssetManager uiAssetMan = new AssetManager();
         public List<string> editorTracks = new List<string>();
         public Dictionary<string, Texture2D> lightmaps = new Dictionary<string, Texture2D>();
         public const int editorInteractableLayer = 13; // CollidableEntities

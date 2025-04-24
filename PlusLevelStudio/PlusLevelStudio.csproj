@@ -17,6 +17,9 @@
     <Reference Include="MTM101BaldAPI">
       <HintPath>..\Dependencies\MTM101BaldAPI.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\Dependencies\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="Rewired_Core">
       <HintPath>..\Dependencies\Rewired_Core.dll</HintPath>
     </Reference>
