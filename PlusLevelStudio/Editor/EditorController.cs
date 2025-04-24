@@ -7,6 +7,9 @@ using System.Text;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UIElements;
+using PlusLevelStudio.UI;
+using MTM101BaldAPI.AssetTools;
+using System.IO;
 
 namespace PlusLevelStudio.Editor
 {
@@ -18,6 +21,7 @@ namespace PlusLevelStudio.Editor
         public Canvas canvas;
 
         public Tile[][] tiles = new Tile[0][];
+        public GameObject[] uiObjects = new GameObject[1];
 
         public EnvironmentController workerEc;
         public EnvironmentController ecPrefab;
@@ -92,6 +96,15 @@ namespace PlusLevelStudio.Editor
             canvas.scaleFactor = calculatedScaleFactor;
             canvas.worldCamera = camera.canvasCam;
             screenSize = new Vector2(Screen.width / calculatedScaleFactor, Screen.height / calculatedScaleFactor);
+            for (int i = 0; i < uiObjects.Length; i++)
+            {
+                if (uiObjects[i] != null)
+                {
+                    GameObject.Destroy(uiObjects[i]);
+                }
+            }
+            uiObjects[0] = UIBuilder.BuildUIFromFile(canvas, "Main", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "Main.json"));
+            uiObjects[0].transform.SetAsFirstSibling();
             CursorInitiator init = canvas.GetComponent<CursorInitiator>();
             init.screenSize = screenSize;
             init.Inititate();
@@ -144,6 +157,10 @@ namespace PlusLevelStudio.Editor
                 return;
             }
             HandleClicking();
+            if (InputManager.Instance.GetDigitalInput("Item1", true))
+            {
+                UpdateUI();
+            }
         }
 
         protected void HandleClicking()

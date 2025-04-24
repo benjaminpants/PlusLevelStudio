@@ -13,6 +13,7 @@ using PlusLevelStudio.Editor;
 using System.Collections.Generic;
 using System.IO;
 using MTM101BaldAPI.Reflection;
+using PlusLevelStudio.UI;
 
 namespace PlusLevelStudio
 {
@@ -81,7 +82,7 @@ namespace PlusLevelStudio
         IEnumerator FindObjectsAndSetupEditor()
         {
             List<Direction> directions = Directions.All();
-            yield return 6;
+            yield return 7;
             yield return "Grabbing necessary resources...";
             assetMan.Add<Mesh>("Quad", Resources.FindObjectsOfTypeAll<Mesh>().First(x => x.GetInstanceID() >= 0 && x.name == "Quad"));
             Material[] materials = Resources.FindObjectsOfTypeAll<Material>().Where(x => x.GetInstanceID() >= 0).ToArray();
@@ -172,6 +173,10 @@ namespace PlusLevelStudio
             standardEditorController.ecPrefab = ecPrefab;
 
             assetMan.Add<EditorController>("MainEditorController", standardEditorController);
+
+            yield return "Setting up UIBuilders...";
+
+            UIBuilder.elementBuilders.Add("image", new ImageBuilder());
         }
 
         public static GameObject CreateQuad(string name, Material mat, Vector3 position, Vector3 rotation)

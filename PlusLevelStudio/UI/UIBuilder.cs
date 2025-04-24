@@ -11,16 +11,29 @@ namespace PlusLevelStudio.UI
 
     public abstract class UIElementBuilder
     {
-        public abstract GameObject Build(Dictionary<string, JToken> data);
+
+        protected Vector2 ConvertToVector2(JToken value)
+        {
+            float[] floatArray = value.ToObject<float[]>(); //lets hope this works?
+            return new Vector2(floatArray[0], floatArray[1]);
+        }
+
+        public abstract GameObject Build(GameObject parent, Dictionary<string, JToken> data);
     }
 
     public static class UIBuilder
     {
         public static Dictionary<string, UIElementBuilder> elementBuilders = new Dictionary<string, UIElementBuilder>();
 
+        static Dictionary<string, JToken> mostRecentlyParsedElement;
 
-        public static GameObject BuildUIFromFile(string path)
+        static JObject mostRecentlyParsedObject;
+
+
+        public static GameObject BuildUIFromFile(Canvas canvas, string name, string path)
         {
+            GameObject obj = new GameObject(name);
+            obj.transform.SetParent(canvas.transform, false);
             JObject parsedFile = JObject.Parse(File.ReadAllText(path));
 
 
@@ -38,6 +51,7 @@ namespace PlusLevelStudio.UI
             for (int i = 0; i < elementsArray.Count; i++)
             {
                 JObject currentElement = elementsArray[i] as JObject;
+                mostRecentlyParsedObject = currentElement;
                 // process the element type so we know what builder to give this to
                 //string elementType = currentElement["type"].Value<string>();
 
@@ -45,9 +59,9 @@ namespace PlusLevelStudio.UI
 
                 foreach (JProperty property in currentElement.Children())
                 {
-                    if (property.Type == JTokenType.String)
+                    if (property.Value.Type == JTokenType.String)
                     {
-                        string propertyString = property.Value<string>();
+                        string propertyString = property.Value.Value<string>();
                         // strings beginning with #s are defines and thus should copy values from the defines table
                         if (propertyString.StartsWith("#"))
                         {
@@ -58,12 +72,16 @@ namespace PlusLevelStudio.UI
                     elementData.Add(property.Name, property.Value);
                 }
 
+                mostRecentlyParsedElement = elementData;
+
                 // handle this last just incase some evil lunatic decides to use macros for defining types
-                string elementType = elementData["type"].Value<string>();
+                string elementType = elementData["type"].ToString();
+
+                elementBuilders[elementType].Build(obj, elementData);
             }
 
 
-            return null;
+            return obj;
         }
     }
 }
