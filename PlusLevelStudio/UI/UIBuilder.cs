@@ -12,13 +12,32 @@ namespace PlusLevelStudio.UI
     public abstract class UIElementBuilder
     {
 
+        protected Sprite GetSprite(string spriteName)
+        {
+            return LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>(spriteName);
+        }
+
+        protected Sprite GetSprite(JToken token)
+        {
+            return GetSprite(token.Value<string>());
+        }
+
         protected Vector2 ConvertToVector2(JToken value)
         {
             float[] floatArray = value.ToObject<float[]>(); //lets hope this works?
             return new Vector2(floatArray[0], floatArray[1]);
         }
 
-        public abstract GameObject Build(GameObject parent, Dictionary<string, JToken> data);
+        public abstract GameObject Build(GameObject parent, UIExchangeHandler handler, Dictionary<string, JToken> data);
+    }
+
+    public abstract class UIExchangeHandler : MonoBehaviour
+    {
+        /// <summary>
+        /// Sends an interaction message to this exchange handler.
+        /// </summary>
+        /// <param name="message"></param>
+        public abstract void SendInteractionMessage(string message);
     }
 
     public static class UIBuilder
@@ -30,11 +49,15 @@ namespace PlusLevelStudio.UI
         static JObject mostRecentlyParsedObject;
 
 
-        public static GameObject BuildUIFromFile(Canvas canvas, string name, string path)
+        public static T BuildUIFromFile<T>(Canvas canvas, string name, string path) where T : UIExchangeHandler
         {
             GameObject obj = new GameObject(name);
             obj.transform.SetParent(canvas.transform, false);
+            RectTransform rect = obj.AddComponent<RectTransform>();
+            rect.sizeDelta = canvas.GetComponent<RectTransform>().sizeDelta;
             JObject parsedFile = JObject.Parse(File.ReadAllText(path));
+
+            T handler = obj.AddComponent<T>();
 
 
             // handle defines
@@ -77,11 +100,11 @@ namespace PlusLevelStudio.UI
                 // handle this last just incase some evil lunatic decides to use macros for defining types
                 string elementType = elementData["type"].ToString();
 
-                elementBuilders[elementType].Build(obj, elementData);
+                elementBuilders[elementType].Build(obj, handler, elementData);
             }
 
 
-            return obj;
+            return handler;
         }
     }
 }

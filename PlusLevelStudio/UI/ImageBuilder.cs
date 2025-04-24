@@ -9,7 +9,7 @@ namespace PlusLevelStudio.UI
 {
     public class ImageBuilder : UIElementBuilder
     {
-        public override GameObject Build(GameObject parent, Dictionary<string, JToken> data)
+        public override GameObject Build(GameObject parent, UIExchangeHandler handler, Dictionary<string, JToken> data)
         {
             GameObject baseObject = new GameObject(data["name"].Value<string>());
             baseObject.transform.SetParent(parent.transform, false);
@@ -17,6 +17,8 @@ namespace PlusLevelStudio.UI
             img.rectTransform.anchorMin = ConvertToVector2(data["anchorMin"]);
             img.rectTransform.anchorMax = ConvertToVector2(data["anchorMax"]);
             img.rectTransform.sizeDelta = ConvertToVector2(data["size"]);
+            img.rectTransform.pivot = ConvertToVector2(data["pivot"]);
+            img.sprite = LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>(data["graphic"].Value<string>());
             img.rectTransform.anchoredPosition = ConvertToVector2(data["anchoredPosition"]);
             return baseObject;
         }

@@ -103,11 +103,11 @@ namespace PlusLevelStudio.Editor
                     GameObject.Destroy(uiObjects[i]);
                 }
             }
-            uiObjects[0] = UIBuilder.BuildUIFromFile(canvas, "Main", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "Main.json"));
-            uiObjects[0].transform.SetAsFirstSibling();
             CursorInitiator init = canvas.GetComponent<CursorInitiator>();
             init.screenSize = screenSize;
             init.Inititate();
+            uiObjects[0] = UIBuilder.BuildUIFromFile<EditorUIMainHandler>(canvas, "Main", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "Main.json")).gameObject;
+            uiObjects[0].transform.SetAsFirstSibling();
         }
 
         protected void UpdateMouseRay()
@@ -148,6 +148,7 @@ namespace PlusLevelStudio.Editor
             UpdateMouseRay();
             PlaySongIfNecessary();
             UpdateCamera();
+            /*
             if (Singleton<InputManager>.Instance.GetDigitalInput("Item1", true))
             {
                 selector.SelectArea(new RectInt(new Vector2Int(0,0), new Vector2Int(3,7)), (sizeDif, posDif) =>
@@ -155,9 +156,9 @@ namespace PlusLevelStudio.Editor
                     selector.DisableSelection();
                 });
                 return;
-            }
+            }*/
             HandleClicking();
-            if (InputManager.Instance.GetDigitalInput("Item1", true))
+            if (Singleton<InputManager>.Instance.GetDigitalInput("Item1", true))
             {
                 UpdateUI();
             }

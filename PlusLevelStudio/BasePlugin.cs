@@ -69,8 +69,6 @@ namespace PlusLevelStudio
             Shader.SetGlobalFloat("_FogMaxDistance", 100f);
             Shader.SetGlobalFloat("_FogStrength", 0f);
 
-            GameCamera cam = GameObject.Instantiate<GameCamera>(assetMan.Get<GameCamera>("gameCam"));
-
             EditorController editorController = GameObject.Instantiate<EditorController>(assetMan.Get<EditorController>("MainEditorController"));
         }
 
@@ -176,7 +174,13 @@ namespace PlusLevelStudio
 
             yield return "Setting up UIBuilders...";
 
+            Sprite[] allVanillaSprites = Resources.FindObjectsOfTypeAll<Sprite>().Where(x => x.GetInstanceID() >= 0).ToArray();
+
+            uiAssetMan.Add<Sprite>("BackArrow_0", allVanillaSprites.First(x => x.name == "BackArrow_0"));
+            uiAssetMan.Add<Sprite>("BackArrow_1", allVanillaSprites.First(x => x.name == "BackArrow_1"));
+
             UIBuilder.elementBuilders.Add("image", new ImageBuilder());
+            UIBuilder.elementBuilders.Add("imageButton", new ButtonBuilder());
         }
 
         public static GameObject CreateQuad(string name, Material mat, Vector3 position, Vector3 rotation)

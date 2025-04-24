@@ -1,16 +1,24 @@
 {
 	"defines":{
-		"iconSize":[32,32]
+		"iconSize":[32,32],
+		"topRight":[1,1],
+		"topLeft":[0,1],
+		"bottomLeft":[0,0],
+		"bottomRight":[1,0],
+		"center":[0.5,0.5],
 	},
 	"elements":[
 		{
 			"name":"BackButton",
-			"type":"image",
-			"graphic":"backButton",
+			"type":"imageButton",
+			"graphic":"BackArrow_0",
+			"hoverGraphic":"BackArrow_1",
 			"anchoredPosition":[0,0],
 			"size":"#iconSize",
-			"anchorMin":[0,0],
-			"anchorMax":[0.5,0.5]
-		}
+			"pivot":"#topLeft",
+			"anchorMin":"#topLeft",
+			"anchorMax":"#topLeft",
+			"onPressed":"exit"
+		},
 	]
 }
