@@ -172,15 +172,29 @@ namespace PlusLevelStudio
 
             assetMan.Add<EditorController>("MainEditorController", standardEditorController);
 
-            yield return "Setting up UIBuilders...";
+            yield return "Setting up UI assets...";
 
             Sprite[] allVanillaSprites = Resources.FindObjectsOfTypeAll<Sprite>().Where(x => x.GetInstanceID() >= 0).ToArray();
 
             uiAssetMan.Add<Sprite>("BackArrow_0", allVanillaSprites.First(x => x.name == "BackArrow_0"));
             uiAssetMan.Add<Sprite>("BackArrow_1", allVanillaSprites.First(x => x.name == "BackArrow_1"));
+            uiAssetMan.Add<Sprite>("ItemSlot_0", allVanillaSprites.First(x => x.name == "ItemSlot_Dynamic_0"));
+            uiAssetMan.Add<Sprite>("ItemSlot_1", allVanillaSprites.First(x => x.name == "ItemSlot_Dynamic_1"));
+            uiAssetMan.Add<Sprite>("ItemSlot_2", allVanillaSprites.First(x => x.name == "ItemSlot_Dynamic_2"));
+            uiAssetMan.Add<Sprite>("QuestionMark0", allVanillaSprites.First(x => x.name == "QMark_Sheet_0"));
+            uiAssetMan.Add<Sprite>("QuestionMark1", allVanillaSprites.First(x => x.name == "QMark_Sheet_1"));
 
             UIBuilder.elementBuilders.Add("image", new ImageBuilder());
             UIBuilder.elementBuilders.Add("imageButton", new ButtonBuilder());
+            UIBuilder.elementBuilders.Add("hotslot", new HotSlotBuilder());
+            UIBuilder.elementBuilders.Add("hotslotSpecial", new SpecialHotSlotBuilder());
+
+            string[] paths = Directory.GetFiles(Path.Combine(AssetLoader.GetModPath(this), "UI", "Editor"), "*.png");
+            for (int i = 0; i < paths.Length; i++)
+            {
+                Texture2D texture = AssetLoader.TextureFromFile(paths[i]);
+                uiAssetMan.Add<Sprite>(texture.name, AssetLoader.SpriteFromTexture2D(texture, 1f));
+            }
         }
 
         public static GameObject CreateQuad(string name, Material mat, Vector3 position, Vector3 rotation)

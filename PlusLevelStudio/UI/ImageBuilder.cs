@@ -18,7 +18,7 @@ namespace PlusLevelStudio.UI
             img.rectTransform.anchorMax = ConvertToVector2(data["anchorMax"]);
             img.rectTransform.sizeDelta = ConvertToVector2(data["size"]);
             img.rectTransform.pivot = ConvertToVector2(data["pivot"]);
-            img.sprite = LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>(data["graphic"].Value<string>());
+            img.sprite = GetSprite(data["graphic"].Value<string>());
             img.rectTransform.anchoredPosition = ConvertToVector2(data["anchoredPosition"]);
             return baseObject;
         }

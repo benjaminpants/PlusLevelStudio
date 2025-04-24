@@ -10,12 +10,14 @@ using UnityEngine.UIElements;
 using PlusLevelStudio.UI;
 using MTM101BaldAPI.AssetTools;
 using System.IO;
+using UnityEngine.EventSystems;
 
 namespace PlusLevelStudio.Editor
 {
     public class EditorController : Singleton<EditorController>
     {
         protected static FieldInfo _deltaThisFrame = AccessTools.Field(typeof(CursorController), "deltaThisFrame");
+        protected static FieldInfo _results = AccessTools.Field(typeof(CursorController), "results");
 
         public EditorLevelData levelData;
         public Canvas canvas;
@@ -129,7 +131,7 @@ namespace PlusLevelStudio.Editor
         public void ResizeGrid(IntVector2 posDif, IntVector2 sizeDif)
         {
             IntVector2 targetSize = levelData.mapSize + sizeDif;
-            if (targetSize.x > 255 || targetSize.z > 255) { TriggerError("LevelTooBig"); return; }
+            if (targetSize.x > 256 || targetSize.z > 256) { TriggerError("LevelTooBig"); return; }
             if (targetSize.x < 1 || targetSize.z < 1) { TriggerError("LevelTooSmall"); return; }
             // TODO: INSERT LOGIC FOR HANDLING AREAS AND OBJECTS
             // IF A RESIZE WOULD CUT OFF AN AREA IT SHOULD TRIGGER A "AREA IN THE WAY" ERROR
@@ -157,7 +159,10 @@ namespace PlusLevelStudio.Editor
                 });
                 return;
             }*/
-            HandleClicking();
+            if (((List<RaycastResult>)_results.GetValue(CursorController.Instance)).Count == 0)
+            {
+                HandleClicking();
+            }
             if (Singleton<InputManager>.Instance.GetDigitalInput("Item1", true))
             {
                 UpdateUI();
