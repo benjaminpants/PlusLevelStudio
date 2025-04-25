@@ -38,6 +38,11 @@ namespace PlusLevelStudio.UI
         /// </summary>
         /// <param name="message"></param>
         public abstract void SendInteractionMessage(string message);
+
+        /// <summary>
+        /// Called when the UI is finished being built.
+        /// </summary>
+        public abstract void OnElementsCreated();
     }
 
     public static class UIBuilder
@@ -102,6 +107,8 @@ namespace PlusLevelStudio.UI
 
                 elementBuilders[elementType].Build(obj, handler, elementData);
             }
+
+            handler.OnElementsCreated();
 
 
             return handler;

@@ -9,6 +9,15 @@ namespace PlusLevelStudio.Editor
 {
     public class EditorUIMainHandler : UIExchangeHandler
     {
+        public override void OnElementsCreated()
+        {
+            HotSlotScript[] foundSlotScripts = transform.GetComponentsInChildren<HotSlotScript>();
+            for (int i = 0; i < foundSlotScripts.Length; i++)
+            {
+                EditorController.Instance.hotSlots[foundSlotScripts[i].slotIndex] = foundSlotScripts[i];
+            }
+        }
+
         public override void SendInteractionMessage(string message)
         {
             switch (message)

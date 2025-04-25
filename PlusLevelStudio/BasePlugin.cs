@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.IO;
 using MTM101BaldAPI.Reflection;
 using PlusLevelStudio.UI;
+using PlusLevelStudio.Editor.Tools;
 
 namespace PlusLevelStudio
 {
@@ -70,6 +71,16 @@ namespace PlusLevelStudio
             Shader.SetGlobalFloat("_FogStrength", 0f);
 
             EditorController editorController = GameObject.Instantiate<EditorController>(assetMan.Get<EditorController>("MainEditorController"));
+
+            // TODO: put code that actually does logic for assigning editor mode here instead of just creating it on the fly
+            editorController.currentMode = new EditorMode()
+            {
+                availableTools = new List<EditorTool>()
+                {
+                    new RoomTool("test")
+                }
+            };
+
         }
 
         public void GoToEditor()
@@ -188,12 +199,21 @@ namespace PlusLevelStudio
             UIBuilder.elementBuilders.Add("imageButton", new ButtonBuilder());
             UIBuilder.elementBuilders.Add("hotslot", new HotSlotBuilder());
             UIBuilder.elementBuilders.Add("hotslotSpecial", new SpecialHotSlotBuilder());
+            SpritesFromPath(Path.Combine(AssetLoader.GetModPath(this), "UI", "Editor"), "");
+        }
 
-            string[] paths = Directory.GetFiles(Path.Combine(AssetLoader.GetModPath(this), "UI", "Editor"), "*.png");
+        void SpritesFromPath(string path, string prefix)
+        {
+            string[] paths = Directory.GetFiles(path, "*.png");
             for (int i = 0; i < paths.Length; i++)
             {
                 Texture2D texture = AssetLoader.TextureFromFile(paths[i]);
-                uiAssetMan.Add<Sprite>(texture.name, AssetLoader.SpriteFromTexture2D(texture, 1f));
+                uiAssetMan.Add<Sprite>(prefix + texture.name, AssetLoader.SpriteFromTexture2D(texture, 1f));
+            }
+            string[] subDirectories = Directory.GetDirectories(path);
+            for (int i = 0; i < subDirectories.Length; i++)
+            {
+                SpritesFromPath(subDirectories[i], prefix + new DirectoryInfo(subDirectories[i]).Name + "/");
             }
         }
 

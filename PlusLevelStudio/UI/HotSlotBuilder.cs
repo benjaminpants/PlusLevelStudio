@@ -63,6 +63,10 @@ namespace PlusLevelStudio.UI
             {
                 img.color = Color.white;
             });
+            HotSlotScript hotScript = baseObject.AddComponent<HotSlotScript>();
+            hotScript.slotIndex = data["slotIndex"].Value<int>();
+            hotScript.button = button;
+            hotScript.iconImage = itemImage;
             return baseObject;
         }
     }

@@ -19,6 +19,9 @@ namespace PlusLevelStudio.Editor
         protected static FieldInfo _deltaThisFrame = AccessTools.Field(typeof(CursorController), "deltaThisFrame");
         protected static FieldInfo _results = AccessTools.Field(typeof(CursorController), "results");
 
+        public HotSlotScript[] hotSlots = new HotSlotScript[9];
+
+        public EditorMode currentMode;
         public EditorLevelData levelData;
         public Canvas canvas;
 
