@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PlusStudioLevelFormat;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
@@ -21,9 +22,41 @@ namespace PlusLevelStudio
             return new IntVector2(Mathf.RoundToInt(x), Mathf.RoundToInt(y));
         }
 
+        public static RectInt ToRect(this Vector2Int start, Vector2Int end)
+        {
+            Vector2Int rectStart;
+            Vector2Int rectEnd;
+            if ((end.x < start.x) && (end.y < start.y))
+            {
+                rectStart = end;
+                rectEnd = start;
+            }
+            else if (end.x < start.x)
+            {
+                rectStart = new Vector2Int(end.x, start.y);
+                rectEnd = new Vector2Int(start.x, end.y);
+            }
+            else if (end.y < start.y)
+            {
+                rectStart = new Vector2Int(start.x, end.y);
+                rectEnd = new Vector2Int(end.x, start.y);
+            }
+            else
+            {
+                rectStart = start;
+                rectEnd = end;
+            }
+            return new RectInt(rectStart, rectEnd - rectStart + Vector2Int.one);
+        }
+
         public static IntVector2 ToMystVector(this Vector2Int me)
         {
             return new IntVector2(me.x, me.y);
+        }
+
+        public static Vector2Int ToUnityVector(this IntVector2 me)
+        {
+            return new Vector2Int(me.x, me.z);
         }
 
         /// <summary>
@@ -110,6 +143,17 @@ namespace PlusLevelStudio
         public static IntVector2 Max(this IntVector2 me, IntVector2 max)
         {
             return new IntVector2(Mathf.Max(me.x, max.x), Mathf.Max(me.z, max.z));
+        }
+
+        // TODO: move this to the LevelLoader when the time is right
+        public static IntVector2 ToInt(this ByteVector2 me)
+        {
+            return new IntVector2(me.x, me.y);
+        }
+
+        public static ByteVector2 ToByte(this IntVector2 me)
+        {
+            return new ByteVector2(me.x, me.z);
         }
     }
 }

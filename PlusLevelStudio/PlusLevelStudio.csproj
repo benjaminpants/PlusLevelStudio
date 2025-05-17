@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\PlusStudioLevelFormat\PlusStudioLevelFormat.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="0Harmony">
       <HintPath>..\Dependencies\0Harmony.dll</HintPath>
     </Reference>

@@ -9,6 +9,7 @@ namespace PlusLevelStudio.Editor.Tools
     {
         protected string roomType;
         protected bool inScaleMode = false;
+        protected IntVector2? startVector = null;
         public override string id => "room_" + roomType;
 
         public RoomTool(string roomId) : this(roomId, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/room_" + roomId))
@@ -24,7 +25,7 @@ namespace PlusLevelStudio.Editor.Tools
 
         public override void Begin()
         {
-            
+            startVector = null;
         }
 
         public override bool Cancelled()
@@ -41,11 +42,12 @@ namespace PlusLevelStudio.Editor.Tools
         public override void Exit()
         {
             inScaleMode = false;
-            Debug.Log("Exit!");
+            EditorController.Instance.selector.DisableSelection();
         }
 
         public override bool MousePressed()
         {
+            startVector = EditorController.Instance.mouseGridPosition;
             inScaleMode = true;
             return false;
         }
@@ -59,11 +61,12 @@ namespace PlusLevelStudio.Editor.Tools
         {
             if (inScaleMode)
             {
-                Debug.Log("In scale mode!");
+                if (startVector == null) throw new InvalidOperationException();
+                EditorController.Instance.selector.SelectArea(startVector.Value.ToUnityVector().ToRect(EditorController.Instance.mouseGridPosition.ToUnityVector()),null);
             }
             else
             {
-                Debug.Log("In regular mode!");
+                EditorController.Instance.selector.SelectTile(EditorController.Instance.mouseGridPosition);
             }
         }
     }

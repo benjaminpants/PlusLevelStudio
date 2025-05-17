@@ -11,6 +11,7 @@ using PlusLevelStudio.UI;
 using MTM101BaldAPI.AssetTools;
 using System.IO;
 using UnityEngine.EventSystems;
+using MTM101BaldAPI.Reflection;
 
 namespace PlusLevelStudio.Editor
 {
@@ -33,6 +34,9 @@ namespace PlusLevelStudio.Editor
 
         public EnvironmentController workerEc;
         public EnvironmentController ecPrefab;
+
+        public CoreGameManager workerCgm;
+        public CoreGameManager cgmPrefab;
 
         //public Material tileAlphaMaterial;
 
@@ -169,15 +173,19 @@ namespace PlusLevelStudio.Editor
         {
             if (sizeDif.x == 0 && sizeDif.z == 0) return; // no point in doing anything?
             IntVector2 targetSize = levelData.mapSize + sizeDif;
-            if (targetSize.x > 256 || targetSize.z > 256) { TriggerError("LevelTooBig"); return; }
+            if (targetSize.x > 255 || targetSize.z > 255) { TriggerError("LevelTooBig"); return; }
             if (targetSize.x < 1 || targetSize.z < 1) { TriggerError("LevelTooSmall"); return; }
             // TODO: INSERT LOGIC FOR HANDLING AREAS AND OBJECTS
             // IF A RESIZE WOULD CUT OFF AN AREA IT SHOULD TRIGGER A "AREA IN THE WAY" ERROR
             // IF POSDIF IS ZERO THEN SKIP ALL THAT LOGIC BECAUSE ITS UNNECESSARY
 
-            levelData.mapSize += sizeDif;
+            if (!levelData.ResizeLevel(posDif, sizeDif))
+            {
+                TriggerError("RoomClipped");
+                return;
+            }
 
-            gridManager.RegenerateGrid();
+            RegenerateGridAndCells();
             // move camera so the change isn't noticable
             transform.position -= new Vector3(posDif.x * 10f, 0f, posDif.z * 10f);
         }
@@ -303,20 +311,56 @@ namespace PlusLevelStudio.Editor
             transform.position += transform.right * analogMove.x * Time.deltaTime * moveSpeed;
         }
 
+        protected void RegenerateGridAndCells()
+        {
+            gridManager.RegenerateGrid();
+            if (workerEc.cells != null)
+            {
+                for (int x = 0; x < workerEc.cells.GetLength(0); x++)
+                {
+                    for (int y = 0; y < workerEc.cells.GetLength(1); y++)
+                    {
+                        GameObject.Destroy(workerEc.cells[x, y].Tile.gameObject); // bye bye tile
+                    }
+                }
+            }
+            workerEc.SetTileInstantiation(true);
+            workerEc.levelSize = levelData.mapSize;
+            workerEc.InitializeCells(levelData.mapSize);
+            workerEc.InitializeLighting();
+            for (int x = 0; x < workerEc.cells.GetLength(0); x++)
+            {
+                for (int y = 0; y < workerEc.cells.GetLength(1); y++)
+                {
+                    workerEc.cells[x, y].LoadTile();
+                    workerEc.cells[x, y].Tile.transform.SetParent(gridManager.transform, true);
+                    if (levelData.cells[x,y].type == 16)
+                    {
+                        workerEc.cells[x, y].Tile.gameObject.SetActive(false);
+                    }
+                }
+            }
+            LevelStudioPlugin.Instance.lightmaps["standard"].Apply(false,false);
+        }
+
         protected override void AwakeFunction()
         {
-            levelData = new EditorLevelData();
+            levelData = new EditorLevelData(new IntVector2(50,50));
             gridManager = GameObject.Instantiate(gridManagerPrefab);
             gridManager.editor = this;
             camera = GameObject.Instantiate(cameraPrefab);
             camera.UpdateTargets(transform,0);
             canvas.transform.SetParent(null);
             UpdateUI();
-            gridManager.RegenerateGrid();
             selector = GameObject.Instantiate(selectorPrefab);
             workerEc = GameObject.Instantiate(ecPrefab);
             workerEc.gameObject.SetActive(false);
             workerEc.name = "WorkerEnvironmentController";
+
+            workerCgm = GameObject.Instantiate(cgmPrefab);
+            workerCgm.gameObject.SetActive(true);
+            workerCgm.gameObject.SetActive(false);
+            RegenerateGridAndCells();
         }
     }
 }

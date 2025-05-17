@@ -35,7 +35,7 @@ namespace PlusLevelStudio.Editor
         public GameObject gridCellTemplate;
         protected Direction currentArrow = Direction.Null;
         protected IntVector2 currentStartPosition = new IntVector2();
-
+        protected float offset = -0.01f;
 
         public GameObject[] arrowObjects = new GameObject[4];
 
@@ -86,8 +86,9 @@ namespace PlusLevelStudio.Editor
                 for (int y = 0; y < editor.levelData.mapSize.z; y++)
                 {
                     gridObjects[count] = GameObject.Instantiate(gridCellTemplate);
-                    gridObjects[count].transform.position = new IntVector2(x, y).ToWorld();
+                    gridObjects[count].transform.position = new IntVector2(x, y).ToWorld() + (Vector3.up * offset);
                     gridObjects[count].transform.SetParent(transform, true);
+
                     count++;
                 }
             }

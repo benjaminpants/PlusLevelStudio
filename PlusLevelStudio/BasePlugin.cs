@@ -93,7 +93,7 @@ namespace PlusLevelStudio
         IEnumerator FindObjectsAndSetupEditor()
         {
             List<Direction> directions = Directions.All();
-            yield return 7;
+            yield return 8;
             yield return "Grabbing necessary resources...";
             assetMan.Add<Mesh>("Quad", Resources.FindObjectsOfTypeAll<Mesh>().First(x => x.GetInstanceID() >= 0 && x.name == "Quad"));
             Material[] materials = Resources.FindObjectsOfTypeAll<Material>().Where(x => x.GetInstanceID() >= 0).ToArray();
@@ -163,7 +163,12 @@ namespace PlusLevelStudio
                 selector.tileArrows[i] = dirQuad;
             }
 
-
+            yield return "Creating Worker CoreGameManager...";
+            CoreGameManager cgm = Resources.FindObjectsOfTypeAll<CoreGameManager>().First(x => x.name == "CoreGameManager" && x.GetInstanceID() >= 0);
+            CoreGameManager workerCgm = GameObject.Instantiate<CoreGameManager>(cgm, MTM101BaldiDevAPI.prefabTransform);
+            workerCgm.ReflectionSetVariable("destroyOnLoad", true);
+            workerCgm.gameObject.SetActive(false);
+            workerCgm.name = "WorkerCoreGameManager";
 
             yield return "Setting up Editor Controller...";
             GameObject editorControllerObject = new GameObject("StandardEditorController");
@@ -182,6 +187,7 @@ namespace PlusLevelStudio
             standardEditorController.selectorPrefab = selector;
             standardEditorController.gridManagerPrefab = gridManager;
             standardEditorController.ecPrefab = ecPrefab;
+            standardEditorController.cgmPrefab = workerCgm;
 
             assetMan.Add<EditorController>("MainEditorController", standardEditorController);
 
@@ -234,6 +240,7 @@ namespace PlusLevelStudio
         {
             yield return 3;
             yield return "Creating solid color lightmaps...";
+            lightmaps.Add("standard", Resources.FindObjectsOfTypeAll<Texture2D>().First(x => x.GetInstanceID() >= 0 && x.name == "LightMap"));
             AddSolidColorLightmap("white", Color.white);
             AddSolidColorLightmap("yellow", Color.yellow);
             AddSolidColorLightmap("red", Color.red);
