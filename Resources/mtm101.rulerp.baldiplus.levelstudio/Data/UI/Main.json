@@ -23,7 +23,7 @@
 		{
 			"name":"HotSlot1",
 			"type":"hotslot",
-			"graphic":"ItemSlot_1",
+			"graphic":"ItemSlot_0",
 			"slotIndex":0,
 			"anchoredPosition":[90,-4],
 			"size":"#slotSize",

@@ -21,6 +21,9 @@ namespace PlusLevelStudio.Editor
 
         public HotSlotScript[] hotSlots = new HotSlotScript[9];
 
+        public EditorTool currentTool => _currentTool;
+        protected EditorTool _currentTool;
+
         public EditorMode currentMode;
         public EditorLevelData levelData;
         public Canvas canvas;
@@ -47,6 +50,7 @@ namespace PlusLevelStudio.Editor
         public Plane currentFloorPlane = new Plane(Vector3.up, 0f);
         public Ray mouseRay;
         public Vector3 mousePlanePosition = Vector3.zero;
+        protected bool mousePressedLastFrame = false; // used for handling tools
         public IntVector2 mouseGridPosition => mousePlanePosition.ToCellVector();
 
         protected IEditorInteractable heldInteractable = null;
@@ -115,6 +119,12 @@ namespace PlusLevelStudio.Editor
             uiObjects[0].transform.SetAsFirstSibling();
         }
 
+        // called when the editor mode is assigned or re-assigned
+        public void EditorModeAssigned()
+        {
+            hotSlots[0].currentTool = currentMode.availableTools[0];
+        }
+
         protected void UpdateMouseRay()
         {
             Vector3 pos = new Vector3((CursorController.Instance.LocalPosition.x / screenSize.x) * Screen.width, Screen.height + ((CursorController.Instance.LocalPosition.y / screenSize.y) * Screen.height));
@@ -131,8 +141,33 @@ namespace PlusLevelStudio.Editor
             Debug.LogWarning("Encountered error: " + errorString + "!");
         }
 
+        /// <summary>
+        /// Switches the current tool to the one passed in.
+        /// </summary>
+        /// <param name="tool"></param>
+        public void SwitchToTool(EditorTool tool)
+        {
+            if (_currentTool != null)
+            {
+                _currentTool.Exit();
+            }
+            _currentTool = tool;
+            mousePressedLastFrame = false;
+            if (_currentTool != null)
+            {
+                _currentTool.Begin();
+            }
+        }
+
+        /// <summary>
+        /// Resizes the grid to the respective size and shifts everything by the respective position.
+        /// The camera is moved so no visible change is noticed
+        /// </summary>
+        /// <param name="posDif"></param>
+        /// <param name="sizeDif"></param>
         public void ResizeGrid(IntVector2 posDif, IntVector2 sizeDif)
         {
+            if (sizeDif.x == 0 && sizeDif.z == 0) return; // no point in doing anything?
             IntVector2 targetSize = levelData.mapSize + sizeDif;
             if (targetSize.x > 256 || targetSize.z > 256) { TriggerError("LevelTooBig"); return; }
             if (targetSize.x < 1 || targetSize.z < 1) { TriggerError("LevelTooSmall"); return; }
@@ -151,7 +186,7 @@ namespace PlusLevelStudio.Editor
         {
             canvas.scaleFactor = calculatedScaleFactor;
             UpdateMouseRay();
-            PlaySongIfNecessary();
+            //PlaySongIfNecessary();
             UpdateCamera();
             /*
             if (Singleton<InputManager>.Instance.GetDigitalInput("Item1", true))
@@ -166,14 +201,42 @@ namespace PlusLevelStudio.Editor
             {
                 HandleClicking();
             }
+#if DEBUG
             if (Singleton<InputManager>.Instance.GetDigitalInput("Item1", true))
             {
                 UpdateUI();
+                EditorModeAssigned();
             }
+#endif
         }
 
         protected void HandleClicking()
         {
+            if (currentTool != null)
+            {
+                bool mousePressedThisFrame = Singleton<InputManager>.Instance.GetDigitalInput("Interact", false);
+                if (mousePressedLastFrame != mousePressedThisFrame)
+                {
+                    if (mousePressedThisFrame)
+                    {
+                        if (currentTool.MousePressed()) { SwitchToTool(null); return; }
+                    }
+                    else
+                    {
+                        if (currentTool.MouseReleased()) { SwitchToTool(null); return; }
+                    }
+                }
+                mousePressedLastFrame = mousePressedThisFrame;
+                currentTool.Update();
+                if (Singleton<InputManager>.Instance.GetDigitalInput("Pause", true))
+                {
+                    if (currentTool.Cancelled())
+                    {
+                        SwitchToTool(null);
+                    }
+                }
+                return;
+            }
             if (heldInteractable != null)
             {
                 if (Singleton<InputManager>.Instance.GetDigitalInput("Interact", false))

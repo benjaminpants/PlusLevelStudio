@@ -81,6 +81,8 @@ namespace PlusLevelStudio
                 }
             };
 
+            editorController.EditorModeAssigned();
+
         }
 
         public void GoToEditor()

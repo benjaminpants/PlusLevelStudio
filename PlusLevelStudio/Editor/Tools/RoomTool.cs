@@ -8,13 +8,18 @@ namespace PlusLevelStudio.Editor.Tools
     public class RoomTool : EditorTool
     {
         protected string roomType;
-
+        protected bool inScaleMode = false;
         public override string id => "room_" + roomType;
 
-        public RoomTool(string roomId)
+        public RoomTool(string roomId) : this(roomId, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/room_" + roomId))
+        {
+
+        }
+
+        public RoomTool(string roomId, Sprite sprite)
         {
             roomType = roomId;
-            sprite = LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/" + id);
+            this.sprite = sprite;
         }
 
         public override void Begin()
@@ -24,22 +29,42 @@ namespace PlusLevelStudio.Editor.Tools
 
         public override bool Cancelled()
         {
+            Debug.Log("Cancelled!");
+            if (inScaleMode)
+            {
+                inScaleMode = false;
+                return false;
+            }
             return true;
+        }
+
+        public override void Exit()
+        {
+            inScaleMode = false;
+            Debug.Log("Exit!");
         }
 
         public override bool MousePressed()
         {
-            return true;
+            inScaleMode = true;
+            return false;
         }
 
         public override bool MouseReleased()
         {
-            return false;
+            return inScaleMode; // if we are in scale mode, return, otherwise, don't
         }
 
         public override void Update()
         {
-            
+            if (inScaleMode)
+            {
+                Debug.Log("In scale mode!");
+            }
+            else
+            {
+                Debug.Log("In regular mode!");
+            }
         }
     }
 }

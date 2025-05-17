@@ -34,6 +34,13 @@ namespace PlusLevelStudio.Editor
         /// Called when the tool is selected/picked up
         /// </summary>
         public abstract void Begin();
+
+        /// <summary>
+        /// Called when the tool is put away/closed
+        /// </summary>
+        public abstract void Exit();
+
+
         /// <summary>
         /// Called when the tool gets cancelled for any reason/the user attempts to cancel the tool.
         /// </summary>
@@ -43,7 +50,7 @@ namespace PlusLevelStudio.Editor
         /// <summary>
         /// Called when the mouse is pressed.
         /// </summary>
-        /// <returns>If the tool should be return.</returns>
+        /// <returns>If the tool should be returned.</returns>
         public abstract bool MousePressed();
         /// <summary>
         /// Called when the mouse is released.

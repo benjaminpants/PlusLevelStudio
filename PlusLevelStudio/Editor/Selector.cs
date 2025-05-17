@@ -118,7 +118,10 @@ namespace PlusLevelStudio.Editor
         {
             EditorExtensions.CalculateDifferencesForHandleDrag(currentArrow, (Singleton<EditorController>.Instance.mouseGridPosition - currentStartPosition).DistanceInDirection(currentArrow), out IntVector2 sizeDif, out IntVector2 posDif);
             PositionArrow(currentArrow, 0f);
-            resizeAction.Invoke(sizeDif, posDif);
+            if (resizeAction != null)
+            {
+                resizeAction.Invoke(sizeDif, posDif);
+            }
             currentArrow = Direction.Null;
         }
 
