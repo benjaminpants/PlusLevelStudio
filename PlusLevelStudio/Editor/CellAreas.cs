@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
 namespace PlusLevelStudio.Editor
 {
@@ -18,6 +19,22 @@ namespace PlusLevelStudio.Editor
         {
             this.origin = origin;
             this.roomId = roomId;
+        }
+
+        public abstract RectInt? rect { get; }
+
+        public abstract void Resize(IntVector2 posDif, IntVector2 sizeDif);
+
+        // TODO: change implementation?
+        public bool ResizeWithSafety(IntVector2 posDif, IntVector2 sizeDif)
+        {
+            Resize(posDif, sizeDif);
+            if (!EditorController.Instance.levelData.AreaValid(this))
+            {
+                Resize(posDif * -1, sizeDif * -1);
+                return false;
+            }
+            return true;
         }
 
         public virtual bool VectorIsInArea(ByteVector2 vector)
@@ -60,6 +77,7 @@ namespace PlusLevelStudio.Editor
         public override string type => "rect";
         public ByteVector2 size;
         public ByteVector2 corner => origin + (size - ByteVector2.one);
+        public override RectInt? rect => new RectInt(origin.ToInt().ToUnityVector(), size.ToInt().ToUnityVector());
 
         public RectCellArea(ByteVector2 origin, ByteVector2 size, ushort roomId) : base(origin, roomId)
         {
@@ -99,6 +117,12 @@ namespace PlusLevelStudio.Editor
                 }
             }
             return vectors.ToArray();
+        }
+
+        public override void Resize(IntVector2 posDif, IntVector2 sizeDif)
+        {
+            origin = (origin.ToInt() - posDif).ToByte();
+            size = (size.ToInt() + sizeDif).ToByte();
         }
     }
 }

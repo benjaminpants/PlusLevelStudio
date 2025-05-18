@@ -281,8 +281,24 @@ namespace PlusLevelStudio.Editor
             }
         }
 
+        protected void AreaResize(CellArea area, IntVector2 posDif, IntVector2 sizeDif)
+        {
+            area.Resize(posDif, sizeDif);
+            RefreshCells();
+            selector.SelectArea(area.rect.Value, (IntVector2 pd, IntVector2 sd) => AreaResize(area, pd, sd));
+        }
+
         protected virtual void SelectTile(IntVector2 tileSelected)
         {
+            CellArea area = levelData.AreaFromPos(tileSelected.ToByte(), true);
+            if (area != null)
+            {
+                if (area.rect.HasValue)
+                {
+                    selector.SelectArea(area.rect.Value, (IntVector2 posDif, IntVector2 sizeDif) => AreaResize(area, posDif, sizeDif));
+                }
+                return;
+            }
             selector.SelectTile(tileSelected);
         }
 

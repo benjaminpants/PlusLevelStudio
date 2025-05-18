@@ -99,6 +99,7 @@ namespace PlusLevelStudio.Editor
         {
             for (int i = 0; i < areas.Count; i++)
             {
+                if (areas[i] == area) continue;
                 if (areas[i].CollidesWith(area)) return false;
             }
             ByteVector2[] ownedCells = area.CalculateOwnedCells();
@@ -120,15 +121,22 @@ namespace PlusLevelStudio.Editor
 
         public ushort RoomIdFromPos(ByteVector2 vector, bool forEditor)
         {
+            CellArea area = AreaFromPos(vector, forEditor);
+            if (area == null) return 0;
+            return area.roomId;
+        }
+
+        public CellArea AreaFromPos(ByteVector2 vector, bool forEditor)
+        {
             foreach (CellArea area in areas)
             {
                 if (area.editorOnly && !forEditor) continue;
                 if (area.VectorIsInArea(vector))
                 {
-                    return area.roomId;
+                    return area;
                 }
             }
-            return 0;
+            return null;
         }
     }
 }
