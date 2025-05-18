@@ -362,6 +362,8 @@ namespace PlusLevelStudio.Editor
             transform.position += transform.right * analogMove.x * Time.deltaTime * moveSpeed;
         }
 
+
+        static FieldInfo _initialized = AccessTools.Field(typeof(Cell), "initalized"); // seriously mystman? "initalized"?
         public void RefreshCells()
         {
             levelData.UpdateCells(true);
@@ -372,10 +374,18 @@ namespace PlusLevelStudio.Editor
                     if (levelData.cells[x, y].type == 16)
                     {
                         workerEc.cells[x, y].Tile.gameObject.SetActive(false);
+                        if (!workerEc.cells[x, y].Null)
+                        {
+                            _initialized.SetValue(workerEc.cells[x, y], false);
+                        }
                         continue;
                     }
                     workerEc.cells[x, y].Tile.gameObject.SetActive(true);
                     workerEc.cells[x, y].SetShape(levelData.cells[x, y].type, TileShapeMask.None);
+                    if (workerEc.cells[x, y].Null)
+                    {
+                        workerEc.cells[x, y].Initialize();
+                    }
                 }
             }
             UnhighlightAllCells();
@@ -427,6 +437,7 @@ namespace PlusLevelStudio.Editor
             workerEc = GameObject.Instantiate(ecPrefab);
             workerEc.gameObject.SetActive(false);
             workerEc.name = "WorkerEnvironmentController";
+            workerEc.lightMode = LightMode.Cumulative;
 
             workerCgm = GameObject.Instantiate(cgmPrefab);
             workerCgm.gameObject.SetActive(true);
