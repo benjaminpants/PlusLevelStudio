@@ -121,6 +121,7 @@ namespace PlusLevelStudio.Editor
         {
             visualizable.CleanupVisual(objectVisuals[visualizable]);
             GameObject.Destroy(objectVisuals[visualizable]);
+            objectVisuals.Remove(visualizable);
         }
 
         /// <summary>

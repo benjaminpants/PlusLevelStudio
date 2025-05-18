@@ -95,12 +95,13 @@ namespace PlusLevelStudio
         IEnumerator FindObjectsAndSetupEditor()
         {
             List<Direction> directions = Directions.All();
-            yield return 8;
+            yield return 9;
             yield return "Grabbing necessary resources...";
             assetMan.Add<Mesh>("Quad", Resources.FindObjectsOfTypeAll<Mesh>().First(x => x.GetInstanceID() >= 0 && x.name == "Quad"));
             Material[] materials = Resources.FindObjectsOfTypeAll<Material>().Where(x => x.GetInstanceID() >= 0).ToArray();
             EnvironmentController ecPrefab = Resources.FindObjectsOfTypeAll<EnvironmentController>().First(x => x.GetInstanceID() >= 0);
             assetMan.Add<Material>("tileAlpha", materials.First(x => x.name == "TileBase_Alpha"));
+            assetMan.Add<Material>("spriteBillboard", materials.First(x => x.name == "SpriteStandard_Billboard"));
             yield return "Finding GameCamera...";
             assetMan.Add<GameCamera>("gameCam", Resources.FindObjectsOfTypeAll<GameCamera>().First());
             yield return "Setting up materials...";
@@ -171,6 +172,25 @@ namespace PlusLevelStudio
             workerCgm.ReflectionSetVariable("destroyOnLoad", true);
             workerCgm.gameObject.SetActive(false);
             workerCgm.name = "WorkerCoreGameManager";
+
+            yield return "Creating editor prefab visuals...";
+            GameObject lightDisplayObject = new GameObject("LightVisual");
+            lightDisplayObject.transform.SetParent(MTM101BaldiDevAPI.prefabTransform);
+            GameObject lightSpriteObject = new GameObject("Sprite");
+            lightSpriteObject.transform.SetParent(lightDisplayObject.transform);
+            lightSpriteObject.layer = LayerMask.NameToLayer("Billboard");
+            lightSpriteObject.transform.localPosition = Vector3.up * 2f;
+            SpriteRenderer lightSpriteRenderer = lightSpriteObject.AddComponent<SpriteRenderer>();
+            lightSpriteRenderer.material = assetMan.Get<Material>("spriteBillboard");
+            lightSpriteRenderer.sprite = AssetLoader.SpriteFromMod(this, Vector2.one / 2f, 32f, "Editor", "Lightbulb.png");
+            lightSpriteRenderer.material.SetTexture("_LightMap", lightmaps["white"]);
+            assetMan.Add<GameObject>("LightDisplay", lightDisplayObject);
+            BoxCollider boxC = lightDisplayObject.AddComponent<BoxCollider>();
+            boxC.size = new Vector3(1f,2f,1f);
+            boxC.center += Vector3.up * 2f;
+            boxC.gameObject.layer = editorInteractableLayer;
+            EditorDeletableObject lightEdo = boxC.gameObject.AddComponent<EditorDeletableObject>();
+            lightEdo.myRenderers = new Renderer[] { lightSpriteRenderer };
 
             yield return "Setting up Editor Controller...";
             GameObject editorControllerObject = new GameObject("StandardEditorController");
