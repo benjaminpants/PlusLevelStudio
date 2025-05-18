@@ -134,9 +134,10 @@ namespace PlusLevelStudio.Editor
 
         public override bool Resize(IntVector2 sizeDif, IntVector2 posDif)
         {
-            if (size + sizeDif == new IntVector2()) return false; // if this shrinks us into being 0x0, return false
+            IntVector2 newSize = (size + sizeDif);
+            if (newSize.x <= 0 || newSize.z <= 0) return false; // if this shrinks us into being 0x0, return false
             origin += posDif;
-            size += sizeDif;
+            size = newSize;
             return true;
         }
     }

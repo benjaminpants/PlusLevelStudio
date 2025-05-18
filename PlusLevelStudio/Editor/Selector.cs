@@ -72,6 +72,11 @@ namespace PlusLevelStudio.Editor
             UpdateSelectionObjects();
         }
 
+        /// <summary>
+        /// Select the area specified by Rect.
+        /// </summary>
+        /// <param name="rect"></param>
+        /// <param name="resizeAction">First parameter is the change in size, the second parameter is the change in position.</param>
         public void SelectArea(RectInt rect, Action<IntVector2, IntVector2> resizeAction)
         {
             selectedArea = rect;

@@ -77,7 +77,8 @@ namespace PlusLevelStudio
             {
                 availableTools = new List<EditorTool>()
                 {
-                    new RoomTool("test")
+                    new RoomTool("test"),
+                    new DeleteTool()
                 }
             };
 
@@ -240,7 +241,7 @@ namespace PlusLevelStudio
         {
             yield return 3;
             yield return "Creating solid color lightmaps...";
-            lightmaps.Add("standard", Resources.FindObjectsOfTypeAll<Texture2D>().First(x => x.GetInstanceID() >= 0 && x.name == "LightMap"));
+            lightmaps.Add("none", Resources.FindObjectsOfTypeAll<Texture2D>().First(x => x.GetInstanceID() >= 0 && x.name == "LightMap"));
             AddSolidColorLightmap("white", Color.white);
             AddSolidColorLightmap("yellow", Color.yellow);
             AddSolidColorLightmap("red", Color.red);

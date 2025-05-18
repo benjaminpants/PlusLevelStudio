@@ -35,6 +35,19 @@ namespace PlusLevelStudio.UI
             button.OnPress.AddListener(ButtonPressed);
         }
 
+        void Update()
+        {
+            if (currentTool == null) return;
+            if (EditorController.Instance.currentTool == currentTool)
+            {
+                iconImage.color = Color.gray;
+            }
+            else
+            {
+                iconImage.color = Color.white;
+            }
+        }
+
         void ButtonPressed()
         {
             if (currentTool == null) return;

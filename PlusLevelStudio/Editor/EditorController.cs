@@ -12,6 +12,7 @@ using MTM101BaldAPI.AssetTools;
 using System.IO;
 using UnityEngine.EventSystems;
 using MTM101BaldAPI.Reflection;
+using MTM101BaldAPI;
 
 namespace PlusLevelStudio.Editor
 {
@@ -127,6 +128,7 @@ namespace PlusLevelStudio.Editor
         public void EditorModeAssigned()
         {
             hotSlots[0].currentTool = currentMode.availableTools[0];
+            hotSlots[1].currentTool = currentMode.availableTools[1];
         }
 
         protected void UpdateMouseRay()
@@ -151,6 +153,8 @@ namespace PlusLevelStudio.Editor
         /// <param name="tool"></param>
         public void SwitchToTool(EditorTool tool)
         {
+            selector.DisableSelection(); // deselect whatever we had selected
+            UnhighlightAllCells();
             if (_currentTool != null)
             {
                 _currentTool.Exit();
@@ -281,21 +285,54 @@ namespace PlusLevelStudio.Editor
             }
         }
 
+        /// <summary>
+        /// Highlights all the cells at the corresponding positions.
+        /// </summary>
+        /// <param name="positions"></param>
+        /// <param name="highlight">The lightmap/highlight to use.</param>
+        public void HighlightCells(IntVector2[] positions, string highlight)
+        {
+            for (int i = 0; i < positions.Length; i++)
+            {
+                workerEc.cells[positions[i].x, positions[i].z].Tile.MeshRenderer.material.SetTexture("_LightMap", LevelStudioPlugin.Instance.lightmaps[highlight]);
+            }
+        }
+
+        /// <summary>
+        /// Removes highlights from all cells.
+        /// </summary>
+        public void UnhighlightAllCells()
+        {
+            for (int x = 0; x < workerEc.cells.GetLength(0); x++)
+            {
+                for (int y = 0; y < workerEc.cells.GetLength(1); y++)
+                {
+                    workerEc.cells[x,y].Tile.MeshRenderer.material.SetTexture("_LightMap", LevelStudioPlugin.Instance.lightmaps["none"]);
+                }
+            }
+        }
+
         protected void AreaResize(CellArea area, IntVector2 sizeDif, IntVector2 posDif)
         {
-            area.ResizeWithSafety(sizeDif, posDif);
-            RefreshCells();
+            HighlightCells(area.CalculateOwnedCells(), "none");
+            if (sizeDif.x != 0 || sizeDif.z != 0)
+            {
+                area.ResizeWithSafety(sizeDif, posDif);
+                RefreshCells();
+            }
+            HighlightCells(area.CalculateOwnedCells(), "yellow");
             selector.SelectArea(area.rect.Value, (IntVector2 sd, IntVector2 pd) => AreaResize(area, sd, pd));
         }
 
         protected virtual void SelectTile(IntVector2 tileSelected)
         {
+            UnhighlightAllCells(); // TODO: investigate performance?
             CellArea area = levelData.AreaFromPos(tileSelected, true);
             if (area != null)
             {
                 if (area.rect.HasValue)
                 {
-                    selector.SelectArea(area.rect.Value, (IntVector2 sizeDif, IntVector2 posDif) => AreaResize(area, sizeDif, posDif));
+                    AreaResize(area, new IntVector2(), new IntVector2());
                 }
                 return;
             }
@@ -341,6 +378,7 @@ namespace PlusLevelStudio.Editor
                     workerEc.cells[x, y].SetShape(levelData.cells[x, y].type, TileShapeMask.None);
                 }
             }
+            UnhighlightAllCells();
         }
 
         protected void RegenerateGridAndCells()
@@ -373,7 +411,7 @@ namespace PlusLevelStudio.Editor
                 }
             }
             RefreshCells(); // TODO: check performance, potential clean up?
-            LevelStudioPlugin.Instance.lightmaps["standard"].Apply(false,false);
+            LevelStudioPlugin.Instance.lightmaps["none"].Apply(false,false);
         }
 
         protected override void AwakeFunction()
