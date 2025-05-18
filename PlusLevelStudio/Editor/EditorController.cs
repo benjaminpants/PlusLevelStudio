@@ -13,6 +13,7 @@ using System.IO;
 using UnityEngine.EventSystems;
 using MTM101BaldAPI.Reflection;
 using MTM101BaldAPI;
+using PlusStudioLevelFormat;
 
 namespace PlusLevelStudio.Editor
 {
@@ -62,10 +63,10 @@ namespace PlusLevelStudio.Editor
         protected IEditorInteractable heldInteractable = null;
 
         /// <summary>
-        /// Registers the specified IEditorVisualizable into the editor visuals system.
+        /// Adds the specified IEditorVisualizable into the editor visuals system.
         /// </summary>
         /// <param name="visualizable"></param>
-        public void RegisterVisual(IEditorVisualizable visualizable)
+        public void AddVisual(IEditorVisualizable visualizable)
         {
             GameObject visualPrefab = visualizable.GetVisualPrefab();
             GameObject visual;
@@ -79,6 +80,47 @@ namespace PlusLevelStudio.Editor
             }
             objectVisuals.Add(visualizable, visual);
             visualizable.InitializeVisual(visual);
+        }
+
+        static FieldInfo _lightMap = AccessTools.Field(typeof(EnvironmentController), "lightMap");
+        public void RefreshLights()
+        {
+            workerEc.UpdateQueuedLightChanges(); // there shouldn't be any of these but just incase there somehow are, take care of them now
+
+            // clear all lights
+            LightController[,] lightMap = (LightController[,])_lightMap.GetValue(workerEc);
+            for (int i = workerEc.lights.Count - 1; i >= 0; i--)
+            {
+                Cell lightCell = workerEc.lights[i];
+                foreach (Cell cell in workerEc.lights[i].lightAffectingCells)
+                {
+                    lightMap[cell.position.x, cell.position.z].RemoveSource(lightCell);
+                }
+                lightCell.lightAffectingCells.Clear();
+                workerEc.lights.Remove(lightCell);
+                lightCell.room.lights.Remove(lightCell);
+                lightCell.lightOn = true;
+                lightCell.hasLight = false;
+            }
+            // re-initialize to take care of the rest
+            workerEc.InitializeLighting();
+            for (int i = 0; i < levelData.lights.Count; i++)
+            {
+                LightPlacement placement = levelData.lights[i];
+                LightGroup group = levelData.lightGroups[placement.lightGroup];
+                Cell cell = workerEc.CellFromPosition(placement.position);
+                // todo: figure out if this is really what i should be doing?
+                workerEc.GenerateLight(cell, group.color, group.strength);
+                workerEc.RegenerateLight(cell);
+            }
+            workerEc.UpdateQueuedLightChanges();
+            LevelStudioPlugin.Instance.lightmaps["none"].Apply(false, false);
+        }
+
+        public void RemoveVisual(IEditorVisualizable visualizable)
+        {
+            visualizable.CleanupVisual(objectVisuals[visualizable]);
+            GameObject.Destroy(objectVisuals[visualizable]);
         }
 
         /// <summary>
@@ -162,6 +204,7 @@ namespace PlusLevelStudio.Editor
         {
             hotSlots[0].currentTool = currentMode.availableTools[0];
             hotSlots[1].currentTool = currentMode.availableTools[1];
+            hotSlots[2].currentTool = currentMode.availableTools[2];
         }
 
         protected void UpdateMouseRay()
@@ -422,6 +465,7 @@ namespace PlusLevelStudio.Editor
                 }
             }
             UnhighlightAllCells();
+            RefreshLights();
         }
 
         protected void RegenerateGridAndCells()
@@ -440,7 +484,6 @@ namespace PlusLevelStudio.Editor
             workerEc.SetTileInstantiation(true);
             workerEc.levelSize = levelData.mapSize;
             workerEc.InitializeCells(levelData.mapSize);
-            workerEc.InitializeLighting();
             for (int x = 0; x < workerEc.cells.GetLength(0); x++)
             {
                 for (int y = 0; y < workerEc.cells.GetLength(1); y++)
@@ -455,7 +498,6 @@ namespace PlusLevelStudio.Editor
             }
             RefreshCells(); // TODO: check performance, potential clean up?
             UpdateAllVisuals();
-            LevelStudioPlugin.Instance.lightmaps["none"].Apply(false,false);
         }
 
         protected override void AwakeFunction()

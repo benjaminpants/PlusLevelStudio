@@ -29,6 +29,11 @@ namespace PlusLevelStudio.Editor
         {
             
         }
+
+        public bool ValidatePosition(EditorLevelData data)
+        {
+            return data.RoomIdFromPos(position, true) != 0;
+        }
     }
 
     public class LightGroup

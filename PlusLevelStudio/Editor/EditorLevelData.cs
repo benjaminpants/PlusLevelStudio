@@ -15,11 +15,21 @@ namespace PlusLevelStudio.Editor
         public List<LightGroup> lightGroups = new List<LightGroup>() { new LightGroup() };
         public List<LightPlacement> lights = new List<LightPlacement>();
 
-
-        public void AddLight()
+        public void ValidatePlacements(bool updateVisuals)
         {
-
+            for (int i = lights.Count - 1; i >= 0; i--)
+            {
+                if (!lights[i].ValidatePosition(this))
+                {
+                    if (updateVisuals)
+                    {
+                        EditorController.Instance.RemoveVisual(lights[i]);
+                    }
+                    lights.RemoveAt(i);
+                }
+            }
         }
+
 
         public void UpdateCells(bool forEditor)
         {
@@ -52,6 +62,7 @@ namespace PlusLevelStudio.Editor
                     }
                 }
             }
+            ValidatePlacements(forEditor); // TODO: figure out
         }
 
         // TODO: figure out if we even NEED to manually recalculate all cells, or if we'd just be better off moving only areas
@@ -85,6 +96,11 @@ namespace PlusLevelStudio.Editor
                 {
                     cells[x, y] = new PlusStudioLevelFormat.Cell(new ByteVector2(x, y));
                 }
+            }
+
+            for (int i = 0; i < lights.Count; i++)
+            {
+                lights[i].position -= posDif;
             }
             return true;
         }
