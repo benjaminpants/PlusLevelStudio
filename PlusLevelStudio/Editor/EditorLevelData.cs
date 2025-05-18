@@ -12,7 +12,14 @@ namespace PlusLevelStudio.Editor
         public IntVector2 mapSize = new IntVector2(50,50);
         public PlusStudioLevelFormat.Cell[,] cells;
         public List<CellArea> areas = new List<CellArea>();
+        public List<LightGroup> lightGroups = new List<LightGroup>() { new LightGroup() };
+        public List<LightPlacement> lights = new List<LightPlacement>();
 
+
+        public void AddLight()
+        {
+
+        }
 
         public void UpdateCells(bool forEditor)
         {

@@ -22,6 +22,7 @@ namespace PlusLevelStudio.Editor
         protected static FieldInfo _results = AccessTools.Field(typeof(CursorController), "results");
 
         public HotSlotScript[] hotSlots = new HotSlotScript[9];
+        public Dictionary<IEditorVisualizable, GameObject> objectVisuals = new Dictionary<IEditorVisualizable, GameObject>();
 
         public EditorTool currentTool => _currentTool;
         protected EditorTool _currentTool;
@@ -59,6 +60,38 @@ namespace PlusLevelStudio.Editor
         public IntVector2 mouseGridPosition => mousePlanePosition.ToCellVector();
 
         protected IEditorInteractable heldInteractable = null;
+
+        /// <summary>
+        /// Registers the specified IEditorVisualizable into the editor visuals system.
+        /// </summary>
+        /// <param name="visualizable"></param>
+        public void RegisterVisual(IEditorVisualizable visualizable)
+        {
+            GameObject visualPrefab = visualizable.GetVisualPrefab();
+            GameObject visual;
+            if (visualPrefab == null)
+            {
+                visual = new GameObject(visualizable.GetType().Name + "_Visual");
+            }
+            else
+            {
+                visual = GameObject.Instantiate<GameObject>(visualPrefab);
+            }
+            objectVisuals.Add(visualizable, visual);
+            visualizable.InitializeVisual(visual);
+        }
+
+        /// <summary>
+        /// Updates all the object visuals.
+        /// Only use when necessary!
+        /// </summary>
+        public void UpdateAllVisuals()
+        {
+            foreach (KeyValuePair<IEditorVisualizable, GameObject> kvp in objectVisuals)
+            {
+                kvp.Key.UpdateVisual(kvp.Value);
+            }
+        }
 
         /// <summary>
         /// Casts the current mouse ray to the specified plane
@@ -421,6 +454,7 @@ namespace PlusLevelStudio.Editor
                 }
             }
             RefreshCells(); // TODO: check performance, potential clean up?
+            UpdateAllVisuals();
             LevelStudioPlugin.Instance.lightmaps["none"].Apply(false,false);
         }
 

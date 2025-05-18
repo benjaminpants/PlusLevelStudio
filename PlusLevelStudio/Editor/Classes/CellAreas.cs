@@ -8,7 +8,6 @@ using UnityEngine;
 
 namespace PlusLevelStudio.Editor
 {
-    // TODO: decide if this class should be modified to use IntVector2's instead of ByteVector2s
     public abstract class CellArea
     {
         public abstract string type { get; }
@@ -134,7 +133,7 @@ namespace PlusLevelStudio.Editor
 
         public override bool Resize(IntVector2 sizeDif, IntVector2 posDif)
         {
-            IntVector2 newSize = (size + sizeDif);
+            IntVector2 newSize = size + sizeDif;
             if (newSize.x <= 0 || newSize.z <= 0) return false; // if this shrinks us into being 0x0, return false
             origin += posDif;
             size = newSize;
