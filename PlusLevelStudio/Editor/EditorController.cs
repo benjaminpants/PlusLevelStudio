@@ -281,21 +281,21 @@ namespace PlusLevelStudio.Editor
             }
         }
 
-        protected void AreaResize(CellArea area, IntVector2 posDif, IntVector2 sizeDif)
+        protected void AreaResize(CellArea area, IntVector2 sizeDif, IntVector2 posDif)
         {
-            area.Resize(posDif, sizeDif);
+            area.ResizeWithSafety(sizeDif, posDif);
             RefreshCells();
-            selector.SelectArea(area.rect.Value, (IntVector2 pd, IntVector2 sd) => AreaResize(area, pd, sd));
+            selector.SelectArea(area.rect.Value, (IntVector2 sd, IntVector2 pd) => AreaResize(area, sd, pd));
         }
 
         protected virtual void SelectTile(IntVector2 tileSelected)
         {
-            CellArea area = levelData.AreaFromPos(tileSelected.ToByte(), true);
+            CellArea area = levelData.AreaFromPos(tileSelected, true);
             if (area != null)
             {
                 if (area.rect.HasValue)
                 {
-                    selector.SelectArea(area.rect.Value, (IntVector2 posDif, IntVector2 sizeDif) => AreaResize(area, posDif, sizeDif));
+                    selector.SelectArea(area.rect.Value, (IntVector2 sizeDif, IntVector2 posDif) => AreaResize(area, sizeDif, posDif));
                 }
                 return;
             }

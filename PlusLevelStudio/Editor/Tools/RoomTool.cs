@@ -58,7 +58,7 @@ namespace PlusLevelStudio.Editor.Tools
             if (inScaleMode)
             {
                 RectInt rect = startVector.Value.ToUnityVector().ToRect(EditorController.Instance.mouseGridPosition.ToUnityVector());
-                CellArea areaToAdd = new RectCellArea(rect.position.ToMystVector().ToByte(), rect.size.ToMystVector().ToByte(), 1);
+                CellArea areaToAdd = new RectCellArea(rect.position.ToMystVector(), rect.size.ToMystVector(), 1);
                 if (EditorController.Instance.levelData.AreaValid(areaToAdd))
                 {
                     EditorController.Instance.levelData.areas.Add(areaToAdd);

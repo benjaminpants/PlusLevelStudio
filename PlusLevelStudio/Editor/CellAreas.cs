@@ -12,32 +12,46 @@ namespace PlusLevelStudio.Editor
     public abstract class CellArea
     {
         public abstract string type { get; }
-        public ByteVector2 origin;
+        public IntVector2 origin;
         public ushort roomId;
         public virtual bool editorOnly => false;
-        public CellArea(ByteVector2 origin, ushort roomId)
+        public CellArea(IntVector2 origin, ushort roomId)
         {
             this.origin = origin;
             this.roomId = roomId;
         }
 
+        /// <summary>
+        /// The rect for when this CellArea is selected. Return null to prevent the resize handles from showing up.
+        /// </summary>
         public abstract RectInt? rect { get; }
 
-        public abstract void Resize(IntVector2 posDif, IntVector2 sizeDif);
+        /// <summary>
+        /// Called when this Area is being resized.
+        /// </summary>
+        /// <param name="sizeDif"></param>
+        /// <param name="posDif"></param>
+        /// <returns></returns>
+        public abstract bool Resize(IntVector2 sizeDif, IntVector2 posDif);
 
         // TODO: change implementation?
-        public bool ResizeWithSafety(IntVector2 posDif, IntVector2 sizeDif)
+        public bool ResizeWithSafety(IntVector2 sizeDif, IntVector2 posDif)
         {
-            Resize(posDif, sizeDif);
+            if (!Resize(sizeDif, posDif)) return false;
             if (!EditorController.Instance.levelData.AreaValid(this))
             {
-                Resize(posDif * -1, sizeDif * -1);
+                Resize(sizeDif * -1, posDif * -1);
                 return false;
             }
             return true;
         }
 
-        public virtual bool VectorIsInArea(ByteVector2 vector)
+        /// <summary>
+        /// Returns if the specified IntVector2 is inside of this area.
+        /// </summary>
+        /// <param name="vector"></param>
+        /// <returns></returns>
+        public virtual bool VectorIsInArea(IntVector2 vector)
         {
             return CalculateOwnedCells().Contains(vector);
         }
@@ -45,20 +59,20 @@ namespace PlusLevelStudio.Editor
         public virtual void Write(BinaryWriter writer)
         {
             writer.Write(type);
-            writer.Write(origin);
             writer.Write(roomId);
+            writer.Write(origin.ToByte());
         }
 
         public virtual CellArea ReadInto(BinaryReader reader)
         {
-            origin = reader.ReadByteVector2();
             roomId = reader.ReadUInt16();
+            origin = reader.ReadByteVector2().ToInt();
             return this;
         }
 
         public virtual bool CollidesWith(CellArea area)
         {
-            ByteVector2[] owned = CalculateOwnedCells();
+            IntVector2[] owned = CalculateOwnedCells();
             for (int i = 0; i < owned.Length; i++)
             {
                 if (area.VectorIsInArea(owned[i]))
@@ -69,17 +83,16 @@ namespace PlusLevelStudio.Editor
             return false;
         }
 
-        public abstract ByteVector2[] CalculateOwnedCells();
+        public abstract IntVector2[] CalculateOwnedCells();
     }
 
     public class RectCellArea : CellArea
     {
         public override string type => "rect";
-        public ByteVector2 size;
-        public ByteVector2 corner => origin + (size - ByteVector2.one);
-        public override RectInt? rect => new RectInt(origin.ToInt().ToUnityVector(), size.ToInt().ToUnityVector());
+        public IntVector2 size;
+        public override RectInt? rect => new RectInt(origin.ToUnityVector(), size.ToUnityVector());
 
-        public RectCellArea(ByteVector2 origin, ByteVector2 size, ushort roomId) : base(origin, roomId)
+        public RectCellArea(IntVector2 origin, IntVector2 size, ushort roomId) : base(origin, roomId)
         {
             this.size = size;
         }
@@ -87,42 +100,44 @@ namespace PlusLevelStudio.Editor
         public override void Write(BinaryWriter writer)
         {
             base.Write(writer);
-            writer.Write(size);
+            writer.Write(size.ToByte());
         }
 
         public override CellArea ReadInto(BinaryReader reader)
         {
             base.ReadInto(reader);
-            size = reader.ReadByteVector2();
+            size = reader.ReadByteVector2().ToInt();
             return this;
         }
 
-        public override bool VectorIsInArea(ByteVector2 vector) //this is quicker than the default VectorIsInArea implementation
+        public override bool VectorIsInArea(IntVector2 vector) //this is quicker than the default VectorIsInArea implementation
         {
             if (!(vector.x >= origin.x)) return false;
             if (!(vector.x < (origin + size).x)) return false;
-            if (!(vector.y >= origin.y)) return false;
-            if (!(vector.y < (origin + size).y)) return false;
+            if (!(vector.z >= origin.z)) return false;
+            if (!(vector.z < (origin + size).z)) return false;
             return true;
         }
 
-        public override ByteVector2[] CalculateOwnedCells()
+        public override IntVector2[] CalculateOwnedCells()
         {
-            List<ByteVector2> vectors = new List<ByteVector2>();
+            List<IntVector2> vectors = new List<IntVector2>();
             for (int x = 0; x < size.x; x++)
             {
-                for (int y = 0; y < size.y; y++)
+                for (int y = 0; y < size.z; y++)
                 {
-                    vectors.Add(origin + new ByteVector2(x, y));
+                    vectors.Add(origin + new IntVector2(x, y));
                 }
             }
             return vectors.ToArray();
         }
 
-        public override void Resize(IntVector2 posDif, IntVector2 sizeDif)
+        public override bool Resize(IntVector2 sizeDif, IntVector2 posDif)
         {
-            origin = (origin.ToInt() - posDif).ToByte();
-            size = (size.ToInt() + sizeDif).ToByte();
+            if (size + sizeDif == new IntVector2()) return false; // if this shrinks us into being 0x0, return false
+            origin += posDif;
+            size += sizeDif;
+            return true;
         }
     }
 }

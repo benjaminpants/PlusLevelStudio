@@ -21,7 +21,7 @@ namespace PlusLevelStudio.Editor
             {
                 for (int y = 0; y < mapSize.z; y++)
                 {
-                    cells[x, y].roomId = RoomIdFromPos(cells[x, y].position, forEditor);
+                    cells[x, y].roomId = RoomIdFromPos(cells[x, y].position.ToInt(), forEditor);
                     cells[x, y].walls = new Nybble(0);
                 }
             }
@@ -54,10 +54,10 @@ namespace PlusLevelStudio.Editor
             // now check areas
             for (int i = 0; i < areas.Count; i++)
             {
-                ByteVector2[] owned = areas[i].CalculateOwnedCells();
+                IntVector2[] owned = areas[i].CalculateOwnedCells();
                 for (int j = 0; j < owned.Length; j++)
                 {
-                    IntVector2 result = owned[j].ToInt() - posDif;
+                    IntVector2 result = owned[j] - posDif;
                     if (result.x < 0 || result.z < 0 || result.x >= newMapSize.x || result.z >= newMapSize.z)
                     {
                         return false;
@@ -67,7 +67,7 @@ namespace PlusLevelStudio.Editor
             // only if all checks pass do we shift everything
             for (int i = 0; i < areas.Count; i++)
             {
-                areas[i].origin = (areas[i].origin.ToInt() - posDif).ToByte();
+                areas[i].origin = (areas[i].origin - posDif);
             }
 
             mapSize = newMapSize;
@@ -102,10 +102,10 @@ namespace PlusLevelStudio.Editor
                 if (areas[i] == area) continue;
                 if (areas[i].CollidesWith(area)) return false;
             }
-            ByteVector2[] ownedCells = area.CalculateOwnedCells();
+            IntVector2[] ownedCells = area.CalculateOwnedCells();
             for (int i = 0; i < ownedCells.Length; i++)
             {
-                if (GetTileSafe(ownedCells[i].x, ownedCells[i].y) == null) return false;
+                if (GetTileSafe(ownedCells[i].x, ownedCells[i].z) == null) return false;
             }
             return true;
         }
@@ -119,14 +119,14 @@ namespace PlusLevelStudio.Editor
             return cells[x, y];
         }
 
-        public ushort RoomIdFromPos(ByteVector2 vector, bool forEditor)
+        public ushort RoomIdFromPos(IntVector2 vector, bool forEditor)
         {
             CellArea area = AreaFromPos(vector, forEditor);
             if (area == null) return 0;
             return area.roomId;
         }
 
-        public CellArea AreaFromPos(ByteVector2 vector, bool forEditor)
+        public CellArea AreaFromPos(IntVector2 vector, bool forEditor)
         {
             foreach (CellArea area in areas)
             {
