@@ -171,13 +171,11 @@ namespace PlusLevelStudio.Editor
         /// <param name="sizeDif"></param>
         public void ResizeGrid(IntVector2 posDif, IntVector2 sizeDif)
         {
-            if (sizeDif.x == 0 && sizeDif.z == 0) return; // no point in doing anything?
+            if (sizeDif.x == 0 && sizeDif.z == 0) return; // no point in doing anything
             IntVector2 targetSize = levelData.mapSize + sizeDif;
             if (targetSize.x > 255 || targetSize.z > 255) { TriggerError("LevelTooBig"); return; }
             if (targetSize.x < 1 || targetSize.z < 1) { TriggerError("LevelTooSmall"); return; }
-            // TODO: INSERT LOGIC FOR HANDLING AREAS AND OBJECTS
-            // IF A RESIZE WOULD CUT OFF AN AREA IT SHOULD TRIGGER A "AREA IN THE WAY" ERROR
-            // IF POSDIF IS ZERO THEN SKIP ALL THAT LOGIC BECAUSE ITS UNNECESSARY
+            // TODO: INSERT LOGIC FOR OBJECTS
 
             if (!levelData.ResizeLevel(posDif, sizeDif))
             {
@@ -311,6 +309,24 @@ namespace PlusLevelStudio.Editor
             transform.position += transform.right * analogMove.x * Time.deltaTime * moveSpeed;
         }
 
+        public void RefreshCells()
+        {
+            levelData.UpdateCells(true);
+            for (int x = 0; x < workerEc.cells.GetLength(0); x++)
+            {
+                for (int y = 0; y < workerEc.cells.GetLength(1); y++)
+                {
+                    if (levelData.cells[x, y].type == 16)
+                    {
+                        workerEc.cells[x, y].Tile.gameObject.SetActive(false);
+                        continue;
+                    }
+                    workerEc.cells[x, y].Tile.gameObject.SetActive(true);
+                    workerEc.cells[x, y].SetShape(levelData.cells[x, y].type, TileShapeMask.None);
+                }
+            }
+        }
+
         protected void RegenerateGridAndCells()
         {
             gridManager.RegenerateGrid();
@@ -340,6 +356,7 @@ namespace PlusLevelStudio.Editor
                     }
                 }
             }
+            RefreshCells(); // TODO: check performance, potential clean up?
             LevelStudioPlugin.Instance.lightmaps["standard"].Apply(false,false);
         }
 

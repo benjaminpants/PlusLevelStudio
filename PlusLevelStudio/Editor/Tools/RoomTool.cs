@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using PlusStudioLevelFormat;
 
 namespace PlusLevelStudio.Editor.Tools
 {
@@ -54,7 +55,20 @@ namespace PlusLevelStudio.Editor.Tools
 
         public override bool MouseReleased()
         {
-            return inScaleMode; // if we are in scale mode, return, otherwise, don't
+            if (inScaleMode)
+            {
+                RectInt rect = startVector.Value.ToUnityVector().ToRect(EditorController.Instance.mouseGridPosition.ToUnityVector());
+                CellArea areaToAdd = new RectCellArea(rect.position.ToMystVector().ToByte(), rect.size.ToMystVector().ToByte(), 1);
+                if (EditorController.Instance.levelData.AreaValid(areaToAdd))
+                {
+                    EditorController.Instance.levelData.areas.Add(areaToAdd);
+                    EditorController.Instance.RefreshCells();
+                    return true;
+                }
+                Cancelled(); // go back
+                return false;
+            }
+            return false;
         }
 
         public override void Update()
