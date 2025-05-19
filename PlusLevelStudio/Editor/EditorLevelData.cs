@@ -14,6 +14,8 @@ namespace PlusLevelStudio.Editor
         public List<CellArea> areas = new List<CellArea>();
         public List<LightGroup> lightGroups = new List<LightGroup>() { new LightGroup() };
         public List<LightPlacement> lights = new List<LightPlacement>();
+        public List<EditorRoom> rooms = new List<EditorRoom>();
+        public EditorRoom hall => rooms[0];
 
         public void ValidatePlacements(bool updateVisuals)
         {
@@ -116,6 +118,11 @@ namespace PlusLevelStudio.Editor
                     cells[x, y] = new PlusStudioLevelFormat.Cell(new ByteVector2(x,y));
                 }
             }
+            EditorRoom hallRoom = new EditorRoom();
+            hallRoom.textureContainer.floor = "HallFloor";
+            hallRoom.textureContainer.wall = "Wall";
+            hallRoom.textureContainer.ceiling = "Ceiling";
+            rooms.Add(hallRoom);
         }
 
         public bool AreaValid(CellArea area)
@@ -147,6 +154,13 @@ namespace PlusLevelStudio.Editor
             CellArea area = AreaFromPos(vector, forEditor);
             if (area == null) return 0;
             return area.roomId;
+        }
+
+        public EditorRoom RoomFromPos(IntVector2 vector, bool forEditor)
+        {
+            ushort id = RoomIdFromPos(vector, forEditor);
+            if (id == 0) return null;
+            return rooms[id - 1];
         }
 
         public CellArea AreaFromPos(IntVector2 vector, bool forEditor)

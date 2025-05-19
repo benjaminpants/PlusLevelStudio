@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PlusStudioLevelFormat\PlusStudioLevelFormat.csproj" />
+    <ProjectReference Include="..\PlusStudioLevelLoader\PlusStudioLevelLoader.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -37,11 +37,10 @@ namespace PlusLevelStudio.Editor
 
         public EnvironmentController workerEc;
         public EnvironmentController ecPrefab;
+        public RoomController workerRc;
 
         public CoreGameManager workerCgm;
         public CoreGameManager cgmPrefab;
-
-        //public Material tileAlphaMaterial;
 
         public Selector selector;
         public Selector selectorPrefab;
@@ -439,6 +438,15 @@ namespace PlusLevelStudio.Editor
             transform.position += transform.right * analogMove.x * Time.deltaTime * moveSpeed;
         }
 
+        public Texture2D GenerateTextureAtlas(Texture2D floor, Texture2D wall, Texture2D ceiling)
+        {
+            workerRc.florTex = floor;
+            workerRc.wallTex = wall;
+            workerRc.ceilTex = ceiling;
+            workerRc.GenerateTextureAtlas();
+            return workerRc.textureAtlas;
+        }
+
 
         static FieldInfo _initialized = AccessTools.Field(typeof(Cell), "initalized"); // seriously mystman? "initalized"?
         public void RefreshCells()
@@ -457,7 +465,10 @@ namespace PlusLevelStudio.Editor
                         }
                         continue;
                     }
+                    EditorRoom room = levelData.RoomFromPos(new IntVector2(x,y), true);
+                    // room shouldn't be null here, because if we've reached this point roomId wasn't zero
                     workerEc.cells[x, y].Tile.gameObject.SetActive(true);
+                    workerEc.cells[x, y].Tile.MeshRenderer.material.SetMainTexture(GenerateTextureAtlas(room.floorTex, room.wallTex, room.ceilTex));
                     workerEc.cells[x, y].SetShape(levelData.cells[x, y].type, TileShapeMask.None);
                     if (workerEc.cells[x, y].Null)
                     {
@@ -515,6 +526,9 @@ namespace PlusLevelStudio.Editor
             workerEc.gameObject.SetActive(false);
             workerEc.name = "WorkerEnvironmentController";
             workerEc.lightMode = LightMode.Cumulative;
+            workerRc = workerEc.transform.Find("NullRoom").GetComponent<RoomController>();
+            workerRc.ec = workerEc;
+            workerRc.ReflectionInvoke("Awake", null);
 
             workerCgm = GameObject.Instantiate(cgmPrefab);
             workerCgm.gameObject.SetActive(true);
