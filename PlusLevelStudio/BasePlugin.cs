@@ -78,7 +78,9 @@ namespace PlusLevelStudio
             {
                 availableTools = new List<EditorTool>()
                 {
-                    new RoomTool("test"),
+                    new RoomTool("hall"),
+                    new RoomTool("class"),
+                    new RoomTool("faculty"),
                     new DeleteTool(),
                     new LightTool()
                 }

@@ -58,7 +58,17 @@ namespace PlusLevelStudio.Editor.Tools
             if (inScaleMode)
             {
                 RectInt rect = startVector.Value.ToUnityVector().ToRect(EditorController.Instance.mouseGridPosition.ToUnityVector());
-                CellArea areaToAdd = new RectCellArea(rect.position.ToMystVector(), rect.size.ToMystVector(), 1);
+                CellArea areaToAdd;
+                if (roomType == "hall")
+                {
+                    areaToAdd = new RectCellArea(rect.position.ToMystVector(), rect.size.ToMystVector(), 1);
+                }
+                else
+                {
+                    EditorRoom edRoomData = EditorController.Instance.levelData.CreateRoomWithDefaultSettings(roomType);
+                    EditorController.Instance.levelData.rooms.Add(edRoomData);
+                    areaToAdd = new RectCellArea(rect.position.ToMystVector(), rect.size.ToMystVector(), (ushort)EditorController.Instance.levelData.rooms.Count);
+                }
                 if (EditorController.Instance.levelData.AreaValid(areaToAdd))
                 {
                     EditorController.Instance.levelData.areas.Add(areaToAdd);

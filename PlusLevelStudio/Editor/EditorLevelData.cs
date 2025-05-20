@@ -17,6 +17,56 @@ namespace PlusLevelStudio.Editor
         public List<EditorRoom> rooms = new List<EditorRoom>();
         public EditorRoom hall => rooms[0];
 
+        private Dictionary<string, TextureContainer> defaultTextures = new Dictionary<string, TextureContainer>();
+
+        // TODO: CHANGE THIS!
+        public void DefineDefaultTextures()
+        {
+            defaultTextures.Add("hall", new TextureContainer("HallFloor", "Wall", "Ceiling"));
+            defaultTextures.Add("class", new TextureContainer("BlueCarpet", "WallWithMolding", "Ceiling"));
+            defaultTextures.Add("faculty", new TextureContainer("BlueCarpet", "SaloonWall", "Ceiling"));
+        }
+
+        public EditorRoom CreateRoomWithDefaultSettings(string type)
+        {
+            return new EditorRoom(type, defaultTextures[type]);
+        }
+
+        public void RemoveUnusedRoom(ushort idToCheck)
+        {
+            if (idToCheck == 1) return; // NEVER DELETE THE HALLWAY ROOM
+            for (int i = 0; i < areas.Count; i++)
+            {
+                if (areas[i].roomId == idToCheck) return;
+            }
+            RemoveRoom(rooms[idToCheck - 1]);
+        }
+
+        public void RemoveRoom(EditorRoom toRemove)
+        {
+            Dictionary<EditorRoom, ushort> oldValues = new Dictionary<EditorRoom, ushort>();
+            Dictionary<EditorRoom, ushort> newValues = new Dictionary<EditorRoom, ushort>();
+            foreach (EditorRoom rm in rooms)
+            {
+                oldValues.Add(rm, (ushort)(rooms.IndexOf(rm) + 1));
+            }
+            rooms.Remove(toRemove);
+            foreach (EditorRoom rm in rooms)
+            {
+                newValues.Add(rm, (ushort)(rooms.IndexOf(rm) + 1));
+            }
+            Dictionary<ushort, ushort> oldToNew = new Dictionary<ushort, ushort>();
+            foreach (KeyValuePair<EditorRoom, ushort> kvp in newValues)
+            {
+                oldToNew.Add(oldValues[kvp.Key], kvp.Value);
+            }
+            for (int i = 0; i < areas.Count; i++)
+            {
+                areas[i].roomId = oldToNew[areas[i].roomId];
+            }
+            UpdateCells(true);
+        }
+
         public void ValidatePlacements(bool updateVisuals)
         {
             for (int i = lights.Count - 1; i >= 0; i--)
@@ -118,11 +168,8 @@ namespace PlusLevelStudio.Editor
                     cells[x, y] = new PlusStudioLevelFormat.Cell(new ByteVector2(x,y));
                 }
             }
-            EditorRoom hallRoom = new EditorRoom();
-            hallRoom.textureContainer.floor = "HallFloor";
-            hallRoom.textureContainer.wall = "Wall";
-            hallRoom.textureContainer.ceiling = "Ceiling";
-            rooms.Add(hallRoom);
+            DefineDefaultTextures();
+            rooms.Add(CreateRoomWithDefaultSettings("hall"));
         }
 
         public bool AreaValid(CellArea area)

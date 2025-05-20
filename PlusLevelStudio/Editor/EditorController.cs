@@ -202,9 +202,11 @@ namespace PlusLevelStudio.Editor
         // called when the editor mode is assigned or re-assigned
         public void EditorModeAssigned()
         {
-            hotSlots[0].currentTool = currentMode.availableTools[0];
-            hotSlots[1].currentTool = currentMode.availableTools[1];
-            hotSlots[2].currentTool = currentMode.availableTools[2];
+            for (int i = 0; i < hotSlots.Length; i++)
+            {
+                if (i >= currentMode.availableTools.Count) continue;
+                hotSlots[i].currentTool = currentMode.availableTools[i];
+            }
         }
 
         protected void UpdateMouseRay()

@@ -45,7 +45,7 @@ namespace PlusStudioLevelLoader
             roomTextureAliases.Add("Wall", textures.First(x => x.name == "Wall"));
             roomTextureAliases.Add("Ceiling", textures.First(x => x.name == "CeilingNoLight"));
             roomTextureAliases.Add("BlueCarpet", textures.First(x => x.name == "Carpet"));
-            roomTextureAliases.Add("FacultyWall", textures.First(x => x.name == "WallWithMolding"));
+            roomTextureAliases.Add("WallWithMolding", textures.First(x => x.name == "WallWithMolding"));
             roomTextureAliases.Add("TileFloor", textures.First(x => x.name == "ActualTileFloor"));
             roomTextureAliases.Add("ElevatorCeiling", textures.First(x => x.name == "ElCeiling"));
             roomTextureAliases.Add("Grass", textures.First(x => x.name == "Grass"));
@@ -53,6 +53,7 @@ namespace PlusStudioLevelLoader
             roomTextureAliases.Add("JohnnyWall", textures.First(x => x.name == "JohnnyWall"));
             roomTextureAliases.Add("None", textures.First(x => x.name == "Transparent"));
             roomTextureAliases.Add("PlaceholderWall", textures.First(x => x.name == "Placeholder_Wall"));
+            roomTextureAliases.Add("SaloonWall", textures.First(x => x.name == "SaloonWall"));
         }
     }
 }
