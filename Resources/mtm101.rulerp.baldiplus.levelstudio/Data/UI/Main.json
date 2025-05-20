@@ -119,5 +119,17 @@
 			"anchorMin":"#topLeft",
 			"anchorMax":"#topLeft",
 		},
+		{
+			"name":"PlayButton",
+			"type":"imageButton",
+			"graphic":"PlayButton",
+			"hoverGraphic":"PlayButtonHover",
+			"anchoredPosition":[0,0],
+			"size":[50,50],
+			"pivot":"#bottomRight",
+			"anchorMin":"#bottomRight",
+			"anchorMax":"#bottomRight",
+			"onPressed":"play"
+		},
 	]
 }

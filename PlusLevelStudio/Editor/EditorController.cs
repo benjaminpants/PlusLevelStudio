@@ -136,6 +136,15 @@ namespace PlusLevelStudio.Editor
         }
 
         /// <summary>
+        /// Updates the visual for a specific object
+        /// </summary>
+        /// <param name="visualizable"></param>
+        public void UpdateVisual(IEditorVisualizable visualizable)
+        {
+            visualizable.UpdateVisual(objectVisuals[visualizable]);
+        }
+
+        /// <summary>
         /// Casts the current mouse ray to the specified plane
         /// </summary>
         /// <param name="plane"></param>

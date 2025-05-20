@@ -81,6 +81,7 @@ namespace PlusLevelStudio
                     new RoomTool("hall"),
                     new RoomTool("class"),
                     new RoomTool("faculty"),
+                    new MergeTool(),
                     new DeleteTool(),
                     new LightTool()
                 }

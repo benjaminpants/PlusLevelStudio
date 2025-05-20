@@ -42,6 +42,13 @@ namespace PlusLevelStudio.Editor
             RemoveRoom(rooms[idToCheck - 1]);
         }
 
+        // TODO: implement where needed
+        public EditorRoom RoomFromID(ushort roomId)
+        {
+            if (roomId == 0) return null;
+            return rooms[roomId - 1];
+        }
+
         public void RemoveRoom(EditorRoom toRemove)
         {
             Dictionary<EditorRoom, ushort> oldValues = new Dictionary<EditorRoom, ushort>();
