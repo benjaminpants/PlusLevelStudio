@@ -15,6 +15,13 @@ namespace PlusStudioLevelFormat
         {
             position = pos;
         }
+
+        public Cell(Cell cell)
+        {
+            position = cell.position;
+            roomId = cell.roomId;
+            walls = cell.walls;
+        }
     }
 
     public class RoomInfo

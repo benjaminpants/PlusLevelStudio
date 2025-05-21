@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using PlusStudioLevelFormat;
+using PlusStudioLevelLoader;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
@@ -235,5 +236,35 @@ namespace PlusLevelStudio.Editor
             }
             return null;
         }
+
+        public BaldiLevel Compile()
+        {
+            BaldiLevel compiled = new BaldiLevel(mapSize.ToByte());
+            UpdateCells(false); // update our cells
+            for (int x = 0; x < mapSize.x; x++)
+            {
+                for (int y = 0; y < mapSize.z; y++)
+                {
+                    compiled.cells[x, y] = new PlusStudioLevelFormat.Cell(cells[x,y]);
+                }
+            }
+            for (int i = 0; i < rooms.Count; i++)
+            {
+                compiled.rooms.Add(new RoomInfo(rooms[i].roomType, new TextureContainer(rooms[i].textureContainer)));
+            }
+            for (int i = 0; i < lights.Count; i++)
+            {
+                LightGroup group = lightGroups[lights[i].lightGroup];
+                compiled.lights.Add(new LightInfo()
+                {
+                    color = group.color.ToData(),
+                    position = lights[i].position.ToByte(),
+                    prefab = "fluorescent",
+                    strength = (byte)group.strength
+                });
+            }
+            return compiled;
+        }
+
     }
 }

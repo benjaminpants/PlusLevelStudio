@@ -39,9 +39,9 @@ namespace PlusStudioLevelFormat
             objectsCompressor.FinalizeDatabase();
             roomCompressor.FinalizeDatabase();
             writer.Write(version);
-            writer.Write(levelSize);
             roomCompressor.WriteStringDatabase(writer);
             objectsCompressor.WriteStringDatabase(writer);
+            writer.Write(levelSize);
             List<Nybble> nybbles = new List<Nybble>();
             for (int x = 0; x < levelSize.x; x++)
             {
