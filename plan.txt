@@ -1,13 +1,8 @@
-PLAN:
+IDEAS:
 
-Implement dummy environment controller to create tiles
-Make sure grid resizing fails if it would cut off any areas
+dynamic editor music when bb+ gets its music update (akin to spore)
 
-Figure out specifics for how the editor level format works
+PLANS:
 
-Use a placeholder keybind to set up tile placement
-Setup JSON based UI elements for easy prototyping.
-
-FOR INTERFACE:
-double click to use a tool
-click once to select it/switch it out
+implement object selection menu/toolbox. make it look nice and pretty
+FIGURE OUT FULL 3D ROTATION
