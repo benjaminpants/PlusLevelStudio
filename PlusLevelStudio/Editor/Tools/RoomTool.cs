@@ -31,7 +31,6 @@ namespace PlusLevelStudio.Editor.Tools
 
         public override bool Cancelled()
         {
-            Debug.Log("Cancelled!");
             if (inScaleMode)
             {
                 inScaleMode = false;
