@@ -23,7 +23,7 @@ namespace PlusLevelStudio.Editor
         /// <summary>
         /// Used for changing the material's LightMap for the highlight effect.
         /// </summary>
-        public Renderer[] myRenderers = new Renderer[0];
+        public List<Renderer> myRenderers = new List<Renderer>();
         public bool OnDelete(EditorLevelData data)
         {
             return toDelete.OnDelete(data);
@@ -31,7 +31,7 @@ namespace PlusLevelStudio.Editor
 
         public void Highlight(string highlight)
         {
-            for (int i = 0; i < myRenderers.Length; i++)
+            for (int i = 0; i < myRenderers.Count; i++)
             {
                 for (int j = 0; j < myRenderers[i].materials.Length; j++)
                 {

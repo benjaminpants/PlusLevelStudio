@@ -259,7 +259,7 @@ namespace PlusLevelStudio.Editor
                 {
                     color = group.color.ToData(),
                     position = lights[i].position.ToByte(),
-                    prefab = "fluorescent",
+                    prefab = lights[i].type,
                     strength = (byte)group.strength
                 });
             }

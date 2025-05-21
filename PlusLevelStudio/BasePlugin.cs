@@ -83,7 +83,7 @@ namespace PlusLevelStudio
                     new RoomTool("faculty"),
                     new MergeTool(),
                     new DeleteTool(),
-                    new LightTool()
+                    new LightTool("fluorescent")
                 }
             };
 
@@ -194,7 +194,7 @@ namespace PlusLevelStudio
             boxC.center += Vector3.up * 2f;
             boxC.gameObject.layer = editorInteractableLayer;
             EditorDeletableObject lightEdo = boxC.gameObject.AddComponent<EditorDeletableObject>();
-            lightEdo.myRenderers = new Renderer[] { lightSpriteRenderer };
+            lightEdo.myRenderers = new List<Renderer> { lightSpriteRenderer };
 
             yield return "Setting up Editor Controller...";
             GameObject editorControllerObject = new GameObject("StandardEditorController");

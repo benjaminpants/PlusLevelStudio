@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using PlusStudioLevelLoader;
 
 namespace PlusLevelStudio.Editor
 {
@@ -10,6 +11,7 @@ namespace PlusLevelStudio.Editor
     {
         public IntVector2 position;
         public ushort lightGroup;
+        public string type;
 
         public void CleanupVisual(GameObject visualObject)
         {
@@ -23,7 +25,12 @@ namespace PlusLevelStudio.Editor
 
         public void InitializeVisual(GameObject visualObject)
         {
-            visualObject.GetComponent<EditorDeletableObject>().toDelete = this;
+            EditorDeletableObject edDel = visualObject.GetComponent<EditorDeletableObject>();
+            edDel.toDelete = this;
+            Transform lightTransform = GameObject.Instantiate<Transform>(LevelLoaderPlugin.Instance.lightTransforms[type], visualObject.transform);
+            lightTransform.localPosition = Vector3.down * 12f; // TODO: change?
+            edDel.myRenderers.AddRange(lightTransform.GetComponentsInChildren<Renderer>());
+
             UpdateVisual(visualObject);
         }
 

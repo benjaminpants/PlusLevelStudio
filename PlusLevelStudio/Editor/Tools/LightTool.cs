@@ -8,11 +8,13 @@ namespace PlusLevelStudio.Editor.Tools
     // TODO: make it so this accepts a prefab ID, which would be used to set the light transform used for the visual
     public class LightTool : EditorTool
     {
+        public string lightType;
         public override string id => "light";
 
-        public LightTool()
+        public LightTool(string lightType)
         {
             sprite = LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/light");
+            this.lightType = lightType;
         }
 
         public override void Begin()
@@ -35,6 +37,7 @@ namespace PlusLevelStudio.Editor.Tools
             if (EditorController.Instance.levelData.RoomIdFromPos(EditorController.Instance.mouseGridPosition, true) != 0)
             {
                 LightPlacement lightPlace = new LightPlacement();
+                lightPlace.type = lightType;
                 lightPlace.position = EditorController.Instance.mouseGridPosition;
                 EditorController.Instance.AddVisual(lightPlace);
                 EditorController.Instance.levelData.lights.Add(lightPlace);

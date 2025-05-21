@@ -18,6 +18,7 @@ namespace PlusStudioLevelLoader
         public static LevelLoaderPlugin Instance;
 
         public Dictionary<string, Texture2D> roomTextureAliases = new Dictionary<string, Texture2D>();
+        public Dictionary<string, Transform> lightTransforms = new Dictionary<string, Transform>();
 
         public static Texture2D RoomTextureFromAlias(string alias)
         {
@@ -38,7 +39,7 @@ namespace PlusStudioLevelLoader
 
         IEnumerator LoadEnumerator()
         {
-            yield return 1;
+            yield return 2;
             yield return "Fetching textures...";
             Texture2D[] textures = Resources.FindObjectsOfTypeAll<Texture2D>().Where(x => x.GetInstanceID() >= 0 && x.isReadable).ToArray();
             roomTextureAliases.Add("HallFloor", textures.First(x => x.name == "TileFloor"));
@@ -54,6 +55,9 @@ namespace PlusStudioLevelLoader
             roomTextureAliases.Add("None", textures.First(x => x.name == "Transparent"));
             roomTextureAliases.Add("PlaceholderWall", textures.First(x => x.name == "Placeholder_Wall"));
             roomTextureAliases.Add("SaloonWall", textures.First(x => x.name == "SaloonWall"));
+            yield return "Fetching prefabs...";
+            Transform[] transforms = Resources.FindObjectsOfTypeAll<Transform>().Where(x => x.GetInstanceID() >= 0 && x.transform.parent == null).ToArray();
+            lightTransforms.Add("fluorescent", transforms.First(x => x.name == "FluorescentLight"));
         }
     }
 }
