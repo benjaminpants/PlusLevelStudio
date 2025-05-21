@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PlusStudioLevelFormat;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
@@ -47,7 +48,7 @@ namespace PlusLevelStudio.Editor
 
     public class LightGroup
     {
-        public Color color = Color.white;
+        public Color color = new Color(1f, 1f, 1f);
         public int strength = 10;
     }
 }

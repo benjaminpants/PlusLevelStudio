@@ -14,6 +14,7 @@ using UnityEngine.EventSystems;
 using MTM101BaldAPI.Reflection;
 using MTM101BaldAPI;
 using PlusStudioLevelFormat;
+using PlusStudioLevelLoader;
 
 namespace PlusLevelStudio.Editor
 {

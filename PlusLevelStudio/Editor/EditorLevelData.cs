@@ -43,10 +43,16 @@ namespace PlusLevelStudio.Editor
         }
 
         // TODO: implement where needed
-        public EditorRoom RoomFromID(ushort roomId)
+        public EditorRoom RoomFromId(ushort roomId)
         {
             if (roomId == 0) return null;
             return rooms[roomId - 1];
+        }
+
+        public ushort IdFromRoom(EditorRoom room)
+        {
+            if (room == null) return 0;
+            return (ushort)(rooms.IndexOf(room) + 1);
         }
 
         public void RemoveRoom(EditorRoom toRemove)

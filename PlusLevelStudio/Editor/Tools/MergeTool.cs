@@ -8,9 +8,10 @@ namespace PlusLevelStudio.Editor.Tools
     public class MergeTool : EditorTool
     {
         public override string id => "merge";
-        ushort currentRoom = 0;
+        EditorRoom currentRoom = null;
         CellArea currentHoveredArea = null;
-        ushort lastHoveredRoom = 0;
+        EditorRoom lastHoveredRoom = null;
+        ushort currentRoomId => EditorController.Instance.levelData.IdFromRoom(currentRoom);
 
         public MergeTool() 
         {
@@ -34,14 +35,14 @@ namespace PlusLevelStudio.Editor.Tools
 
         public override bool Cancelled()
         {
-            HighlightAllAreasBelongingToRoom(currentRoom, "none");
-            if (currentRoom != 0)
+            HighlightAllAreasBelongingToRoom(currentRoomId, "none");
+            if (currentRoom != null)
             {
                 if (currentHoveredArea != null)
                 {
                     EditorController.Instance.HighlightCells(currentHoveredArea.CalculateOwnedCells(), "none");
                 }
-                currentRoom = 0;
+                currentRoom = null;
                 return false;
             }
             return true;
@@ -49,26 +50,26 @@ namespace PlusLevelStudio.Editor.Tools
 
         public override void Exit()
         {
-            currentRoom = 0;
+            currentRoom = null;
             currentHoveredArea = null;
         }
 
         public override bool MousePressed()
         {
-            if (currentRoom != 0)
+            if (currentRoom != null)
             {
                 if (currentHoveredArea == null) return false; // hovering over nothing
-                if (EditorController.Instance.levelData.RoomFromID(currentHoveredArea.roomId).roomType != EditorController.Instance.levelData.RoomFromID(currentRoom).roomType) return false; // room is from different type
+                if (EditorController.Instance.levelData.RoomFromId(currentHoveredArea.roomId).roomType != currentRoom.roomType) return false; // room is from different type
                 ushort oldId = currentHoveredArea.roomId;
-                currentHoveredArea.roomId = currentRoom;
+                currentHoveredArea.roomId = currentRoomId;
                 EditorController.Instance.levelData.RemoveUnusedRoom(oldId); // check to see if the room of the area we just removed is unused now, if it is, remove it
                 EditorController.Instance.RefreshCells();
-                HighlightAllAreasBelongingToRoom(currentRoom, "yellow");
+                HighlightAllAreasBelongingToRoom(currentRoomId, "yellow");
                 currentHoveredArea = null;
                 return false;
             }
             currentRoom = lastHoveredRoom; // this does nothing if we are hovering over empty space
-            HighlightAllAreasBelongingToRoom(currentRoom, "yellow");
+            HighlightAllAreasBelongingToRoom(currentRoomId, "yellow");
             return false;
         }
 
@@ -80,16 +81,16 @@ namespace PlusLevelStudio.Editor.Tools
         public override void Update()
         {
             // player has selected a room
-            if (currentRoom != 0)
+            if (currentRoom != null)
             {
                 CellArea hoveringArea = EditorController.Instance.levelData.AreaFromPos(EditorController.Instance.mouseGridPosition, true);
                 if (currentHoveredArea != null)
                 {
                     EditorController.Instance.HighlightCells(currentHoveredArea.CalculateOwnedCells(), "none");
                 }
-                if ((hoveringArea != null) && (hoveringArea.roomId != currentRoom))
+                if ((hoveringArea != null) && (hoveringArea.roomId != currentRoomId))
                 {
-                    if (EditorController.Instance.levelData.RoomFromID(hoveringArea.roomId).roomType == EditorController.Instance.levelData.RoomFromID(currentRoom).roomType) // somehow this is getting null?
+                    if (EditorController.Instance.levelData.RoomFromId(hoveringArea.roomId).roomType == currentRoom.roomType) // somehow this is getting null?
                     {
                         EditorController.Instance.HighlightCells(hoveringArea.CalculateOwnedCells(), "green");
                     }
@@ -107,11 +108,11 @@ namespace PlusLevelStudio.Editor.Tools
                 return;
             }
             // player hasn't selected a room
-            ushort hoveringRoom = EditorController.Instance.levelData.RoomIdFromPos(EditorController.Instance.mouseGridPosition, true);
+            EditorRoom hoveringRoom = EditorController.Instance.levelData.RoomFromPos(EditorController.Instance.mouseGridPosition, true);
             if (hoveringRoom != lastHoveredRoom)
             {
-                HighlightAllAreasBelongingToRoom(lastHoveredRoom, "none");
-                HighlightAllAreasBelongingToRoom(hoveringRoom, "yellow");
+                HighlightAllAreasBelongingToRoom(EditorController.Instance.levelData.IdFromRoom(lastHoveredRoom), "none");
+                HighlightAllAreasBelongingToRoom(EditorController.Instance.levelData.IdFromRoom(hoveringRoom), "yellow");
             }
             lastHoveredRoom = hoveringRoom;
         }
