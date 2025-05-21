@@ -31,9 +31,10 @@ namespace PlusLevelStudio.Editor
                     SceneManager.LoadScene("MainMenu");
                     break;
                 case "play":
-                    BinaryWriter writer = new BinaryWriter(File.OpenWrite(Path.Combine(Application.persistentDataPath, "test.cbl")));
-                    EditorController.Instance.levelData.Compile().Write(writer);
-                    writer.Close();
+                    EditorController.Instance.CompileAndPlay();
+                    //BinaryWriter writer = new BinaryWriter(File.OpenWrite(Path.Combine(Application.persistentDataPath, "test.cbl")));
+                    //EditorController.Instance.levelData.Compile().Write(writer);
+                    //writer.Close();
                     break;
             }
         }

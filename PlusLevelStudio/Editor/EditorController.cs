@@ -15,6 +15,7 @@ using MTM101BaldAPI.Reflection;
 using MTM101BaldAPI;
 using PlusStudioLevelFormat;
 using PlusStudioLevelLoader;
+using System.Linq;
 
 namespace PlusLevelStudio.Editor
 {
@@ -42,6 +43,8 @@ namespace PlusLevelStudio.Editor
 
         public CoreGameManager workerCgm;
         public CoreGameManager cgmPrefab;
+        public GameLoader gameLoaderPrefab;
+        public ElevatorScreen elevatorScreenPrefab;
 
         public Selector selector;
         public Selector selectorPrefab;
@@ -122,6 +125,30 @@ namespace PlusLevelStudio.Editor
             visualizable.CleanupVisual(objectVisuals[visualizable]);
             GameObject.Destroy(objectVisuals[visualizable]);
             objectVisuals.Remove(visualizable);
+        }
+
+        public void DestroySelf()
+        {
+            Destroy(workerCgm.gameObject);
+            Destroy(camera.gameObject);
+            Destroy(canvas.gameObject);
+            Destroy(gameObject);
+        }
+
+        public void CompileAndPlay()
+        {
+            BaldiLevel level = levelData.Compile();
+            SceneObject sceneObj = LevelImporter.CreateSceneObject(level);
+            sceneObj.manager = Resources.FindObjectsOfTypeAll<MainGameManager>().First(x => x.name == "Lvl1_MainGameManager");
+            GameLoader loader = GameObject.Instantiate<GameLoader>(gameLoaderPrefab);
+            ElevatorScreen screen = GameObject.Instantiate<ElevatorScreen>(elevatorScreenPrefab);
+            AccessTools.Field(typeof(Singleton<CoreGameManager>), "m_Instance").SetValue(null, null); // so coregamemanager gets created properly
+            loader.AssignElevatorScreen(screen);
+            loader.Initialize(0);
+            loader.LoadLevel(sceneObj);
+            screen.Initialize();
+            loader.SetSave(false);
+            DestroySelf();
         }
 
         /// <summary>

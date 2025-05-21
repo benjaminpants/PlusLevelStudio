@@ -214,6 +214,13 @@ namespace PlusLevelStudio
             standardEditorController.gridManagerPrefab = gridManager;
             standardEditorController.ecPrefab = ecPrefab;
             standardEditorController.cgmPrefab = workerCgm;
+            // quick pause to create the gameloader prefab
+            GameObject gameLoaderPreObject = new GameObject("EditorGameLoader");
+            gameLoaderPreObject.ConvertToPrefab(true);
+            GameLoader gameLoaderPre = gameLoaderPreObject.AddComponent<GameLoader>();
+            gameLoaderPre.cgmPre = Resources.FindObjectsOfTypeAll<CoreGameManager>().First(x => x.name == "CoreGameManager" && x.GetInstanceID() >= 0);
+            standardEditorController.gameLoaderPrefab = gameLoaderPre;
+            standardEditorController.elevatorScreenPrefab = Resources.FindObjectsOfTypeAll<ElevatorScreen>().First(x => x.GetInstanceID() >= 0 && x.transform.parent == null);
 
             assetMan.Add<EditorController>("MainEditorController", standardEditorController);
 
