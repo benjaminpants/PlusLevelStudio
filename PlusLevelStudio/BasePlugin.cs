@@ -35,12 +35,14 @@ namespace PlusLevelStudio
         public const int editorInteractableLayer = 13; // CollidableEntities
         public const int editorInteractableLayerMask = 1 << editorInteractableLayer;
 
+        public Dictionary<string, DoorDisplay> doorDisplays = new Dictionary<string, DoorDisplay>();
+
         void Awake()
         {
             Instance = this;
             Harmony harmony = new Harmony("mtm101.rulerp.baldiplus.levelstudio");
-            LoadingEvents.RegisterOnLoadingScreenStart(Info, LoadAssets());
-            LoadingEvents.RegisterOnAssetsLoaded(Info, FindObjectsAndSetupEditor(), false);
+            LoadingEvents.RegisterOnAssetsLoaded(Info, LoadAssets(), LoadingEventOrder.Start);
+            LoadingEvents.RegisterOnAssetsLoaded(Info, FindObjectsAndSetupEditor(), LoadingEventOrder.Pre);
             harmony.PatchAllConditionals();
         }
 
@@ -64,7 +66,7 @@ namespace PlusLevelStudio
             {
                 yield return null;
             }
-            Shader.SetGlobalTexture("_Skybox", SkyboxMetaStorage.Instance.Find((x) => x.value.name == "Cubemap_DayStandard").value);
+            Shader.SetGlobalTexture("_Skybox", Resources.FindObjectsOfTypeAll<Cubemap>().First(x => x.name == "Cubemap_DayStandard"));
             Shader.SetGlobalColor("_SkyboxColor", Color.white);
             Shader.SetGlobalColor("_FogColor", Color.white);
             Shader.SetGlobalFloat("_FogStartDistance", 5f);
@@ -106,6 +108,7 @@ namespace PlusLevelStudio
             EnvironmentController ecPrefab = Resources.FindObjectsOfTypeAll<EnvironmentController>().First(x => x.GetInstanceID() >= 0);
             assetMan.Add<Material>("tileAlpha", materials.First(x => x.name == "TileBase_Alpha"));
             assetMan.Add<Material>("spriteBillboard", materials.First(x => x.name == "SpriteStandard_Billboard"));
+            assetMan.Add<Material>("doorMask", materials.First(x => x.name == "DoorMask"));
             yield return "Finding GameCamera...";
             assetMan.Add<GameCamera>("gameCam", Resources.FindObjectsOfTypeAll<GameCamera>().First());
             yield return "Setting up materials...";
@@ -196,6 +199,19 @@ namespace PlusLevelStudio
             EditorDeletableObject lightEdo = boxC.gameObject.AddComponent<EditorDeletableObject>();
             lightEdo.myRenderers = new List<Renderer> { lightSpriteRenderer };
 
+            // create door visuals
+            GameObject standardDoorDisplayObject = new GameObject("StandardDoorVisual");
+            standardDoorDisplayObject.transform.SetParent(MTM101BaldiDevAPI.prefabTransform);
+            GameObject sideAQuad = CreateQuad("SideA", assetMan.Get<Material>("doorMask"), Vector3.zero, Vector3.zero);
+            GameObject sideBQuad = CreateQuad("SideB", assetMan.Get<Material>("doorMask"), Vector3.zero, new Vector3(0f,180f,0f));
+            sideAQuad.transform.SetParent(standardDoorDisplayObject.transform);
+            sideBQuad.transform.SetParent(standardDoorDisplayObject.transform);
+            EditorDeletableObject doorDisplayDeletable = standardDoorDisplayObject.AddComponent<EditorDeletableObject>();
+            doorDisplayDeletable.myRenderers.Add(sideAQuad.GetComponent<MeshRenderer>());
+            doorDisplayDeletable.myRenderers.Add(sideBQuad.GetComponent<MeshRenderer>());
+            DoorDisplay standardDoorDisplayBehavior = standardDoorDisplayObject.AddComponent<DoorDisplay>();
+            doorDisplays.Add("standard", standardDoorDisplayBehavior);
+
             yield return "Setting up Editor Controller...";
             GameObject editorControllerObject = new GameObject("StandardEditorController");
             editorControllerObject.ConvertToPrefab(true);
@@ -261,7 +277,7 @@ namespace PlusLevelStudio
         public static GameObject CreateQuad(string name, Material mat, Vector3 position, Vector3 rotation)
         {
             GameObject newQuad = new GameObject(name);
-            newQuad.gameObject.AddComponent<MeshFilter>().mesh = LevelStudioPlugin.Instance.assetMan.Get<Mesh>("Quad");
+            newQuad.gameObject.AddComponent<MeshFilter>().mesh = Instance.assetMan.Get<Mesh>("Quad");
             newQuad.AddComponent<MeshRenderer>().material = mat;
             newQuad.transform.position = position;
             newQuad.transform.eulerAngles = rotation;

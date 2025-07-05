@@ -37,7 +37,7 @@ namespace PlusStudioLevelLoader
         {
             Harmony harmony = new Harmony("mtm101.rulerp.baldiplus.levelstudioloader");
             harmony.PatchAllConditionals();
-            LoadingEvents.RegisterOnAssetsLoaded(Info, LoadEnumerator(), false);
+            LoadingEvents.RegisterOnAssetsLoaded(Info, LoadEnumerator(), LoadingEventOrder.Pre);
             Instance = this;
         }
 

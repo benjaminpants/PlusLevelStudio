@@ -49,6 +49,12 @@ namespace PlusLevelStudio.Editor
 
         public bool ValidatePosition(EditorLevelData data)
         {
+            // dont allow light stacking
+            for (int i = 0; i < data.lights.Count; i++)
+            {
+                if (data.lights[i] == this) continue;
+                if (data.lights[i].position == position) return false;
+            }
             return data.RoomIdFromPos(position, true) != 0;
         }
     }

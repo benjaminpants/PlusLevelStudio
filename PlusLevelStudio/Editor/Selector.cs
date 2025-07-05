@@ -11,6 +11,7 @@ namespace PlusLevelStudio.Editor
         None,
         Tile,
         Area,
+        Direction,
         Object
     }
 
@@ -49,6 +50,14 @@ namespace PlusLevelStudio.Editor
         protected SelectorState state;
 
         protected Action<IntVector2, IntVector2> resizeAction;
+        protected Action<Direction> directionAction;
+
+
+        private void NullActions()
+        {
+            resizeAction = null;
+            directionAction = null;
+        }
 
         /// <summary>
         /// The current state of the selector.
@@ -61,15 +70,40 @@ namespace PlusLevelStudio.Editor
         public void DisableSelection()
         {
             state = SelectorState.None;
-            resizeAction = null;
+            NullActions();
             UpdateSelectionObjects();
         }
 
+        /// <summary>
+        /// Selects the specified tile.
+        /// </summary>
+        /// <param name="tile"></param>
         public void SelectTile(IntVector2 tile)
         {
             selectedTile = tile;
             state = SelectorState.Tile;
+            NullActions();
             UpdateSelectionObjects();
+        }
+
+        /// <summary>
+        /// Places the Selector at the specified tile and shows the arrows.
+        /// directionSelectAction is called when one of the arrows is clicked.
+        /// </summary>
+        /// <param name="tile"></param>
+        /// <param name="directionSelectAction"></param>
+        public void SelectRotation(IntVector2 tile, Action<Direction> directionSelectAction)
+        {
+            selectedTile = tile;
+            selectedArea = new RectInt(new Vector2Int(tile.x,tile.z), new Vector2Int(1,1));
+            state = SelectorState.Direction;
+            NullActions();
+            directionAction = directionSelectAction;
+            UpdateSelectionObjects();
+            for (int i = 0; i < tileArrows.Length; i++)
+            {
+                PositionArrow((Direction)i, 0f);
+            }
         }
 
         /// <summary>
@@ -92,6 +126,11 @@ namespace PlusLevelStudio.Editor
 
         public bool TileArrowClicked(Direction d)
         {
+            if (state == SelectorState.Direction)
+            {
+                directionAction.Invoke(currentArrow);
+                return false;
+            }
             currentArrow = d;
             currentStartPosition = Singleton<EditorController>.Instance.mouseGridPosition;
             return true;
@@ -136,6 +175,7 @@ namespace PlusLevelStudio.Editor
             {
                 case SelectorState.None:
                     break;
+                case SelectorState.Direction:
                 case SelectorState.Tile:
                     transform.position = selectedTile.ToWorld() + (Vector3.up * 0.01f);
                     break;
@@ -157,6 +197,13 @@ namespace PlusLevelStudio.Editor
                     tileSelector.SetActive(true);
                     break;
                 case SelectorState.Area:
+                    for (int i = 0; i < tileArrows.Length; i++)
+                    {
+                        tileArrows[i].SetActive(true);
+                    }
+                    break;
+                case SelectorState.Direction:
+                    tileSelector.SetActive(true);
                     for (int i = 0; i < tileArrows.Length; i++)
                     {
                         tileArrows[i].SetActive(true);

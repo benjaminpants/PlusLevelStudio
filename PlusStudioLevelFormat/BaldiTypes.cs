@@ -48,4 +48,13 @@ namespace PlusStudioLevelFormat
         public UnityColor color = new UnityColor(1f, 1f, 1f);
         public byte strength = 10;
     }
+
+    public enum PlusDirection
+    {
+        North,
+        East,
+        South,
+        West,
+        Null
+    }
 }

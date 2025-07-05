@@ -16,6 +16,7 @@ namespace PlusLevelStudio.Editor
         public List<LightGroup> lightGroups = new List<LightGroup>() { new LightGroup() };
         public List<LightPlacement> lights = new List<LightPlacement>();
         public List<EditorRoom> rooms = new List<EditorRoom>();
+        public List<DoorLocation> doors = new List<DoorLocation>();
         public EditorRoom hall => rooms[0];
 
         private Dictionary<string, TextureContainer> defaultTextures = new Dictionary<string, TextureContainer>();
@@ -97,6 +98,14 @@ namespace PlusLevelStudio.Editor
         }
 
 
+        protected void ApplyCellModifiers(IEnumerable<IEditorCellModifier> modifiers, bool forEditor)
+        {
+            foreach (IEditorCellModifier cellMod in modifiers)
+            {
+                cellMod.ModifyCells(this, forEditor);
+            }
+        }
+
         public void UpdateCells(bool forEditor)
         {
             List<Direction> allDirections = Directions.All();
@@ -128,6 +137,7 @@ namespace PlusLevelStudio.Editor
                     }
                 }
             }
+            ApplyCellModifiers(doors, forEditor);
             ValidatePlacements(forEditor); // TODO: figure out
         }
 

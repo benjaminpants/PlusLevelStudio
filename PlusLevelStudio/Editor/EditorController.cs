@@ -335,6 +335,11 @@ namespace PlusLevelStudio.Editor
 #endif
         }
 
+        protected void HandleInteractableClicking()
+        {
+
+        }
+
         protected void HandleClicking()
         {
             if (currentTool != null)
@@ -352,6 +357,7 @@ namespace PlusLevelStudio.Editor
                     }
                 }
                 mousePressedLastFrame = mousePressedThisFrame;
+
                 currentTool.Update();
                 if (Singleton<InputManager>.Instance.GetDigitalInput("Pause", true))
                 {
