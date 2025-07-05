@@ -85,7 +85,8 @@ namespace PlusLevelStudio
                     new RoomTool("faculty"),
                     new MergeTool(),
                     new DeleteTool(),
-                    new LightTool("fluorescent")
+                    new LightTool("fluorescent"),
+                    new DoorTool("standard")
                 }
             };
 
@@ -210,6 +211,12 @@ namespace PlusLevelStudio
             doorDisplayDeletable.myRenderers.Add(sideAQuad.GetComponent<MeshRenderer>());
             doorDisplayDeletable.myRenderers.Add(sideBQuad.GetComponent<MeshRenderer>());
             DoorDisplay standardDoorDisplayBehavior = standardDoorDisplayObject.AddComponent<DoorDisplay>();
+            standardDoorDisplayBehavior.sideA = sideAQuad.GetComponent<MeshRenderer>();
+            standardDoorDisplayBehavior.sideB = sideBQuad.GetComponent<MeshRenderer>();
+            EditorDeletableObject doorDelete = standardDoorDisplayObject.AddComponent<EditorDeletableObject>();
+            doorDelete.myRenderers = new List<Renderer>() { standardDoorDisplayBehavior.sideA, standardDoorDisplayBehavior.sideB };
+            standardDoorDisplayObject.AddComponent<BoxCollider>().size = new Vector3(10f,10f,0.5f);
+            standardDoorDisplayObject.layer = editorInteractableLayer;
             doorDisplays.Add("standard", standardDoorDisplayBehavior);
 
             yield return "Setting up Editor Controller...";

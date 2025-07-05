@@ -25,6 +25,11 @@ namespace PlusLevelStudio.UI
                     iconImage.sprite = null;
                     return;
                 }
+                if (_currentTool.sprite == null)
+                {
+                    iconImage.sprite = LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/unknown");
+                    return;
+                }
                 iconImage.sprite = _currentTool.sprite;
             }
         }

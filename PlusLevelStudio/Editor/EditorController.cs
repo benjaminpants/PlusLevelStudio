@@ -335,9 +335,23 @@ namespace PlusLevelStudio.Editor
 #endif
         }
 
-        protected void HandleInteractableClicking()
+        protected bool HandleInteractableClicking()
         {
-
+            if (Physics.Raycast(mouseRay, out RaycastHit info, 1000f, LevelStudioPlugin.editorInteractableLayerMask))
+            {
+                if (info.transform.TryGetComponent(out IEditorInteractable interactable))
+                {
+                    if ((currentTool == null) || interactable.InteractableByTool(currentTool))
+                    {
+                        if (interactable.OnClicked())
+                        {
+                            heldInteractable = interactable;
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
         }
 
         protected void HandleClicking()
@@ -349,6 +363,8 @@ namespace PlusLevelStudio.Editor
                 {
                     if (mousePressedThisFrame)
                     {
+                        if (HandleInteractableClicking()) return;
+                        if (currentTool == null) return;
                         if (currentTool.MousePressed()) { SwitchToTool(null); return; }
                     }
                     else
@@ -357,7 +373,6 @@ namespace PlusLevelStudio.Editor
                     }
                 }
                 mousePressedLastFrame = mousePressedThisFrame;
-
                 currentTool.Update();
                 if (Singleton<InputManager>.Instance.GetDigitalInput("Pause", true))
                 {
@@ -388,17 +403,7 @@ namespace PlusLevelStudio.Editor
             }
             if (Singleton<InputManager>.Instance.GetDigitalInput("Interact", true))
             {
-                if (Physics.Raycast(mouseRay, out RaycastHit info, 1000f, LevelStudioPlugin.editorInteractableLayerMask))
-                {
-                    if (info.transform.TryGetComponent(out IEditorInteractable interactable))
-                    {
-                        if (interactable.OnClicked())
-                        {
-                            heldInteractable = interactable;
-                            return;
-                        }
-                    }
-                }
+                if (HandleInteractableClicking()) return;
                 if (mouseGridPosition.x >= 0 && mouseGridPosition.z >= 0 && mouseGridPosition.x < levelData.mapSize.x && mouseGridPosition.z < levelData.mapSize.z)
                 {
                     SelectTile(mouseGridPosition);

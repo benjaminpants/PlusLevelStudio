@@ -23,5 +23,11 @@ namespace PlusLevelStudio.Editor
         /// </summary>
         /// <returns></returns>
         void OnReleased();
+
+        /// <summary>
+        /// Gets called when this EditorInteractable is clicked on when a tool is active.
+        /// </summary>
+        /// <returns>Whether this interactable can be clicked on when a tool is active.</returns>
+        bool InteractableByTool(EditorTool tool);
     }
 }

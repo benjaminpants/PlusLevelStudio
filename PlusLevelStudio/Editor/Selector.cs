@@ -20,6 +20,11 @@ namespace PlusLevelStudio.Editor
         public Selector selector;
         public Direction direction;
 
+        public bool InteractableByTool(EditorTool tool)
+        {
+            return true;
+        }
+
         public bool OnClicked()
         {
             return selector.TileArrowClicked(direction);
@@ -128,7 +133,7 @@ namespace PlusLevelStudio.Editor
         {
             if (state == SelectorState.Direction)
             {
-                directionAction.Invoke(currentArrow);
+                directionAction.Invoke(d);
                 return false;
             }
             currentArrow = d;

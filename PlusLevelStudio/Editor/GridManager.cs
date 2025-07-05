@@ -10,6 +10,11 @@ namespace PlusLevelStudio.Editor
         public GridManager grid;
         public Direction direction;
 
+        public bool InteractableByTool(EditorTool tool)
+        {
+            return false;
+        }
+
         public bool OnClicked()
         {
             return grid.TileArrowClicked(direction);
