@@ -62,12 +62,18 @@ namespace PlusLevelStudio.Editor.Tools
             return false;
         }
 
+        // TODO: revise this code
         public override void Update()
         {
             if (Physics.Raycast(EditorController.Instance.mouseRay, out RaycastHit info, 1000f, LevelStudioPlugin.editorInteractableLayerMask))
             {
+                EditorDeletableObject previousDeletabl = lastFoundDeletable;
                 if (info.transform.TryGetComponent(out lastFoundDeletable))
                 {
+                    if (previousDeletabl != lastFoundDeletable)
+                    {
+                        previousDeletabl.Highlight("none");
+                    }
                     lastFoundDeletable.Highlight("red");
                     if (lastFoundArea != null)
                     {

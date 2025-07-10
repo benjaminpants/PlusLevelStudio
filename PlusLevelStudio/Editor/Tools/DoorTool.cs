@@ -11,10 +11,15 @@ namespace PlusLevelStudio.Editor.Tools
         public override string id => "door_" + doorType;
         protected IntVector2? pos;
 
-        public DoorTool(string type)
+        public DoorTool(string type) : this(type, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/door_" + type))
+        {
+            
+        }
+
+        public DoorTool(string type, Sprite sprite)
         {
             doorType = type;
-            //sprite = LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/light");
+            this.sprite = sprite;
         }
 
         public override void Begin()
