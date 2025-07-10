@@ -23,6 +23,7 @@ namespace PlusStudioLevelLoader
         public Dictionary<string, RoomSettings> roomSettings = new Dictionary<string, RoomSettings>();
         public Dictionary<string, Texture2D> roomTextureAliases = new Dictionary<string, Texture2D>();
         public Dictionary<string, Transform> lightTransforms = new Dictionary<string, Transform>();
+        public Dictionary<string, Door> doorPrefabs = new Dictionary<string, Door>();
 
         public static Texture2D RoomTextureFromAlias(string alias)
         {
@@ -86,6 +87,11 @@ namespace PlusStudioLevelLoader
             yield return "Fetching prefabs...";
             Transform[] transforms = Resources.FindObjectsOfTypeAll<Transform>().Where(x => x.GetInstanceID() >= 0 && x.transform.parent == null).ToArray();
             lightTransforms.Add("fluorescent", transforms.First(x => x.name == "FluorescentLight"));
+
+            // doors
+            // ClassDoor_Standard
+            Door[] doors = Resources.FindObjectsOfTypeAll<Door>().Where(x => x.GetInstanceID() >= 0 && x.transform.parent == null).ToArray();
+            doorPrefabs.Add("standard", doors.First(x => x.name == "ClassDoor_Standard"));
         }
     }
 }

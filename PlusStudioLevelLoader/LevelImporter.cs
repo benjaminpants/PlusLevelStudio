@@ -85,6 +85,11 @@ namespace PlusStudioLevelLoader
                     strength = level.lights[i].strength,
                 });
             }
+
+            for (int i = 0; i < level.doors.Count; i++)
+            {
+                asset.doors.Add(new DoorData((int)level.doors[i].roomId - 1, LevelLoaderPlugin.Instance.doorPrefabs[level.doors[i].prefab], level.doors[i].position.ToInt(), (Direction)level.doors[i].direction));
+            }
             return asset;
         }
     }

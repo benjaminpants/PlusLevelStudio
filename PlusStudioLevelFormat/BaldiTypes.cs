@@ -49,6 +49,14 @@ namespace PlusStudioLevelFormat
         public byte strength = 10;
     }
 
+    public class DoorInfo
+    {
+        public string prefab;
+        public ByteVector2 position;
+        public ushort roomId;
+        public PlusDirection direction = PlusDirection.Null;
+    }
+
     public enum PlusDirection
     {
         North,

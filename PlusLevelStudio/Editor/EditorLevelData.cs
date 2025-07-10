@@ -82,8 +82,9 @@ namespace PlusLevelStudio.Editor
             UpdateCells(true);
         }
 
-        public void ValidatePlacements(bool updateVisuals)
+        public bool ValidatePlacements(bool updateVisuals)
         {
+            bool changedSomething = false;
             for (int i = lights.Count - 1; i >= 0; i--)
             {
                 if (!lights[i].ValidatePosition(this))
@@ -93,8 +94,22 @@ namespace PlusLevelStudio.Editor
                         EditorController.Instance.RemoveVisual(lights[i]);
                     }
                     lights.RemoveAt(i);
+                    changedSomething = true;
                 }
             }
+            for (int i = doors.Count - 1; i >= 0; i--)
+            {
+                if (!doors[i].ValidatePosition(this))
+                {
+                    if (updateVisuals)
+                    {
+                        EditorController.Instance.RemoveVisual(doors[i]);
+                    }
+                    doors.RemoveAt(i);
+                    changedSomething = true;
+                }
+            }
+            return changedSomething;
         }
 
 
@@ -137,8 +152,8 @@ namespace PlusLevelStudio.Editor
                     }
                 }
             }
+            ValidatePlacements(forEditor);
             ApplyCellModifiers(doors, forEditor);
-            ValidatePlacements(forEditor); // TODO: figure out
         }
 
         // TODO: figure out if we even NEED to manually recalculate all cells, or if we'd just be better off moving only areas
@@ -177,6 +192,10 @@ namespace PlusLevelStudio.Editor
             for (int i = 0; i < lights.Count; i++)
             {
                 lights[i].position -= posDif;
+            }
+            for (int i = 0; i < doors.Count; i++)
+            {
+                doors[i].position -= posDif;
             }
             return true;
         }
@@ -271,6 +290,16 @@ namespace PlusLevelStudio.Editor
                     position = lights[i].position.ToByte(),
                     prefab = lights[i].type,
                     strength = (byte)group.strength
+                });
+            }
+            for (int i = 0; i < doors.Count; i++)
+            {
+                compiled.doors.Add(new DoorInfo()
+                {
+                    prefab = doors[i].type, // placeholder
+                    position = doors[i].position.ToByte(),
+                    direction = (PlusDirection)doors[i].direction,
+                    roomId = GetTileSafe(doors[i].position.x, doors[i].position.z).roomId
                 });
             }
             return compiled;

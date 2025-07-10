@@ -34,11 +34,15 @@ namespace PlusLevelStudio.Editor.Tools
 
         public virtual void OnPlaced(Direction dir)
         {
-            Debug.Log(dir);
             DoorLocation doorPos = new DoorLocation();
             doorPos.position = pos.Value;
             doorPos.type = doorType;
             doorPos.direction = dir;
+            if (!doorPos.ValidatePosition(EditorController.Instance.levelData))
+            {
+                EditorController.Instance.selector.SelectRotation(pos.Value, OnPlaced); // try again
+                return;
+            }
             EditorController.Instance.levelData.doors.Add(doorPos);
             EditorController.Instance.AddVisual(doorPos);
             EditorController.Instance.RefreshCells();

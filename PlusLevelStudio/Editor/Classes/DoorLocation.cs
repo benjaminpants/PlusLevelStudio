@@ -30,8 +30,16 @@ namespace PlusLevelStudio.Editor
 
         public void ModifyCells(EditorLevelData data, bool forEditor)
         {
+            IntVector2 pos2;
+            if (!forEditor)
+            {
+                data.cells[position.x, position.z].walls = (Nybble)(data.cells[position.x, position.z].walls | direction.ToBinary());
+                pos2 = direction.ToIntVector2();
+                data.cells[position.x + pos2.x, position.z + pos2.z].walls = (Nybble)(data.cells[position.x + pos2.x, position.z + pos2.z].walls | direction.GetOpposite().ToBinary());
+                return;
+            }    
             data.cells[position.x, position.z].walls = (Nybble)(data.cells[position.x, position.z].walls & ~direction.ToBinary());
-            IntVector2 pos2 = direction.ToIntVector2();
+            pos2 = direction.ToIntVector2();
             data.cells[position.x + pos2.x, position.z + pos2.z].walls = (Nybble)(data.cells[position.x + pos2.x, position.z + pos2.z].walls & ~direction.GetOpposite().ToBinary());
         }
 
@@ -50,6 +58,17 @@ namespace PlusLevelStudio.Editor
             visualObject.transform.rotation = direction.ToRotation();
             DoorDisplay display = visualObject.GetComponent<DoorDisplay>();
             display.UpdateSides(position, direction);
+        }
+
+        public bool ValidatePosition(EditorLevelData data)
+        {
+            // dont allow light stacking
+            for (int i = 0; i < data.doors.Count; i++)
+            {
+                if (data.doors[i] == this) continue;
+                if (data.doors[i].position == position && data.doors[i].direction == direction) return false;
+            }
+            return (data.RoomIdFromPos(position, true) != 0 && data.RoomIdFromPos(position + direction.ToIntVector2(), true) != 0);
         }
     }
 }

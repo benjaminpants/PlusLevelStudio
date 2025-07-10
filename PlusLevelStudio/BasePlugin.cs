@@ -210,7 +210,7 @@ namespace PlusLevelStudio
             EditorDeletableObject doorDisplayDeletable = standardDoorDisplayObject.AddComponent<EditorDeletableObject>();
             doorDisplayDeletable.myRenderers.Add(sideAQuad.GetComponent<MeshRenderer>());
             doorDisplayDeletable.myRenderers.Add(sideBQuad.GetComponent<MeshRenderer>());
-            DoorDisplay standardDoorDisplayBehavior = standardDoorDisplayObject.AddComponent<DoorDisplay>();
+            DoorDisplay standardDoorDisplayBehavior = standardDoorDisplayObject.AddComponent<StandardDoorDisplay>();
             standardDoorDisplayBehavior.sideA = sideAQuad.GetComponent<MeshRenderer>();
             standardDoorDisplayBehavior.sideB = sideBQuad.GetComponent<MeshRenderer>();
             EditorDeletableObject doorDelete = standardDoorDisplayObject.AddComponent<EditorDeletableObject>();

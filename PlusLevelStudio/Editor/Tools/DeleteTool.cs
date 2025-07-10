@@ -33,6 +33,11 @@ namespace PlusLevelStudio.Editor.Tools
             {
                 EditorController.Instance.HighlightCells(lastFoundArea.CalculateOwnedCells(), "none");
             }
+            if (lastFoundDeletable != null)
+            {
+                lastFoundDeletable.Highlight("none");
+            }
+            lastFoundDeletable = null;
             lastFoundArea = null;
         }
 

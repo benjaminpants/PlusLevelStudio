@@ -12,6 +12,7 @@ namespace PlusStudioLevelFormat
         public Cell[,] cells;
         public List<RoomInfo> rooms = new List<RoomInfo>();
         public List<LightInfo> lights = new List<LightInfo>();
+        public List<DoorInfo> doors = new List<DoorInfo>();
         public static readonly byte version = 0;
 
         public BaldiLevel(ByteVector2 size)
@@ -36,6 +37,7 @@ namespace PlusStudioLevelFormat
             roomCompressor.AddStrings(rooms.Select(x => x.textureContainer.ceiling));
             StringCompressor objectsCompressor = new StringCompressor();
             objectsCompressor.AddStrings(lights.Select(x => x.prefab));
+            objectsCompressor.AddStrings(doors.Select(x => x.prefab));
             objectsCompressor.FinalizeDatabase();
             roomCompressor.FinalizeDatabase();
             writer.Write(version);
@@ -76,6 +78,13 @@ namespace PlusStudioLevelFormat
                 writer.Write(lights[i].position);
                 writer.Write(lights[i].color);
                 writer.Write(lights[i].strength);
+            }
+            writer.Write(doors.Count);
+            for (int i = 0; i < doors.Count; i++)
+            {
+                objectsCompressor.WriteStoredString(writer, doors[i].prefab);
+                writer.Write(doors[i].position);
+                writer.Write((byte)doors[i].direction);
             }
         }
     }
