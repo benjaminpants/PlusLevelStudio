@@ -9,6 +9,7 @@ namespace PlusLevelStudio.Editor
     /// </summary>
     public class EditorMode
     {
+        public string id;
         public List<EditorTool> availableTools = new List<EditorTool>();
         public bool supportsNPCProperties = true;
     }

@@ -78,6 +78,7 @@ namespace PlusLevelStudio
             // TODO: put code that actually does logic for assigning editor mode here instead of just creating it on the fly
             editorController.currentMode = new EditorMode()
             {
+                id="full",
                 availableTools = new List<EditorTool>()
                 {
                     new RoomTool("hall"),

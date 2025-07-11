@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using PlusStudioLevelFormat;
 using PlusStudioLevelLoader;
@@ -303,6 +304,18 @@ namespace PlusLevelStudio.Editor
                 });
             }
             return compiled;
+        }
+
+        public const byte version = 0;
+
+        public void Write(BinaryWriter writer)
+        {
+            writer.Write(version);
+            writer.Write(areas.Count);
+            for (int i = 0; i < areas.Count; i++)
+            {
+                areas[i].Write(writer);
+            }
         }
 
     }
