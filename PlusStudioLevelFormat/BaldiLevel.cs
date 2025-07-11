@@ -30,6 +30,38 @@ namespace PlusStudioLevelFormat
             }
         }
 
+        public static BaldiLevel Read(BinaryReader reader)
+        {
+            byte version = reader.ReadByte();
+            StringCompressor roomCompressor = StringCompressor.ReadStringDatabase(reader);
+            StringCompressor objectsCompressor = StringCompressor.ReadStringDatabase(reader);
+            UnityVector3 spawnPoint = reader.ReadUnityVector3();
+            PlusDirection spawnDirection = (PlusDirection)reader.ReadByte();
+            BaldiLevel level = new BaldiLevel(reader.ReadByteVector2());
+            level.spawnPoint = spawnPoint;
+            level.spawnDirection = spawnDirection;
+            Nybble[] wallNybbles = reader.ReadNybbles();
+            // todo: replace with proper method of reading back the nybbles
+            int cellIndex = 0;
+            for (int x = 0; x < level.levelSize.x; x++)
+            {
+                for (int y = 0; y < level.levelSize.y; y++)
+                {
+                    level.cells[x, y].walls = wallNybbles[cellIndex];
+                    cellIndex++;
+                }
+            }
+            for (int x = 0; x < level.levelSize.x; x++)
+            {
+                for (int y = 0; y < level.levelSize.y; y++)
+                {
+                    level.cells[x, y].roomId = reader.ReadUInt16();
+                }
+            }
+
+            return level;
+        }
+
         public void Write(BinaryWriter writer)
         {
             StringCompressor roomCompressor = new StringCompressor();

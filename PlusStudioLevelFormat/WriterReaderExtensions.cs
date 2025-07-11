@@ -12,6 +12,11 @@ namespace PlusStudioLevelFormat
             return new ByteVector2(reader.ReadByte(), reader.ReadByte());
         }
 
+        public static UnityVector3 ReadUnityVector3(this BinaryReader reader)
+        {
+            return new UnityVector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+        }
+
         public static void Write(this BinaryWriter writer, ByteVector2 vector)
         {
             writer.Write(vector.x);
