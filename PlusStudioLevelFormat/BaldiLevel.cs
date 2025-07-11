@@ -58,7 +58,33 @@ namespace PlusStudioLevelFormat
                     level.cells[x, y].roomId = reader.ReadUInt16();
                 }
             }
-
+            int roomCount = reader.ReadInt32();
+            for (int i = 0; i < roomCount; i++)
+            {
+                level.rooms.Add(new RoomInfo(roomCompressor.ReadStoredString(reader), new TextureContainer(roomCompressor.ReadStoredString(reader), roomCompressor.ReadStoredString(reader), roomCompressor.ReadStoredString(reader))));
+            }
+            int lightCount = reader.ReadInt32();
+            for (int i = 0; i < lightCount; i++)
+            {
+                level.lights.Add(new LightInfo()
+                {
+                    prefab = objectsCompressor.ReadStoredString(reader),
+                    position = reader.ReadByteVector2(),
+                    color = reader.ReadUnityColor(),
+                    strength = reader.ReadByte()
+                });
+            }
+            int doorCount = reader.ReadInt32();
+            for (int i = 0; i < doorCount; i++)
+            {
+                level.doors.Add(new DoorInfo()
+                {
+                    prefab=objectsCompressor.ReadStoredString(reader),
+                    position = reader.ReadByteVector2(),
+                    direction = (PlusDirection)reader.ReadByte(),
+                    roomId = reader.ReadUInt16()
+                });
+            }
             return level;
         }
 
@@ -125,6 +151,7 @@ namespace PlusStudioLevelFormat
                 objectsCompressor.WriteStoredString(writer, doors[i].prefab);
                 writer.Write(doors[i].position);
                 writer.Write((byte)doors[i].direction);
+                writer.Write(doors[i].roomId);
             }
         }
     }

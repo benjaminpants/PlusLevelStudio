@@ -104,7 +104,7 @@ namespace PlusStudioLevelFormat
             WriteAppropiateType(writer, index);
         }
 
-        public string ReadStoredString(BinaryReader reader, string str)
+        public string ReadStoredString(BinaryReader reader)
         {
             if (!finalized) throw new InvalidOperationException("StringCompressor hasn't been finalized!");
             return storedStrings[ReadAppropiateType(reader)];

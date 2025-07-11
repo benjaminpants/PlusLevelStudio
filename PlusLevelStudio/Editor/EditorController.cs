@@ -138,6 +138,14 @@ namespace PlusLevelStudio.Editor
         public void CompileAndPlay()
         {
             BaldiLevel level = levelData.Compile();
+            // write to file for testing purposes
+            /*
+            BinaryWriter writer = new BinaryWriter(File.OpenWrite(Path.Combine(Application.streamingAssetsPath, "test.bpl")));
+            level.Write(writer);
+            writer.Close();
+            BinaryReader reader = new BinaryReader(File.OpenRead(Path.Combine(Application.streamingAssetsPath, "test.bpl")));
+            level = BaldiLevel.Read(reader);
+            reader.Close();*/
             SceneObject sceneObj = LevelImporter.CreateSceneObject(level);
             sceneObj.manager = Resources.FindObjectsOfTypeAll<MainGameManager>().First(x => x.name == "Lvl1_MainGameManager");
             GameLoader loader = GameObject.Instantiate<GameLoader>(gameLoaderPrefab);

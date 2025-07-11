@@ -40,7 +40,7 @@ namespace PlusStudioLevelFormat
 
         public static UnityColor ReadUnityColor(this BinaryReader reader)
         {
-            return new UnityColor(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            return new UnityColor(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
         }
     }
 }
