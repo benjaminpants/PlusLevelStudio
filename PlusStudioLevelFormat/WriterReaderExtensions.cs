@@ -26,6 +26,13 @@ namespace PlusStudioLevelFormat
             writer.Write(color.a);
         }
 
+        public static void Write(this BinaryWriter writer, UnityVector3 vector)
+        {
+            writer.Write(vector.x);
+            writer.Write(vector.y);
+            writer.Write(vector.z);
+        }
+
         public static UnityColor ReadUnityColor(this BinaryReader reader)
         {
             return new UnityColor(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());

@@ -65,10 +65,11 @@ namespace PlusLevelStudio.Editor
             // dont allow light stacking
             for (int i = 0; i < data.doors.Count; i++)
             {
-                if (data.doors[i] == this) continue;
-                if (data.doors[i].position == position && data.doors[i].direction == direction) return false;
+                if (data.doors[i] == this) continue; // this is us
+                if (data.doors[i].position == position && data.doors[i].direction == direction) return false; // door is clashing
+                if (data.doors[i].position == (position + direction.ToIntVector2()) && data.doors[i].direction == direction.GetOpposite()) return false; // door is clashing
             }
-            return (data.RoomIdFromPos(position, true) != 0 && data.RoomIdFromPos(position + direction.ToIntVector2(), true) != 0);
+            return (data.RoomIdFromPos(position, true) != 0 && data.RoomIdFromPos(position + direction.ToIntVector2(), true) != 0); // make sure both rooms we are facing are valid
         }
     }
 }

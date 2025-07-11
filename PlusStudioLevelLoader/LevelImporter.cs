@@ -72,8 +72,8 @@ namespace PlusStudioLevelLoader
                     activity = new ActivityData(),
                 });
             }
-            asset.spawnDirection = Direction.North;
-            asset.spawnPoint = new Vector3(5f, 5f, 5f);
+            asset.spawnDirection = (Direction)level.spawnDirection;
+            asset.spawnPoint = level.spawnPoint.ToUnity();
 
             for (int i = 0; i < level.lights.Count; i++)
             {

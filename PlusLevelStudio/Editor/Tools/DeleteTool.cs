@@ -70,9 +70,12 @@ namespace PlusLevelStudio.Editor.Tools
                 EditorDeletableObject previousDeletabl = lastFoundDeletable;
                 if (info.transform.TryGetComponent(out lastFoundDeletable))
                 {
-                    if (previousDeletabl != lastFoundDeletable)
+                    if (previousDeletabl != null)
                     {
-                        previousDeletabl.Highlight("none");
+                        if (previousDeletabl != lastFoundDeletable)
+                        {
+                            previousDeletabl.Highlight("none");
+                        }
                     }
                     lastFoundDeletable.Highlight("red");
                     if (lastFoundArea != null)

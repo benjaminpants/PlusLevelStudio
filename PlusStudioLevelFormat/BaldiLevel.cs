@@ -13,6 +13,8 @@ namespace PlusStudioLevelFormat
         public List<RoomInfo> rooms = new List<RoomInfo>();
         public List<LightInfo> lights = new List<LightInfo>();
         public List<DoorInfo> doors = new List<DoorInfo>();
+        public UnityVector3 spawnPoint = new UnityVector3(5f,5f,5f);
+        public PlusDirection spawnDirection = PlusDirection.North;
         public static readonly byte version = 0;
 
         public BaldiLevel(ByteVector2 size)
@@ -41,8 +43,14 @@ namespace PlusStudioLevelFormat
             objectsCompressor.FinalizeDatabase();
             roomCompressor.FinalizeDatabase();
             writer.Write(version);
+            // write string databases
             roomCompressor.WriteStringDatabase(writer);
             objectsCompressor.WriteStringDatabase(writer);
+            // write spawn position or other metadata
+            writer.Write(spawnPoint);
+            writer.Write((byte)spawnDirection);
+            // write level cell data split into nybble list for the walls and an array of room ids
+            // this is done in two steps so the code for reading is easy, and writing a nybble by itself and not in a pair has no value over using a byte
             writer.Write(levelSize);
             List<Nybble> nybbles = new List<Nybble>();
             for (int x = 0; x < levelSize.x; x++)
