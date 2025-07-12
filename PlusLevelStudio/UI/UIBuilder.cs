@@ -60,6 +60,17 @@ namespace PlusLevelStudio.UI
 
         static JObject mostRecentlyParsedObject;
 
+        public static Dictionary<string, JToken> globalDefines = new Dictionary<string, JToken>();
+
+        public static void LoadGlobalDefinesFromFile(string path)
+        {
+            globalDefines.Clear();
+            JObject parsedFile = JObject.Parse(File.ReadAllText(path));
+            foreach (JProperty child in parsedFile.Children())
+            {
+                globalDefines.Add(child.Name, child.Value);
+            }
+        }
 
         public static T BuildUIFromFile<T>(Canvas canvas, string name, string path) where T : UIExchangeHandler
         {
@@ -73,7 +84,7 @@ namespace PlusLevelStudio.UI
 
 
             // handle defines
-            Dictionary<string, JToken> defines = new Dictionary<string, JToken>();
+            Dictionary<string, JToken> defines = new Dictionary<string, JToken>(globalDefines);
             JToken definesToken = parsedFile["defines"];
 
             foreach (JProperty child in definesToken.Children())

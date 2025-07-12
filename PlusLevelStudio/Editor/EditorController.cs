@@ -300,6 +300,7 @@ namespace PlusLevelStudio.Editor
             CursorInitiator init = canvas.GetComponent<CursorInitiator>();
             init.screenSize = screenSize;
             init.Inititate();
+            UIBuilder.LoadGlobalDefinesFromFile(Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "GlobalDefines.json"));
             uiObjects[0] = UIBuilder.BuildUIFromFile<EditorUIMainHandler>(canvas, "Main", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "Main.json")).gameObject;
             uiObjects[0].transform.SetAsFirstSibling();
         }
