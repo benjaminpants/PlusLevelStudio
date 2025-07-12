@@ -5,6 +5,7 @@ using UnityEngine;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.IO;
+using PlusLevelStudio.Editor;
 
 namespace PlusLevelStudio.UI
 {
@@ -71,6 +72,27 @@ namespace PlusLevelStudio.UI
         public override void SendInteractionMessage(string message)
         {
             Debug.Log("Interaction message sent: " + message);
+        }
+    }
+
+    public class EditorOverlayUIExchangeHandler : UIExchangeHandler
+    {
+        public override bool GetStateBoolean(string key)
+        {
+            return false;
+        }
+
+        public override void OnElementsCreated()
+        {
+            
+        }
+
+        public override void SendInteractionMessage(string message)
+        {
+            if (message == "exit")
+            {
+                EditorController.Instance.RemoveUI(this.gameObject);
+            }
         }
     }
 

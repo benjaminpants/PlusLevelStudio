@@ -6,7 +6,7 @@
 			"type":"blocker"
 		},
 		{
-			"name":"BackButton",
+			"name":"Chalkboard",
 			"type":"image",
 			"graphic":"ChalkBoardStandard",
 			"anchoredPosition":[0,0],
@@ -14,6 +14,18 @@
 			"pivot":"#center",
 			"anchorMin":"#center",
 			"anchorMax":"#center",
+		},
+		{
+			"name":"ExitButton",
+			"type":"imageButton",
+			"graphic":"Exit",
+			"hoverGraphic":"ExitHigh",
+			"anchoredPosition":[-194,144],
+			"size":[64,64],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"onPressed":"exit"
 		},
 	]
 }

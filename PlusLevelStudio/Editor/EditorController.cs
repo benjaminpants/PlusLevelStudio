@@ -16,6 +16,7 @@ using MTM101BaldAPI;
 using PlusStudioLevelFormat;
 using PlusStudioLevelLoader;
 using System.Linq;
+using MidiPlayerTK;
 
 namespace PlusLevelStudio.Editor
 {
@@ -292,7 +293,18 @@ namespace PlusLevelStudio.Editor
                 uiObjects[i].transform.SetAsFirstSibling();
             }
             uiOverlays.Add(obj.gameObject);
+            SetChannelsMuted(true);
             return obj;
+        }
+
+        public void RemoveUI(GameObject obj)
+        {
+            uiOverlays.Remove(obj);
+            Destroy(obj);
+            if (uiOverlays.Count == 0)
+            {
+                SetChannelsMuted(false);
+            }
         }
 
         public void UpdateUI()
@@ -398,7 +410,7 @@ namespace PlusLevelStudio.Editor
         {
             canvas.scaleFactor = calculatedScaleFactor;
             UpdateMouseRay();
-            //PlaySongIfNecessary();
+            PlaySongIfNecessary();
             UpdateCamera();
             /*
             if (Singleton<InputManager>.Instance.GetDigitalInput("Item1", true))
@@ -553,12 +565,33 @@ namespace PlusLevelStudio.Editor
             selector.SelectTile(tileSelected);
         }
 
+        static FieldInfo _midiPlayer = AccessTools.Field(typeof(MusicManager), "midiPlayer"); // type: MidiFilePlayer
+
         protected virtual void PlaySongIfNecessary()
         {
             if (!Singleton<MusicManager>.Instance.MidiPlaying)
             {
+                Singleton<MusicManager>.Instance.StopMidi();
                 Singleton<MusicManager>.Instance.PlayMidi(LevelStudioPlugin.Instance.editorTracks[UnityEngine.Random.Range(0, LevelStudioPlugin.Instance.editorTracks.Count)], false);
             }
+        }
+
+        protected void SetChannelsMuted(bool inMenu)
+        {
+            MidiFilePlayer midiPlayer = (MidiFilePlayer)_midiPlayer.GetValue(Singleton<MusicManager>.Instance);
+            for (int i = 0; i < midiPlayer.Channels.Length; i++)
+            {
+                midiPlayer.MPTK_ChannelEnableSet(i, inMenu ? (i == 1 || i == 9) : true);
+            }
+            /*
+            if (inMenu)
+            {
+                Singleton<MusicManager>.Instance.SetSpeed(0.8f);
+            }
+            else
+            {
+                Singleton<MusicManager>.Instance.SetSpeed(1f);
+            }*/
         }
 
         protected virtual void UpdateCamera()

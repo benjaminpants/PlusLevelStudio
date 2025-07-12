@@ -24,7 +24,7 @@ namespace PlusLevelStudio.Editor
         public void SettingsClicked()
         {
             // placeholder
-            EditorController.Instance.CreateUI<DummyUIExchangeHandler>("LightConfig");
+            EditorController.Instance.CreateUI<EditorOverlayUIExchangeHandler>("LightConfig");
         }
 
         public GameObject GetVisualPrefab()
