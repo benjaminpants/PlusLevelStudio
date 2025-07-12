@@ -48,6 +48,7 @@ namespace PlusLevelStudio.Editor.Tools
                 EditorController.Instance.selector.SelectRotation(pos.Value, OnPlaced); // try again
                 return;
             }
+            EditorController.Instance.AddUndo();
             EditorController.Instance.levelData.doors.Add(doorPos);
             EditorController.Instance.AddVisual(doorPos);
             EditorController.Instance.RefreshCells();

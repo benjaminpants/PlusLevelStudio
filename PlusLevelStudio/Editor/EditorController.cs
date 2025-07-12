@@ -65,6 +65,65 @@ namespace PlusLevelStudio.Editor
 
         protected IEditorInteractable heldInteractable = null;
 
+        public int maxUndos = 100;
+        public List<MemoryStream> undoStreams = new List<MemoryStream>();
+
+        /// <summary>
+        /// Adds the current state to the undo memory.
+        /// Do this BEFORE you perform your operation!
+        /// </summary>
+        public void AddUndo()
+        {
+            if (undoStreams.Count >= maxUndos) //we already have 5 undos
+            {
+                undoStreams.RemoveAt(0); // memory streams dont need .Dispose to be called
+            }
+            MemoryStream newStream = new MemoryStream();
+            BinaryWriter writer = new BinaryWriter(newStream, Encoding.Default, true);
+            levelData.Write(writer);
+            newStream.Seek(0, SeekOrigin.Begin);
+            undoStreams.Add(newStream);
+        }
+
+        /// <summary>
+        /// Pops the most recently added undo and loads it
+        /// </summary>
+        public void PopUndo()
+        {
+            MemoryStream recentUndo = undoStreams[undoStreams.Count - 1];
+            undoStreams.Remove(recentUndo);
+            BinaryReader reader = new BinaryReader(recentUndo);
+            LoadEditorLevel(EditorLevelData.ReadFrom(reader));
+            reader.Close();
+        }
+
+        public void LoadEditorLevel(EditorLevelData newData)
+        {
+            if (heldInteractable != null)
+            {
+                heldInteractable.OnReleased();
+                heldInteractable = null;
+            }
+            SwitchToTool(null); // remove our current tool
+            IEditorVisualizable[] visuals = objectVisuals.Keys.ToArray();
+            foreach (var item in visuals)
+            {
+                RemoveVisual(item);
+            }
+            levelData = newData;
+            RegenerateGridAndCells();
+            foreach (LightPlacement item in levelData.lights)
+            {
+                AddVisual(item);
+            }
+            foreach (DoorLocation item in levelData.doors)
+            {
+                AddVisual(item);
+            }
+            RefreshCells();
+            RefreshLights();
+        }
+
         /// <summary>
         /// Adds the specified IEditorVisualizable into the editor visuals system.
         /// </summary>
@@ -123,7 +182,7 @@ namespace PlusLevelStudio.Editor
         public void RemoveVisual(IEditorVisualizable visualizable)
         {
             visualizable.CleanupVisual(objectVisuals[visualizable]);
-            GameObject.Destroy(objectVisuals[visualizable]);
+            GameObject.DestroyImmediate(objectVisuals[visualizable]); // TODO: Destroy or DestroyImmediate?
             objectVisuals.Remove(visualizable);
         }
 
@@ -304,7 +363,7 @@ namespace PlusLevelStudio.Editor
             if (targetSize.x < 1 || targetSize.z < 1) { TriggerError("LevelTooSmall"); return; }
             // TODO: INSERT LOGIC FOR OBJECTS
 
-            if (!levelData.ResizeLevel(posDif, sizeDif))
+            if (!levelData.ResizeLevel(posDif, sizeDif, this))
             {
                 TriggerError("RoomClipped");
                 return;

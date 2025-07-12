@@ -62,6 +62,6 @@ namespace PlusLevelStudio.Editor
     public class LightGroup
     {
         public Color color = new Color(1f, 1f, 1f);
-        public int strength = 10;
+        public byte strength = 10;
     }
 }

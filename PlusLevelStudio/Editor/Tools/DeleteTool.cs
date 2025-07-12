@@ -45,10 +45,12 @@ namespace PlusLevelStudio.Editor.Tools
         {
             if (lastFoundDeletable != null)
             {
+                EditorController.Instance.AddUndo();
                 return lastFoundDeletable.OnDelete(EditorController.Instance.levelData);
             }    
             if (lastFoundArea != null)
             {
+                EditorController.Instance.AddUndo();
                 EditorController.Instance.levelData.areas.Remove(lastFoundArea); // TODO: switch this out for the appropiate area removal logic
                 EditorController.Instance.levelData.RemoveUnusedRoom(lastFoundArea.roomId);
                 EditorController.Instance.RefreshCells();

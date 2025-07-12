@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using PlusStudioLevelFormat;
 using PlusStudioLevelLoader;
@@ -158,7 +159,7 @@ namespace PlusLevelStudio.Editor
         }
 
         // TODO: figure out if we even NEED to manually recalculate all cells, or if we'd just be better off moving only areas
-        public bool ResizeLevel(IntVector2 posDif, IntVector2 sizeDif)
+        public bool ResizeLevel(IntVector2 posDif, IntVector2 sizeDif, EditorController toAddUndo = null)
         {
             IntVector2 newMapSize = mapSize + sizeDif;
             // now check areas
@@ -173,6 +174,10 @@ namespace PlusLevelStudio.Editor
                         return false;
                     }
                 }
+            }
+            if (toAddUndo != null)
+            {
+                toAddUndo.AddUndo();
             }
             // only if all checks pass do we shift everything
             for (int i = 0; i < areas.Count; i++)
@@ -311,11 +316,101 @@ namespace PlusLevelStudio.Editor
         public void Write(BinaryWriter writer)
         {
             writer.Write(version);
+            StringCompressor stringComp = new StringCompressor();
+            stringComp.AddStrings(lights.Select(x => x.type));
+            stringComp.AddStrings(doors.Select(x => x.type));
+            stringComp.AddStrings(rooms.Select(x => x.roomType));
+            stringComp.AddStrings(rooms.Select(x => x.textureContainer.floor));
+            stringComp.AddStrings(rooms.Select(x => x.textureContainer.wall));
+            stringComp.AddStrings(rooms.Select(x => x.textureContainer.ceiling));
+            stringComp.FinalizeDatabase();
+            stringComp.WriteStringDatabase(writer);
+            writer.Write((byte)mapSize.x);
+            writer.Write((byte)mapSize.z);
             writer.Write(areas.Count);
             for (int i = 0; i < areas.Count; i++)
             {
                 areas[i].Write(writer);
             }
+            writer.Write(rooms.Count);
+            for (int i = 0; i < rooms.Count; i++)
+            {
+                stringComp.WriteStoredString(writer, rooms[i].roomType);
+                stringComp.WriteStoredString(writer, rooms[i].textureContainer.floor);
+                stringComp.WriteStoredString(writer, rooms[i].textureContainer.wall);
+                stringComp.WriteStoredString(writer, rooms[i].textureContainer.ceiling);
+            }
+
+            writer.Write((ushort)lightGroups.Count); // we will only allow ushort.Max amount of light groups because why the fuck would you ever need more?
+            for (int i = 0; i < lightGroups.Count; i++)
+            {
+                writer.Write(lightGroups[i].color.ToData());
+                writer.Write(lightGroups[i].strength);
+            }
+            writer.Write(lights.Count);
+            for (int i = 0; i < lights.Count; i++)
+            {
+                stringComp.WriteStoredString(writer, lights[i].type);
+                writer.Write(lights[i].position.ToByte());
+                writer.Write(lights[i].lightGroup);
+            }
+            writer.Write(doors.Count);
+            for (int i = 0; i < doors.Count; i++)
+            {
+                stringComp.WriteStoredString(writer, doors[i].type);
+                writer.Write(doors[i].position.ToByte());
+                writer.Write((byte)doors[i].direction);
+            }
+        }
+
+        public static EditorLevelData ReadFrom(BinaryReader reader)
+        {
+            byte version = reader.ReadByte();
+            StringCompressor stringComp = StringCompressor.ReadStringDatabase(reader);
+            EditorLevelData levelData = new EditorLevelData(new IntVector2(reader.ReadByte(), reader.ReadByte()));
+            levelData.lightGroups.Clear();
+            levelData.rooms.Clear();
+            int areaCount = reader.ReadInt32();
+            for (int i = 0; i < areaCount; i++)
+            {
+                // PLACEHOLDER: TODO: actually handle types
+                reader.ReadString();
+                levelData.areas.Add(new RectCellArea(new IntVector2(), new IntVector2(), 0).ReadInto(reader));
+            }
+            int roomCount = reader.ReadInt32();
+            for (int i = 0; i < roomCount; i++)
+            {
+                levelData.rooms.Add(new EditorRoom(stringComp.ReadStoredString(reader), new TextureContainer(stringComp.ReadStoredString(reader), stringComp.ReadStoredString(reader), stringComp.ReadStoredString(reader))));
+            }
+            ushort lightGroupCount = reader.ReadUInt16();
+            for (int i = 0; i < lightGroupCount; i++)
+            {
+                levelData.lightGroups.Add(new LightGroup() { 
+                    color = reader.ReadUnityColor().ToStandard(),
+                    strength = reader.ReadByte()
+                });
+            }
+            int lightCount = reader.ReadInt32();
+            for (int i = 0; i < lightCount; i++)
+            {
+                levelData.lights.Add(new LightPlacement()
+                {
+                    type = stringComp.ReadStoredString(reader),
+                    position = reader.ReadByteVector2().ToInt(),
+                    lightGroup = reader.ReadUInt16(),
+                });
+            }
+            int doorCount = reader.ReadInt32();
+            for (int i = 0; i < doorCount; i++)
+            {
+                levelData.doors.Add(new DoorLocation()
+                {
+                    type = stringComp.ReadStoredString(reader),
+                    position = reader.ReadByteVector2().ToInt(),
+                    direction = (Direction)reader.ReadByte()
+                });
+            }
+            return levelData;
         }
 
     }

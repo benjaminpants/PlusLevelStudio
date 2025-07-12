@@ -21,6 +21,18 @@
 			"onPressed":"exit"
 		},
 		{
+			"name":"undoButton",
+			"type":"imageButton",
+			"graphic":"BackArrow_0",
+			"hoverGraphic":"BackArrow_1",
+			"anchoredPosition":[0,0],
+			"size":[32,32],
+			"pivot":"#bottomLeft",
+			"anchorMin":"#bottomLeft",
+			"anchorMax":"#bottomLeft",
+			"onPressed":"undo"
+		},
+		{
 			"name":"HotSlot1",
 			"type":"hotslot",
 			"graphic":"ItemSlot_0",

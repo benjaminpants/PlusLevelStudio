@@ -36,6 +36,7 @@ namespace PlusLevelStudio.Editor.Tools
         {
             if (EditorController.Instance.levelData.RoomIdFromPos(EditorController.Instance.mouseGridPosition, true) != 0)
             {
+                EditorController.Instance.AddUndo();
                 LightPlacement lightPlace = new LightPlacement();
                 lightPlace.type = lightType;
                 lightPlace.position = EditorController.Instance.mouseGridPosition;

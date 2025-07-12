@@ -60,6 +60,7 @@ namespace PlusLevelStudio.Editor.Tools
             {
                 if (currentHoveredArea == null) return false; // hovering over nothing
                 if (EditorController.Instance.levelData.RoomFromId(currentHoveredArea.roomId).roomType != currentRoom.roomType) return false; // room is from different type
+                EditorController.Instance.AddUndo();
                 ushort oldId = currentHoveredArea.roomId;
                 currentHoveredArea.roomId = currentRoomId;
                 EditorController.Instance.levelData.RemoveUnusedRoom(oldId); // check to see if the room of the area we just removed is unused now, if it is, remove it

@@ -36,6 +36,9 @@ namespace PlusLevelStudio.Editor
                     //EditorController.Instance.levelData.Compile().Write(writer);
                     //writer.Close();
                     break;
+                case "undo":
+                    EditorController.Instance.PopUndo();
+                    break;
             }
         }
     }
