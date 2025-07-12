@@ -25,7 +25,8 @@
 			"pivot":"#bottomLeft",
 			"anchorMin":"#bottomLeft",
 			"anchorMax":"#bottomLeft",
-			"onPressed":"undo"
+			"onPressed":"undo",
+			"tooltip":"Ed_Tip_Undo"
 		},
 		{
 			"name":"HotSlot1",
@@ -136,7 +137,8 @@
 			"pivot":"#bottomRight",
 			"anchorMin":"#bottomRight",
 			"anchorMax":"#bottomRight",
-			"onPressed":"play"
+			"onPressed":"play",
+			"tooltip":"Ed_Tip_PlayButton"
 		},
 		{
 			"name":"ObjectBox",

@@ -16,7 +16,6 @@ namespace PlusLevelStudio.Editor
 
         public bool OnClicked()
         {
-            Debug.Log("Settings Gear Clicked!");
             if (clickedAction != null)
             {
                 clickedAction();

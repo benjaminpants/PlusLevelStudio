@@ -15,6 +15,7 @@ using System.IO;
 using MTM101BaldAPI.Reflection;
 using PlusLevelStudio.UI;
 using PlusLevelStudio.Editor.Tools;
+using TMPro;
 
 namespace PlusLevelStudio
 {
@@ -84,6 +85,8 @@ namespace PlusLevelStudio
                     new RoomTool("hall"),
                     new RoomTool("class"),
                     new RoomTool("faculty"),
+                    new RoomTool("office"),
+                    new RoomTool("closet"),
                     new MergeTool(),
                     new DeleteTool(),
                     new LightTool("fluorescent"),
@@ -249,6 +252,17 @@ namespace PlusLevelStudio
             editorCanvas.referencePixelsPerUnit = 100f;
             editorCanvas.gameObject.AddComponent<PlaneDistance>();
             editorCanvas.renderMode = RenderMode.ScreenSpaceCamera;
+
+            // attempt to set up tooltips
+            RectTransform tooltipBase = workerCgm.pauseScreen.transform.Find("Options").Find("TooltipBase").GetComponent<RectTransform>();
+            RectTransform editorTooltip = GameObject.Instantiate<RectTransform>(tooltipBase, editorCanvas.transform);
+            editorTooltip.name = "TooltipBase";
+            editorTooltip.anchoredPosition = Vector2.zero;
+            TooltipController toolTipController = editorCanvas.gameObject.AddComponent<TooltipController>();
+            toolTipController.ReflectionSetVariable("tooltipBgRect", editorTooltip.transform.Find("Tooltip").Find("BG").GetComponent<RectTransform>());
+            toolTipController.ReflectionSetVariable("tooltipTmp", editorTooltip.transform.Find("Tooltip").Find("Tmp").GetComponent<TextMeshProUGUI>());
+            toolTipController.ReflectionSetVariable("tooltipRect", editorTooltip.transform.Find("Tooltip").GetComponent<RectTransform>());
+
             UIHelpers.AddCursorInitiatorToCanvas(editorCanvas).useRawPosition = true;
             EditorController standardEditorController = editorControllerObject.AddComponent<EditorController>();
             standardEditorController.ReflectionSetVariable("destroyOnLoad", true);
@@ -258,6 +272,8 @@ namespace PlusLevelStudio
             standardEditorController.gridManagerPrefab = gridManager;
             standardEditorController.ecPrefab = ecPrefab;
             standardEditorController.cgmPrefab = workerCgm;
+            standardEditorController.tooltipController = toolTipController;
+            standardEditorController.tooltipBase = editorTooltip;
             // quick pause to create the gameloader prefab
             GameObject gameLoaderPreObject = new GameObject("EditorGameLoader");
             gameLoaderPreObject.ConvertToPrefab(true);
@@ -325,7 +341,7 @@ namespace PlusLevelStudio
 
         IEnumerator LoadAssets()
         {
-            yield return 3;
+            yield return 4;
             yield return "Creating solid color lightmaps...";
             lightmaps.Add("none", Resources.FindObjectsOfTypeAll<Texture2D>().First(x => x.GetInstanceID() >= 0 && x.name == "LightMap"));
             AddSolidColorLightmap("white", Color.white);
@@ -348,6 +364,8 @@ namespace PlusLevelStudio
             {
                 editorTracks.Add(AssetLoader.MidiFromFile(midiPaths[i], "editorTrack_" + Path.GetFileNameWithoutExtension(midiPaths[i])));
             }
+            yield return "Loading Localization...";
+            AssetLoader.LocalizationFromMod(this);
         }
     }
 }

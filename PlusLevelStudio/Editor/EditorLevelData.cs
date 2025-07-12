@@ -29,6 +29,8 @@ namespace PlusLevelStudio.Editor
             defaultTextures.Add("hall", new TextureContainer("HallFloor", "Wall", "Ceiling"));
             defaultTextures.Add("class", new TextureContainer("BlueCarpet", "WallWithMolding", "Ceiling"));
             defaultTextures.Add("faculty", new TextureContainer("BlueCarpet", "SaloonWall", "Ceiling"));
+            defaultTextures.Add("office", new TextureContainer("BlueCarpet", "WallWithMolding", "Ceiling"));
+            defaultTextures.Add("closet", new TextureContainer("TileFloor", "Wall", "Ceiling"));
         }
 
         public EditorRoom CreateRoomWithDefaultSettings(string type)

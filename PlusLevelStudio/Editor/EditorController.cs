@@ -54,6 +54,8 @@ namespace PlusLevelStudio.Editor
 
         public GridManager gridManagerPrefab;
         public GridManager gridManager;
+        public TooltipController tooltipController;
+        public RectTransform tooltipBase;
 
         public GameCamera cameraPrefab;
         public GameCamera camera;
@@ -347,11 +349,16 @@ namespace PlusLevelStudio.Editor
             }
         }
 
+        protected static FieldInfo _xMin = AccessTools.Field(typeof(TooltipController), "xMin");
+        protected static FieldInfo _xMax = AccessTools.Field(typeof(TooltipController), "xMax");
+
         public void UpdateUI()
         {
             if ((float)Singleton<PlayerFileManager>.Instance.resolutionX / (float)Singleton<PlayerFileManager>.Instance.resolutionY >= 1.3333f)
             {
-                calculatedScaleFactor = (float)Mathf.RoundToInt((float)Singleton<PlayerFileManager>.Instance.resolutionY / 360f);
+                // currently replacing RoundToInt with FloorToInt as a hacky solution to avoid elements getting cut off at certain resolutions.
+                // TODO: find a more elegant/proper way of doing this, as a variety of resolutions that were rendering fine before are now rendering oddly!
+                calculatedScaleFactor = (float)Mathf.FloorToInt((float)Singleton<PlayerFileManager>.Instance.resolutionY / 360f);
             }
             else
             {
@@ -360,6 +367,8 @@ namespace PlusLevelStudio.Editor
             canvas.scaleFactor = calculatedScaleFactor;
             canvas.worldCamera = camera.canvasCam;
             screenSize = new Vector2(Screen.width / calculatedScaleFactor, Screen.height / calculatedScaleFactor);
+            _xMin.SetValue(tooltipController,0f);
+            _xMax.SetValue(tooltipController,canvas.GetComponent<RectTransform>().rect.width);
             for (int i = 0; i < uiObjects.Length; i++)
             {
                 if (uiObjects[i] != null)
@@ -370,6 +379,7 @@ namespace PlusLevelStudio.Editor
             CursorInitiator init = canvas.GetComponent<CursorInitiator>();
             init.screenSize = screenSize;
             init.Inititate();
+            tooltipBase.anchoredPosition = CursorController.Instance.GetComponent<RectTransform>().anchoredPosition;
             UIBuilder.LoadGlobalDefinesFromFile(Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "GlobalDefines.json"));
             uiObjects[0] = UIBuilder.BuildUIFromFile<EditorUIMainHandler>(canvas, "Main", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "Main.json")).gameObject;
             uiObjects[0].transform.SetAsFirstSibling();

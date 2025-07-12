@@ -22,7 +22,6 @@ namespace PlusLevelStudio.Editor
 
         public override void SendInteractionMessage(string message, object data = null)
         {
-            Debug.Log(message);
             if (message == "yes")
             {
                 OnYes();

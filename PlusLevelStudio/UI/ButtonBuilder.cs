@@ -1,5 +1,6 @@
 ﻿using MTM101BaldAPI.UI;
 using Newtonsoft.Json.Linq;
+using PlusLevelStudio.Editor;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -22,6 +23,13 @@ namespace PlusLevelStudio.UI
             if (data.ContainsKey("onPressed"))
             {
                 button.OnPress.AddListener(() => handler.SendInteractionMessage(data["onPressed"].Value<string>()));
+            }
+            if (data.ContainsKey("tooltip"))
+            {
+                string key = data["tooltip"].Value<string>();
+                button.eventOnHigh = true;
+                button.OnHighlight.AddListener(() => EditorController.Instance.tooltipController.UpdateTooltip(key));
+                button.OffHighlight.AddListener(() => EditorController.Instance.tooltipController.CloseTooltip());
             }
             return b;
         }
