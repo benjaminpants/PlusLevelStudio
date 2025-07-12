@@ -4,10 +4,13 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using PlusStudioLevelLoader;
+using MTM101BaldAPI.AssetTools;
+using PlusLevelStudio.UI;
+using System.IO;
 
 namespace PlusLevelStudio.Editor
 {
-    public class LightPlacement : IEditorVisualizable, IEditorDeletable
+    public class LightPlacement : IEditorVisualizable, IEditorDeletable, IEditorSettingsable
     {
         public IntVector2 position;
         public ushort lightGroup;
@@ -16,6 +19,12 @@ namespace PlusLevelStudio.Editor
         public void CleanupVisual(GameObject visualObject)
         {
             
+        }
+
+        public void SettingsClicked()
+        {
+            // placeholder
+            EditorController.Instance.CreateUI<DummyUIExchangeHandler>("LightConfig");
         }
 
         public GameObject GetVisualPrefab()
@@ -30,7 +39,7 @@ namespace PlusLevelStudio.Editor
             Transform lightTransform = GameObject.Instantiate<Transform>(LevelLoaderPlugin.Instance.lightTransforms[type], visualObject.transform);
             lightTransform.localPosition = Vector3.down * 12f; // TODO: change?
             edDel.myRenderers.AddRange(lightTransform.GetComponentsInChildren<Renderer>());
-
+            visualObject.GetComponent<SettingsComponent>().activateSettingsOn = this;
             UpdateVisual(visualObject);
         }
 

@@ -8,11 +8,30 @@ namespace PlusLevelStudio.Editor
 
     public enum SelectorState
     {
+        /// <summary>
+        /// Nothing is selected or displayed.
+        /// </summary>
         None,
+        /// <summary>
+        /// A tile is selected, show the tile selection box.
+        /// </summary>
         Tile,
+        /// <summary>
+        /// An area is selected. Show the resize handles.
+        /// </summary>
         Area,
+        /// <summary>
+        /// A direction is waiting to be selected. Show the resize handles in a 1x1 box.
+        /// </summary>
         Direction,
-        Object
+        /// <summary>
+        /// An object is selected. Show the 3D rotation handles and the settings.
+        /// </summary>
+        Object,
+        /// <summary>
+        /// An object that only can have its settings changed. Show the settings.
+        /// </summary>
+        Settings
     }
 
     public class SelectorArrow : MonoBehaviour, IEditorInteractable
@@ -45,6 +64,7 @@ namespace PlusLevelStudio.Editor
     {
         public GameObject tileSelector;
         public GameObject[] tileArrows = new GameObject[4];
+        public SettingsWorldButton gearButton;
 
         public IntVector2 selectedTile { get; private set; } = new IntVector2(0, 0);
 
@@ -57,6 +77,11 @@ namespace PlusLevelStudio.Editor
         protected Action<IntVector2, IntVector2> resizeAction;
         protected Action<Direction> directionAction;
 
+
+        void Awake()
+        {
+            UpdateSelectionObjects();
+        }
 
         private void NullActions()
         {
@@ -128,6 +153,16 @@ namespace PlusLevelStudio.Editor
             }
         }
 
+        public void ShowSettings(Vector3 position, Action onClicked)
+        {
+            // TODO: REMOVE HACK! ACK ACK ACK ITS SO HACKY IN HERE
+            EditorController.Instance.UnhighlightAllCells();
+            state = SelectorState.Settings;
+            gearButton.clickedAction = onClicked;
+            UpdateSelectionObjects();
+            gearButton.transform.position = position;
+        }
+
 
         public bool TileArrowClicked(Direction d)
         {
@@ -194,6 +229,7 @@ namespace PlusLevelStudio.Editor
             {
                 tileArrows[i].SetActive(false);
             }
+            gearButton.gameObject.SetActive(false);
             switch (state)
             {
                 case SelectorState.None:
@@ -213,6 +249,9 @@ namespace PlusLevelStudio.Editor
                     {
                         tileArrows[i].SetActive(true);
                     }
+                    break;
+                case SelectorState.Settings:
+                    gearButton.gameObject.SetActive(true);
                     break;
             }
         }

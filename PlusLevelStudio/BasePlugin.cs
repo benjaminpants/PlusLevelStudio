@@ -175,6 +175,22 @@ namespace PlusLevelStudio
                 selector.tileArrows[i] = dirQuad;
             }
 
+            GameObject settingsObject = new GameObject("SettingsGear");
+            settingsObject.transform.SetParent(selectorObject.transform, true);
+
+            GameObject settingsSpriteObject = new GameObject("Sprite");
+            settingsSpriteObject.transform.SetParent(settingsObject.transform);
+            settingsSpriteObject.layer = LayerMask.NameToLayer("Billboard");
+            settingsSpriteObject.transform.localPosition = Vector3.zero;
+            SpriteRenderer settingsSpriteRenderer = settingsSpriteObject.AddComponent<SpriteRenderer>();
+            settingsSpriteRenderer.material = assetMan.Get<Material>("spriteBillboard");
+            settingsSpriteRenderer.sprite = AssetLoader.SpriteFromMod(this, Vector2.one / 2f, 32f, "Editor", "SettingsGear.png");
+            settingsSpriteRenderer.material.SetTexture("_LightMap", lightmaps["white"]);
+            BoxCollider settingsCollider = settingsObject.AddComponent<BoxCollider>();
+            settingsCollider.gameObject.layer = editorInteractableLayer;
+            settingsCollider.size = Vector3.one * 2f;
+            selector.gearButton = settingsObject.AddComponent<SettingsWorldButton>();
+
             yield return "Creating Worker CoreGameManager...";
             CoreGameManager cgm = Resources.FindObjectsOfTypeAll<CoreGameManager>().First(x => x.name == "CoreGameManager" && x.GetInstanceID() >= 0);
             CoreGameManager workerCgm = GameObject.Instantiate<CoreGameManager>(cgm, MTM101BaldiDevAPI.prefabTransform);
@@ -183,6 +199,8 @@ namespace PlusLevelStudio
             workerCgm.name = "WorkerCoreGameManager";
 
             yield return "Creating editor prefab visuals...";
+
+            // create light display
             GameObject lightDisplayObject = new GameObject("LightVisual");
             lightDisplayObject.transform.SetParent(MTM101BaldiDevAPI.prefabTransform);
             GameObject lightSpriteObject = new GameObject("Sprite");
@@ -199,6 +217,7 @@ namespace PlusLevelStudio
             boxC.center += Vector3.up * 2f;
             boxC.gameObject.layer = editorInteractableLayer;
             EditorDeletableObject lightEdo = boxC.gameObject.AddComponent<EditorDeletableObject>();
+            boxC.gameObject.AddComponent<SettingsComponent>();
             lightEdo.myRenderers = new List<Renderer> { lightSpriteRenderer };
 
             // create door visuals
@@ -259,11 +278,13 @@ namespace PlusLevelStudio
             uiAssetMan.Add<Sprite>("ItemSlot_2", allVanillaSprites.First(x => x.name == "ItemSlot_Dynamic_2"));
             uiAssetMan.Add<Sprite>("QuestionMark0", allVanillaSprites.First(x => x.name == "QMark_Sheet_0"));
             uiAssetMan.Add<Sprite>("QuestionMark1", allVanillaSprites.First(x => x.name == "QMark_Sheet_1"));
+            uiAssetMan.Add<Sprite>("ChalkBoardStandard", allVanillaSprites.First(x => x.name == "ChalkBoardStandard"));
 
             UIBuilder.elementBuilders.Add("image", new ImageBuilder());
             UIBuilder.elementBuilders.Add("imageButton", new ButtonBuilder());
             UIBuilder.elementBuilders.Add("hotslot", new HotSlotBuilder());
             UIBuilder.elementBuilders.Add("hotslotSpecial", new SpecialHotSlotBuilder());
+            UIBuilder.elementBuilders.Add("blocker", new BlockerBuilder());
             SpritesFromPath(Path.Combine(AssetLoader.GetModPath(this), "UI", "Editor"), "");
         }
 

@@ -52,6 +52,28 @@ namespace PlusLevelStudio.UI
         public abstract void OnElementsCreated();
     }
 
+    /// <summary>
+    /// A dummy UIExchangeHandler that just logs whenever its methods are called. Does nothing and shouldn't be used in anything.
+    /// </summary>
+    public class DummyUIExchangeHandler : UIExchangeHandler
+    {
+        public override bool GetStateBoolean(string key)
+        {
+            Debug.Log("Get State Boolean:" + key);
+            return false;
+        }
+
+        public override void OnElementsCreated()
+        {
+            Debug.Log("Elements Created");
+        }
+
+        public override void SendInteractionMessage(string message)
+        {
+            Debug.Log("Interaction message sent: " + message);
+        }
+    }
+
     public static class UIBuilder
     {
         public static Dictionary<string, UIElementBuilder> elementBuilders = new Dictionary<string, UIElementBuilder>();

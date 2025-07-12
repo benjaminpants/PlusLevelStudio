@@ -36,6 +36,8 @@ namespace PlusLevelStudio.Editor
 
         public Tile[][] tiles = new Tile[0][];
         public GameObject[] uiObjects = new GameObject[1];
+        // todo: maybe make this a tuple list with (GameObject, bool) where the bool represents if it's a blocking UI element?
+        public List<GameObject> uiOverlays = new List<GameObject>();
 
         public EnvironmentController workerEc;
         public EnvironmentController ecPrefab;
@@ -94,11 +96,11 @@ namespace PlusLevelStudio.Editor
             MemoryStream recentUndo = undoStreams[undoStreams.Count - 1];
             undoStreams.Remove(recentUndo);
             BinaryReader reader = new BinaryReader(recentUndo);
-            LoadEditorLevel(EditorLevelData.ReadFrom(reader));
+            LoadEditorLevel(EditorLevelData.ReadFrom(reader), false);
             reader.Close();
         }
 
-        public void LoadEditorLevel(EditorLevelData newData)
+        public void LoadEditorLevel(EditorLevelData newData, bool wipeUndoHistory = true)
         {
             if (heldInteractable != null)
             {
@@ -123,6 +125,10 @@ namespace PlusLevelStudio.Editor
             }
             RefreshCells();
             RefreshLights();
+            if (wipeUndoHistory)
+            {
+                undoStreams.Clear(); // memorystreams dont need .dispose
+            }
         }
 
         /// <summary>
@@ -277,6 +283,18 @@ namespace PlusLevelStudio.Editor
             yDeltaId = ""
         };
 
+        public T CreateUI<T>(string name) where T : UIExchangeHandler
+        {
+            T obj = UIBuilder.BuildUIFromFile<T>(canvas, name, Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", name + ".json"));
+            obj.transform.SetAsFirstSibling();
+            for (int i = 0; i < uiObjects.Length; i++)
+            {
+                uiObjects[i].transform.SetAsFirstSibling();
+            }
+            uiOverlays.Add(obj.gameObject);
+            return obj;
+        }
+
         public void UpdateUI()
         {
             if ((float)Singleton<PlayerFileManager>.Instance.resolutionX / (float)Singleton<PlayerFileManager>.Instance.resolutionY >= 1.3333f)
@@ -417,6 +435,7 @@ namespace PlusLevelStudio.Editor
                             heldInteractable = interactable;
                             return true;
                         }
+                        return true;
                     }
                 }
             }
@@ -544,6 +563,7 @@ namespace PlusLevelStudio.Editor
 
         protected virtual void UpdateCamera()
         {
+            if (uiOverlays.Count > 0) return;
             if (Singleton<InputManager>.Instance.GetDigitalInput("UseItem", false))
             {
                 Vector2 analog = CursorController.Movement;

@@ -36,4 +36,29 @@ namespace PlusLevelStudio.Editor
             MaterialModifier.ChangeOverlay(sideA, doorMatB.shut);
         }
     }
+
+    public class SettingsComponent : MonoBehaviour, IEditorInteractable
+    {
+        public IEditorSettingsable activateSettingsOn;
+        public bool InteractableByTool(EditorTool tool)
+        {
+            return false;
+        }
+
+        public bool OnClicked()
+        {
+            EditorController.Instance.selector.ShowSettings(transform.position + (Vector3.up * 7f), activateSettingsOn.SettingsClicked);
+            return false;
+        }
+
+        public bool OnHeld()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnReleased()
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

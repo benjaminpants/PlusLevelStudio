@@ -1,0 +1,19 @@
+{
+	"defines":{
+	},
+	"elements":[
+		{
+			"type":"blocker"
+		},
+		{
+			"name":"BackButton",
+			"type":"image",
+			"graphic":"ChalkBoardStandard",
+			"anchoredPosition":[0,0],
+			"size":[480,360],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+		},
+	]
+}
