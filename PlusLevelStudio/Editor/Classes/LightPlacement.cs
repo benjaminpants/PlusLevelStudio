@@ -42,7 +42,7 @@ namespace PlusLevelStudio.Editor
             edDel.toDelete = this;
             Transform lightTransform = GameObject.Instantiate<Transform>(LevelLoaderPlugin.Instance.lightTransforms[type], visualObject.transform);
             lightTransform.localPosition = Vector3.down * 12f; // TODO: change?
-            edDel.myRenderers.AddRange(lightTransform.GetComponentsInChildren<Renderer>());
+            edDel.AddRendererRange(lightTransform.GetComponentsInChildren<Renderer>(), "none");
             visualObject.GetComponent<SettingsComponent>().activateSettingsOn = this;
             UpdateVisual(visualObject);
         }

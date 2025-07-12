@@ -20,6 +20,7 @@ namespace PlusLevelStudio.Editor
     public class EditorDeletableObject : MonoBehaviour
     {
         public IEditorDeletable toDelete;
+        public List<string> defaultHighlights = new List<string>();
         /// <summary>
         /// Used for changing the material's LightMap for the highlight effect.
         /// </summary>
@@ -29,13 +30,30 @@ namespace PlusLevelStudio.Editor
             return toDelete.OnDelete(data);
         }
 
+        public void AddRendererRange(IEnumerable<Renderer> renders, string defaultHighlight)
+        {
+            int count = -myRenderers.Count;
+            myRenderers.AddRange(renders);
+            count += myRenderers.Count;
+            for (int i = 0; i < count; i++)
+            {
+                defaultHighlights.Add(defaultHighlight);
+            }
+        }
+
+        public void AddRenderer(Renderer render, string defaultHighlight)
+        {
+            myRenderers.Add(render);
+            defaultHighlights.Add(defaultHighlight);
+        }
+
         public void Highlight(string highlight)
         {
             for (int i = 0; i < myRenderers.Count; i++)
             {
                 for (int j = 0; j < myRenderers[i].materials.Length; j++)
                 {
-                    myRenderers[i].materials[j].SetTexture("_LightMap", LevelStudioPlugin.Instance.lightmaps[highlight]);
+                    myRenderers[i].materials[j].SetTexture("_LightMap", LevelStudioPlugin.Instance.lightmaps[highlight == "none" ? defaultHighlights[i] : highlight]);
                 }
             }
         }

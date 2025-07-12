@@ -4,6 +4,7 @@ using System.Text;
 using PlusLevelStudio.UI;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace PlusLevelStudio.Editor.SettingsUI
 {
@@ -21,7 +22,13 @@ namespace PlusLevelStudio.Editor.SettingsUI
         public RectTransform greenTick;
         public RectTransform blueTick;
 
-        public void Refresh()
+        public TextMeshProUGUI redText;
+        public TextMeshProUGUI greenText;
+        public TextMeshProUGUI blueText;
+        public Image hexDisplay;
+        public TextMeshProUGUI hexText;
+
+        public void Refresh(bool refreshHexText = true)
         {
             LightGroup currentGroup = EditorController.Instance.levelData.lightGroups[myPlacement.lightGroup];
             groupText.text = (myPlacement.lightGroup + 1).ToString();
@@ -29,6 +36,14 @@ namespace PlusLevelStudio.Editor.SettingsUI
             redTick.anchoredPosition = new Vector2(redTick.anchoredPosition.x,redTickStartY + Mathf.Round(currentGroup.color.r * 128));
             greenTick.anchoredPosition = new Vector2(greenTick.anchoredPosition.x, greenTickStartY + Mathf.Round(currentGroup.color.g * 128));
             blueTick.anchoredPosition = new Vector2(blueTick.anchoredPosition.x, blueTickStartY + Mathf.Round(currentGroup.color.b * 128));
+            redText.text = Mathf.RoundToInt(currentGroup.color.r * 255f).ToString();
+            greenText.text = Mathf.RoundToInt(currentGroup.color.g * 255f).ToString();
+            blueText.text = Mathf.RoundToInt(currentGroup.color.b * 255f).ToString();
+            hexDisplay.color = currentGroup.color;
+            if (refreshHexText)
+            {
+                hexText.text = ColorUtility.ToHtmlStringRGB(currentGroup.color);
+            }
         }
 
         public void ChangeRed(float newVal)
@@ -59,6 +74,11 @@ namespace PlusLevelStudio.Editor.SettingsUI
             redTickStartY = redTick.anchoredPosition.y;
             blueTickStartY = blueTick.anchoredPosition.y;
             greenTickStartY = greenTick.anchoredPosition.y;
+            redText = transform.Find("RedText").GetComponent<TextMeshProUGUI>();
+            greenText = transform.Find("GreenText").GetComponent<TextMeshProUGUI>();
+            blueText = transform.Find("BlueText").GetComponent<TextMeshProUGUI>();
+            hexDisplay = transform.Find("HexDisplay").GetComponent<Image>();
+            hexText = transform.Find("HexCodeDisplay").GetComponent<TextMeshProUGUI>();
             base.OnElementsCreated();
         }
 
@@ -131,16 +151,26 @@ namespace PlusLevelStudio.Editor.SettingsUI
                     UpdateRefreshMark();
                     break;
                 case "red":
-                    ChangeRed(Mathf.Clamp(((Vector3)data).y / 127f,0f,1f));
+                    ChangeRed(Mathf.Clamp(((Vector3)data).y / 128f,0f,1f));
                     UpdateRefreshMark();
                     break;
                 case "green":
-                    ChangeGreen(Mathf.Clamp(((Vector3)data).y / 127f, 0f, 1f));
+                    ChangeGreen(Mathf.Clamp(((Vector3)data).y / 128f, 0f, 1f));
                     UpdateRefreshMark();
                     break;
                 case "blue":
-                    ChangeBlue(Mathf.Clamp(((Vector3)data).y / 127f, 0f, 1f));
+                    ChangeBlue(Mathf.Clamp(((Vector3)data).y / 128f, 0f, 1f));
                     UpdateRefreshMark();
+                    break;
+                case "hexDone":
+                case "hex":
+                    if (ColorUtility.TryParseHtmlString("#" + (hexText.text.PadRight(6,'0')), out Color c))
+                    {
+                        EditorController.Instance.levelData.lightGroups[myPlacement.lightGroup].color = c;
+                        EditorController.Instance.RefreshLights();
+                        somethingChanged = true;
+                        Refresh(message == "hexDone");
+                    }
                     break;
             }
             base.SendInteractionMessage(message, data);

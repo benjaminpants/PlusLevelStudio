@@ -218,7 +218,7 @@ namespace PlusLevelStudio
             boxC.gameObject.layer = editorInteractableLayer;
             EditorDeletableObject lightEdo = boxC.gameObject.AddComponent<EditorDeletableObject>();
             boxC.gameObject.AddComponent<SettingsComponent>();
-            lightEdo.myRenderers = new List<Renderer> { lightSpriteRenderer };
+            lightEdo.AddRenderer(lightSpriteRenderer, "white");
 
             // create door visuals
             GameObject standardDoorDisplayObject = new GameObject("StandardDoorVisual");
@@ -228,13 +228,14 @@ namespace PlusLevelStudio
             sideAQuad.transform.SetParent(standardDoorDisplayObject.transform);
             sideBQuad.transform.SetParent(standardDoorDisplayObject.transform);
             EditorDeletableObject doorDisplayDeletable = standardDoorDisplayObject.AddComponent<EditorDeletableObject>();
-            doorDisplayDeletable.myRenderers.Add(sideAQuad.GetComponent<MeshRenderer>());
-            doorDisplayDeletable.myRenderers.Add(sideBQuad.GetComponent<MeshRenderer>());
+            doorDisplayDeletable.AddRenderer(sideAQuad.GetComponent<MeshRenderer>(), "none");
+            doorDisplayDeletable.AddRenderer(sideBQuad.GetComponent<MeshRenderer>(), "none");
             DoorDisplay standardDoorDisplayBehavior = standardDoorDisplayObject.AddComponent<StandardDoorDisplay>();
             standardDoorDisplayBehavior.sideA = sideAQuad.GetComponent<MeshRenderer>();
             standardDoorDisplayBehavior.sideB = sideBQuad.GetComponent<MeshRenderer>();
+            /*
             EditorDeletableObject doorDelete = standardDoorDisplayObject.AddComponent<EditorDeletableObject>();
-            doorDelete.myRenderers = new List<Renderer>() { standardDoorDisplayBehavior.sideA, standardDoorDisplayBehavior.sideB };
+            doorDelete.myRenderers = new List<Renderer>() { standardDoorDisplayBehavior.sideA, standardDoorDisplayBehavior.sideB };*/
             standardDoorDisplayObject.AddComponent<BoxCollider>().size = new Vector3(10f,10f,0.5f);
             standardDoorDisplayObject.layer = editorInteractableLayer;
             doorDisplays.Add("standard", standardDoorDisplayBehavior);
@@ -291,6 +292,7 @@ namespace PlusLevelStudio
             UIBuilder.elementBuilders.Add("blocker", new BlockerBuilder());
             UIBuilder.elementBuilders.Add("text", new TextBuilder());
             UIBuilder.elementBuilders.Add("dragdetect", new DragDetectorBuilder());
+            UIBuilder.elementBuilders.Add("textbox", new TextBoxBuilder());
             SpritesFromPath(Path.Combine(AssetLoader.GetModPath(this), "UI", "Editor"), "");
         }
 

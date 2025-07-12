@@ -8,4 +8,5 @@
 	"center":[0.5,0.5],
 	"centerLeft":[0,0.5],
 	"centerRight":[1,0.5],
+	"white":[255,255,255]
 }

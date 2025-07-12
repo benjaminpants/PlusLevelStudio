@@ -2,7 +2,7 @@
 	"defines":{
 		"redBarPos":[-155,-70],
 		"greenBarPos":[-107,-70],
-		"blueBarPos":[-58,-70]
+		"blueBarPos":[-58,-70],
 	},
 	"elements":[
 		{
@@ -234,6 +234,73 @@
 			"anchorMin":"#center",
 			"anchorMax":"#center",
 			"onDrag":"blue"
+		},
+		{
+			"name":"RedText",
+			"type":"text",
+			"anchoredPosition":[-139,-90],
+			"size":[64,64],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"font":"ComicSans18",
+			"color":[255,0,0],
+			"text":"255",
+			"alignment":"Center"
+		},
+		{
+			"name":"GreenText",
+			"type":"text",
+			"anchoredPosition":[-91,-90],
+			"size":[64,64],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"font":"ComicSans18",
+			"color":[0,255,0],
+			"text":"255",
+			"alignment":"Center"
+		},
+		{
+			"name":"BlueText",
+			"type":"text",
+			"anchoredPosition":[-42,-90],
+			"size":[64,64],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"font":"ComicSans18",
+			"color":[0,0,255],
+			"text":"255",
+			"alignment":"Center"
+		},
+		{
+			"name":"HexDisplay",
+			"type":"image",
+			"graphic":"ColorDisplay",
+			"anchoredPosition":[0,0],
+			"size":[42,42],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+		},
+		{
+			"name":"HexCodeDisplay",
+			"type":"textbox",
+			"anchoredPosition":[-22,-22],
+			"size":[72,24],
+			"pivot":"#topLeft",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"font":"ComicSans18",
+			"color":[255,255,255],
+			"text":"FFFFFF",
+			"alignment":"TopLeft",
+			"characterLimit":6,
+			"upper":true,
+			"allowedCharacters":"0123456789ABCDEF",
+			"onType":"hex",
+			"onFinish":"hexDone",
 		},
 		{
 			"name":"ExitButton",

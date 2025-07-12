@@ -1,0 +1,114 @@
+﻿using MTM101BaldAPI.UI;
+using Newtonsoft.Json.Linq;
+using Rewired;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace PlusLevelStudio.UI
+{
+    public class TextBoxBuilder : TextBuilder
+    {
+        public override GameObject Build(GameObject parent, UIExchangeHandler handler, Dictionary<string, JToken> data)
+        {
+            GameObject b = base.Build(parent, handler, data);
+            GameObject collision = new ImageBuilder().Build(parent, handler, data);
+            collision.name += "_Collision";
+            collision.gameObject.tag = "Button";
+            collision.GetComponent<Image>().color = Color.clear;
+            EditorTextBox box = collision.AddComponent<EditorTextBox>();
+            box.text = b.GetComponent<TextMeshProUGUI>();
+            box.characterLimit = data["characterLimit"].Value<int>();
+            box.upperAll = data["upper"].Value<bool>();
+            if (data.ContainsKey("onType"))
+            {
+                box.typeMessage = data["onType"].Value<string>();
+            }
+            box.typeDoneMessage = data["onFinish"].Value<string>();
+            box.handler = handler;
+            if (data.ContainsKey("allowedCharacters"))
+            {
+                box.allowedCharacters = data["allowedCharacters"].Value<string>();
+            }
+            return b;
+        }
+    }
+
+    public class EditorTextBox : MenuButton
+    {
+        public TextMeshProUGUI text;
+        bool typing = false;
+        public int characterLimit = 8;
+        public bool upperAll = false;
+        public string allowedCharacters = null;
+        public string typeMessage = null;
+        public string typeDoneMessage;
+        public UIExchangeHandler handler;
+        public override void Press()
+        {
+            //base.Press();
+            CursorController.Instance.Hide(true);
+            typing = true;
+        }
+
+        public override void Highlight()
+        {
+            text.fontStyle = FontStyles.Underline;
+            highlighted = true;
+            wasHighlighted = true;
+        }
+
+        void Update()
+        {
+            if (!highlighted && wasHighlighted)
+            {
+                text.fontStyle = FontStyles.Normal;
+                wasHighlighted = false;
+            }
+            highlighted = false;
+            if (!typing) return;
+            text.fontStyle = FontStyles.Underline;
+            bool sendUpdate = false;
+            if (Input.anyKeyDown && Input.inputString.Length > 0 && !char.IsControl(Input.inputString, 0))
+            {
+                if ((allowedCharacters == null) || allowedCharacters.Contains(Input.inputString[0].ToString().ToUpper()))
+                {
+                    text.text += Input.inputString[0].ToString();
+                    sendUpdate = true;
+                }
+                if (upperAll)
+                {
+                    text.text = text.text.ToUpper();
+                }
+            }
+            if (Input.GetKeyDown(KeyCode.Backspace))
+            {
+                if (text.text.Length > 0)
+                {
+                    text.text = text.text.Remove(text.text.Length - 1);
+                    sendUpdate = true;
+                }
+            }
+            if (text.text.Length > characterLimit)
+            {
+                text.text = text.text.Remove(characterLimit);
+                sendUpdate = true;
+            }
+            if (sendUpdate && (typeMessage != null))
+            {
+                handler.SendInteractionMessage(typeMessage, text.text);
+            }
+            //text.text = baseText;
+            if (Input.GetKeyDown(KeyCode.Return))
+            {
+                CursorController.Instance.Hide(false);
+                typing = false;
+                handler.SendInteractionMessage(typeDoneMessage, text.text);
+                text.fontStyle = FontStyles.Normal;
+            }
+        }
+    }
+}
