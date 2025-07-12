@@ -65,7 +65,7 @@ namespace PlusLevelStudio.Editor
 
         protected IEditorInteractable heldInteractable = null;
 
-        public int maxUndos = 100;
+        public int maxUndos = 5;
         public List<MemoryStream> undoStreams = new List<MemoryStream>();
 
         /// <summary>
@@ -90,6 +90,7 @@ namespace PlusLevelStudio.Editor
         /// </summary>
         public void PopUndo()
         {
+            if (undoStreams.Count == 0) return;
             MemoryStream recentUndo = undoStreams[undoStreams.Count - 1];
             undoStreams.Remove(recentUndo);
             BinaryReader reader = new BinaryReader(recentUndo);

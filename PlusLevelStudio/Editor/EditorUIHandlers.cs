@@ -11,6 +11,11 @@ namespace PlusLevelStudio.Editor
 {
     public class EditorUIMainHandler : UIExchangeHandler
     {
+        public override bool GetStateBoolean(string key)
+        {
+            return false;
+        }
+
         public override void OnElementsCreated()
         {
             HotSlotScript[] foundSlotScripts = transform.GetComponentsInChildren<HotSlotScript>();

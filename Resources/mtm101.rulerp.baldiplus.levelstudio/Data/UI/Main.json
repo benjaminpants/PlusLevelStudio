@@ -23,8 +23,8 @@
 		{
 			"name":"undoButton",
 			"type":"imageButton",
-			"graphic":"BackArrow_0",
-			"hoverGraphic":"BackArrow_1",
+			"graphic":"UndoButton",
+			"hoverGraphic":"UndoButtonHover",
 			"anchoredPosition":[0,0],
 			"size":[32,32],
 			"pivot":"#bottomLeft",

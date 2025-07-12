@@ -40,6 +40,13 @@ namespace PlusLevelStudio.UI
         public abstract void SendInteractionMessage(string message);
 
         /// <summary>
+        /// Gets the respective state boolean.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public abstract bool GetStateBoolean(string key);
+
+        /// <summary>
         /// Called when the UI is finished being built.
         /// </summary>
         public abstract void OnElementsCreated();
