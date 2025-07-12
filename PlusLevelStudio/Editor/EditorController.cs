@@ -70,6 +70,7 @@ namespace PlusLevelStudio.Editor
 
         public int maxUndos = 5;
         public List<MemoryStream> undoStreams = new List<MemoryStream>();
+        public MemoryStream currentlyHeldUndo = null;
 
         /// <summary>
         /// Adds the current state to the undo memory.
@@ -77,15 +78,45 @@ namespace PlusLevelStudio.Editor
         /// </summary>
         public void AddUndo()
         {
-            if (undoStreams.Count >= maxUndos) //we already have 5 undos
+            if (currentlyHeldUndo != null)
             {
-                undoStreams.RemoveAt(0); // memory streams dont need .Dispose to be called
+                Debug.LogWarning("Adding Undo while an Undo is being held! Discarding held undo...");
             }
+            HoldUndo();
+            AddHeldUndo();
+        }
+
+        /// <summary>
+        /// Creates an undo, but doesn't add it right away.
+        /// </summary>
+        public void HoldUndo()
+        {
             MemoryStream newStream = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(newStream, Encoding.Default, true);
             levelData.Write(writer);
             newStream.Seek(0, SeekOrigin.Begin);
-            undoStreams.Add(newStream);
+            currentlyHeldUndo = newStream;
+        }
+
+        /// <summary>
+        /// Cancels the currently held undo.
+        /// </summary>
+        public void CancelHeldUndo()
+        {
+            currentlyHeldUndo = null;
+        }
+
+        /// <summary>
+        /// Adds the currently held undo.
+        /// </summary>
+        public void AddHeldUndo()
+        {
+            if (undoStreams.Count >= maxUndos) //we already have 5 undos
+            {
+                undoStreams.RemoveAt(0); // memory streams dont need .Dispose to be called
+            }
+            undoStreams.Add(currentlyHeldUndo);
+            currentlyHeldUndo = null;
         }
 
         /// <summary>

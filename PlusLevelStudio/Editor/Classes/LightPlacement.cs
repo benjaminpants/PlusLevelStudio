@@ -7,6 +7,7 @@ using PlusStudioLevelLoader;
 using MTM101BaldAPI.AssetTools;
 using PlusLevelStudio.UI;
 using System.IO;
+using PlusLevelStudio.Editor.SettingsUI;
 
 namespace PlusLevelStudio.Editor
 {
@@ -23,8 +24,11 @@ namespace PlusLevelStudio.Editor
 
         public void SettingsClicked()
         {
+            EditorController.Instance.HoldUndo();
             // placeholder
-            EditorController.Instance.CreateUI<EditorOverlayUIExchangeHandler>("LightConfig");
+            LightSettingsExchangeHandler settings = EditorController.Instance.CreateUI<LightSettingsExchangeHandler>("LightConfig");
+            settings.myPlacement = this;
+            settings.Refresh(); // make it refresh
         }
 
         public GameObject GetVisualPrefab()
@@ -72,5 +76,16 @@ namespace PlusLevelStudio.Editor
     {
         public Color color = new Color(1f, 1f, 1f);
         public byte strength = 10;
+
+        public LightGroup()
+        {
+
+        }
+
+        public LightGroup(LightGroup toCopy)
+        {
+            color = toCopy.color;
+            strength = toCopy.strength;
+        }
     }
 }

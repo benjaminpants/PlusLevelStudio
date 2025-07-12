@@ -279,12 +279,18 @@ namespace PlusLevelStudio
             uiAssetMan.Add<Sprite>("QuestionMark0", allVanillaSprites.First(x => x.name == "QMark_Sheet_0"));
             uiAssetMan.Add<Sprite>("QuestionMark1", allVanillaSprites.First(x => x.name == "QMark_Sheet_1"));
             uiAssetMan.Add<Sprite>("ChalkBoardStandard", allVanillaSprites.First(x => x.name == "ChalkBoardStandard"));
+            uiAssetMan.Add<Sprite>("BackArrow_0", allVanillaSprites.First(x => x.name == "BackArrow_0"));
+            uiAssetMan.Add<Sprite>("MenuArrowLeft", allVanillaSprites.First(x => x.name == "MenuArrowSheet_2"));
+            uiAssetMan.Add<Sprite>("MenuArrowLeftHigh", allVanillaSprites.First(x => x.name == "MenuArrowSheet_0"));
+            uiAssetMan.Add<Sprite>("MenuArrowRight", allVanillaSprites.Where(x => x.name == "MenuArrowSheet_3").First());
+            uiAssetMan.Add<Sprite>("MenuArrowRightHigh", allVanillaSprites.First(x => x.name == "MenuArrowSheet_1"));
 
             UIBuilder.elementBuilders.Add("image", new ImageBuilder());
             UIBuilder.elementBuilders.Add("imageButton", new ButtonBuilder());
             UIBuilder.elementBuilders.Add("hotslot", new HotSlotBuilder());
-            UIBuilder.elementBuilders.Add("hotslotSpecial", new SpecialHotSlotBuilder());
             UIBuilder.elementBuilders.Add("blocker", new BlockerBuilder());
+            UIBuilder.elementBuilders.Add("text", new TextBuilder());
+            UIBuilder.elementBuilders.Add("dragdetect", new DragDetectorBuilder());
             SpritesFromPath(Path.Combine(AssetLoader.GetModPath(this), "UI", "Editor"), "");
         }
 

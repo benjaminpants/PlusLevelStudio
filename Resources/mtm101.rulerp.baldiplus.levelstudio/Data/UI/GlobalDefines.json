@@ -1,7 +1,11 @@
 {
 	"topRight":[1,1],
 	"topLeft":[0,1],
+	"topCenter":[0.5,1],
 	"bottomLeft":[0,0],
 	"bottomRight":[1,0],
+	"bottomCenter":[0.5,0],
 	"center":[0.5,0.5],
+	"centerLeft":[0,0.5],
+	"centerRight":[1,0.5],
 }

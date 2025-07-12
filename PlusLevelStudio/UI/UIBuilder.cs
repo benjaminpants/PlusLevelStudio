@@ -29,6 +29,19 @@ namespace PlusLevelStudio.UI
             return new Vector2(floatArray[0], floatArray[1]);
         }
 
+        protected Color ConvertToColor(JToken value)
+        {
+            float[] floatArray = value.ToObject<float[]>(); //lets hope this works?
+            if (floatArray.Length == 3)
+            {
+                return new Color(floatArray[0] / 255f, floatArray[1] / 255f, floatArray[2] / 255f);
+            }
+            else
+            {
+                return new Color(floatArray[0] / 255f, floatArray[1] / 255f, floatArray[2] / 255f, floatArray[3] / 255f);
+            }
+        }
+
         public abstract GameObject Build(GameObject parent, UIExchangeHandler handler, Dictionary<string, JToken> data);
     }
 
@@ -38,7 +51,7 @@ namespace PlusLevelStudio.UI
         /// Sends an interaction message to this exchange handler.
         /// </summary>
         /// <param name="message"></param>
-        public abstract void SendInteractionMessage(string message);
+        public abstract void SendInteractionMessage(string message, object data = null);
 
         /// <summary>
         /// Gets the respective state boolean.
@@ -69,7 +82,7 @@ namespace PlusLevelStudio.UI
             Debug.Log("Elements Created");
         }
 
-        public override void SendInteractionMessage(string message)
+        public override void SendInteractionMessage(string message, object data)
         {
             Debug.Log("Interaction message sent: " + message);
         }
@@ -87,11 +100,19 @@ namespace PlusLevelStudio.UI
             
         }
 
-        public override void SendInteractionMessage(string message)
+        public virtual bool OnExit()
+        {
+            return true;
+        }
+
+        public override void SendInteractionMessage(string message, object data)
         {
             if (message == "exit")
             {
-                EditorController.Instance.RemoveUI(this.gameObject);
+                if (OnExit())
+                {
+                    EditorController.Instance.RemoveUI(this.gameObject);
+                }
             }
         }
     }

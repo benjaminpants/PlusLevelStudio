@@ -70,27 +70,4 @@ namespace PlusLevelStudio.UI
             return baseObject;
         }
     }
-
-    public class SpecialHotSlotBuilder : HotSlotBuilder
-    {
-        public override GameObject Build(GameObject parent, UIExchangeHandler handler, Dictionary<string, JToken> data)
-        {
-            GameObject b = base.Build(parent, handler, data);
-
-            Image itmImage = b.transform.Find("Itm").GetComponent<Image>();
-
-            StandardMenuButton button = b.GetComponentInChildren<StandardMenuButton>();
-            button.OnHighlight.AddListener(() =>
-            {
-                itmImage.sprite = GetSprite("ObjectBoxOpen");
-            });
-            button.OffHighlight.AddListener(() =>
-            {
-                itmImage.sprite = GetSprite("ObjectBoxClosed");
-            });
-            itmImage.sprite = GetSprite("ObjectBoxClosed");
-
-            return b;
-        }
-    }
 }

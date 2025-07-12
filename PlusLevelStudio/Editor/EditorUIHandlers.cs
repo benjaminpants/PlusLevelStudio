@@ -25,7 +25,7 @@ namespace PlusLevelStudio.Editor
             }
         }
 
-        public override void SendInteractionMessage(string message)
+        public override void SendInteractionMessage(string message, object data)
         {
             switch (message)
             {
