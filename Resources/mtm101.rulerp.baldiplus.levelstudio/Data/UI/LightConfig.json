@@ -6,7 +6,8 @@
 	},
 	"elements":[
 		{
-			"type":"blocker"
+			"type":"blocker",
+			"transparency":1
 		},
 		{
 			"name":"Chalkboard",
@@ -288,7 +289,7 @@
 			"name":"HexCodeDisplay",
 			"type":"textbox",
 			"anchoredPosition":[-22,-22],
-			"size":[72,24],
+			"size":[80,24],
 			"pivot":"#topLeft",
 			"anchorMin":"#center",
 			"anchorMax":"#center",

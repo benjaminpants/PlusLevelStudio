@@ -293,6 +293,7 @@ namespace PlusLevelStudio
             UIBuilder.elementBuilders.Add("text", new TextBuilder());
             UIBuilder.elementBuilders.Add("dragdetect", new DragDetectorBuilder());
             UIBuilder.elementBuilders.Add("textbox", new TextBoxBuilder());
+            UIBuilder.elementBuilders.Add("textbutton", new TextButtonBuilder());
             SpritesFromPath(Path.Combine(AssetLoader.GetModPath(this), "UI", "Editor"), "");
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using System.Text;
 using PlusLevelStudio.UI;
 using TMPro;
@@ -126,6 +127,41 @@ namespace PlusLevelStudio.Editor.SettingsUI
             Refresh();
         }
 
+        public void RemoveLightGroup(bool confirm)
+        {
+            if (EditorController.Instance.levelData.lightGroups.Count == 1) return; // can't delete the only light group
+            List<LightPlacement> placementsNotSelf = new List<LightPlacement>();
+            for (int i = 0; i < EditorController.Instance.levelData.lights.Count; i++)
+            {
+                if (EditorController.Instance.levelData.lights[i] == myPlacement) continue;
+                if (EditorController.Instance.levelData.lights[i].lightGroup != myPlacement.lightGroup) continue;
+                placementsNotSelf.Add(EditorController.Instance.levelData.lights[i]);
+            }
+            if (placementsNotSelf.Count > 0 && !confirm)
+            {
+                EditorController.Instance.CreateUIPopup(String.Format("This will delete {0} other light(s) that use this light group! Are you sure?", placementsNotSelf.Count), () => { RemoveLightGroup(true); }, null);
+                return;
+            }
+            ushort lightGroupToRemove = myPlacement.lightGroup;
+            for (int i = EditorController.Instance.levelData.lights.Count - 1; i >= 0; i--)
+            {
+                LightPlacement placement = EditorController.Instance.levelData.lights[i];
+                if ((placement.lightGroup > lightGroupToRemove) || (placement == myPlacement))
+                {
+                    placement.lightGroup = (ushort)Mathf.Max(placement.lightGroup - 1, 0);
+                    continue;
+                }
+                if (placement.lightGroup == lightGroupToRemove)
+                {
+                    EditorController.Instance.levelData.lights.Remove(placement);
+                    EditorController.Instance.RemoveVisual(placement);
+                    continue;
+                }
+            }
+            EditorController.Instance.levelData.lightGroups.RemoveAt(lightGroupToRemove);
+            UpdateRefreshMark();
+        }
+
         public override void SendInteractionMessage(string message, object data)
         {
             switch (message)
@@ -149,6 +185,9 @@ namespace PlusLevelStudio.Editor.SettingsUI
                 case "addGroup":
                     AddLightGroup();
                     UpdateRefreshMark();
+                    break;
+                case "removeGroup":
+                    RemoveLightGroup(false);
                     break;
                 case "red":
                     ChangeRed(Mathf.Clamp(((Vector3)data).y / 128f,0f,1f));

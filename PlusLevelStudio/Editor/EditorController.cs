@@ -318,14 +318,23 @@ namespace PlusLevelStudio.Editor
         public T CreateUI<T>(string name) where T : UIExchangeHandler
         {
             T obj = UIBuilder.BuildUIFromFile<T>(canvas, name, Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", name + ".json"));
-            obj.transform.SetAsFirstSibling();
+            /*obj.transform.SetAsFirstSibling();
             for (int i = 0; i < uiObjects.Length; i++)
             {
                 uiObjects[i].transform.SetAsFirstSibling();
-            }
+            }*/
+            CursorController.Instance.transform.SetAsLastSibling();
             uiOverlays.Add(obj.gameObject);
             SetChannelsMuted(true);
             return obj;
+        }
+
+        public void CreateUIPopup(string text, Action onYes, Action onNo)
+        {
+            EditorPopupExchangeHandler handler = CreateUI<EditorPopupExchangeHandler>("2ChoicePopUp");
+            handler.transform.Find("Title").GetComponent<TextMeshProUGUI>().text = text;
+            handler.OnYes = onYes;
+            handler.OnNo = onNo;
         }
 
         public void RemoveUI(GameObject obj)

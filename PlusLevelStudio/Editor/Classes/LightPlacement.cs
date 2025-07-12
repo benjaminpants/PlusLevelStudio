@@ -25,7 +25,6 @@ namespace PlusLevelStudio.Editor
         public void SettingsClicked()
         {
             EditorController.Instance.HoldUndo();
-            // placeholder
             LightSettingsExchangeHandler settings = EditorController.Instance.CreateUI<LightSettingsExchangeHandler>("LightConfig");
             settings.myPlacement = this;
             settings.Refresh(); // make it refresh

@@ -19,6 +19,7 @@ namespace PlusLevelStudio.UI
             img.rectTransform.sizeDelta = new Vector2(float.MaxValue, float.MaxValue);
             img.rectTransform.pivot = new Vector2(0f, 1f);
             img.color = Color.clear;
+            //img.color = new Color(0f,0f,0f, 1f - data["transparency"].Value<float>());
             img.rectTransform.anchoredPosition = new Vector2(0f, 0f);
             return baseObject;
         }

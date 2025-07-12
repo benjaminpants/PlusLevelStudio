@@ -111,7 +111,7 @@ namespace PlusLevelStudio.UI
             {
                 if (OnExit())
                 {
-                    EditorController.Instance.RemoveUI(this.gameObject);
+                    EditorController.Instance.RemoveUI(gameObject);
                 }
             }
         }
