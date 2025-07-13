@@ -38,6 +38,7 @@ namespace PlusLevelStudio
 
         public Dictionary<string, DoorDisplay> doorDisplays = new Dictionary<string, DoorDisplay>();
         public Dictionary<string, bool> doorIsTileBased = new Dictionary<string, bool>();
+        public Dictionary<string, DoorDisplay> windowDisplays = new Dictionary<string, DoorDisplay>();
 
         void Awake()
         {
@@ -100,6 +101,8 @@ namespace PlusLevelStudio
                         new DoorTool("standard"),
                         new DoorTool("swinging"),
                         new DoorTool("oneway"),
+                        new DoorTool("swinging_silent"),
+                        new WindowTool("standard"),
                     } },
                     { "lights", new List<EditorTool>()
                     {
@@ -163,6 +166,11 @@ namespace PlusLevelStudio
             Material arrowMat = new Material(gridMat);
             arrowMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "FloorArrow.png"));
             arrowMat.name = "EditorArrowMaterial";
+
+            Material silentDoorMat = new Material(assetMan.Get<Material>("SwingingDoorMat"));
+            silentDoorMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "SwingDoorSilent.png"));
+            silentDoorMat.name = "SilentSwingDoorDisplayMat";
+            silentDoorMat.MarkAsNeverUnload();
 
             Material gridArrowMat = new Material(gridMat);
             gridArrowMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "GridArrow.png"));
@@ -261,6 +269,10 @@ namespace PlusLevelStudio
             EditorInterface.AddDoor<StandardDoorDisplay>("standard", false, assetMan.Get<Material>("doorMask"), null);
             EditorInterface.AddDoor<DoorDisplay>("swinging", true, assetMan.Get<Material>("swingingDoorMask"), new Material[] { assetMan.Get<Material>("SwingingDoorMat"), assetMan.Get<Material>("SwingingDoorMat") });
             EditorInterface.AddDoor<DoorDisplay>("oneway", true, assetMan.Get<Material>("swingingDoorMask"), new Material[] { assetMan.Get<Material>("OneWayRight"), assetMan.Get<Material>("OneWayWrong") });
+            EditorInterface.AddDoor<DoorDisplay>("swinging_silent", true, assetMan.Get<Material>("swingingDoorMask"), new Material[] { silentDoorMat, silentDoorMat });
+
+            WindowObject standardWindowObject = Resources.FindObjectsOfTypeAll<WindowObject>().First(x => x.name == "WoodWindow" && x.GetInstanceID() >= 0);
+            EditorInterface.AddWindow<DoorDisplay>("standard", standardWindowObject.mask, standardWindowObject.overlay);
 
             yield return "Setting up Editor Controller...";
             GameObject editorControllerObject = new GameObject("StandardEditorController");

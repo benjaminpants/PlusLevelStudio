@@ -14,6 +14,7 @@ namespace PlusStudioLevelFormat
         public List<LightInfo> lights = new List<LightInfo>();
         public List<TileObjectInfo> tileObjects = new List<TileObjectInfo>();
         public List<DoorInfo> doors = new List<DoorInfo>();
+        public List<WindowInfo> windows = new List<WindowInfo>();
         public UnityVector3 spawnPoint = new UnityVector3(5f,5f,5f);
         public PlusDirection spawnDirection = PlusDirection.North;
         public static readonly byte version = 0;
@@ -86,6 +87,16 @@ namespace PlusStudioLevelFormat
                     roomId = reader.ReadUInt16()
                 });
             }
+            int windowsCount = reader.ReadInt32();
+            for (int i = 0; i < windowsCount; i++)
+            {
+                level.windows.Add(new WindowInfo()
+                {
+                    prefab = objectsCompressor.ReadStoredString(reader),
+                    position = reader.ReadByteVector2(),
+                    direction = (PlusDirection)reader.ReadByte()
+                });
+            }
             int tileObjectCount = reader.ReadInt32();
             for (int i = 0; i < tileObjectCount; i++)
             {
@@ -109,6 +120,7 @@ namespace PlusStudioLevelFormat
             StringCompressor objectsCompressor = new StringCompressor();
             objectsCompressor.AddStrings(lights.Select(x => x.prefab));
             objectsCompressor.AddStrings(doors.Select(x => x.prefab));
+            objectsCompressor.AddStrings(windows.Select(x => x.prefab));
             objectsCompressor.AddStrings(tileObjects.Select(x => x.prefab));
             objectsCompressor.FinalizeDatabase();
             roomCompressor.FinalizeDatabase();
@@ -164,6 +176,13 @@ namespace PlusStudioLevelFormat
                 writer.Write(doors[i].position);
                 writer.Write((byte)doors[i].direction);
                 writer.Write(doors[i].roomId);
+            }
+            writer.Write(windows.Count);
+            for (int i = 0; i < windows.Count; i++)
+            {
+                objectsCompressor.WriteStoredString(writer, windows[i].prefab);
+                writer.Write(windows[i].position);
+                writer.Write((byte)windows[i].direction);
             }
             writer.Write(tileObjects.Count);
             for (int i = 0; i < tileObjects.Count; i++)

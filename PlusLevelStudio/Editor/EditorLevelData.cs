@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using PlusLevelStudio.Editor;
 using PlusStudioLevelFormat;
 using PlusStudioLevelLoader;
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
 
 namespace PlusLevelStudio.Editor
 {
@@ -19,6 +19,8 @@ namespace PlusLevelStudio.Editor
         public List<LightPlacement> lights = new List<LightPlacement>();
         public List<EditorRoom> rooms = new List<EditorRoom>();
         public List<DoorLocation> doors = new List<DoorLocation>();
+        // TODO: TileBasedObject data
+        public List<WindowLocation> windows = new List<WindowLocation>();
         public EditorRoom hall => rooms[0];
 
         private Dictionary<string, TextureContainer> defaultTextures = new Dictionary<string, TextureContainer>();
@@ -91,6 +93,7 @@ namespace PlusLevelStudio.Editor
             UpdateCells(true);
         }
 
+        // TODO: consider interface for ValidatePosition to avoid repeated code..?
         public bool ValidatePlacements(bool updateVisuals)
         {
             bool changedSomething = false;
@@ -115,6 +118,18 @@ namespace PlusLevelStudio.Editor
                         EditorController.Instance.RemoveVisual(doors[i]);
                     }
                     doors.RemoveAt(i);
+                    changedSomething = true;
+                }
+            }
+            for (int i = windows.Count - 1; i >= 0; i--)
+            {
+                if (!windows[i].ValidatePosition(this))
+                {
+                    if (updateVisuals)
+                    {
+                        EditorController.Instance.RemoveVisual(windows[i]);
+                    }
+                    windows.RemoveAt(i);
                     changedSomething = true;
                 }
             }
@@ -163,6 +178,7 @@ namespace PlusLevelStudio.Editor
             }
             ValidatePlacements(forEditor);
             ApplyCellModifiers(doors, forEditor);
+            ApplyCellModifiers(windows, forEditor);
         }
 
         // TODO: figure out if we even NEED to manually recalculate all cells, or if we'd just be better off moving only areas
@@ -209,6 +225,10 @@ namespace PlusLevelStudio.Editor
             for (int i = 0; i < doors.Count; i++)
             {
                 doors[i].position -= posDif;
+            }
+            for (int i = 0; i < windows.Count; i++)
+            {
+                windows[i].position -= posDif;
             }
             return true;
         }
@@ -305,6 +325,8 @@ namespace PlusLevelStudio.Editor
                     strength = (byte)group.strength
                 });
             }
+            // TODO: during compilation, figure out which side of us is the side with the room (if any) and prioritize that room as our room.
+            // this is to stop mrs pomp from dying a slow slow death if someone didnt intentionally click INSIDE the room
             for (int i = 0; i < doors.Count; i++)
             {
                 if (LevelStudioPlugin.Instance.doorIsTileBased[doors[i].type])
@@ -327,6 +349,15 @@ namespace PlusLevelStudio.Editor
                     });
                 }
             }
+            for (int i = 0; i < windows.Count; i++)
+            {
+                compiled.windows.Add(new WindowInfo()
+                {
+                    prefab = windows[i].type,
+                    position = windows[i].position.ToByte(),
+                    direction = (PlusDirection)windows[i].direction
+                });
+            }
             return compiled;
         }
 
@@ -338,6 +369,7 @@ namespace PlusLevelStudio.Editor
             StringCompressor stringComp = new StringCompressor();
             stringComp.AddStrings(lights.Select(x => x.type));
             stringComp.AddStrings(doors.Select(x => x.type));
+            stringComp.AddStrings(windows.Select(x => x.type));
             stringComp.AddStrings(rooms.Select(x => x.roomType));
             stringComp.AddStrings(rooms.Select(x => x.textureContainer.floor));
             stringComp.AddStrings(rooms.Select(x => x.textureContainer.wall));
@@ -379,6 +411,13 @@ namespace PlusLevelStudio.Editor
                 stringComp.WriteStoredString(writer, doors[i].type);
                 writer.Write(doors[i].position.ToByte());
                 writer.Write((byte)doors[i].direction);
+            }
+            writer.Write(windows.Count);
+            for (int i = 0; i < windows.Count; i++)
+            {
+                stringComp.WriteStoredString(writer, windows[i].type);
+                writer.Write(windows[i].position.ToByte());
+                writer.Write((byte)windows[i].direction);
             }
         }
 
@@ -423,6 +462,16 @@ namespace PlusLevelStudio.Editor
             for (int i = 0; i < doorCount; i++)
             {
                 levelData.doors.Add(new DoorLocation()
+                {
+                    type = stringComp.ReadStoredString(reader),
+                    position = reader.ReadByteVector2().ToInt(),
+                    direction = (Direction)reader.ReadByte()
+                });
+            }
+            int windowCount = reader.ReadInt32();
+            for (int i = 0; i < windowCount; i++)
+            {
+                levelData.windows.Add(new WindowLocation()
                 {
                     type = stringComp.ReadStoredString(reader),
                     position = reader.ReadByteVector2().ToInt(),

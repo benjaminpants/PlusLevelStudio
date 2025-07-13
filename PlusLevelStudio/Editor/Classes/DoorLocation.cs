@@ -17,7 +17,7 @@ namespace PlusLevelStudio.Editor
             
         }
 
-        public GameObject GetVisualPrefab()
+        public virtual GameObject GetVisualPrefab()
         {
             return LevelStudioPlugin.Instance.doorDisplays[type].gameObject;
         }
@@ -43,7 +43,7 @@ namespace PlusLevelStudio.Editor
             data.cells[position.x + pos2.x, position.z + pos2.z].walls = (Nybble)(data.cells[position.x + pos2.x, position.z + pos2.z].walls & ~direction.GetOpposite().ToBinary());
         }
 
-        public bool OnDelete(EditorLevelData data)
+        public virtual bool OnDelete(EditorLevelData data)
         {
             data.doors.Remove(this);
             EditorController.Instance.RemoveVisual(this);
@@ -62,12 +62,19 @@ namespace PlusLevelStudio.Editor
 
         public bool ValidatePosition(EditorLevelData data)
         {
-            // dont allow light stacking
+            // dont allow stacking
             for (int i = 0; i < data.doors.Count; i++)
             {
                 if (data.doors[i] == this) continue; // this is us
                 if (data.doors[i].position == position && data.doors[i].direction == direction) return false; // door is clashing
                 if (data.doors[i].position == (position + direction.ToIntVector2()) && data.doors[i].direction == direction.GetOpposite()) return false; // door is clashing
+            }
+            // dont allow doors ontop of windows (or vise versa)
+            for (int i = 0; i < data.windows.Count; i++)
+            {
+                if (data.windows[i] == this) continue; // this is us
+                if (data.windows[i].position == position && data.windows[i].direction == direction) return false; // window is clashing
+                if (data.windows[i].position == (position + direction.ToIntVector2()) && data.windows[i].direction == direction.GetOpposite()) return false; // window is clashing
             }
             return (data.RoomIdFromPos(position, true) != 0 && data.RoomIdFromPos(position + direction.ToIntVector2(), true) != 0); // make sure both rooms we are facing are valid
         }

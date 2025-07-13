@@ -24,6 +24,7 @@ namespace PlusStudioLevelLoader
         public Dictionary<string, Texture2D> roomTextureAliases = new Dictionary<string, Texture2D>();
         public Dictionary<string, Transform> lightTransforms = new Dictionary<string, Transform>();
         public Dictionary<string, Door> doorPrefabs = new Dictionary<string, Door>();
+        public Dictionary<string, WindowObject> windowObjects = new Dictionary<string, WindowObject>();
         public Dictionary<string, TileBasedObject> tileBasedObjectPrefabs = new Dictionary<string, TileBasedObject>();
 
         public static Texture2D RoomTextureFromAlias(string alias)
@@ -100,6 +101,10 @@ namespace PlusStudioLevelLoader
             doorPrefabs.Add("standard", doors.First(x => x.name == "ClassDoor_Standard"));
             tileBasedObjectPrefabs.Add("swinging", doors.First(x => x.name == "Door_Swinging")); // swinging doors aren't "doors" and don't belong to any room.
             tileBasedObjectPrefabs.Add("oneway", doors.First(x => x.name == "Door_SwingingOneWay")); // swinging doors aren't "doors" and don't belong to any room.
+            tileBasedObjectPrefabs.Add("swinging_silent", doors.First(x => x.name == "SilentDoor_Swinging")); // swinging doors aren't "doors" and don't belong to any room.
+
+            WindowObject[] windows = Resources.FindObjectsOfTypeAll<WindowObject>().Where(x => x.GetInstanceID() >= 0).ToArray();
+            windowObjects.Add("standard", windows.First(x => x.name == "WoodWindow"));
         }
     }
 }

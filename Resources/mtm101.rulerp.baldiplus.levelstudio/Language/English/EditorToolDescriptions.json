@@ -21,6 +21,25 @@
 {"key":"Ed_Tool_room_outside_Title","value":"Outside"},
 {"key":"Ed_Tool_room_outside_Desc","value":"The player can run infinitely in this room, and all rule violations will be forgotten!"},
 {"key":"Ed_Tool_room_cafeteria_Title","value":"Cafeteria"},
-{"key":"Ed_Tool_room_cafeteria_Desc","value":"Bananas are literred across the floor in this room."}
+{"key":"Ed_Tool_room_cafeteria_Desc","value":"Bananas are literred across the floor in this room."},
+{"key":"Ed_Tool_door_standard_Title","value":"Standard Door"},
+{"key":"Ed_Tool_door_standard_Desc","value":"It's textures automatically adapt to the room its placed in or by."},
+{"key":"Ed_Tool_door_swinging_Title","value":"Swinging Door"},
+{"key":"Ed_Tool_door_swinging_Desc","value":"This door can be walked and seen through."},
+{"key":"Ed_Tool_door_swinging_silent_Title","value":"Silent Swinging Door"},
+{"key":"Ed_Tool_door_swinging_silent_Desc","value":"Use instead of the regular swinging door for library entrances. Or don't. Or use it elsewhere."},
+{"key":"Ed_Tool_door_oneway_Title","value":"Oneway Door"},
+{"key":"Ed_Tool_door_oneway_Desc","value":"This door can only be entered from the direction you assign it."},
+{"key":"Ed_Tool_door_oneway_Title","value":"Oneway Door"},
+{"key":"Ed_Tool_window_standard_Title","value":"Wooden Window"},
+{"key":"Ed_Tool_window_standard_Desc","value":"Although not a door at first glance, this 'door' can be opened by First-Prize slamming into it!"},
+{"key":"Ed_Tool_light_fluorescent_Title","value":"Fluorescent Light"},
+{"key":"Ed_Tool_light_fluorescent_Desc","value":"An all time classic since 1999!"},
+{"key":"Ed_Tool_light_caged_Title","value":"Caged Light"},
+{"key":"Ed_Tool_light_caged_Desc","value":"Scary... Does not come with the yellow tint. You must do that yourself."},
+{"key":"Ed_Tool_light_cordedhanging_Title","value":"Corded Hanging Light"},
+{"key":"Ed_Tool_light_cordedhanging_Desc","value":"Most ceilings cannot handle the vast power of this light..."},
+{"key":"Ed_Tool_light_standardhanging_Title","value":"Hanging Light"},
+{"key":"Ed_Tool_light_standardhanging_Desc","value":"Snazzy!"}
 
 ]}

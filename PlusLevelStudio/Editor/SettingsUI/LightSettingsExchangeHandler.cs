@@ -115,6 +115,7 @@ namespace PlusLevelStudio.Editor.SettingsUI
 
         public void AddLightGroup()
         {
+            if (EditorController.Instance.levelData.lightGroups.Count >= ushort.MaxValue) return;
             LightGroup newGroup = new LightGroup(EditorController.Instance.levelData.lightGroups[myPlacement.lightGroup]);
             EditorController.Instance.levelData.lightGroups.Add(newGroup);
             myPlacement.lightGroup = (ushort)(EditorController.Instance.levelData.lightGroups.Count - 1);

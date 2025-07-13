@@ -9,19 +9,10 @@ namespace PlusLevelStudio
 {
     public static class EditorInterface
     {
-        /// <summary>
-        /// Creates the DoorDisplay of the specified type and adds it to the editor's keys.
-        /// (Does not add nor create the tool for placing it)
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="key"></param>
-        /// <param name="isTileBasedObject"></param>
-        /// <param name="mask"></param>
-        /// <param name="sideMaterials"></param>
-        /// <returns></returns>
-        public static T AddDoor<T>(string key, bool isTileBasedObject, Material mask, Material[] sideMaterials = null) where T : DoorDisplay
+
+        private static T AddDoorNoArray<T>(string visualName, Material mask, Material[] sideMaterials = null) where T : DoorDisplay
         {
-            GameObject standardDoorDisplayObject = new GameObject("StandardDoorVisual");
+            GameObject standardDoorDisplayObject = new GameObject(visualName);
             standardDoorDisplayObject.transform.SetParent(MTM101BaldiDevAPI.prefabTransform);
             GameObject sideAQuad = LevelStudioPlugin.CreateQuad("SideA", mask, Vector3.zero, Vector3.zero);
             GameObject sideBQuad = LevelStudioPlugin.CreateQuad("SideB", mask, Vector3.zero, new Vector3(0f, 180f, 0f));
@@ -40,8 +31,40 @@ namespace PlusLevelStudio
             standardDoorDisplayBehavior.sideB = sideBQuad.GetComponent<MeshRenderer>();
             standardDoorDisplayObject.AddComponent<BoxCollider>().size = new Vector3(10f, 10f, 0.5f);
             standardDoorDisplayObject.layer = LevelStudioPlugin.editorInteractableLayer;
+            return standardDoorDisplayBehavior;
+        }
+
+        /// <summary>
+        /// Creates the DoorDisplay of the specified type and adds it to the editor's keys.
+        /// (Does not add nor create the tool for placing it)
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <param name="isTileBasedObject"></param>
+        /// <param name="mask"></param>
+        /// <param name="sideMaterials"></param>
+        /// <returns></returns>
+        public static T AddDoor<T>(string key, bool isTileBasedObject, Material mask, Material[] sideMaterials = null) where T : DoorDisplay
+        {
+            T standardDoorDisplayBehavior = AddDoorNoArray<T>(key + "_" + typeof(T).Name,mask, sideMaterials);
             LevelStudioPlugin.Instance.doorDisplays.Add(key, standardDoorDisplayBehavior);
             LevelStudioPlugin.Instance.doorIsTileBased.Add(key, isTileBasedObject);
+            return standardDoorDisplayBehavior;
+        }
+
+        /// <summary>
+        /// Creates the DoorDisplay of the specified type and adds it to the editor's keys.
+        /// (Does not add nor create the tool for placing it)
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <param name="mask"></param>
+        /// <param name="sideMaterials"></param>
+        /// <returns></returns>
+        public static T AddWindow<T>(string key, Material mask, Material[] sideMaterials = null) where T : DoorDisplay
+        {
+            T standardDoorDisplayBehavior = AddDoorNoArray<T>(key + "_Window" + typeof(T).Name, mask, sideMaterials);
+            LevelStudioPlugin.Instance.windowDisplays.Add(key, standardDoorDisplayBehavior);
             return standardDoorDisplayBehavior;
         }
     }

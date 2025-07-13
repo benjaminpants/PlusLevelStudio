@@ -171,6 +171,7 @@ namespace PlusLevelStudio.Editor
                     EditorController.Instance.PopUndo();
                     break;
                 case "toolbox":
+                    EditorController.Instance.SwitchToTool(null);
                     EditorController.Instance.uiObjects[1].SetActive(true);
                     EditorController.Instance.uiObjects[1].GetComponent<EditorUIToolboxHandler>().Open();
                     break;
