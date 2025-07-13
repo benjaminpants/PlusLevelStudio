@@ -1,5 +1,6 @@
 ﻿using MTM101BaldAPI.UI;
 using Newtonsoft.Json.Linq;
+using PlusLevelStudio.Editor;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -67,6 +68,19 @@ namespace PlusLevelStudio.UI
             hotScript.slotIndex = data["slotIndex"].Value<int>();
             hotScript.button = button;
             hotScript.iconImage = itemImage;
+            // ACK HACK! HACK!!
+            if (data["type"].Value<string>() == "hotslot")
+            {
+                button.OnHighlight.AddListener(() =>
+                {
+                    if (hotScript.currentTool == null) return;
+                    EditorController.Instance.tooltipController.UpdateTooltip(hotScript.currentTool.titleKey);
+                });
+                button.OffHighlight.AddListener(() => {
+                    if (hotScript.currentTool == null) return;
+                    EditorController.Instance.tooltipController.CloseTooltip();
+                });
+            }
             return baseObject;
         }
     }
