@@ -90,6 +90,15 @@ namespace PlusStudioLevelLoader
             {
                 asset.doors.Add(new DoorData((int)level.doors[i].roomId - 1, LevelLoaderPlugin.Instance.doorPrefabs[level.doors[i].prefab], level.doors[i].position.ToInt(), (Direction)level.doors[i].direction));
             }
+            for (int i = 0; i < level.tileObjects.Count; i++)
+            {
+                asset.tbos.Add(new TileBasedObjectData()
+                {
+                    direction = (Direction)level.tileObjects[i].direction,
+                    position = level.tileObjects[i].position.ToInt(),
+                    prefab = LevelLoaderPlugin.Instance.tileBasedObjectPrefabs[level.tileObjects[i].prefab]
+                });
+            }
             return asset;
         }
     }

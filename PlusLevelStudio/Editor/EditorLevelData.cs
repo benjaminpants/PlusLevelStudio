@@ -31,6 +31,11 @@ namespace PlusLevelStudio.Editor
             defaultTextures.Add("faculty", new TextureContainer("BlueCarpet", "SaloonWall", "Ceiling"));
             defaultTextures.Add("office", new TextureContainer("BlueCarpet", "WallWithMolding", "Ceiling"));
             defaultTextures.Add("closet", new TextureContainer("TileFloor", "Wall", "Ceiling"));
+            defaultTextures.Add("reflex", new TextureContainer("HallFloor", "WallWithMolding", "ElevatorCeiling"));
+            defaultTextures.Add("library", new TextureContainer("BlueCarpet", "WallWithMolding", "Ceiling"));
+            defaultTextures.Add("cafeteria", new TextureContainer("HallFloor", "Wall", "Ceiling"));
+            defaultTextures.Add("outside", new TextureContainer("Grass", "Fence", "None"));
+            defaultTextures.Add("shop", new TextureContainer("HallFloor", "JohnnyWall", "Ceiling"));
         }
 
         public EditorRoom CreateRoomWithDefaultSettings(string type)
@@ -302,13 +307,25 @@ namespace PlusLevelStudio.Editor
             }
             for (int i = 0; i < doors.Count; i++)
             {
-                compiled.doors.Add(new DoorInfo()
+                if (LevelStudioPlugin.Instance.doorIsTileBased[doors[i].type])
                 {
-                    prefab = doors[i].type, // placeholder
-                    position = doors[i].position.ToByte(),
-                    direction = (PlusDirection)doors[i].direction,
-                    roomId = GetTileSafe(doors[i].position.x, doors[i].position.z).roomId
-                });
+                    compiled.tileObjects.Add(new TileObjectInfo()
+                    {
+                        prefab = doors[i].type,
+                        position = doors[i].position.ToByte(),
+                        direction = (PlusDirection)doors[i].direction,
+                    });
+                }
+                else
+                {
+                    compiled.doors.Add(new DoorInfo()
+                    {
+                        prefab = doors[i].type,
+                        position = doors[i].position.ToByte(),
+                        direction = (PlusDirection)doors[i].direction,
+                        roomId = GetTileSafe(doors[i].position.x, doors[i].position.z).roomId
+                    });
+                }
             }
             return compiled;
         }

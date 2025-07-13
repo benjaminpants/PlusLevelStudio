@@ -20,9 +20,11 @@ namespace PlusLevelStudio.UI
             set
             {
                 _currentTool = value;
+                iconImage.color = Color.white;
                 if (_currentTool == null)
                 {
                     iconImage.sprite = null;
+                    iconImage.color = Color.clear;
                     return;
                 }
                 if (_currentTool.sprite == null)

@@ -31,7 +31,7 @@ namespace PlusLevelStudio.Editor
         public void ModifyCells(EditorLevelData data, bool forEditor)
         {
             IntVector2 pos2;
-            if (!forEditor)
+            if (!forEditor && !LevelStudioPlugin.Instance.doorIsTileBased[type])
             {
                 data.cells[position.x, position.z].walls = (Nybble)(data.cells[position.x, position.z].walls | direction.ToBinary());
                 pos2 = direction.ToIntVector2();

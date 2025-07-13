@@ -37,6 +37,7 @@ namespace PlusLevelStudio
         public const int editorInteractableLayerMask = 1 << editorInteractableLayer;
 
         public Dictionary<string, DoorDisplay> doorDisplays = new Dictionary<string, DoorDisplay>();
+        public Dictionary<string, bool> doorIsTileBased = new Dictionary<string, bool>();
 
         void Awake()
         {
@@ -79,19 +80,47 @@ namespace PlusLevelStudio
             // TODO: put code that actually does logic for assigning editor mode here instead of just creating it on the fly
             editorController.currentMode = new EditorMode()
             {
-                id="full",
-                availableTools = new List<EditorTool>()
+                id = "full",
+                availableTools = new Dictionary<string, List<EditorTool>>()
                 {
-                    new RoomTool("hall"),
-                    new RoomTool("class"),
-                    new RoomTool("faculty"),
-                    new RoomTool("office"),
-                    new RoomTool("closet"),
-                    new MergeTool(),
-                    new DeleteTool(),
-                    new LightTool("fluorescent"),
-                    new DoorTool("standard")
-                }
+                    { "rooms", new List<EditorTool>()
+                    {
+                        new RoomTool("hall"),
+                        new RoomTool("class"),
+                        new RoomTool("faculty"),
+                        new RoomTool("office"),
+                        new RoomTool("closet"),
+                        new RoomTool("reflex"),
+                        new RoomTool("cafeteria"),
+                        new RoomTool("outside"),
+                        new RoomTool("library"),
+                    } },
+                    { "doors", new List<EditorTool>()
+                    {
+                        new DoorTool("standard"),
+                        new DoorTool("swinging"),
+                        new DoorTool("oneway"),
+                    } },
+                    { "lights", new List<EditorTool>()
+                    {
+                        new LightTool("fluorescent"),
+                        new LightTool("caged"),
+                        new LightTool("cordedhanging"),
+                        new LightTool("standardhanging")
+                    } },
+                    { "tools", new List<EditorTool>()
+                    {
+                        new MergeTool(),
+                        new DeleteTool(),
+                    } }
+                },
+                categoryOrder = new string[] {
+                    "rooms",
+                    "doors",
+                    "lights",
+                    "tools"
+                },
+                defaultTools = new string[] { "room_hall", "room_class", "room_faculty", "room_office", "room_closet", "light_fluorescent", "door_standard", "merge", "delete"}
             };
 
             editorController.EditorModeAssigned();
@@ -114,6 +143,11 @@ namespace PlusLevelStudio
             assetMan.Add<Material>("tileAlpha", materials.First(x => x.name == "TileBase_Alpha"));
             assetMan.Add<Material>("spriteBillboard", materials.First(x => x.name == "SpriteStandard_Billboard"));
             assetMan.Add<Material>("doorMask", materials.First(x => x.name == "DoorMask"));
+            assetMan.Add<Material>("swingingDoorMask", materials.First(x => x.name == "SwingDoorMask"));
+            assetMan.Add<Material>("SwingingDoorMat", materials.First(x => x.name == "SwingDoorTexture_Closed"));
+
+            assetMan.Add<Material>("OneWayRight", materials.First(x => x.name == "SwingDoorRightWay_Closed"));
+            assetMan.Add<Material>("OneWayWrong", materials.First(x => x.name == "SwingDoorTextureOneWay_Closed"));
             yield return "Finding GameCamera...";
             assetMan.Add<GameCamera>("gameCam", Resources.FindObjectsOfTypeAll<GameCamera>().First());
             yield return "Setting up materials...";
@@ -224,24 +258,9 @@ namespace PlusLevelStudio
             lightEdo.AddRenderer(lightSpriteRenderer, "white");
 
             // create door visuals
-            GameObject standardDoorDisplayObject = new GameObject("StandardDoorVisual");
-            standardDoorDisplayObject.transform.SetParent(MTM101BaldiDevAPI.prefabTransform);
-            GameObject sideAQuad = CreateQuad("SideA", assetMan.Get<Material>("doorMask"), Vector3.zero, Vector3.zero);
-            GameObject sideBQuad = CreateQuad("SideB", assetMan.Get<Material>("doorMask"), Vector3.zero, new Vector3(0f,180f,0f));
-            sideAQuad.transform.SetParent(standardDoorDisplayObject.transform);
-            sideBQuad.transform.SetParent(standardDoorDisplayObject.transform);
-            EditorDeletableObject doorDisplayDeletable = standardDoorDisplayObject.AddComponent<EditorDeletableObject>();
-            doorDisplayDeletable.AddRenderer(sideAQuad.GetComponent<MeshRenderer>(), "none");
-            doorDisplayDeletable.AddRenderer(sideBQuad.GetComponent<MeshRenderer>(), "none");
-            DoorDisplay standardDoorDisplayBehavior = standardDoorDisplayObject.AddComponent<StandardDoorDisplay>();
-            standardDoorDisplayBehavior.sideA = sideAQuad.GetComponent<MeshRenderer>();
-            standardDoorDisplayBehavior.sideB = sideBQuad.GetComponent<MeshRenderer>();
-            /*
-            EditorDeletableObject doorDelete = standardDoorDisplayObject.AddComponent<EditorDeletableObject>();
-            doorDelete.myRenderers = new List<Renderer>() { standardDoorDisplayBehavior.sideA, standardDoorDisplayBehavior.sideB };*/
-            standardDoorDisplayObject.AddComponent<BoxCollider>().size = new Vector3(10f,10f,0.5f);
-            standardDoorDisplayObject.layer = editorInteractableLayer;
-            doorDisplays.Add("standard", standardDoorDisplayBehavior);
+            EditorInterface.AddDoor<StandardDoorDisplay>("standard", false, assetMan.Get<Material>("doorMask"), null);
+            EditorInterface.AddDoor<DoorDisplay>("swinging", true, assetMan.Get<Material>("swingingDoorMask"), new Material[] { assetMan.Get<Material>("SwingingDoorMat"), assetMan.Get<Material>("SwingingDoorMat") });
+            EditorInterface.AddDoor<DoorDisplay>("oneway", true, assetMan.Get<Material>("swingingDoorMask"), new Material[] { assetMan.Get<Material>("OneWayRight"), assetMan.Get<Material>("OneWayWrong") });
 
             yield return "Setting up Editor Controller...";
             GameObject editorControllerObject = new GameObject("StandardEditorController");
@@ -305,6 +324,7 @@ namespace PlusLevelStudio
             UIBuilder.elementBuilders.Add("image", new ImageBuilder());
             UIBuilder.elementBuilders.Add("imageButton", new ButtonBuilder());
             UIBuilder.elementBuilders.Add("hotslot", new HotSlotBuilder());
+            UIBuilder.elementBuilders.Add("hotslottoolbox", new HotSlotToolboxBuilder());
             UIBuilder.elementBuilders.Add("blocker", new BlockerBuilder());
             UIBuilder.elementBuilders.Add("text", new TextBuilder());
             UIBuilder.elementBuilders.Add("dragdetect", new DragDetectorBuilder());

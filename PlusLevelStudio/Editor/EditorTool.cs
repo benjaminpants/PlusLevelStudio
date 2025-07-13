@@ -5,17 +5,6 @@ using UnityEngine;
 
 namespace PlusLevelStudio.Editor
 {
-
-    public enum ToolCategory
-    {
-        Room,
-        Character,
-        Item,
-        Light,
-        Structure,
-        Tool
-    }
-
     /// <summary>
     /// The base class for all editor tools.
     /// </summary>
@@ -25,6 +14,10 @@ namespace PlusLevelStudio.Editor
         /// The ID for this tool, used during the save/load process.
         /// </summary>
         public abstract string id { get; }
+
+        public virtual string titleKey => "Ed_Tool_" + id + "_Title";
+        public virtual string descKey => "Ed_Tool_" + id + "_Desc";
+
         /// <summary>
         /// The sprite for this tool in the editor.
         /// </summary>

@@ -36,7 +36,7 @@ namespace PlusLevelStudio.Editor
         public Canvas canvas;
 
         public Tile[][] tiles = new Tile[0][];
-        public GameObject[] uiObjects = new GameObject[1];
+        public GameObject[] uiObjects = new GameObject[2];
         // todo: maybe make this a tuple list with (GameObject, bool) where the bool represents if it's a blocking UI element?
         public List<GameObject> uiOverlays = new List<GameObject>();
 
@@ -57,6 +57,7 @@ namespace PlusLevelStudio.Editor
         public TooltipController tooltipController;
         public RectTransform tooltipBase;
 
+        public bool toolboxOnNullTool;
         public GameCamera cameraPrefab;
         public GameCamera camera;
         public Vector3 cameraRotation = new Vector3(0f, 0f, 0f);
@@ -67,6 +68,14 @@ namespace PlusLevelStudio.Editor
         public Vector3 mousePlanePosition = Vector3.zero;
         protected bool mousePressedLastFrame = false; // used for handling tools
         public IntVector2 mouseGridPosition => mousePlanePosition.ToCellVector();
+
+        public bool MovementEnabled
+        {
+            get
+            {
+                return (uiOverlays.Count == 0 && (uiObjects[1] == null || !uiObjects[1].activeSelf));
+            }
+        }
 
         protected IEditorInteractable heldInteractable = null;
 
@@ -367,8 +376,8 @@ namespace PlusLevelStudio.Editor
             canvas.scaleFactor = calculatedScaleFactor;
             canvas.worldCamera = camera.canvasCam;
             screenSize = new Vector2(Screen.width / calculatedScaleFactor, Screen.height / calculatedScaleFactor);
-            _xMin.SetValue(tooltipController,0f);
-            _xMax.SetValue(tooltipController,canvas.GetComponent<RectTransform>().rect.width);
+            _xMin.SetValue(tooltipController, 0f);
+            _xMax.SetValue(tooltipController, canvas.GetComponent<RectTransform>().rect.width);
             for (int i = 0; i < uiObjects.Length; i++)
             {
                 if (uiObjects[i] != null)
@@ -381,6 +390,9 @@ namespace PlusLevelStudio.Editor
             init.Inititate();
             tooltipBase.anchoredPosition = CursorController.Instance.GetComponent<RectTransform>().anchoredPosition;
             UIBuilder.LoadGlobalDefinesFromFile(Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "GlobalDefines.json"));
+            uiObjects[1] = UIBuilder.BuildUIFromFile<EditorUIToolboxHandler>(canvas, "Main", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "Toolbox.json")).gameObject;
+            uiObjects[1].transform.SetAsFirstSibling();
+            uiObjects[1].SetActive(false);
             uiObjects[0] = UIBuilder.BuildUIFromFile<EditorUIMainHandler>(canvas, "Main", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "Main.json")).gameObject;
             uiObjects[0].transform.SetAsFirstSibling();
         }
@@ -390,8 +402,22 @@ namespace PlusLevelStudio.Editor
         {
             for (int i = 0; i < hotSlots.Length; i++)
             {
-                if (i >= currentMode.availableTools.Count) continue;
-                hotSlots[i].currentTool = currentMode.availableTools[i];
+                if (i >= currentMode.defaultTools.Length) continue;
+                foreach (List<EditorTool> list in currentMode.availableTools.Values)
+                {
+                    bool breakOut = false;
+                    for (int j = 0; j < list.Count; j++)
+                    {
+                        if (list[j].id == currentMode.defaultTools[i])
+                        {
+                            hotSlots[i].currentTool = list[j];
+                            breakOut = true;
+                            break;
+                        }
+                    }
+                    if (breakOut) break;
+                }
+                //hotSlots[i].currentTool = currentMode.availableTools.Values.Select(x => x.First(z => z.id == currentMode.defaultTools[i])).First();
             }
         }
 
@@ -429,6 +455,41 @@ namespace PlusLevelStudio.Editor
             {
                 _currentTool.Begin();
             }
+            if (tool == null && toolboxOnNullTool)
+            {
+                toolboxOnNullTool = false;
+                uiObjects[1].SetActive(true);
+            }
+        }
+
+        /// <summary>
+        /// Switches the current tool and sets a flag that will cause the toolbox to re-appear when the tool is done.
+        /// </summary>
+        /// <param name="tool"></param>
+        public void SwitchToToolToolbox(EditorTool tool)
+        {
+            SwitchToTool(tool);
+            toolboxOnNullTool = true;
+        }
+
+        /// <summary>
+        /// Attempts to get the slot the mouse is hovering over and replaces it with the specified tool.
+        /// This will open the toolbox afterwards if it wasnt already.
+        /// </summary>
+        /// <param name="tool"></param>
+        public void SwitchCurrentHoveringSlot(EditorTool tool)
+        {
+            uiObjects[1].SetActive(false); // so theres nothing in the cursors way
+            List<RaycastResult> results = (List<RaycastResult>)_results.GetValue(CursorController.Instance);
+            for (int i = 0; i < results.Count; i++)
+            {
+                if (!results[i].gameObject.activeInHierarchy) continue;
+                HotSlotScript hotSlot = results[i].gameObject.GetComponent<HotSlotScript>();
+                if (hotSlot == null) continue;
+                hotSlot.currentTool = tool;
+                break;
+            }
+            uiObjects[1].SetActive(true); // put it back
         }
 
         /// <summary>
@@ -646,7 +707,7 @@ namespace PlusLevelStudio.Editor
 
         protected virtual void UpdateCamera()
         {
-            if (uiOverlays.Count > 0) return;
+            if (!MovementEnabled) return;
             if (Singleton<InputManager>.Instance.GetDigitalInput("UseItem", false))
             {
                 Vector2 analog = CursorController.Movement;

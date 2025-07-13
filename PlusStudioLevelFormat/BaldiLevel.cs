@@ -12,6 +12,7 @@ namespace PlusStudioLevelFormat
         public Cell[,] cells;
         public List<RoomInfo> rooms = new List<RoomInfo>();
         public List<LightInfo> lights = new List<LightInfo>();
+        public List<TileObjectInfo> tileObjects = new List<TileObjectInfo>();
         public List<DoorInfo> doors = new List<DoorInfo>();
         public UnityVector3 spawnPoint = new UnityVector3(5f,5f,5f);
         public PlusDirection spawnDirection = PlusDirection.North;
@@ -85,6 +86,16 @@ namespace PlusStudioLevelFormat
                     roomId = reader.ReadUInt16()
                 });
             }
+            int tileObjectCount = reader.ReadInt32();
+            for (int i = 0; i < tileObjectCount; i++)
+            {
+                level.tileObjects.Add(new TileObjectInfo()
+                {
+                    prefab = objectsCompressor.ReadStoredString(reader),
+                    position = reader.ReadByteVector2(),
+                    direction = (PlusDirection)reader.ReadByte(),
+                });
+            }
             return level;
         }
 
@@ -98,6 +109,7 @@ namespace PlusStudioLevelFormat
             StringCompressor objectsCompressor = new StringCompressor();
             objectsCompressor.AddStrings(lights.Select(x => x.prefab));
             objectsCompressor.AddStrings(doors.Select(x => x.prefab));
+            objectsCompressor.AddStrings(tileObjects.Select(x => x.prefab));
             objectsCompressor.FinalizeDatabase();
             roomCompressor.FinalizeDatabase();
             writer.Write(version);
@@ -152,6 +164,13 @@ namespace PlusStudioLevelFormat
                 writer.Write(doors[i].position);
                 writer.Write((byte)doors[i].direction);
                 writer.Write(doors[i].roomId);
+            }
+            writer.Write(tileObjects.Count);
+            for (int i = 0; i < tileObjects.Count; i++)
+            {
+                objectsCompressor.WriteStoredString(writer, tileObjects[i].prefab);
+                writer.Write(tileObjects[i].position);
+                writer.Write((byte)tileObjects[i].direction);
             }
         }
     }

@@ -1,0 +1,26 @@
+{"items":[
+
+{"key":"Ed_Tool_merge_Title","value":"Merge Tool"},
+{"key":"Ed_Tool_merge_Desc","value":"Click two rooms of the same kind to merge them together and remove the walls between them."},
+{"key":"Ed_Tool_delete_Title","value":"Delete Tool"},
+{"key":"Ed_Tool_delete_Desc","value":"Click anything, anything at all to delete it!"},
+{"key":"Ed_Tool_room_hall_Title","value":"Hallway"},
+{"key":"Ed_Tool_room_hall_Desc","value":"The building block of any level! There can only be one room of this type in a level!"},
+{"key":"Ed_Tool_room_class_Title","value":"Classroom"},
+{"key":"Ed_Tool_room_class_Desc","value":"The intended location to place notebooks."},
+{"key":"Ed_Tool_room_faculty_Title","value":"Faculty"},
+{"key":"Ed_Tool_room_faculty_Desc","value":"Place rare items in here!"},
+{"key":"Ed_Tool_room_office_Title","value":"Office"},
+{"key":"Ed_Tool_room_office_Desc","value":"The Principal will teleport you to one of these if you get sent to detention."},
+{"key":"Ed_Tool_room_closet_Title","value":"Closet"},
+{"key":"Ed_Tool_room_closet_Desc","value":"No special properties. Gotta Sweep goes to his spawn point, not one of these rooms."},
+{"key":"Ed_Tool_room_reflex_Title","value":"Dr Reflex's Office"},
+{"key":"Ed_Tool_room_reflex_Desc","value":"No special properties. Dr Reflex's hammer is at his spawn point."},
+{"key":"Ed_Tool_room_library_Title","value":"Library"},
+{"key":"Ed_Tool_room_library_Desc","value":"No sound will play in this room, and if a player is in it their game is muted."},
+{"key":"Ed_Tool_room_outside_Title","value":"Outside"},
+{"key":"Ed_Tool_room_outside_Desc","value":"The player can run infinitely in this room, and all rule violations will be forgotten!"},
+{"key":"Ed_Tool_room_cafeteria_Title","value":"Cafeteria"},
+{"key":"Ed_Tool_room_cafeteria_Desc","value":"Bananas are literred across the floor in this room."}
+
+]}

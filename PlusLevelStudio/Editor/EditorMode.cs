@@ -10,7 +10,9 @@ namespace PlusLevelStudio.Editor
     public class EditorMode
     {
         public string id;
-        public List<EditorTool> availableTools = new List<EditorTool>();
+        public Dictionary<string, List<EditorTool>> availableTools = new Dictionary<string, List<EditorTool>>();
+        public string[] defaultTools = new string[0];
+        public string[] categoryOrder = new string[0];
         public bool supportsNPCProperties = true;
     }
 }
