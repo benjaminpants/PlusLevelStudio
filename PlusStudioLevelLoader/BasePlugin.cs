@@ -27,6 +27,7 @@ namespace PlusStudioLevelLoader
         public Dictionary<string, WindowObject> windowObjects = new Dictionary<string, WindowObject>();
         public Dictionary<string, TileBasedObject> tileBasedObjectPrefabs = new Dictionary<string, TileBasedObject>();
         public Dictionary<string, LoaderExitData> exitDatas = new Dictionary<string, LoaderExitData>();
+        public Dictionary<string, ItemObject> itemObjects = new Dictionary<string, ItemObject>();
 
         public static Texture2D RoomTextureFromAlias(string alias)
         {
@@ -111,6 +112,32 @@ namespace PlusStudioLevelLoader
                 prefab = Resources.FindObjectsOfTypeAll<Elevator>().First(x => x.name == "ElevatorWGate" && x.GetInstanceID() >= 0),
                 room = Resources.FindObjectsOfTypeAll<RoomAsset>().First(x => ((UnityEngine.Object)x).name == "Room_Elevator" && x.GetInstanceID() >= 0)
             });
+
+            itemObjects.Add("quarter", ItemMetaStorage.Instance.FindByEnum(Items.Quarter).value);
+            itemObjects.Add("keys", ItemMetaStorage.Instance.FindByEnum(Items.DetentionKey).value);
+            itemObjects.Add("zesty", ItemMetaStorage.Instance.FindByEnum(Items.ZestyBar).value);
+            itemObjects.Add("whistle", ItemMetaStorage.Instance.FindByEnum(Items.PrincipalWhistle).value);
+            itemObjects.Add("teleporter", ItemMetaStorage.Instance.FindByEnum(Items.Teleporter).value);
+            itemObjects.Add("dietbsoda", ItemMetaStorage.Instance.FindByEnum(Items.DietBsoda).value);
+            itemObjects.Add("bsoda", ItemMetaStorage.Instance.FindByEnum(Items.Bsoda).value);
+            itemObjects.Add("boots", ItemMetaStorage.Instance.FindByEnum(Items.Boots).value);
+            itemObjects.Add("clock", ItemMetaStorage.Instance.FindByEnum(Items.AlarmClock).value);
+            itemObjects.Add("dirtychalk", ItemMetaStorage.Instance.FindByEnum(Items.ChalkEraser).value);
+            itemObjects.Add("grapple", ItemMetaStorage.Instance.FindByEnum(Items.GrapplingHook).value);
+            itemObjects.Add("nosquee", ItemMetaStorage.Instance.FindByEnum(Items.Wd40).value);
+            itemObjects.Add("nametag", ItemMetaStorage.Instance.FindByEnum(Items.Nametag).value);
+            itemObjects.Add("tape", ItemMetaStorage.Instance.FindByEnum(Items.Tape).value);
+            itemObjects.Add("scissors", ItemMetaStorage.Instance.FindByEnum(Items.Scissors).value);
+            itemObjects.Add("apple", ItemMetaStorage.Instance.FindByEnum(Items.Apple).value);
+            itemObjects.Add("swinglock", ItemMetaStorage.Instance.FindByEnum(Items.DoorLock).value);
+            itemObjects.Add("portalposter", ItemMetaStorage.Instance.FindByEnum(Items.PortalPoster).value);
+            itemObjects.Add("banana", ItemMetaStorage.Instance.FindByEnum(Items.NanaPeel).value);
+            itemObjects.Add("points25", ItemMetaStorage.Instance.GetPointsObject(25, true));
+            itemObjects.Add("points50", ItemMetaStorage.Instance.GetPointsObject(50, true));
+            itemObjects.Add("points100", ItemMetaStorage.Instance.GetPointsObject(100, true));
+            itemObjects.Add("buspass", ItemMetaStorage.Instance.FindByEnum(Items.BusPass).value);
+            itemObjects.Add("inviselixer", ItemMetaStorage.Instance.FindByEnum(Items.InvisibilityElixir).value);
+            itemObjects.Add("reachextend", ItemMetaStorage.Instance.FindByEnum(Items.ReachExtender).value);
         }
     }
 }

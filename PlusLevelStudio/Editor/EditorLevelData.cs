@@ -23,6 +23,7 @@ namespace PlusLevelStudio.Editor
         // TODO: TileBasedObject data
         public List<WindowLocation> windows = new List<WindowLocation>();
         public List<ExitLocation> exits = new List<ExitLocation>();
+        public List<ItemPlacement> items = new List<ItemPlacement>();
         public EditorRoom hall => rooms[0];
 
         private Dictionary<string, TextureContainer> defaultTextures = new Dictionary<string, TextureContainer>();
@@ -237,6 +238,10 @@ namespace PlusLevelStudio.Editor
             {
                 exits[i].position -= posDif;
             }
+            for (int i = 0; i < items.Count; i++)
+            {
+                items[i].position -= new Vector2(posDif.x * 10f, posDif.z * 10f);
+            }
             return true;
         }
 
@@ -380,6 +385,15 @@ namespace PlusLevelStudio.Editor
                     isSpawn = exits[i].isSpawn
                 });
             }
+            for (int i = 0; i < items.Count; i++)
+            {
+                ushort roomId = (ushort)Mathf.Max(GetCellSafe(Mathf.RoundToInt((items[i].position.x - 5f) / 10f), Mathf.RoundToInt((items[i].position.y - 5f) / 10f)).roomId, 1);
+                compiled.rooms[roomId - 1].items.Add(new ItemInfo()
+                {
+                    item = items[i].item,
+                    position = items[i].position.ToData()
+                });
+            }
             return compiled;
         }
 
@@ -393,6 +407,7 @@ namespace PlusLevelStudio.Editor
             stringComp.AddStrings(doors.Select(x => x.type));
             stringComp.AddStrings(exits.Select(x => x.type));
             stringComp.AddStrings(windows.Select(x => x.type));
+            stringComp.AddStrings(items.Select(x => x.item));
             stringComp.AddStrings(rooms.Select(x => x.roomType));
             stringComp.AddStrings(rooms.Select(x => x.textureContainer.floor));
             stringComp.AddStrings(rooms.Select(x => x.textureContainer.wall));
@@ -449,6 +464,12 @@ namespace PlusLevelStudio.Editor
                 writer.Write(exits[i].position.ToByte());
                 writer.Write((byte)exits[i].direction);
                 writer.Write(exits[i].isSpawn);
+            }
+            writer.Write(items.Count);
+            for (int i = 0; i < items.Count; i++)
+            {
+                stringComp.WriteStoredString(writer, items[i].item);
+                writer.Write(items[i].position.ToData());
             }
         }
 
@@ -518,6 +539,15 @@ namespace PlusLevelStudio.Editor
                     position = reader.ReadByteVector2().ToInt(),
                     direction = (Direction)reader.ReadByte(),
                     isSpawn = reader.ReadBoolean()
+                });
+            }
+            int itemCount = reader.ReadInt32();
+            for (int i = 0; i < itemCount; i++)
+            {
+                levelData.items.Add(new ItemPlacement()
+                {
+                    item = stringComp.ReadStoredString(reader),
+                    position = reader.ReadUnityVector2().ToUnity(),
                 });
             }
             return levelData;

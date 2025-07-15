@@ -28,6 +28,7 @@ namespace PlusStudioLevelFormat
     {
         public string type;
         public TextureContainer textureContainer;
+        public List<ItemInfo> items = new List<ItemInfo>();
 
         public RoomInfo(string roomType, TextureContainer container)
         {
@@ -77,6 +78,12 @@ namespace PlusStudioLevelFormat
         public ByteVector2 position;
         public PlusDirection direction = PlusDirection.Null;
         public bool isSpawn = false;
+    }
+
+    public class ItemInfo
+    {
+        public string item;
+        public UnityVector2 position;
     }
 
     public enum PlusDirection

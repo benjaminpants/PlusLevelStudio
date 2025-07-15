@@ -33,6 +33,16 @@ namespace PlusStudioLevelLoader
             return new Vector3(me.x, me.y, me.z);
         }
 
+        public static Vector2 ToUnity(this UnityVector2 me)
+        {
+            return new Vector2(me.x, me.y);
+        }
+
+        public static UnityVector2 ToData(this Vector2 me)
+        {
+            return new UnityVector2(me.x, me.y);
+        }
+
         public static Quaternion ToUnity(this UnityQuaternion me)
         {
             return new Quaternion(me.x, me.y, me.z, me.w);

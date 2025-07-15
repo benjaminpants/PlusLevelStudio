@@ -73,7 +73,17 @@ namespace PlusStudioLevelFormat
             int roomCount = reader.ReadInt32();
             for (int i = 0; i < roomCount; i++)
             {
-                level.rooms.Add(new RoomInfo(roomCompressor.ReadStoredString(reader), new TextureContainer(roomCompressor.ReadStoredString(reader), roomCompressor.ReadStoredString(reader), roomCompressor.ReadStoredString(reader))));
+                RoomInfo room = new RoomInfo(roomCompressor.ReadStoredString(reader), new TextureContainer(roomCompressor.ReadStoredString(reader), roomCompressor.ReadStoredString(reader), roomCompressor.ReadStoredString(reader)));
+                int itemCount = reader.ReadInt32();
+                for (int j = 0; j < itemCount; j++)
+                {
+                    room.items.Add(new ItemInfo()
+                    {
+                        item = objectsCompressor.ReadStoredString(reader),
+                        position = reader.ReadUnityVector2()
+                    });
+                }
+                level.rooms.Add(room);
             }
             int lightCount = reader.ReadInt32();
             for (int i = 0; i < lightCount; i++)
@@ -139,6 +149,10 @@ namespace PlusStudioLevelFormat
             roomCompressor.AddStrings(rooms.Select(x => x.textureContainer.wall));
             roomCompressor.AddStrings(rooms.Select(x => x.textureContainer.ceiling));
             StringCompressor objectsCompressor = new StringCompressor();
+            foreach (var room in rooms)
+            {
+                objectsCompressor.AddStrings(room.items.Select(x => x.item));
+            }
             objectsCompressor.AddStrings(lights.Select(x => x.prefab));
             objectsCompressor.AddStrings(doors.Select(x => x.prefab));
             objectsCompressor.AddStrings(windows.Select(x => x.prefab));
@@ -182,6 +196,12 @@ namespace PlusStudioLevelFormat
                 roomCompressor.WriteStoredString(writer, rooms[i].textureContainer.floor);
                 roomCompressor.WriteStoredString(writer, rooms[i].textureContainer.wall);
                 roomCompressor.WriteStoredString(writer, rooms[i].textureContainer.ceiling);
+                writer.Write(rooms[i].items.Count);
+                for (int j = 0; j < rooms[i].items.Count; j++)
+                {
+                    objectsCompressor.WriteStoredString(writer, rooms[i].items[j].item);
+                    writer.Write(rooms[i].items[j].position);
+                }
             }
             writer.Write(lights.Count);
             for (int i = 0; i < lights.Count; i++)

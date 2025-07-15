@@ -1,6 +1,7 @@
 ﻿using PlusStudioLevelFormat;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -70,6 +71,11 @@ namespace PlusStudioLevelLoader
                     hasActivity = false,
                     roomFunctionContainer = settings.container,
                     activity = new ActivityData(),
+                    items = level.rooms[i].items.Select(x => new ItemData()
+                    {
+                        item = LevelLoaderPlugin.Instance.itemObjects[x.item],
+                        position = x.position.ToUnity()
+                    }).ToList()
                 });
             }
             asset.spawnDirection = (Direction)level.spawnDirection;

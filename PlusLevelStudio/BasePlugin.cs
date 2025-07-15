@@ -40,6 +40,7 @@ namespace PlusLevelStudio
         public Dictionary<string, bool> doorIsTileBased = new Dictionary<string, bool>();
         public Dictionary<string, DoorDisplay> windowDisplays = new Dictionary<string, DoorDisplay>();
         public Dictionary<string, GameObject> exitDisplays = new Dictionary<string, GameObject>();
+        public GameObject pickupVisual;
 
         void Awake()
         {
@@ -105,6 +106,34 @@ namespace PlusLevelStudio
                         new DoorTool("swinging_silent"),
                         new WindowTool("standard"),
                     } },
+                    { "items", new List<EditorTool>()
+                    {
+                        new ItemTool("quarter"),
+                        new ItemTool("dietbsoda"),
+                        new ItemTool("bsoda"),
+                        new ItemTool("zesty"),
+                        new ItemTool("banana"),
+                        new ItemTool("scissors"),
+                        new ItemTool("boots"),
+                        new ItemTool("nosquee"),
+                        new ItemTool("keys"),
+                        new ItemTool("tape"),
+                        new ItemTool("clock"),
+                        new ItemTool("swinglock"),
+                        new ItemTool("whistle"),
+                        new ItemTool("dirtychalk"),
+                        new ItemTool("nametag"),
+                        new ItemTool("inviselixer"),
+                        new ItemTool("reachextend"),
+                        new ItemTool("teleporter"),
+                        new ItemTool("portalposter"),
+                        new ItemTool("grapple"),
+                        new ItemTool("apple"),
+                        new ItemTool("buspass"),
+                        new ItemTool("points25"),
+                        new ItemTool("points50"),
+                        new ItemTool("points100"),
+                    } },
                     { "lights", new List<EditorTool>()
                     {
                         new LightTool("fluorescent"),
@@ -123,6 +152,7 @@ namespace PlusLevelStudio
                 categoryOrder = new string[] {
                     "rooms",
                     "doors",
+                    "items",
                     "lights",
                     "tools"
                 },
@@ -276,7 +306,15 @@ namespace PlusLevelStudio
 
             WindowObject standardWindowObject = Resources.FindObjectsOfTypeAll<WindowObject>().First(x => x.name == "WoodWindow" && x.GetInstanceID() >= 0);
             EditorInterface.AddWindow<DoorDisplay>("standard", standardWindowObject.mask, standardWindowObject.overlay);
+
+            // elevators
             EditorInterface.AddExit("elevator", PlusStudioLevelLoader.LevelLoaderPlugin.Instance.exitDatas["elevator"].prefab);
+
+            // pickup visual
+            pickupVisual = EditorInterface.CloneToPrefabStripMonoBehaviors(Resources.FindObjectsOfTypeAll<Pickup>().First(x => x.transform.parent == null && x.GetInstanceID() >= 0 && x.name == "Pickup").gameObject);
+            pickupVisual.AddComponent<EditorDeletableObject>().AddRenderer(pickupVisual.transform.Find("ItemSprite").GetComponent<SpriteRenderer>(), "none");
+            pickupVisual.name = "PickupVisual";
+            pickupVisual.layer = editorInteractableLayer;
 
             yield return "Setting up Editor Controller...";
             GameObject editorControllerObject = new GameObject("StandardEditorController");

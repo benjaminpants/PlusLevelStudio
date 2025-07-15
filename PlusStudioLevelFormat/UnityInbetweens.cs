@@ -18,6 +18,18 @@ namespace PlusStudioLevelFormat
         }
     }
 
+    public struct UnityVector2
+    {
+        public float x;
+        public float y;
+
+        public UnityVector2(float x, float y)
+        {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
     public struct UnityColor
     {
         public float r;

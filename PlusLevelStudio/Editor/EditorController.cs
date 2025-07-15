@@ -174,8 +174,11 @@ namespace PlusLevelStudio.Editor
             {
                 AddVisual(item);
             }
+            foreach (ItemPlacement item in levelData.items)
+            {
+                AddVisual(item);
+            }
             RefreshCells();
-            RefreshLights();
             if (wipeUndoHistory)
             {
                 undoStreams.Clear(); // memorystreams dont need .dispose

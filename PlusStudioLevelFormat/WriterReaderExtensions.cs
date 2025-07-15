@@ -17,6 +17,11 @@ namespace PlusStudioLevelFormat
             return new UnityVector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
         }
 
+        public static UnityVector2 ReadUnityVector2(this BinaryReader reader)
+        {
+            return new UnityVector2(reader.ReadSingle(), reader.ReadSingle());
+        }
+
         public static void Write(this BinaryWriter writer, ByteVector2 vector)
         {
             writer.Write(vector.x);
@@ -36,6 +41,12 @@ namespace PlusStudioLevelFormat
             writer.Write(vector.x);
             writer.Write(vector.y);
             writer.Write(vector.z);
+        }
+
+        public static void Write(this BinaryWriter writer, UnityVector2 vector)
+        {
+            writer.Write(vector.x);
+            writer.Write(vector.y);
         }
 
         public static UnityColor ReadUnityColor(this BinaryReader reader)
