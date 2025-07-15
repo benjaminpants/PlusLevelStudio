@@ -200,10 +200,6 @@ namespace PlusLevelStudio
             arrowMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "FloorArrow.png"));
             arrowMat.name = "EditorArrowMaterial";
 
-            Material objectArrowMat = new Material(gridMat);
-            objectArrowMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "ObjectArrow.png"));
-            objectArrowMat.name = "EditorObjectArrowMaterial";
-
             Material silentDoorMat = new Material(assetMan.Get<Material>("SwingingDoorMat"));
             silentDoorMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "SwingDoorSilent.png"));
             silentDoorMat.name = "SilentSwingDoorDisplayMat";
@@ -273,65 +269,6 @@ namespace PlusLevelStudio
             settingsCollider.size = Vector3.one * 2f;
             selector.gearButton = settingsObject.AddComponent<SettingsWorldButton>();
 
-            // create the movement arrows
-            // first time using a method in a method
-            // THIS IS REALLY HACKY BUT I PLAN ON LATER SWITCHING OUT THE MINECRAFT PAPER STYLE HANDLES WITH 3D MODELS SO UGHH.
-            GameObject CreateSelectorObjectHandle(string name, Quaternion rotation)
-            {
-                Vector3[] eulers = new Vector3[]
-                {
-                    new Vector3(90f,0f,0f),
-                    new Vector3(0f,90f,90f),
-                    new Vector3(270f, 180f, 0f),
-                    new Vector3(0f, 270f, 270f)
-                };
-                GameObject handleBase = new GameObject(name);
-                handleBase.ConvertToPrefab(true);
-                for (int i = 0; i < 4; i++)
-                {
-                    GameObject quad = CreateQuad("Part_" + i, objectArrowMat, Vector3.zero, eulers[i]);
-                    quad.transform.SetParent(handleBase.transform, true);
-                    quad.transform.localScale /= 5f;
-                }
-                BoxCollider collider = handleBase.AddComponent<BoxCollider>();
-                collider.size = new Vector3(2f,2f,2f);
-                handleBase.transform.rotation = rotation;
-                handleBase.layer = editorInteractableLayer;
-                return handleBase;
-            }
-
-            // this weirdness from the legacy editor persists...
-            Vector3[] rotationRots = new Vector3[]
-            {
-                Vector3.up,
-                Vector3.down,
-                Vector3.forward,
-                Vector3.back,
-                Vector3.right,
-                Vector3.left,
-            };
-            string[] rotationNames = new string[]
-            {
-                "Up",
-                "Down",
-                "North",
-                "South",
-                "East",
-                "West"
-            };
-            for (int i = 0; i < rotationRots.Length; i++)
-            {
-                GameObject handle = CreateSelectorObjectHandle("Handle_" + rotationNames[i].ToString(), Quaternion.identity);
-                handle.transform.SetParent(selector.transform);
-                handle.transform.forward = rotationRots[i];
-                selector.objectArrows[i] = handle;
-                ObjectSelectorArrow objArrow = handle.AddComponent<ObjectSelectorArrow>();
-                objArrow.index = i;
-                objArrow.selector = selector;
-            }
-
-
-
             yield return "Creating Worker CoreGameManager...";
             CoreGameManager cgm = Resources.FindObjectsOfTypeAll<CoreGameManager>().First(x => x.name == "CoreGameManager" && x.GetInstanceID() >= 0);
             CoreGameManager workerCgm = GameObject.Instantiate<CoreGameManager>(cgm, MTM101BaldiDevAPI.prefabTransform);
@@ -378,7 +315,6 @@ namespace PlusLevelStudio
             pickupVisual.AddComponent<EditorDeletableObject>().AddRenderer(pickupVisual.transform.Find("ItemSprite").GetComponent<SpriteRenderer>(), "none");
             pickupVisual.name = "PickupVisual";
             pickupVisual.layer = editorInteractableLayer;
-            pickupVisual.AddComponent<MovableObjectInteraction>().flags = SelectorObjectFlags.Move2D;
 
             yield return "Setting up Editor Controller...";
             GameObject editorControllerObject = new GameObject("StandardEditorController");

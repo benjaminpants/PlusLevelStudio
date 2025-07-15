@@ -205,15 +205,6 @@ namespace PlusLevelStudio.Editor
             visualizable.InitializeVisual(visual);
         }
 
-        /// <summary>
-        /// Gets the visual created for the specified IEditorVisualizable.
-        /// </summary>
-        /// <param name="visualizable"></param>
-        public GameObject GetVisual(IEditorVisualizable visualizable)
-        {
-            return objectVisuals[visualizable];
-        }
-
         static FieldInfo _lightMap = AccessTools.Field(typeof(EnvironmentController), "lightMap");
         public void RefreshLights()
         {
@@ -315,7 +306,7 @@ namespace PlusLevelStudio.Editor
         /// <param name="plane"></param>
         /// <param name="doubleSided"></param>
         /// <returns>The position the ray landed on.</returns>
-        public Vector3? CastRayToPlane(Plane plane, bool doubleSided)
+        protected Vector3? CastRayToPlane(Plane plane, bool doubleSided)
         {
             float enteredAt;
             if (plane.Raycast(mouseRay, out enteredAt))
