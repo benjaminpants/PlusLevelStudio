@@ -13,10 +13,13 @@ namespace PlusLevelStudio.Editor
     public class EditorUIToolboxHandler : UIExchangeHandler
     {
         public string currentCategory = "tools";
+        public int currentMaxPages => Mathf.CeilToInt((float)EditorController.Instance.currentMode.availableTools[currentCategory].Count / hotSlots.Length);
+        public int currentPage = 0;
         public TextMeshProUGUI title;
         public TextMeshProUGUI description;
+        public TextMeshProUGUI pageCountText;
         public TextMeshProUGUI[] texts = new TextMeshProUGUI[10];
-        public HotSlotScript[] hotSlots;
+        public HotSlotScript[] hotSlots = new HotSlotScript[30];
 
         public override bool GetStateBoolean(string key)
         {
@@ -33,6 +36,7 @@ namespace PlusLevelStudio.Editor
             {
                 hotSlots[slot.slotIndex] = slot;
             }
+            pageCountText = transform.Find("PageNumber").GetComponent<TextMeshProUGUI>();
             // this code is horrible
             texts[0] = transform.Find("Category0").GetComponent<TextMeshProUGUI>();
             texts[1] = transform.Find("Category1").GetComponent<TextMeshProUGUI>();
@@ -71,6 +75,7 @@ namespace PlusLevelStudio.Editor
             {
                 return;
             }
+            currentPage = 0;
             currentCategory = EditorController.Instance.currentMode.categoryOrder[index];
             RefreshPage(0);
             SetTip(null);
@@ -102,6 +107,7 @@ namespace PlusLevelStudio.Editor
                 }
                 hotSlots[i - startIndex].currentTool = toolList[i];
             }
+            pageCountText.text = (page + 1) + "/" + currentMaxPages;
         }
 
         public override void SendInteractionMessage(string message, object data = null)
@@ -133,6 +139,14 @@ namespace PlusLevelStudio.Editor
                     break;
                 case "tip":
                     SetTip((data == null ? null : (EditorTool)data));
+                    break;
+                case "nextPage":
+                    currentPage = Mathf.Clamp(currentPage + 1, 0, currentMaxPages - 1);
+                    RefreshPage(currentPage);
+                    break;
+                case "prevPage":
+                    currentPage = Mathf.Clamp(currentPage - 1, 0, currentMaxPages - 1);
+                    RefreshPage(currentPage);
                     break;
             }
         }

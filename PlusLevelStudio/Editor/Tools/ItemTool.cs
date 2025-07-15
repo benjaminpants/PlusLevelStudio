@@ -12,12 +12,15 @@ namespace PlusLevelStudio.Editor.Tools
 
         public override string titleKey => PlusStudioLevelLoader.LevelLoaderPlugin.Instance.itemObjects[item].nameKey;
 
-        public override string descKey => PlusStudioLevelLoader.LevelLoaderPlugin.Instance.itemObjects[item].descKey;
-
-        public ItemTool(string item)
+        public ItemTool(string item) : this(item, PlusStudioLevelLoader.LevelLoaderPlugin.Instance.itemObjects[item].itemSpriteSmall)
         {
             this.item = item;
-            sprite = PlusStudioLevelLoader.LevelLoaderPlugin.Instance.itemObjects[item].itemSpriteSmall;
+        }
+
+        public ItemTool(string item, Sprite sprite)
+        {
+            this.item = item;
+            this.sprite = sprite;
         }
 
         public override void Begin()

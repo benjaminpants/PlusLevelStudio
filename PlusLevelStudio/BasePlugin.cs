@@ -130,9 +130,9 @@ namespace PlusLevelStudio
                         new ItemTool("grapple"),
                         new ItemTool("apple"),
                         new ItemTool("buspass"),
-                        new ItemTool("points25"),
-                        new ItemTool("points50"),
-                        new ItemTool("points100"),
+                        new ItemTool("points25", uiAssetMan.Get<Sprite>("Tools/items_points25")),
+                        new ItemTool("points50", uiAssetMan.Get<Sprite>("Tools/items_points50")),
+                        new ItemTool("points100", uiAssetMan.Get<Sprite>("Tools/items_points100")),
                     } },
                     { "lights", new List<EditorTool>()
                     {
