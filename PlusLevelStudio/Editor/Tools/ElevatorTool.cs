@@ -23,6 +23,7 @@ namespace PlusLevelStudio.Editor.Tools
 
         public void OnPlaced(Direction dir)
         {
+            EditorController.Instance.AddUndo();
             ExitLocation exitLocal = new ExitLocation();
             exitLocal.position = pos.Value;
             exitLocal.direction = dir;

@@ -85,7 +85,13 @@ namespace PlusLevelStudio.Editor
                 List<Direction> openDirs = Directions.OpenDirectionsFromBin(Directions.RotateBin(cellData.type, direction));
                 foreach (Direction dir in openDirs)
                 {
-                    PlusStudioLevelFormat.Cell nextCell = data.GetCellSafe(cellData.pos.Adjusted(roomPivot, direction) + position + dir.ToIntVector2());
+                    // make sure we aren't replacing another room or elevator since it appears like that isnt how bb+ handles the connection
+                    IntVector2 pos = cellData.pos.Adjusted(roomPivot, direction) + position + dir.ToIntVector2();
+                    if (data.AreaFromPos(pos, true) == null)
+                    {
+                        continue;
+                    }
+                    PlusStudioLevelFormat.Cell nextCell = data.GetCellSafe(pos);
                     nextCell.walls = (Nybble)(nextCell.walls & ~dir.GetOpposite().ToBinary());
                 }
             }

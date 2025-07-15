@@ -166,6 +166,14 @@ namespace PlusLevelStudio.Editor
             {
                 AddVisual(item);
             }
+            foreach (WindowLocation item in levelData.windows)
+            {
+                AddVisual(item);
+            }
+            foreach (ExitLocation item in levelData.exits)
+            {
+                AddVisual(item);
+            }
             RefreshCells();
             RefreshLights();
             if (wipeUndoHistory)
