@@ -26,6 +26,7 @@ namespace PlusStudioLevelLoader
         public Dictionary<string, Door> doorPrefabs = new Dictionary<string, Door>();
         public Dictionary<string, WindowObject> windowObjects = new Dictionary<string, WindowObject>();
         public Dictionary<string, TileBasedObject> tileBasedObjectPrefabs = new Dictionary<string, TileBasedObject>();
+        public Dictionary<string, LoaderExitData> exitDatas = new Dictionary<string, LoaderExitData>();
 
         public static Texture2D RoomTextureFromAlias(string alias)
         {
@@ -105,6 +106,11 @@ namespace PlusStudioLevelLoader
 
             WindowObject[] windows = Resources.FindObjectsOfTypeAll<WindowObject>().Where(x => x.GetInstanceID() >= 0).ToArray();
             windowObjects.Add("standard", windows.First(x => x.name == "WoodWindow"));
+
+            exitDatas.Add("elevator", new LoaderExitData() {
+                prefab = Resources.FindObjectsOfTypeAll<Elevator>().First(x => x.name == "ElevatorWGate" && x.GetInstanceID() >= 0),
+                room = Resources.FindObjectsOfTypeAll<RoomAsset>().First(x => ((UnityEngine.Object)x).name == "Room_Elevator" && x.GetInstanceID() >= 0)
+            });
         }
     }
 }

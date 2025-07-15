@@ -15,7 +15,17 @@ namespace PlusStudioLevelFormat
         public List<TileObjectInfo> tileObjects = new List<TileObjectInfo>();
         public List<DoorInfo> doors = new List<DoorInfo>();
         public List<WindowInfo> windows = new List<WindowInfo>();
+        public List<ExitInfo> exits = new List<ExitInfo>();
         public UnityVector3 spawnPoint = new UnityVector3(5f,5f,5f);
+        public UnityVector3 UnitySpawnPoint
+        {
+            get
+            {
+                if (exits.Where(x => x.isSpawn).Count() == 0) return spawnPoint;
+                ExitInfo exit = exits.Last(x => x.isSpawn);
+                return new UnityVector3(exit.position.x * 10f + 5f, 5f, exit.position.y * 10f + 5f);
+            }
+        }
         public PlusDirection spawnDirection = PlusDirection.North;
         public static readonly byte version = 0;
 
@@ -107,6 +117,17 @@ namespace PlusStudioLevelFormat
                     direction = (PlusDirection)reader.ReadByte(),
                 });
             }
+            int exitCount = reader.ReadInt32();
+            for (int i = 0; i < exitCount; i++)
+            {
+                level.exits.Add(new ExitInfo()
+                {
+                    type = objectsCompressor.ReadStoredString(reader),
+                    position = reader.ReadByteVector2(),
+                    direction = (PlusDirection)reader.ReadByte(),
+                    isSpawn = reader.ReadBoolean()
+                });
+            }
             return level;
         }
 
@@ -122,6 +143,7 @@ namespace PlusStudioLevelFormat
             objectsCompressor.AddStrings(doors.Select(x => x.prefab));
             objectsCompressor.AddStrings(windows.Select(x => x.prefab));
             objectsCompressor.AddStrings(tileObjects.Select(x => x.prefab));
+            objectsCompressor.AddStrings(exits.Select(x => x.type));
             objectsCompressor.FinalizeDatabase();
             roomCompressor.FinalizeDatabase();
             writer.Write(version);
@@ -190,6 +212,14 @@ namespace PlusStudioLevelFormat
                 objectsCompressor.WriteStoredString(writer, tileObjects[i].prefab);
                 writer.Write(tileObjects[i].position);
                 writer.Write((byte)tileObjects[i].direction);
+            }
+            writer.Write(exits.Count);
+            for (int i = 0; i < exits.Count; i++)
+            {
+                objectsCompressor.WriteStoredString(writer, exits[i].type);
+                writer.Write(exits[i].position);
+                writer.Write((byte)exits[i].direction);
+                writer.Write(exits[i].isSpawn);
             }
         }
     }

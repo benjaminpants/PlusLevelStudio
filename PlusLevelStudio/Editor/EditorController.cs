@@ -748,7 +748,7 @@ namespace PlusLevelStudio.Editor
                         }
                         continue;
                     }
-                    EditorRoom room = levelData.RoomFromPos(new IntVector2(x,y), true);
+                    EditorRoom room = levelData.RoomFromId(levelData.GetCellSafe(x,y).roomId);
                     // room shouldn't be null here, because if we've reached this point roomId wasn't zero
                     workerEc.cells[x, y].Tile.gameObject.SetActive(true);
                     workerEc.cells[x, y].Tile.MeshRenderer.material.SetMainTexture(GenerateTextureAtlas(room.floorTex, room.wallTex, room.ceilTex));

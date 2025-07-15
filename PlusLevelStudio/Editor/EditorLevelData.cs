@@ -7,6 +7,7 @@ using PlusLevelStudio.Editor;
 using PlusStudioLevelFormat;
 using PlusStudioLevelLoader;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace PlusLevelStudio.Editor
 {
@@ -21,6 +22,7 @@ namespace PlusLevelStudio.Editor
         public List<DoorLocation> doors = new List<DoorLocation>();
         // TODO: TileBasedObject data
         public List<WindowLocation> windows = new List<WindowLocation>();
+        public List<ExitLocation> exits = new List<ExitLocation>();
         public EditorRoom hall => rooms[0];
 
         private Dictionary<string, TextureContainer> defaultTextures = new Dictionary<string, TextureContainer>();
@@ -168,7 +170,7 @@ namespace PlusLevelStudio.Editor
                     {
                         Direction dir = allDirections[i];
                         IntVector2 vec2 = dir.ToIntVector2();
-                        PlusStudioLevelFormat.Cell nearbyTile = GetTileSafe(cells[x, y].position.x + vec2.x, cells[x, y].position.y + vec2.z);
+                        PlusStudioLevelFormat.Cell nearbyTile = GetCellSafe(cells[x, y].position.x + vec2.x, cells[x, y].position.y + vec2.z);
                         if ((nearbyTile == null) || (nearbyTile.roomId != cells[x, y].roomId))
                         {
                             cells[x, y].walls |= (Nybble)(1 << Directions.BitPosition(dir));
@@ -179,6 +181,7 @@ namespace PlusLevelStudio.Editor
             ValidatePlacements(forEditor);
             ApplyCellModifiers(doors, forEditor);
             ApplyCellModifiers(windows, forEditor);
+            ApplyCellModifiers(exits, forEditor);
         }
 
         // TODO: figure out if we even NEED to manually recalculate all cells, or if we'd just be better off moving only areas
@@ -230,6 +233,10 @@ namespace PlusLevelStudio.Editor
             {
                 windows[i].position -= posDif;
             }
+            for (int i = 0; i < exits.Count; i++)
+            {
+                exits[i].position -= posDif;
+            }
             return true;
         }
 
@@ -258,18 +265,23 @@ namespace PlusLevelStudio.Editor
             IntVector2[] ownedCells = area.CalculateOwnedCells();
             for (int i = 0; i < ownedCells.Length; i++)
             {
-                if (GetTileSafe(ownedCells[i].x, ownedCells[i].z) == null) return false;
+                if (GetCellSafe(ownedCells[i].x, ownedCells[i].z) == null) return false;
             }
             return true;
         }
 
-        public PlusStudioLevelFormat.Cell GetTileSafe(int x, int y)
+        public PlusStudioLevelFormat.Cell GetCellSafe(int x, int y)
         {
             if (x < 0) return null;
             if (x >= mapSize.x) return null;
             if (y < 0) return null;
             if (y >= mapSize.z) return null;
             return cells[x, y];
+        }
+
+        public PlusStudioLevelFormat.Cell GetCellSafe(IntVector2 vec2)
+        {
+            return GetCellSafe(vec2.x, vec2.z);
         }
 
         public ushort RoomIdFromPos(IntVector2 vector, bool forEditor)
@@ -345,7 +357,7 @@ namespace PlusLevelStudio.Editor
                         prefab = doors[i].type,
                         position = doors[i].position.ToByte(),
                         direction = (PlusDirection)doors[i].direction,
-                        roomId = GetTileSafe(doors[i].position.x, doors[i].position.z).roomId
+                        roomId = GetCellSafe(doors[i].position.x, doors[i].position.z).roomId
                     });
                 }
             }
@@ -356,6 +368,16 @@ namespace PlusLevelStudio.Editor
                     prefab = windows[i].type,
                     position = windows[i].position.ToByte(),
                     direction = (PlusDirection)windows[i].direction
+                });
+            }
+            for (int i = 0; i < exits.Count; i++)
+            {
+                compiled.exits.Add(new ExitInfo()
+                {
+                    type = exits[i].type,
+                    position = exits[i].position.ToByte(),
+                    direction = (PlusDirection)exits[i].direction,
+                    isSpawn = exits[i].isSpawn
                 });
             }
             return compiled;
@@ -369,6 +391,7 @@ namespace PlusLevelStudio.Editor
             StringCompressor stringComp = new StringCompressor();
             stringComp.AddStrings(lights.Select(x => x.type));
             stringComp.AddStrings(doors.Select(x => x.type));
+            stringComp.AddStrings(exits.Select(x => x.type));
             stringComp.AddStrings(windows.Select(x => x.type));
             stringComp.AddStrings(rooms.Select(x => x.roomType));
             stringComp.AddStrings(rooms.Select(x => x.textureContainer.floor));
@@ -418,6 +441,14 @@ namespace PlusLevelStudio.Editor
                 stringComp.WriteStoredString(writer, windows[i].type);
                 writer.Write(windows[i].position.ToByte());
                 writer.Write((byte)windows[i].direction);
+            }
+            writer.Write(exits.Count);
+            for (int i = 0; i < exits.Count; i++)
+            {
+                stringComp.WriteStoredString(writer, exits[i].type);
+                writer.Write(exits[i].position.ToByte());
+                writer.Write((byte)exits[i].direction);
+                writer.Write(exits[i].isSpawn);
             }
         }
 
@@ -476,6 +507,17 @@ namespace PlusLevelStudio.Editor
                     type = stringComp.ReadStoredString(reader),
                     position = reader.ReadByteVector2().ToInt(),
                     direction = (Direction)reader.ReadByte()
+                });
+            }
+            int exitCount = reader.ReadInt32();
+            for (int i = 0; i < exitCount; i++)
+            {
+                levelData.exits.Add(new ExitLocation()
+                {
+                    type = stringComp.ReadStoredString(reader),
+                    position = reader.ReadByteVector2().ToInt(),
+                    direction = (Direction)reader.ReadByte(),
+                    isSpawn = reader.ReadBoolean()
                 });
             }
             return levelData;

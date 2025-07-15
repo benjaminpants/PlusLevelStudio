@@ -108,6 +108,17 @@ namespace PlusStudioLevelLoader
                     prefab = LevelLoaderPlugin.Instance.tileBasedObjectPrefabs[level.tileObjects[i].prefab]
                 });
             }
+            for (int i = 0; i < level.exits.Count; i++)
+            {
+                asset.exits.Add(new ExitData()
+                {
+                    position = level.exits[i].position.ToInt(),
+                    direction = (Direction)level.exits[i].direction,
+                    spawn = level.exits[i].isSpawn,
+                    prefab = LevelLoaderPlugin.Instance.exitDatas[level.exits[i].type].prefab,
+                    room = LevelLoaderPlugin.Instance.exitDatas[level.exits[i].type].room
+                });
+            }
             return asset;
         }
     }

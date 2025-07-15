@@ -40,6 +40,10 @@
 {"key":"Ed_Tool_light_cordedhanging_Title","value":"Corded Hanging Light"},
 {"key":"Ed_Tool_light_cordedhanging_Desc","value":"Most ceilings cannot handle the vast power of this light..."},
 {"key":"Ed_Tool_light_standardhanging_Title","value":"Hanging Light"},
-{"key":"Ed_Tool_light_standardhanging_Desc","value":"Snazzy!"}
+{"key":"Ed_Tool_light_standardhanging_Desc","value":"Snazzy!"},
+{"key":"Ed_Tool_exit_elevator_Title","value":"Elevator"},
+{"key":"Ed_Tool_exit_elevator_Desc","value":"An elevator that can be used to exit the level."},
+{"key":"Ed_Tool_exit_elevator_start_Title","value":"Entrance Elevator"},
+{"key":"Ed_Tool_exit_elevator_start_Desc","value":"If placed, the player will spawn here instead of the spawn point."}
 
 ]}

@@ -11,6 +11,9 @@ namespace PlusLevelStudio.Editor.Tools
         public WindowTool(string type) : base(type, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/window_" + type))
         {
         }
+        public WindowTool(string type, Sprite sprite) : base(type, sprite)
+        {
+        }
 
         public override void OnPlaced(Direction dir)
         {

@@ -71,6 +71,14 @@ namespace PlusStudioLevelFormat
         public PlusDirection direction = PlusDirection.Null;
     }
 
+    public class ExitInfo
+    {
+        public string type;
+        public ByteVector2 position;
+        public PlusDirection direction = PlusDirection.Null;
+        public bool isSpawn = false;
+    }
+
     public enum PlusDirection
     {
         North,

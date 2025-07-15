@@ -1,4 +1,5 @@
-﻿using MTM101BaldAPI;
+﻿using HarmonyLib;
+using MTM101BaldAPI;
 using PlusLevelStudio.Editor;
 using System;
 using System.Collections.Generic;
@@ -66,6 +67,46 @@ namespace PlusLevelStudio
             T standardDoorDisplayBehavior = AddDoorNoArray<T>(key + "_Window" + typeof(T).Name, mask, sideMaterials);
             LevelStudioPlugin.Instance.windowDisplays.Add(key, standardDoorDisplayBehavior);
             return standardDoorDisplayBehavior;
+        }
+
+        /// <summary>
+        /// Generates the visual for the specified elevator prefab.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="prefab"></param>
+        public static void AddExit(string key, Elevator prefab)
+        {
+            GameObject visual = CloneToPrefabStripMonoBehaviors(prefab.gameObject);
+            visual.name = "ElevatorVisual_" + key;
+            // TODO: add hitbox and delete component
+            AddExit(key, visual);
+        }
+
+        /// <summary>
+        /// Adds the specified exit visual to the editors database. Make sure your visual has a collision box and an EditorDeleteComponent attached!
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="visual"></param>
+        public static void AddExit(string key, GameObject visual)
+        {
+            LevelStudioPlugin.Instance.exitDisplays.Add(key, visual);
+        }
+
+        /// <summary>
+        /// Clones the GameObject, strips the clone's components, and then converts it to a prefab and returns.
+        /// </summary>
+        /// <param name="toStrip"></param>
+        /// <returns></returns>
+        public static GameObject CloneToPrefabStripMonoBehaviors(GameObject toStrip)
+        {
+            GameObject obj = GameObject.Instantiate(toStrip, MTM101BaldiDevAPI.prefabTransform);
+            obj.name = obj.name.Replace(" (Cloned)", "_Stripped");
+            MonoBehaviour[] behaviors = obj.GetComponentsInChildren<MonoBehaviour>();
+            foreach (var behavior in behaviors)
+            {
+                GameObject.DestroyImmediate(behavior);
+            }
+            return obj;
         }
     }
 }

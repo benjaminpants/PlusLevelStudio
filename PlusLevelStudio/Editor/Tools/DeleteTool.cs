@@ -9,6 +9,7 @@ namespace PlusLevelStudio.Editor.Tools
     public class DeleteTool : EditorTool
     {
         CellArea lastFoundArea = null;
+        ExitLocation lastFoundExit = null;
         EditorDeletableObject lastFoundDeletable = null;
         public override string id => "delete";
 
@@ -33,12 +34,17 @@ namespace PlusLevelStudio.Editor.Tools
             {
                 EditorController.Instance.HighlightCells(lastFoundArea.CalculateOwnedCells(), "none");
             }
+            if (lastFoundExit != null)
+            {
+                EditorController.Instance.HighlightCells(lastFoundExit.GetOwnedCells(), "none");
+            }
             if (lastFoundDeletable != null)
             {
                 lastFoundDeletable.Highlight("none");
             }
             lastFoundDeletable = null;
             lastFoundArea = null;
+            lastFoundExit = null;
         }
 
         public override bool MousePressed()
@@ -47,7 +53,14 @@ namespace PlusLevelStudio.Editor.Tools
             {
                 EditorController.Instance.AddUndo();
                 return lastFoundDeletable.OnDelete(EditorController.Instance.levelData);
-            }    
+            }
+            if (lastFoundExit != null)
+            {
+                EditorController.Instance.AddUndo();
+                EditorController.Instance.levelData.exits.Remove(lastFoundExit);
+                EditorController.Instance.RemoveVisual(lastFoundExit);
+                EditorController.Instance.RefreshCells();
+            }
             if (lastFoundArea != null)
             {
                 EditorController.Instance.AddUndo();
@@ -84,6 +97,11 @@ namespace PlusLevelStudio.Editor.Tools
                     {
                         EditorController.Instance.HighlightCells(lastFoundArea.CalculateOwnedCells(), "none");
                     }
+                    if (lastFoundExit != null)
+                    {
+                        EditorController.Instance.HighlightCells(lastFoundExit.GetOwnedCells(), "none");
+                    }
+                    lastFoundExit = null;
                     lastFoundArea = null;
                     return;
                 }
@@ -93,11 +111,26 @@ namespace PlusLevelStudio.Editor.Tools
                 lastFoundDeletable.Highlight("none");
             }
             lastFoundDeletable = null;
-            CellArea foundArea = EditorController.Instance.levelData.AreaFromPos(EditorController.Instance.mouseGridPosition, true);
             if (lastFoundArea != null)
             {
                 EditorController.Instance.HighlightCells(lastFoundArea.CalculateOwnedCells(), "none");
             }
+            if (lastFoundExit != null)
+            {
+                EditorController.Instance.HighlightCells(lastFoundExit.GetOwnedCells(), "none");
+            }
+            ExitLocation foundExit = null;
+            foreach (ExitLocation exit in EditorController.Instance.levelData.exits)
+            {
+                if (exit.CellOwned(EditorController.Instance.mouseGridPosition))
+                {
+                    foundExit = exit;
+                    EditorController.Instance.HighlightCells(foundExit.GetOwnedCells(), "red");
+                    break;
+                }
+            }
+            lastFoundExit = foundExit;
+            CellArea foundArea = EditorController.Instance.levelData.AreaFromPos(EditorController.Instance.mouseGridPosition, true);
             if (foundArea != null)
             {
                 EditorController.Instance.HighlightCells(foundArea.CalculateOwnedCells(), "red");

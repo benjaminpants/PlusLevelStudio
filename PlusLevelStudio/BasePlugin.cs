@@ -39,6 +39,7 @@ namespace PlusLevelStudio
         public Dictionary<string, DoorDisplay> doorDisplays = new Dictionary<string, DoorDisplay>();
         public Dictionary<string, bool> doorIsTileBased = new Dictionary<string, bool>();
         public Dictionary<string, DoorDisplay> windowDisplays = new Dictionary<string, DoorDisplay>();
+        public Dictionary<string, GameObject> exitDisplays = new Dictionary<string, GameObject>();
 
         void Awake()
         {
@@ -113,6 +114,8 @@ namespace PlusLevelStudio
                     } },
                     { "tools", new List<EditorTool>()
                     {
+                        new ElevatorTool("elevator", true),
+                        new ElevatorTool("elevator", false),
                         new MergeTool(),
                         new DeleteTool(),
                     } }
@@ -273,6 +276,7 @@ namespace PlusLevelStudio
 
             WindowObject standardWindowObject = Resources.FindObjectsOfTypeAll<WindowObject>().First(x => x.name == "WoodWindow" && x.GetInstanceID() >= 0);
             EditorInterface.AddWindow<DoorDisplay>("standard", standardWindowObject.mask, standardWindowObject.overlay);
+            EditorInterface.AddExit("elevator", PlusStudioLevelLoader.LevelLoaderPlugin.Instance.exitDatas["elevator"].prefab);
 
             yield return "Setting up Editor Controller...";
             GameObject editorControllerObject = new GameObject("StandardEditorController");
