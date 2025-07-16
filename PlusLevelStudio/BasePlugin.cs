@@ -207,6 +207,10 @@ namespace PlusLevelStudio
             handleArrowMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "3DArrow.png"));
             handleArrowMat.name = "Editor3DArrowMaterial";
 
+            Material selectorLatticeMat = new Material(gridMat);
+            selectorLatticeMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "SelectorLattice.png"));
+            selectorLatticeMat.name = "EditorSelectorLatticeMaterial";
+
             Material silentDoorMat = new Material(assetMan.Get<Material>("SwingingDoorMat"));
             silentDoorMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "SwingDoorSilent.png"));
             silentDoorMat.name = "SilentSwingDoorDisplayMat";
@@ -297,8 +301,6 @@ namespace PlusLevelStudio
             handleModelBase.AddComponent<HandleArrow>().myHandles = handles;
             handleModelBase.AddComponent<BoxCollider>().size = new Vector3(0.3f, 0.3f, 1.1f);
 
-            // first time using methods in methods
-
             GameObject handleZ = GameObject.Instantiate(handleModelBase);
             handleZ.transform.SetParent(moveHandleBase.transform);
             handleZ.SetActive(true);
@@ -338,6 +340,30 @@ namespace PlusLevelStudio
             selector.moveHandles = handles;
             handles.mySelector = selector;
 
+            // create the lattices
+
+            GameObject baseLattice = new GameObject("BaseLattice");
+            GameObject topQuad = CreateQuad("TopQuad", selectorLatticeMat, Vector3.zero, Vector3.zero);
+            GameObject bottomQuad = CreateQuad("BottomQuad", selectorLatticeMat, Vector3.zero, Vector3.zero);
+            topQuad.transform.SetParent(baseLattice.transform, true);
+            bottomQuad.transform.SetParent(baseLattice.transform, true);
+            topQuad.transform.localScale = Vector3.one;
+            bottomQuad.transform.localScale = -Vector3.one;
+            baseLattice.layer = editorHandleLayer;
+            baseLattice.AddComponent<BoxCollider>().size = new Vector3(1f,1f,0.025f);
+            baseLattice.GetComponentsInChildren<MeshRenderer>().Do(x => x.gameObject.layer = LayerMask.NameToLayer("Overlay"));
+            baseLattice.AddComponent<HandleLattice>();
+
+
+            GameObject xzLattice = GameObject.Instantiate(baseLattice);
+            xzLattice.transform.SetParent(handles.transform, true);
+            xzLattice.transform.forward = Vector3.up;
+            xzLattice.transform.position = (Vector3.forward + Vector3.right) * 0.75f;
+            xzLattice.GetComponentsInChildren<MeshRenderer>().Do(x => x.material.SetTexture("_LightMap", lightmaps["green"]));
+            xzLattice.GetComponent<HandleLattice>().myHandles = handles;
+            handles.lattices[0] = xzLattice.GetComponent<HandleLattice>();
+
+            DestroyImmediate(baseLattice);
             DestroyImmediate(handleModelBase);
 
             yield return "Creating Worker CoreGameManager...";

@@ -67,15 +67,21 @@ namespace PlusLevelStudio.Editor
             arrows[1].transform.localPosition = Vector3.up;
             arrows[2].gameObject.SetActive(flags.HasFlag(MoveAxis.X));
             arrows[2].transform.localPosition = Vector3.right;
+            lattices[0].gameObject.SetActive(flags.HasFlag(MoveAxis.X) && flags.HasFlag(MoveAxis.Z)); // this lattice moves stuff in the X and Z axis so we need to make sure we are allowed to move both
         }
 
         public HandleArrow[] arrows = new HandleArrow[3];
+        public HandleLattice[] lattices = new HandleLattice[3];
         public Selector mySelector;
         Vector3 currentHandleMouseStart;
 
+        // TODO: figure out appropiate way to calculate the plane distance, as .y is unlikely to continue to work once rotation is implemented
+        // TODO: this still isn't quite right...
         public Plane GeneratePlane(Transform transform)
         {
-            return new Plane(transform.up, -transform.position.y);
+            Vector3 downwards = transform.InverseTransformPoint(new Vector3(transform.position.x, 0f, transform.position.z));
+            float downValue = downwards.y * transform.localScale.y;
+            return new Plane(transform.up, downValue);
         }
 
         public void ClickBegin(HandleArrow arrow)
@@ -89,6 +95,16 @@ namespace PlusLevelStudio.Editor
             currentHandleMouseStart = arrow.transform.position - LockPositionOntoForward(arrow.transform, start.Value);
         }
 
+        public void LatticeClickUpdate(Transform lattice)
+        {
+            Vector3? pos = EditorController.Instance.CastRayToPlane(new Plane(lattice.forward, -lattice.position.y), true);
+            if (pos == null)
+            {
+                return;
+            }
+            mySelector.UpdateObjectPosition(pos.Value - lattice.transform.position);
+        }
+
         public void ClickUpdate(HandleArrow arrow)
         {
             Vector3? pos = EditorController.Instance.CastRayToPlane(GeneratePlane(arrow.transform), true);
@@ -97,8 +113,6 @@ namespace PlusLevelStudio.Editor
                 return;
             }
             mySelector.UpdateObjectPosition(LockPositionOntoForward(arrow.transform, pos.Value) - (arrow.transform.position - currentHandleMouseStart));
-            // TODO: make this position relative to where the player first clicked so there aren't any abrupt jumps
-            //arrow.transform.position = LockPositionOntoForward(arrow.transform, pos.Value);
         }
 
         public void ClickEnd(HandleArrow arrow)
@@ -119,6 +133,34 @@ namespace PlusLevelStudio.Editor
             return relativeTo.TransformPoint(output); // convert back to world space
         }
 
+    }
+
+    public class HandleLattice : MonoBehaviour, IEditorInteractable
+    {
+        public MoveHandles myHandles;
+        public bool InteractableByTool(EditorTool tool)
+        {
+            // shouldn't be called by this, since the layer we SHOULD be on doesn't support being clicked by tools
+            throw new NotImplementedException();
+        }
+
+        public bool OnClicked()
+        {
+            return true;
+            //throw new NotImplementedException();
+        }
+
+        public bool OnHeld()
+        {
+            myHandles.LatticeClickUpdate(transform);
+            return true;
+            //throw new NotImplementedException();
+        }
+
+        public void OnReleased()
+        {
+            
+        }
     }
 
     public class HandleArrow : MonoBehaviour, IEditorInteractable
