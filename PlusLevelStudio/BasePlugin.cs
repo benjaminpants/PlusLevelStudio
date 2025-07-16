@@ -108,6 +108,7 @@ namespace PlusLevelStudio
                         new DoorTool("standard"),
                         new DoorTool("swinging"),
                         new DoorTool("oneway"),
+                        new DoorTool("coinswinging"),
                         new DoorTool("swinging_silent"),
                         new WindowTool("standard"),
                     } },
@@ -199,6 +200,7 @@ namespace PlusLevelStudio
             assetMan.Add<Material>("doorMask", materials.First(x => x.name == "DoorMask"));
             assetMan.Add<Material>("swingingDoorMask", materials.First(x => x.name == "SwingDoorMask"));
             assetMan.Add<Material>("SwingingDoorMat", materials.First(x => x.name == "SwingDoorTexture_Closed"));
+            assetMan.Add<Material>("CoinDoorMat", materials.First(x => x.name == "CoinDoor"));
 
             assetMan.Add<Material>("OneWayRight", materials.First(x => x.name == "SwingDoorRightWay_Closed"));
             assetMan.Add<Material>("OneWayWrong", materials.First(x => x.name == "SwingDoorTextureOneWay_Closed"));
@@ -377,6 +379,7 @@ namespace PlusLevelStudio
             xzLattice.GetComponentsInChildren<MeshRenderer>().Do(x => x.material.SetTexture("_LightMap", lightmaps["green"]));
             xzLattice.GetComponent<HandleLattice>().myHandles = handles;
             handles.lattices[0] = xzLattice.GetComponent<HandleLattice>();
+            xzLattice.name = "XZLattice";
 
             GameObject xyLattice = GameObject.Instantiate(baseLattice);
             xyLattice.transform.SetParent(handles.transform, true);
@@ -385,6 +388,7 @@ namespace PlusLevelStudio
             xyLattice.GetComponentsInChildren<MeshRenderer>().Do(x => x.material.SetTexture("_LightMap", lightmaps["blue"]));
             xyLattice.GetComponent<HandleLattice>().myHandles = handles;
             handles.lattices[1] = xyLattice.GetComponent<HandleLattice>();
+            xyLattice.name = "XYLattice";
 
             GameObject zyLattice = GameObject.Instantiate(baseLattice);
             zyLattice.transform.SetParent(handles.transform, true);
@@ -393,6 +397,7 @@ namespace PlusLevelStudio
             zyLattice.GetComponentsInChildren<MeshRenderer>().Do(x => x.material.SetTexture("_LightMap", lightmaps["red"]));
             zyLattice.GetComponent<HandleLattice>().myHandles = handles;
             handles.lattices[2] = zyLattice.GetComponent<HandleLattice>();
+            zyLattice.name = "ZYLattice";
 
             DestroyImmediate(baseLattice);
             DestroyImmediate(handleModelBase);
@@ -431,6 +436,7 @@ namespace PlusLevelStudio
             EditorInterface.AddDoor<DoorDisplay>("swinging", true, assetMan.Get<Material>("swingingDoorMask"), new Material[] { assetMan.Get<Material>("SwingingDoorMat"), assetMan.Get<Material>("SwingingDoorMat") });
             EditorInterface.AddDoor<DoorDisplay>("oneway", true, assetMan.Get<Material>("swingingDoorMask"), new Material[] { assetMan.Get<Material>("OneWayRight"), assetMan.Get<Material>("OneWayWrong") });
             EditorInterface.AddDoor<DoorDisplay>("swinging_silent", true, assetMan.Get<Material>("swingingDoorMask"), new Material[] { silentDoorMat, silentDoorMat });
+            EditorInterface.AddDoor<DoorDisplay>("coinswinging", true, assetMan.Get<Material>("swingingDoorMask"), new Material[] { assetMan.Get<Material>("CoinDoorMat"), assetMan.Get<Material>("CoinDoorMat") });
 
             WindowObject standardWindowObject = Resources.FindObjectsOfTypeAll<WindowObject>().First(x => x.name == "WoodWindow" && x.GetInstanceID() >= 0);
             EditorInterface.AddWindow<DoorDisplay>("standard", standardWindowObject.mask, standardWindowObject.overlay);

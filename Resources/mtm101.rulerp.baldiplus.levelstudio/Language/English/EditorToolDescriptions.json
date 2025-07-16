@@ -28,6 +28,8 @@
 {"key":"Ed_Tool_door_swinging_Desc","value":"This door can be walked and seen through."},
 {"key":"Ed_Tool_door_swinging_silent_Title","value":"Silent Swinging Door"},
 {"key":"Ed_Tool_door_swinging_silent_Desc","value":"Use instead of the regular swinging door for library entrances. Or don't. Or use it elsewhere."},
+{"key":"Ed_Tool_door_coinswinging_Title","value":"Coin Door"},
+{"key":"Ed_Tool_door_coinswinging_Desc","value":"A yellow door that requires a quarter to unlock."},
 {"key":"Ed_Tool_door_oneway_Title","value":"Oneway Door"},
 {"key":"Ed_Tool_door_oneway_Desc","value":"This door can only be entered from the direction you assign it."},
 {"key":"Ed_Tool_door_oneway_Title","value":"Oneway Door"},
