@@ -368,6 +368,7 @@ namespace PlusLevelStudio.Editor
 
         public void UpdateObjectPosition(Vector3 offset)
         {
+            if (offset.sqrMagnitude == 0) return; // no change made, dont bother sending down
             selectedMovable.MoveUpdate(offset);
         }
 

@@ -75,6 +75,12 @@ namespace PlusStudioLevelLoader
                     {
                         item = LevelLoaderPlugin.Instance.itemObjects[x.item],
                         position = x.position.ToUnity()
+                    }).ToList(),
+                    basicObjects = level.rooms[i].basicObjects.Select(x => new BasicObjectData()
+                    {
+                        position = x.position.ToUnity(),
+                        rotation= x.rotation.ToUnity(),
+                        prefab = LevelLoaderPlugin.Instance.basicObjects[x.prefab].transform
                     }).ToList()
                 });
             }

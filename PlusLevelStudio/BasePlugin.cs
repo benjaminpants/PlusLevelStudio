@@ -16,6 +16,7 @@ using MTM101BaldAPI.Reflection;
 using PlusLevelStudio.UI;
 using PlusLevelStudio.Editor.Tools;
 using TMPro;
+using PlusStudioLevelLoader;
 
 namespace PlusLevelStudio
 {
@@ -43,6 +44,7 @@ namespace PlusLevelStudio
         public Dictionary<string, bool> doorIsTileBased = new Dictionary<string, bool>();
         public Dictionary<string, DoorDisplay> windowDisplays = new Dictionary<string, DoorDisplay>();
         public Dictionary<string, GameObject> exitDisplays = new Dictionary<string, GameObject>();
+        public Dictionary<string, EditorBasicObject> basicObjectDisplays = new Dictionary<string, EditorBasicObject>();
         public GameObject pickupVisual;
 
         void Awake()
@@ -144,6 +146,10 @@ namespace PlusLevelStudio
                         new LightTool("cordedhanging"),
                         new LightTool("standardhanging")
                     } },
+                    { "objects", new List<EditorTool>()
+                    {
+                        new ObjectTool("desk")
+                    } },
                     { "tools", new List<EditorTool>()
                     {
                         new ElevatorTool("elevator", true),
@@ -156,6 +162,7 @@ namespace PlusLevelStudio
                     "rooms",
                     "doors",
                     "items",
+                    "objects",
                     "lights",
                     "tools"
                 },
@@ -405,7 +412,7 @@ namespace PlusLevelStudio
             EditorInterface.AddWindow<DoorDisplay>("standard", standardWindowObject.mask, standardWindowObject.overlay);
 
             // elevators
-            EditorInterface.AddExit("elevator", PlusStudioLevelLoader.LevelLoaderPlugin.Instance.exitDatas["elevator"].prefab);
+            EditorInterface.AddExit("elevator", LevelLoaderPlugin.Instance.exitDatas["elevator"].prefab);
 
             // pickup visual
             pickupVisual = EditorInterface.CloneToPrefabStripMonoBehaviors(Resources.FindObjectsOfTypeAll<Pickup>().First(x => x.transform.parent == null && x.GetInstanceID() >= 0 && x.name == "Pickup").gameObject);
@@ -413,6 +420,9 @@ namespace PlusLevelStudio
             pickupVisual.name = "PickupVisual";
             pickupVisual.AddComponent<MovableObjectInteraction>().allowedAxis = MoveAxis.Horizontal;
             pickupVisual.layer = editorInteractableLayer;
+
+            // object visuals
+            EditorInterface.AddObjectVisual("desk", LevelLoaderPlugin.Instance.basicObjects["desk"], true);
 
             yield return "Setting up Editor Controller...";
             GameObject editorControllerObject = new GameObject("StandardEditorController");

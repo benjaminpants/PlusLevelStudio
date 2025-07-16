@@ -24,6 +24,7 @@ namespace PlusLevelStudio.Editor
         public List<WindowLocation> windows = new List<WindowLocation>();
         public List<ExitLocation> exits = new List<ExitLocation>();
         public List<ItemPlacement> items = new List<ItemPlacement>();
+        public List<BasicObjectLocation> objects = new List<BasicObjectLocation>();
         public EditorRoom hall => rooms[0];
 
         private Dictionary<string, TextureContainer> defaultTextures = new Dictionary<string, TextureContainer>();
@@ -242,6 +243,10 @@ namespace PlusLevelStudio.Editor
             {
                 items[i].position -= new Vector2(posDif.x * 10f, posDif.z * 10f);
             }
+            for (int i = 0; i < objects.Count; i++)
+            {
+                objects[i].position -= new Vector3(posDif.x * 10f, 0f, posDif.z * 10f);
+            }
             return true;
         }
 
@@ -394,6 +399,16 @@ namespace PlusLevelStudio.Editor
                     position = items[i].position.ToData()
                 });
             }
+            for (int i = 0; i < objects.Count; i++)
+            {
+                ushort roomId = (ushort)Mathf.Max(GetCellSafe(Mathf.RoundToInt((objects[i].position.x - 5f) / 10f), Mathf.RoundToInt((objects[i].position.z - 5f) / 10f)).roomId, 1);
+                compiled.rooms[roomId - 1].basicObjects.Add(new BasicObjectInfo()
+                {
+                    prefab = objects[i].prefab,
+                    position = objects[i].position.ToData(),
+                    rotation = objects[i].rotation.ToData()
+                });
+            }
             return compiled;
         }
 
@@ -408,6 +423,7 @@ namespace PlusLevelStudio.Editor
             stringComp.AddStrings(exits.Select(x => x.type));
             stringComp.AddStrings(windows.Select(x => x.type));
             stringComp.AddStrings(items.Select(x => x.item));
+            stringComp.AddStrings(objects.Select(x => x.prefab));
             stringComp.AddStrings(rooms.Select(x => x.roomType));
             stringComp.AddStrings(rooms.Select(x => x.textureContainer.floor));
             stringComp.AddStrings(rooms.Select(x => x.textureContainer.wall));
@@ -470,6 +486,13 @@ namespace PlusLevelStudio.Editor
             {
                 stringComp.WriteStoredString(writer, items[i].item);
                 writer.Write(items[i].position.ToData());
+            }
+            writer.Write(objects.Count);
+            for (int i = 0; i < objects.Count; i++)
+            {
+                stringComp.WriteStoredString(writer, objects[i].prefab);
+                writer.Write(objects[i].position.ToData());
+                writer.Write(objects[i].rotation.ToData());
             }
         }
 
@@ -548,6 +571,16 @@ namespace PlusLevelStudio.Editor
                 {
                     item = stringComp.ReadStoredString(reader),
                     position = reader.ReadUnityVector2().ToUnity(),
+                });
+            }
+            int objectCount = reader.ReadInt32();
+            for (int i = 0; i < objectCount; i++)
+            {
+                levelData.objects.Add(new BasicObjectLocation()
+                {
+                    prefab = stringComp.ReadStoredString(reader),
+                    position = reader.ReadUnityVector3().ToUnity(),
+                    rotation = reader.ReadUnityQuaternion().ToUnity()
                 });
             }
             return levelData;

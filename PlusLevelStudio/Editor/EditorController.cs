@@ -179,6 +179,7 @@ namespace PlusLevelStudio.Editor
                 AddVisual(item);
             }
             RefreshCells();
+            CancelHeldUndo();
             if (wipeUndoHistory)
             {
                 undoStreams.Clear(); // memorystreams dont need .dispose

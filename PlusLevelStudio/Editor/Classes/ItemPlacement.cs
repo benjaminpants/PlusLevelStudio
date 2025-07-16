@@ -10,6 +10,7 @@ namespace PlusLevelStudio.Editor
     {
         public Vector2 position;
         public string item;
+        bool moved = false;
         public void CleanupVisual(GameObject visualObject)
         {
             
@@ -34,6 +35,7 @@ namespace PlusLevelStudio.Editor
 
         public void MoveUpdate(Vector3 moveBy)
         {
+            moved = true;
             position = new Vector2(position.x + moveBy.x, position.y + moveBy.z);
             EditorController.Instance.UpdateVisual(this);
         }
@@ -47,12 +49,18 @@ namespace PlusLevelStudio.Editor
 
         public void Selected()
         {
+            EditorController.Instance.HoldUndo();
             EditorController.Instance.GetVisual(this).GetComponent<EditorDeletableObject>().Highlight("yellow");
         }
 
         public void Unselected()
         {
+            if (moved)
+            {
+                EditorController.Instance.AddHeldUndo();
+            }
             EditorController.Instance.GetVisual(this).GetComponent<EditorDeletableObject>().Highlight("none");
+            moved = false;
         }
 
         public void UpdateVisual(GameObject visualObject)

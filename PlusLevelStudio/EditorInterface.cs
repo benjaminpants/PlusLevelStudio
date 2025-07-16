@@ -3,6 +3,7 @@ using MTM101BaldAPI;
 using PlusLevelStudio.Editor;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using UnityEngine;
 
@@ -97,16 +98,71 @@ namespace PlusLevelStudio
         /// </summary>
         /// <param name="toStrip"></param>
         /// <returns></returns>
-        public static GameObject CloneToPrefabStripMonoBehaviors(GameObject toStrip)
+        public static GameObject CloneToPrefabStripMonoBehaviors(GameObject toStrip, Type[] toPreserve = null)
         {
             GameObject obj = GameObject.Instantiate(toStrip, MTM101BaldiDevAPI.prefabTransform);
             obj.name = obj.name.Replace(" (Cloned)", "_Stripped");
             MonoBehaviour[] behaviors = obj.GetComponentsInChildren<MonoBehaviour>();
             foreach (var behavior in behaviors)
             {
+                if (toPreserve != null)
+                {
+                    if (toPreserve.Contains(behavior.GetType()))
+                    {
+                        continue;
+                    }
+                }
                 GameObject.DestroyImmediate(behavior);
             }
             return obj;
+        }
+
+        public static EditorBasicObject AddObjectVisual(string key, GameObject obj, bool useRegularColliderAsEditorHitbox)
+        {
+            GameObject clone = CloneToPrefabStripMonoBehaviors(obj);
+            clone.name = clone.name.Replace("_Stripped", "_Visual");
+            EditorBasicObject basic = clone.AddComponent<EditorBasicObject>();
+            clone.AddComponent<EditorDeletableObject>().AddRendererRange(clone.GetComponentsInChildren<Renderer>(), "none");
+            basic.ingameLayer = clone.layer;
+            basic.ingameColliders.AddRange(clone.GetComponentsInChildren<Collider>());
+            basic.ingameColliders.ForEach(x => x.enabled = false);
+            basic.gameObject.layer = LevelStudioPlugin.editorInteractableLayer;
+            if (useRegularColliderAsEditorHitbox)
+            {
+                if (basic.ingameColliders.Count == 0)
+                {
+                    throw new Exception("useRegularColliderAsEditorHitbox is set, but object with key: " + key + " has no hitbox!");
+                }
+                Collider baseCollider = basic.ingameColliders[0];
+                Collider edCollider = null;
+                if (baseCollider is BoxCollider)
+                {
+                    BoxCollider box = basic.gameObject.AddComponent<BoxCollider>();
+                    box.size = ((BoxCollider)baseCollider).size;
+                    box.center = ((BoxCollider)baseCollider).center;
+                    edCollider = box;
+                }
+                else if (baseCollider is SphereCollider)
+                {
+                    SphereCollider sphere = basic.gameObject.AddComponent<SphereCollider>();
+                    sphere.center = ((SphereCollider)baseCollider).center;
+                    sphere.radius = ((SphereCollider)baseCollider).radius;
+                    edCollider = sphere;
+                }
+                else if (baseCollider is MeshCollider)
+                {
+                    MeshCollider mesh = basic.gameObject.AddComponent<MeshCollider>();
+                    mesh.convex = ((MeshCollider)baseCollider).convex;
+                    edCollider = mesh;
+                }
+                else
+                {
+                    throw new NotImplementedException("Unknown collider type:" + baseCollider.GetType() + "!");
+                }
+                basic.editorCollider = edCollider;
+            }
+            LevelStudioPlugin.Instance.basicObjectDisplays.Add(key, basic);
+            return basic;
         }
     }
 }

@@ -28,6 +28,7 @@ namespace PlusStudioLevelLoader
         public Dictionary<string, TileBasedObject> tileBasedObjectPrefabs = new Dictionary<string, TileBasedObject>();
         public Dictionary<string, LoaderExitData> exitDatas = new Dictionary<string, LoaderExitData>();
         public Dictionary<string, ItemObject> itemObjects = new Dictionary<string, ItemObject>();
+        public Dictionary<string, GameObject> basicObjects = new Dictionary<string, GameObject>();
 
         public static Texture2D RoomTextureFromAlias(string alias)
         {
@@ -138,6 +139,55 @@ namespace PlusStudioLevelLoader
             itemObjects.Add("buspass", ItemMetaStorage.Instance.FindByEnum(Items.BusPass).value);
             itemObjects.Add("inviselixer", ItemMetaStorage.Instance.FindByEnum(Items.InvisibilityElixir).value);
             itemObjects.Add("reachextend", ItemMetaStorage.Instance.FindByEnum(Items.ReachExtender).value);
+
+            // code ported from legacy editor because retyping all of these would be annoying
+            GameObject[] objects = Resources.FindObjectsOfTypeAll<GameObject>().Where(x => (x.GetInstanceID() >= 0) && (x.transform.parent == null)).ToArray();
+            basicObjects.Add("desk", objects.First(x => (x.name == "Table_Test")));
+            basicObjects.Add("bigdesk", objects.First(x => (x.name == "BigDesk")));
+            basicObjects.Add("cabinettall", objects.First(x => (x.name == "FilingCabinet_Tall")));
+            basicObjects.Add("chair", objects.First(x => (x.name == "Chair_Test")));
+            basicObjects.Add("computer", objects.First(x => (x.name == "MyComputer")));
+            basicObjects.Add("computer_off", objects.First(x => (x.name == "MyComputer_Off")));
+            basicObjects.Add("roundtable", objects.First(x => (x.name == "RoundTable")));
+            basicObjects.Add("locker", objects.First(x => (x.name == "Locker")));
+            basicObjects.Add("bluelocker", objects.First(x => (x.name == "BlueLocker")));
+            basicObjects.Add("greenlocker", objects.First(x => (x.name == "StorageLocker")));
+            basicObjects.Add("decor_pencilnotes", objects.First(x => (x.name == "Decor_PencilNotes")));
+            basicObjects.Add("decor_papers", objects.First(x => (x.name == "Decor_Papers")));
+            basicObjects.Add("decor_globe", objects.First(x => (x.name == "Decor_Globe")));
+            basicObjects.Add("decor_notebooks", objects.First(x => (x.name == "Decor_Notebooks")));
+            basicObjects.Add("decor_lunch", objects.First(x => (x.name == "Decor_Lunch")));
+            basicObjects.Add("bookshelf", objects.First(x => (x.name == "Bookshelf_Object")));
+            basicObjects.Add("bookshelf_hole", objects.First(x => (x.name == "Bookshelf_Hole_Object")));
+            basicObjects.Add("rounddesk", objects.First(x => (x.name == "RoundDesk")));
+            basicObjects.Add("cafeteriatable", objects.First(x => (x.name == "CafeteriaTable")));
+            basicObjects.Add("dietbsodamachine", objects.First(x => (x.name == "DietSodaMachine")));
+            basicObjects.Add("bsodamachine", objects.First(x => (x.name == "SodaMachine")));
+            basicObjects.Add("zestymachine", objects.First(x => (x.name == "ZestyMachine")));
+            basicObjects.Add("crazymachine_bsoda", objects.First(x => (x.name == "CrazyVendingMachineBSODA")));
+            basicObjects.Add("crazymachine_zesty", objects.First(x => (x.name == "CrazyVendingMachineZesty")));
+            basicObjects.Add("waterfountain", objects.First(x => (x.name == "WaterFountain")));
+            basicObjects.Add("counter", objects.First(x => (x.name == "Counter")));
+            basicObjects.Add("examinationtable", objects.First(x => (x.name == "ExaminationTable")));
+            basicObjects.Add("ceilingfan", objects.First(x => (x.name == "CeilingFan")));
+            basicObjects.Add("merrygoround", objects.First(x => (x.name == "MerryGoRound_Object")));
+            basicObjects.Add("tree", objects.First(x => (x.name == "TreeCG")));
+            basicObjects.Add("pinetree", objects.First(x => (x.name == "PineTree")));
+            basicObjects.Add("appletree", objects.First(x => (x.name == "AppleTree")));
+            basicObjects.Add("bananatree", objects.First(x => (x.name == "BananaTree")));
+            basicObjects.Add("hoop", objects.First(x => (x.name == "HoopBase")));
+            basicObjects.Add("payphone", objects.First(x => (x.name == "PayPhone")));
+            basicObjects.Add("tapeplayer", objects.First(x => (x.name == "TapePlayer")));
+            basicObjects.Add("plant", objects.First(x => (x.name == "Plant")));
+            basicObjects.Add("decor_banana", objects.First(x => (x.name == "Decor_Banana")));
+            basicObjects.Add("decor_zoneflag", objects.First(x => (x.name == "Decor_ZoningFlag")));
+            basicObjects.Add("hopscotch", objects.First(x => (x.name == "PlaygroundPavement")));
+            basicObjects.Add("chairsanddesk", objects.First(x => (x.name == "Chairs_Desk_Perfect")));
+            basicObjects.Add("picnictable", objects.First(x => (x.name == "PicnicTable")));
+            basicObjects.Add("tent", objects.First(x => (x.name == "Tent_Object")));
+            basicObjects.Add("rock", objects.First(x => (x.name == "Rock")));
+            basicObjects.Add("picnicbasket", objects.First(x => (x.name == "PicnicBasket")));
+            basicObjects.Add("pedestal", objects.First(x => (x.name == "Decor_Pedestal")));
         }
     }
 }
