@@ -82,6 +82,10 @@
 {"key":"Ed_Tool_item_shapekey_weird_Desc","value":"Used to open Weird Shape Locks."},
 
 {"key":"Ed_Tool_object_desk_Title","value":"Student Desk"},
-{"key":"Ed_Tool_object_desk_Desc","value":"Every good, functioning, limb owning student needs one of these!"}
+{"key":"Ed_Tool_object_desk_Desc","value":"Every good, functioning, limb owning student needs one of these!"},
+{"key":"Ed_Tool_object_bigdesk_Title","value":"Big Desk"},
+{"key":"Ed_Tool_object_bigdesk_Desc","value":"Notebooks are usually placed on these, but don't have to be!"},
+{"key":"Ed_Tool_object_chair_Title","value":"Chair"},
+{"key":"Ed_Tool_object_chair_Desc","value":"A chair is a piece of furniture with a raised surface supported by legs, commonly used to seat a single person."}
 
 ]}

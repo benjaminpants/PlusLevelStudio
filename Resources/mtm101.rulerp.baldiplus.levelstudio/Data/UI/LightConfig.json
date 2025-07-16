@@ -146,6 +146,21 @@
 			"onPressed":"strengthAdd"
 		},
 		{
+			"name":"Category0",
+			"type":"textbutton",
+			"anchoredPosition":[70,-64],
+			"size":[174,32],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"font":"ComicSans12",
+			"color":[255,255,255],
+			"text":"Ed_Menu_ApplyLightGroupToSameType",
+			"alignment":"Center",
+			"onPressed":"changeAllOfType",
+			"localized":true
+		},
+		{
 			"name":"RedSlider",
 			"type":"image",
 			"graphic":"SliderRed",

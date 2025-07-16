@@ -154,7 +154,9 @@ namespace PlusLevelStudio
                     } },
                     { "objects", new List<EditorTool>()
                     {
-                        new ObjectTool("desk")
+                        new ObjectTool("bigdesk"),
+                        new ObjectTool("desk"),
+                        new ObjectTool("chair")
                     } },
                     { "tools", new List<EditorTool>()
                     {
@@ -445,6 +447,8 @@ namespace PlusLevelStudio
 
             // object visuals
             EditorInterface.AddObjectVisualWithMeshCollider("desk", LevelLoaderPlugin.Instance.basicObjects["desk"], true);
+            EditorInterface.AddObjectVisualWithMeshCollider("chair", LevelLoaderPlugin.Instance.basicObjects["chair"], true);
+            EditorInterface.AddObjectVisualWithMeshCollider("bigdesk", LevelLoaderPlugin.Instance.basicObjects["bigdesk"], true);
 
             yield return "Setting up Editor Controller...";
             GameObject editorControllerObject = new GameObject("StandardEditorController");

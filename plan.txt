@@ -1,8 +1,6 @@
-IDEAS:
-
-dynamic editor music when bb+ gets its music update (akin to spore)
-
 PLANS:
 
-implement object selection menu/toolbox. make it look nice and pretty
-FIGURE OUT FULL 3D ROTATION
+Figure out full 3D rotations
+Create a base class for most of the editor objects so we dont have to keep re-implementing the same interfaces and adding extra dummy components (Move ValidatePosition here)
+Consider tutorial? (Save for public release?)
+Create more EditorTool bases (STOP RE-USING DOOR TOOL!)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using PlusLevelStudio.UI;
@@ -140,7 +141,7 @@ namespace PlusLevelStudio.Editor.SettingsUI
             }
             if (placementsNotSelf.Count > 0 && !confirm)
             {
-                EditorController.Instance.CreateUIPopup(String.Format("This will delete {0} other light(s) that use this light group! Are you sure?", placementsNotSelf.Count), () => { RemoveLightGroup(true); }, null);
+                EditorController.Instance.CreateUIPopup(String.Format(LocalizationManager.Instance.GetLocalizedText("Ed_Menu_LightMassDeleteWarning"), placementsNotSelf.Count), () => { RemoveLightGroup(true); }, null);
                 return;
             }
             ushort lightGroupToRemove = myPlacement.lightGroup;
@@ -160,6 +161,25 @@ namespace PlusLevelStudio.Editor.SettingsUI
                 }
             }
             EditorController.Instance.levelData.lightGroups.RemoveAt(lightGroupToRemove);
+            UpdateRefreshMark();
+        }
+
+        public void ApplyGroupToAllOfSameType(bool confirm)
+        {
+            if (!confirm)
+            {
+                int count = EditorController.Instance.levelData.lights.Where(x => x.type == myPlacement.type && x.lightGroup != myPlacement.lightGroup).Count();
+                if (count > 0)
+                {
+                    EditorController.Instance.CreateUIPopup(String.Format(LocalizationManager.Instance.GetLocalizedText("Ed_Menu_LightMassChangeWarning"), count), () => { ApplyGroupToAllOfSameType(true); }, null);
+                    return;
+                }
+            }
+            foreach (LightPlacement placement in EditorController.Instance.levelData.lights)
+            {
+                if (placement.type != myPlacement.type) continue;
+                placement.lightGroup = myPlacement.lightGroup;
+            }
             UpdateRefreshMark();
         }
 
@@ -189,6 +209,9 @@ namespace PlusLevelStudio.Editor.SettingsUI
                     break;
                 case "removeGroup":
                     RemoveLightGroup(false);
+                    break;
+                case "changeAllOfType":
+                    ApplyGroupToAllOfSameType(false);
                     break;
                 case "red":
                     ChangeRed(Mathf.Clamp(((Vector3)data).y / 128f,0f,1f));
