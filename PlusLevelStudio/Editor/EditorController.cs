@@ -69,11 +69,14 @@ namespace PlusLevelStudio.Editor
         protected bool mousePressedLastFrame = false; // used for handling tools
         public IntVector2 mouseGridPosition => mousePlanePosition.ToCellVector();
 
+        // TODO: consider moving to selector?
+        public float gridSnap = 0.25f;
+
         public bool MovementEnabled
         {
             get
             {
-                return (uiOverlays.Count == 0 && (uiObjects[1] == null || !uiObjects[1].activeSelf));
+                return (uiOverlays.Count == 0 && (uiObjects[1] == null || !uiObjects[1].activeSelf) && (CursorController.Instance != null && CursorController.Instance.cursorTransform.gameObject.activeSelf));
             }
         }
 
@@ -175,6 +178,10 @@ namespace PlusLevelStudio.Editor
                 AddVisual(item);
             }
             foreach (ItemPlacement item in levelData.items)
+            {
+                AddVisual(item);
+            }
+            foreach (BasicObjectLocation item in levelData.objects)
             {
                 AddVisual(item);
             }
@@ -331,6 +338,7 @@ namespace PlusLevelStudio.Editor
                     plane.Flip();
                     return plane.ClosestPointOnPlane(mouseRay.origin + (mouseRay.direction * enteredAt));
                 }
+                plane.Flip();
             }
             return null;
         }
@@ -544,21 +552,20 @@ namespace PlusLevelStudio.Editor
             UpdateMouseRay();
             PlaySongIfNecessary();
             UpdateCamera();
-            /*
-            if (Singleton<InputManager>.Instance.GetDigitalInput("Item1", true))
+            if (selector.currentState == SelectorState.Object)
             {
-                selector.SelectArea(new RectInt(new Vector2Int(0,0), new Vector2Int(3,7)), (sizeDif, posDif) =>
-                {
-                    selector.DisableSelection();
-                });
-                return;
-            }*/
+                uiObjects[0].GetComponent<EditorUIMainHandler>().SendInteractionMessage("showTranslateSettings", null);
+            }
+            else
+            {
+                uiObjects[0].GetComponent<EditorUIMainHandler>().SendInteractionMessage("hideTranslateSettings", null);
+            }
             if (((List<RaycastResult>)_results.GetValue(CursorController.Instance)).Count == 0)
             {
                 HandleClicking();
             }
 #if DEBUG
-            if (Singleton<InputManager>.Instance.GetDigitalInput("Item1", true))
+            if (Input.GetKey(KeyCode.LeftAlt) && Input.GetKey(KeyCode.R))
             {
                 UpdateUI();
                 EditorModeAssigned();

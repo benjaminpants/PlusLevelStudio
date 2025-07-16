@@ -1,6 +1,7 @@
 {"items":[
 
 {"key":"Ed_Menu_Lightgroup_Text","value":"Light Group:"},
-{"key":"Ed_Menu_Strength","value":"Strength:"}
+{"key":"Ed_Menu_Strength","value":"Strength:"},
+{"key":"Ed_Menu_GridSize","value":"Grid-Size:"}
 
 ]}

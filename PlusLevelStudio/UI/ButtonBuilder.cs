@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace PlusLevelStudio.UI
 {
@@ -31,7 +32,50 @@ namespace PlusLevelStudio.UI
                 button.OnHighlight.AddListener(() => EditorController.Instance.tooltipController.UpdateTooltip(key));
                 button.OffHighlight.AddListener(() => EditorController.Instance.tooltipController.CloseTooltip());
             }
+            if (data.ContainsKey("useAltOn"))
+            {
+                ChangeUnhighlightSpriteIfTrue hl = button.gameObject.AddComponent<ChangeUnhighlightSpriteIfTrue>();
+                hl.handler = handler;
+                hl.toCheck = data["useAltOn"].Value<string>();
+                hl.specialSprite = GetSprite(data["altGraphic"]);
+            }
             return b;
+        }
+    }
+
+    public class ChangeUnhighlightSpriteIfTrue : MonoBehaviour
+    {
+        StandardMenuButton button;
+        Sprite defaultSprite;
+        Image renderer;
+        public Sprite specialSprite;
+        public UIExchangeHandler handler;
+        public string toCheck;
+        void Start()
+        {
+            button = GetComponent<StandardMenuButton>();
+            renderer = GetComponent<Image>();
+            defaultSprite = button.unhighlightedSprite;
+        }
+        void Update()
+        {
+            if (!button) return;
+            if (handler.GetStateBoolean(toCheck))
+            {
+                button.unhighlightedSprite = specialSprite;
+                if (renderer.sprite == defaultSprite)
+                {
+                    renderer.sprite = button.unhighlightedSprite;
+                }
+            }
+            else
+            {
+                button.unhighlightedSprite = defaultSprite;
+                if (renderer.sprite == specialSprite)
+                {
+                    renderer.sprite = button.unhighlightedSprite;
+                }
+            }
         }
     }
 }

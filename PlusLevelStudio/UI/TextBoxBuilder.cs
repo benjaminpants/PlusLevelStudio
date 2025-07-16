@@ -106,8 +106,8 @@ namespace PlusLevelStudio.UI
             {
                 CursorController.Instance.Hide(false);
                 typing = false;
-                handler.SendInteractionMessage(typeDoneMessage, text.text);
                 text.fontStyle = FontStyles.Normal;
+                handler.SendInteractionMessage(typeDoneMessage, text.text);
             }
         }
     }

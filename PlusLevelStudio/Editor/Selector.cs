@@ -68,25 +68,20 @@ namespace PlusLevelStudio.Editor
             arrows[2].gameObject.SetActive(flags.HasFlag(MoveAxis.X));
             arrows[2].transform.localPosition = Vector3.right;
             lattices[0].gameObject.SetActive(flags.HasFlag(MoveAxis.X) && flags.HasFlag(MoveAxis.Z)); // this lattice moves stuff in the X and Z axis so we need to make sure we are allowed to move both
+            lattices[1].gameObject.SetActive(flags.HasFlag(MoveAxis.X) && flags.HasFlag(MoveAxis.Y)); // this lattice moves stuff in the X and Y axis so we need to make sure we are allowed to move both
+            lattices[2].gameObject.SetActive(flags.HasFlag(MoveAxis.Z) && flags.HasFlag(MoveAxis.Y)); // this lattice moves stuff in the Z and Y axis so we need to make sure we are allowed to move both
         }
 
         public HandleArrow[] arrows = new HandleArrow[3];
         public HandleLattice[] lattices = new HandleLattice[3];
         public Selector mySelector;
-        Vector3 currentHandleMouseStart;
+        public bool worldSpace = false;
 
-        // TODO: figure out appropiate way to calculate the plane distance, as .y is unlikely to continue to work once rotation is implemented
-        // TODO: this still isn't quite right...
-        public Plane GeneratePlane(Transform transform)
-        {
-            Vector3 downwards = transform.InverseTransformPoint(new Vector3(transform.position.x, 0f, transform.position.z));
-            float downValue = downwards.y * transform.localScale.y;
-            return new Plane(transform.up, downValue);
-        }
+        Vector3 currentHandleMouseStart;
 
         public void ClickBegin(HandleArrow arrow)
         {
-            Vector3? start = EditorController.Instance.CastRayToPlane(GeneratePlane(arrow.transform), true);
+            Vector3? start = EditorController.Instance.CastRayToPlane(new Plane(arrow.transform.up, arrow.transform.position), true);
             if (start == null)
             {
                 currentHandleMouseStart = Vector3.zero;
@@ -97,7 +92,7 @@ namespace PlusLevelStudio.Editor
 
         public void LatticeClickUpdate(Transform lattice)
         {
-            Vector3? pos = EditorController.Instance.CastRayToPlane(new Plane(lattice.forward, -lattice.position.y), true);
+            Vector3? pos = EditorController.Instance.CastRayToPlane(new Plane(lattice.forward, lattice.position), true);
             if (pos == null)
             {
                 return;
@@ -107,7 +102,7 @@ namespace PlusLevelStudio.Editor
 
         public void ClickUpdate(HandleArrow arrow)
         {
-            Vector3? pos = EditorController.Instance.CastRayToPlane(GeneratePlane(arrow.transform), true);
+            Vector3? pos = EditorController.Instance.CastRayToPlane(new Plane(arrow.transform.up, arrow.transform.position), true);
             if (pos == null)
             {
                 return;
@@ -131,6 +126,19 @@ namespace PlusLevelStudio.Editor
             // there should be 2 zeros and one one
             output.Scale(new Vector3(Mathf.Abs(localForward.x), Mathf.Abs(localForward.y), Mathf.Abs(localForward.z)));
             return relativeTo.TransformPoint(output); // convert back to world space
+        }
+
+        public void GoToTarget(Transform t)
+        {
+            transform.position = t.position;
+            if (!worldSpace)
+            {
+                transform.rotation = t.rotation;
+            }
+            else
+            {
+                transform.rotation = Quaternion.identity;
+            }
         }
 
     }
@@ -369,7 +377,7 @@ namespace PlusLevelStudio.Editor
         public void UpdateObjectPosition(Vector3 offset)
         {
             if (offset.sqrMagnitude == 0) return; // no change made, dont bother sending down
-            selectedMovable.MoveUpdate(offset);
+            selectedMovable.MoveUpdate(offset, EditorController.Instance.gridSnap);
         }
 
         void PositionArrow(Direction d, float additionalDistanceFromEdge)
@@ -403,8 +411,7 @@ namespace PlusLevelStudio.Editor
                     break;
                 case SelectorState.Object:
                     Transform tf = selectedMovable.GetTransform();
-                    moveHandles.transform.position = tf.position;
-                    moveHandles.transform.rotation = tf.rotation;
+                    moveHandles.GoToTarget(tf);
                     break;
             }
         }

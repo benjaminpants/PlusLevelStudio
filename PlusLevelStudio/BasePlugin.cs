@@ -370,6 +370,22 @@ namespace PlusLevelStudio
             xzLattice.GetComponent<HandleLattice>().myHandles = handles;
             handles.lattices[0] = xzLattice.GetComponent<HandleLattice>();
 
+            GameObject xyLattice = GameObject.Instantiate(baseLattice);
+            xyLattice.transform.SetParent(handles.transform, true);
+            xyLattice.transform.forward = Vector3.forward;
+            xyLattice.transform.position = (Vector3.right + Vector3.up) * 0.75f;
+            xyLattice.GetComponentsInChildren<MeshRenderer>().Do(x => x.material.SetTexture("_LightMap", lightmaps["blue"]));
+            xyLattice.GetComponent<HandleLattice>().myHandles = handles;
+            handles.lattices[1] = xyLattice.GetComponent<HandleLattice>();
+
+            GameObject zyLattice = GameObject.Instantiate(baseLattice);
+            zyLattice.transform.SetParent(handles.transform, true);
+            zyLattice.transform.forward = Vector3.right;
+            zyLattice.transform.position = (Vector3.forward + Vector3.up) * 0.75f;
+            zyLattice.GetComponentsInChildren<MeshRenderer>().Do(x => x.material.SetTexture("_LightMap", lightmaps["red"]));
+            zyLattice.GetComponent<HandleLattice>().myHandles = handles;
+            handles.lattices[2] = zyLattice.GetComponent<HandleLattice>();
+
             DestroyImmediate(baseLattice);
             DestroyImmediate(handleModelBase);
 

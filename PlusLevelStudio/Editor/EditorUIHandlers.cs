@@ -154,8 +154,20 @@ namespace PlusLevelStudio.Editor
 
     public class EditorUIMainHandler : UIExchangeHandler
     {
+        public TextMeshProUGUI gridScaleTextBox;
+        public List<GameObject> translationSettings = new List<GameObject>();
+        bool settingsHidden = true;
+
         public override bool GetStateBoolean(string key)
         {
+            if (key == "worldSpace")
+            {
+                return EditorController.Instance.selector.moveHandles.worldSpace;
+            }
+            else if (key == "localSpace")
+            {
+                return !EditorController.Instance.selector.moveHandles.worldSpace;
+            }
             return false;
         }
 
@@ -166,6 +178,16 @@ namespace PlusLevelStudio.Editor
             {
                 EditorController.Instance.hotSlots[foundSlotScripts[i].slotIndex] = foundSlotScripts[i];
             }
+            gridScaleTextBox = transform.Find("MoveGridSizeBox").GetComponentInChildren<TextMeshProUGUI>();
+            translationSettings.Add(transform.Find("GridGauge").gameObject);
+            translationSettings.Add(transform.Find("MoveGridSizeText").gameObject);
+            translationSettings.Add(transform.Find("MoveGridSizeBox").gameObject);
+            translationSettings.Add(transform.Find("AngleSnapText").gameObject);
+            translationSettings.Add(transform.Find("WorldSpaceButton").gameObject);
+            translationSettings.Add(transform.Find("LocalSpaceButton").gameObject);
+            translationSettings.ForEach(x => x.SetActive(false));
+            // EditorController exists by this point
+            gridScaleTextBox.text = EditorController.Instance.gridSnap.ToString();
         }
 
         public override void SendInteractionMessage(string message, object data)
@@ -188,6 +210,33 @@ namespace PlusLevelStudio.Editor
                     EditorController.Instance.SwitchToTool(null);
                     EditorController.Instance.uiObjects[1].SetActive(true);
                     EditorController.Instance.uiObjects[1].GetComponent<EditorUIToolboxHandler>().Open();
+                    break;
+                case "changeGridScale":
+                    if (float.TryParse((string)data, out float result))
+                    {
+                        EditorController.Instance.gridSnap = result;
+                    }
+                    gridScaleTextBox.text = EditorController.Instance.gridSnap.ToString();
+                    break;
+                case "showTranslateSettings":
+                    if (settingsHidden)
+                    {
+                        translationSettings.ForEach(x => x.SetActive(true));
+                    }
+                    settingsHidden = false;
+                    break;
+                case "hideTranslateSettings":
+                    if (!settingsHidden)
+                    {
+                        translationSettings.ForEach(x => x.SetActive(false));
+                    }
+                    settingsHidden = true;
+                    break;
+                case "switchToWorld":
+                    EditorController.Instance.selector.moveHandles.worldSpace = true;
+                    break;
+                case "switchToLocal":
+                    EditorController.Instance.selector.moveHandles.worldSpace = false;
                     break;
             }
         }
