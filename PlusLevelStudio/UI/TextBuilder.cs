@@ -24,6 +24,15 @@ namespace PlusLevelStudio.UI
             baseText.rectTransform.anchoredPosition = ConvertToVector2(data["anchoredPosition"]);
             baseText.color = ConvertToColor(data["color"]);
             baseText.name = data["name"].Value<string>();
+            if (data.ContainsKey("localized"))
+            {
+                if (data["localized"].Value<bool>() == true)
+                {
+                    TextLocalizer localizer = baseText.gameObject.AddComponent<TextLocalizer>();
+                    localizer.key = baseText.text;
+                    localizer.GetLocalizedText(localizer.key);
+                }
+            }
             return baseText.gameObject;
         }
     }

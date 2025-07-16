@@ -29,7 +29,8 @@
 			"anchorMax":"#center",
 			"font":"BoldComicSans24",
 			"color":[255,255,255],
-			"text":"Light Group:",
+			"text":"Ed_Menu_Lightgroup_Text",
+			"localized":true,
 			"alignment":"BottomLeft"
 		},
 		{
@@ -103,7 +104,8 @@
 			"anchorMax":"#center",
 			"font":"BoldComicSans24",
 			"color":[255,255,255],
-			"text":"Strength:",
+			"text":"Ed_Menu_Strength",
+			"localized":true,
 			"alignment":"Center"
 		},
 		{
