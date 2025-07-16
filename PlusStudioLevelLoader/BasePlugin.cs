@@ -139,6 +139,12 @@ namespace PlusStudioLevelLoader
             itemObjects.Add("buspass", ItemMetaStorage.Instance.FindByEnum(Items.BusPass).value);
             itemObjects.Add("inviselixer", ItemMetaStorage.Instance.FindByEnum(Items.InvisibilityElixir).value);
             itemObjects.Add("reachextend", ItemMetaStorage.Instance.FindByEnum(Items.ReachExtender).value);
+            itemObjects.Add("shapekey_circle", ItemMetaStorage.Instance.FindByEnum(Items.CircleKey).value);
+            itemObjects.Add("shapekey_square", ItemMetaStorage.Instance.FindByEnum(Items.SquareKey).value);
+            itemObjects.Add("shapekey_triangle", ItemMetaStorage.Instance.FindByEnum(Items.TriangleKey).value);
+            itemObjects.Add("shapekey_weird", ItemMetaStorage.Instance.FindByEnum(Items.WeirdKey).value);
+            itemObjects.Add("shapekey_star", ItemMetaStorage.Instance.FindByEnum(Items.PentagonKey).value);
+            itemObjects.Add("shapekey_heart", ItemMetaStorage.Instance.FindByEnum(Items.HexagonKey).value);
 
             // code ported from legacy editor because retyping all of these would be annoying
             GameObject[] objects = Resources.FindObjectsOfTypeAll<GameObject>().Where(x => (x.GetInstanceID() >= 0) && (x.transform.parent == null)).ToArray();

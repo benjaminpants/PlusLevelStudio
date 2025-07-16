@@ -135,6 +135,12 @@ namespace PlusLevelStudio
                         new ItemTool("grapple"),
                         new ItemTool("apple"),
                         new ItemTool("buspass"),
+                        new ItemTool("shapekey_circle"),
+                        new ItemTool("shapekey_triangle"),
+                        new ItemTool("shapekey_square"),
+                        new ItemTool("shapekey_star"),
+                        new ItemTool("shapekey_heart"),
+                        new ItemTool("shapekey_weird"),
                         new ItemTool("points25", uiAssetMan.Get<Sprite>("Tools/items_points25")),
                         new ItemTool("points50", uiAssetMan.Get<Sprite>("Tools/items_points50")),
                         new ItemTool("points100", uiAssetMan.Get<Sprite>("Tools/items_points100")),
@@ -438,7 +444,7 @@ namespace PlusLevelStudio
             pickupVisual.layer = editorInteractableLayer;
 
             // object visuals
-            EditorInterface.AddObjectVisual("desk", LevelLoaderPlugin.Instance.basicObjects["desk"], true);
+            EditorInterface.AddObjectVisualWithMeshCollider("desk", LevelLoaderPlugin.Instance.basicObjects["desk"], true);
 
             yield return "Setting up Editor Controller...";
             GameObject editorControllerObject = new GameObject("StandardEditorController");

@@ -73,6 +73,15 @@
 {"key":"Itm_Points_50","value":"50 YTPs"},
 {"key":"Ed_Tool_item_points50_Desc","value":"Awards 50 YTPs upon collection."},
 {"key":"Itm_Points_100","value":"100 YTPs"},
-{"key":"Ed_Tool_item_points100_Desc","value":"Awards 100 YTPs upon collection."}
+{"key":"Ed_Tool_item_points100_Desc","value":"Awards 100 YTPs upon collection."},
+{"key":"Ed_Tool_item_shapekey_triangle_Desc","value":"Used to open Triangle Shape Locks."},
+{"key":"Ed_Tool_item_shapekey_square_Desc","value":"Used to open Square Shape Locks."},
+{"key":"Ed_Tool_item_shapekey_circle_Desc","value":"Used to open Circle Shape Locks."},
+{"key":"Ed_Tool_item_shapekey_star_Desc","value":"Used to open Star Shape Locks."},
+{"key":"Ed_Tool_item_shapekey_heart_Desc","value":"Used to open Heart Shape Locks."},
+{"key":"Ed_Tool_item_shapekey_weird_Desc","value":"Used to open Weird Shape Locks."},
+
+{"key":"Ed_Tool_object_desk_Title","value":"Student Desk"},
+{"key":"Ed_Tool_object_desk_Desc","value":"Every good, functioning, limb owning student needs one of these!"}
 
 ]}

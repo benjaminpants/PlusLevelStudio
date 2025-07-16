@@ -101,7 +101,7 @@ namespace PlusLevelStudio
         public static GameObject CloneToPrefabStripMonoBehaviors(GameObject toStrip, Type[] toPreserve = null)
         {
             GameObject obj = GameObject.Instantiate(toStrip, MTM101BaldiDevAPI.prefabTransform);
-            obj.name = obj.name.Replace(" (Cloned)", "_Stripped");
+            obj.name = obj.name.Replace("(Clone)", "_Stripped");
             MonoBehaviour[] behaviors = obj.GetComponentsInChildren<MonoBehaviour>();
             foreach (var behavior in behaviors)
             {
@@ -162,6 +162,24 @@ namespace PlusLevelStudio
                 basic.editorCollider = edCollider;
             }
             LevelStudioPlugin.Instance.basicObjectDisplays.Add(key, basic);
+            return basic;
+        }
+
+        public static EditorBasicObject AddObjectVisualWithCustomBoxCollider(string key, GameObject obj, Vector3 size, Vector3 center)
+        {
+            EditorBasicObject basic = AddObjectVisual(key, obj, false);
+            BoxCollider col = basic.gameObject.AddComponent<BoxCollider>();
+            col.size = size;
+            col.center = center;
+            basic.editorCollider = col;
+            return basic;
+        }
+        public static EditorBasicObject AddObjectVisualWithMeshCollider(string key, GameObject obj, bool convex)
+        {
+            EditorBasicObject basic = AddObjectVisual(key, obj, false);
+            MeshCollider col = basic.gameObject.AddComponent<MeshCollider>();
+            col.convex = convex;
+            basic.editorCollider = col;
             return basic;
         }
     }
