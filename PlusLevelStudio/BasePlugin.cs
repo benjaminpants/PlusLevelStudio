@@ -36,6 +36,9 @@ namespace PlusLevelStudio
         public const int editorInteractableLayer = 13; // CollidableEntities
         public const int editorInteractableLayerMask = 1 << editorInteractableLayer;
 
+        public const int editorHandleLayer = 14; // ClickableEntities
+        public const int editorHandleLayerMask = 1 << editorHandleLayer;
+
         public Dictionary<string, DoorDisplay> doorDisplays = new Dictionary<string, DoorDisplay>();
         public Dictionary<string, bool> doorIsTileBased = new Dictionary<string, bool>();
         public Dictionary<string, DoorDisplay> windowDisplays = new Dictionary<string, DoorDisplay>();
@@ -200,6 +203,10 @@ namespace PlusLevelStudio
             arrowMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "FloorArrow.png"));
             arrowMat.name = "EditorArrowMaterial";
 
+            Material handleArrowMat = new Material(gridMat);
+            handleArrowMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "3DArrow.png"));
+            handleArrowMat.name = "Editor3DArrowMaterial";
+
             Material silentDoorMat = new Material(assetMan.Get<Material>("SwingingDoorMat"));
             silentDoorMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "SwingDoorSilent.png"));
             silentDoorMat.name = "SilentSwingDoorDisplayMat";
@@ -269,6 +276,70 @@ namespace PlusLevelStudio
             settingsCollider.size = Vector3.one * 2f;
             selector.gearButton = settingsObject.AddComponent<SettingsWorldButton>();
 
+            // create handles
+
+            GameObject moveHandleBase = new GameObject("MoveHandleBase");
+            moveHandleBase.transform.SetParent(selectorObject.transform);
+            MoveHandles handles = moveHandleBase.AddComponent<MoveHandles>();
+
+            GameObject handleModelBase = AssetLoader.ModelFromModManualMaterials(this, new Dictionary<string, Material>
+            {
+                { "base", handleArrowMat }
+            }, "Models", "arrow.obj");
+            handleModelBase.SetActive(false);
+            handleModelBase.transform.localScale = Vector3.one * 2f;
+            handleModelBase.GetComponentsInChildren<MeshRenderer>().Do(x =>
+            {
+                x.gameObject.layer = LayerMask.NameToLayer("Overlay");
+                x.transform.localScale = new Vector3(1f, 1f, -1f); // fix the arrow facing the wrong way because i modeled it wrong
+            });
+            handleModelBase.layer = editorHandleLayer;
+            handleModelBase.AddComponent<HandleArrow>().myHandles = handles;
+            handleModelBase.AddComponent<BoxCollider>().size = new Vector3(0.3f, 0.3f, 1.1f);
+
+            // first time using methods in methods
+
+            GameObject handleZ = GameObject.Instantiate(handleModelBase);
+            handleZ.transform.SetParent(moveHandleBase.transform);
+            handleZ.SetActive(true);
+            handleZ.name = "HandleZ";
+            handleZ.transform.forward = Vector3.forward;
+            handleZ.transform.position += handleZ.transform.forward;
+            handleZ.GetComponentsInChildren<MeshRenderer>().Do(x =>
+            {
+                x.material.SetTexture("_LightMap", lightmaps["blue"]);
+            });
+            handles.arrows[0] = handleZ.GetComponent<HandleArrow>();
+
+            GameObject handleY = GameObject.Instantiate(handleModelBase);
+            handleY.transform.SetParent(moveHandleBase.transform);
+            handleY.SetActive(true);
+            handleY.name = "HandleY";
+            handleY.transform.forward = Vector3.up;
+            handleY.transform.position += handleY.transform.forward;
+            handleY.GetComponentsInChildren<MeshRenderer>().Do(x =>
+            {
+                x.material.SetTexture("_LightMap", lightmaps["green"]);
+            });
+            handles.arrows[1] = handleY.GetComponent<HandleArrow>();
+
+            GameObject handleX = GameObject.Instantiate(handleModelBase);
+            handleX.transform.SetParent(moveHandleBase.transform);
+            handleX.SetActive(true);
+            handleX.name = "HandleX";
+            handleX.transform.forward = Vector3.right;
+            handleX.transform.position += handleX.transform.forward;
+            handleX.GetComponentsInChildren<MeshRenderer>().Do(x =>
+            {
+                x.material.SetTexture("_LightMap", lightmaps["red"]);
+            });
+            handles.arrows[2] = handleX.GetComponent<HandleArrow>();
+
+            selector.moveHandles = handles;
+            handles.mySelector = selector;
+
+            DestroyImmediate(handleModelBase);
+
             yield return "Creating Worker CoreGameManager...";
             CoreGameManager cgm = Resources.FindObjectsOfTypeAll<CoreGameManager>().First(x => x.name == "CoreGameManager" && x.GetInstanceID() >= 0);
             CoreGameManager workerCgm = GameObject.Instantiate<CoreGameManager>(cgm, MTM101BaldiDevAPI.prefabTransform);
@@ -314,6 +385,7 @@ namespace PlusLevelStudio
             pickupVisual = EditorInterface.CloneToPrefabStripMonoBehaviors(Resources.FindObjectsOfTypeAll<Pickup>().First(x => x.transform.parent == null && x.GetInstanceID() >= 0 && x.name == "Pickup").gameObject);
             pickupVisual.AddComponent<EditorDeletableObject>().AddRenderer(pickupVisual.transform.Find("ItemSprite").GetComponent<SpriteRenderer>(), "none");
             pickupVisual.name = "PickupVisual";
+            pickupVisual.AddComponent<MovableObjectInteraction>().allowedAxis = MoveAxis.Horizontal;
             pickupVisual.layer = editorInteractableLayer;
 
             yield return "Setting up Editor Controller...";

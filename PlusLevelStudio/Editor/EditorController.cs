@@ -301,12 +301,21 @@ namespace PlusLevelStudio.Editor
         }
 
         /// <summary>
+        /// Gets the visual created for the specified IEditorVisualizable.
+        /// </summary>
+        /// <param name="visualizable"></param>
+        public GameObject GetVisual(IEditorVisualizable visualizable)
+        {
+            return objectVisuals[visualizable];
+        }
+
+        /// <summary>
         /// Casts the current mouse ray to the specified plane
         /// </summary>
         /// <param name="plane"></param>
         /// <param name="doubleSided"></param>
         /// <returns>The position the ray landed on.</returns>
-        protected Vector3? CastRayToPlane(Plane plane, bool doubleSided)
+        public Vector3? CastRayToPlane(Plane plane, bool doubleSided)
         {
             float enteredAt;
             if (plane.Raycast(mouseRay, out enteredAt))
@@ -558,7 +567,26 @@ namespace PlusLevelStudio.Editor
 
         protected bool HandleInteractableClicking()
         {
-            if (Physics.Raycast(mouseRay, out RaycastHit info, 1000f, LevelStudioPlugin.editorInteractableLayerMask))
+            RaycastHit info;
+            if (currentTool == null)
+            {
+                if (Physics.Raycast(mouseRay, out info, 1000f, LevelStudioPlugin.editorHandleLayerMask))
+                {
+                    if (info.transform.TryGetComponent(out IEditorInteractable interactable))
+                    {
+                        if ((currentTool == null))
+                        {
+                            if (interactable.OnClicked())
+                            {
+                                heldInteractable = interactable;
+                                return true;
+                            }
+                            return true;
+                        }
+                    }
+                }
+            }
+            if (Physics.Raycast(mouseRay, out info, 1000f, LevelStudioPlugin.editorInteractableLayerMask))
             {
                 if (info.transform.TryGetComponent(out IEditorInteractable interactable))
                 {
