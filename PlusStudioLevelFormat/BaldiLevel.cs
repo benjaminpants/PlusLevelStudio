@@ -83,6 +83,16 @@ namespace PlusStudioLevelFormat
                         position = reader.ReadUnityVector2()
                     });
                 }
+                int basicObjectCount = reader.ReadInt32();
+                for (int j = 0; j < basicObjectCount; j++)
+                {
+                    room.basicObjects.Add(new BasicObjectInfo()
+                    {
+                        prefab = objectsCompressor.ReadStoredString(reader),
+                        position = reader.ReadUnityVector3(),
+                        rotation = reader.ReadUnityQuaternion()
+                    });
+                }
                 level.rooms.Add(room);
             }
             int lightCount = reader.ReadInt32();
@@ -152,6 +162,7 @@ namespace PlusStudioLevelFormat
             foreach (var room in rooms)
             {
                 objectsCompressor.AddStrings(room.items.Select(x => x.item));
+                objectsCompressor.AddStrings(room.basicObjects.Select(x => x.prefab));
             }
             objectsCompressor.AddStrings(lights.Select(x => x.prefab));
             objectsCompressor.AddStrings(doors.Select(x => x.prefab));
@@ -201,6 +212,13 @@ namespace PlusStudioLevelFormat
                 {
                     objectsCompressor.WriteStoredString(writer, rooms[i].items[j].item);
                     writer.Write(rooms[i].items[j].position);
+                }
+                writer.Write(rooms[i].basicObjects.Count);
+                for (int j = 0; j < rooms[i].basicObjects.Count; j++)
+                {
+                    objectsCompressor.WriteStoredString(writer, rooms[i].basicObjects[j].prefab);
+                    writer.Write(rooms[i].basicObjects[j].position);
+                    writer.Write(rooms[i].basicObjects[j].rotation);
                 }
             }
             writer.Write(lights.Count);

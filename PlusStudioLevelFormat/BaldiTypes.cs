@@ -29,6 +29,7 @@ namespace PlusStudioLevelFormat
         public string type;
         public TextureContainer textureContainer;
         public List<ItemInfo> items = new List<ItemInfo>();
+        public List<BasicObjectInfo> basicObjects = new List<BasicObjectInfo>();
 
         public RoomInfo(string roomType, TextureContainer container)
         {
@@ -84,6 +85,14 @@ namespace PlusStudioLevelFormat
     {
         public string item;
         public UnityVector2 position;
+    }
+
+    public class BasicObjectInfo
+    {
+        public string prefab;
+        public UnityVector3 position;
+        public UnityQuaternion rotation;
+        //public bool replaceable;
     }
 
     public enum PlusDirection
