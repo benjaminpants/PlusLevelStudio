@@ -399,8 +399,36 @@ namespace PlusLevelStudio
             handles.lattices[2] = zyLattice.GetComponent<HandleLattice>();
             zyLattice.name = "ZYLattice";
 
+            // create the rings
+            GameObject ringModelBase = AssetLoader.ModelFromModManualMaterials(this, new Dictionary<string, Material>
+            {
+                { "base", handleArrowMat }
+            }, "Models", "ring.obj");
+            ringModelBase.SetActive(false);
+            ringModelBase.transform.localScale = Vector3.one * 3f;
+            ringModelBase.GetComponentsInChildren<MeshRenderer>().Do(x =>
+            {
+                x.gameObject.layer = LayerMask.NameToLayer("Overlay");
+                x.transform.localScale = new Vector3(1f, 1f, 1f); // fix the arrow facing the wrong way because i modeled it wrong
+            });
+            ringModelBase.layer = editorHandleLayer;
+            ringModelBase.AddComponent<HandleRing>().myHandles = handles;
+            ringModelBase.AddComponent<MeshCollider>().sharedMesh = ringModelBase.transform.Find("ring").GetComponent<MeshFilter>().mesh;
+
+            GameObject yawRing = GameObject.Instantiate(ringModelBase);
+            yawRing.transform.SetParent(handles.transform, true);
+            yawRing.GetComponentsInChildren<MeshRenderer>().Do(x => x.material.SetTexture("_LightMap", lightmaps["green"]));
+            yawRing.name = "YawRing";
+            yawRing.GetComponent<HandleRing>().axisVector = Vector3.up;
+            yawRing.SetActive(true);
+
             DestroyImmediate(baseLattice);
+            DestroyImmediate(ringModelBase);
             DestroyImmediate(handleModelBase);
+
+            GameObject dummyTransform = new GameObject("DummyTransform");
+            dummyTransform.transform.SetParent(handles.transform, true);
+            handles.dummyTransform = dummyTransform.transform;
 
             yield return "Creating Worker CoreGameManager...";
             CoreGameManager cgm = Resources.FindObjectsOfTypeAll<CoreGameManager>().First(x => x.name == "CoreGameManager" && x.GetInstanceID() >= 0);

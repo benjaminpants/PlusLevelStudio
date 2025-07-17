@@ -71,6 +71,7 @@ namespace PlusLevelStudio.Editor
 
         // TODO: consider moving to selector?
         public float gridSnap = 0.25f;
+        public float angleSnap = 22.5f;
 
         public bool MovementEnabled
         {
@@ -323,7 +324,7 @@ namespace PlusLevelStudio.Editor
         /// <param name="plane"></param>
         /// <param name="doubleSided"></param>
         /// <returns>The position the ray landed on.</returns>
-        public Vector3? CastRayToPlane(Plane plane, bool doubleSided)
+        public Vector3? CastMouseRayToPlane(Plane plane, bool doubleSided)
         {
             float enteredAt;
             if (plane.Raycast(mouseRay, out enteredAt))
@@ -454,7 +455,7 @@ namespace PlusLevelStudio.Editor
         {
             Vector3 pos = new Vector3((CursorController.Instance.LocalPosition.x / screenSize.x) * Screen.width, Screen.height + ((CursorController.Instance.LocalPosition.y / screenSize.y) * Screen.height));
             mouseRay = camera.camCom.ScreenPointToRay(pos);
-            Vector3? pPos = CastRayToPlane(currentFloorPlane, false);
+            Vector3? pPos = CastMouseRayToPlane(currentFloorPlane, false);
             if (pPos.HasValue)
             {
                 mousePlanePosition = pPos.Value;

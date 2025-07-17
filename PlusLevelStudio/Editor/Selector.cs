@@ -35,169 +35,6 @@ namespace PlusLevelStudio.Editor
         Settings
     }
 
-    public enum MoveAxis
-    {
-        None = 0,
-        Z = 1,
-        Y = 2,
-        X = 4,
-        All = Z | X | Y,
-        Horizontal = X | Z,
-        Forward = Z
-    }
-
-    public class MoveHandles : MonoBehaviour
-    {
-        public MoveAxis enabledAxis
-        {
-            get
-            {
-                return (arrows[0].gameObject.activeSelf ? MoveAxis.Z : MoveAxis.None) | (arrows[1].gameObject.activeSelf ? MoveAxis.Y : MoveAxis.None) | (arrows[2].gameObject.activeSelf ? MoveAxis.X : MoveAxis.None);
-            }
-            set
-            {
-                SetArrows(value);
-            }
-        }
-        public void SetArrows(MoveAxis flags)
-        {
-            arrows[0].gameObject.SetActive(flags.HasFlag(MoveAxis.Z));
-            arrows[0].transform.localPosition = Vector3.forward;
-            arrows[1].gameObject.SetActive(flags.HasFlag(MoveAxis.Y));
-            arrows[1].transform.localPosition = Vector3.up;
-            arrows[2].gameObject.SetActive(flags.HasFlag(MoveAxis.X));
-            arrows[2].transform.localPosition = Vector3.right;
-            lattices[0].gameObject.SetActive(flags.HasFlag(MoveAxis.X) && flags.HasFlag(MoveAxis.Z)); // this lattice moves stuff in the X and Z axis so we need to make sure we are allowed to move both
-            lattices[1].gameObject.SetActive(flags.HasFlag(MoveAxis.X) && flags.HasFlag(MoveAxis.Y)); // this lattice moves stuff in the X and Y axis so we need to make sure we are allowed to move both
-            lattices[2].gameObject.SetActive(flags.HasFlag(MoveAxis.Z) && flags.HasFlag(MoveAxis.Y)); // this lattice moves stuff in the Z and Y axis so we need to make sure we are allowed to move both
-        }
-
-        public HandleArrow[] arrows = new HandleArrow[3];
-        public HandleLattice[] lattices = new HandleLattice[3];
-        public Selector mySelector;
-        public bool worldSpace = false;
-
-        Vector3 currentHandleMouseStart;
-
-        public void ClickBegin(HandleArrow arrow)
-        {
-            Vector3? start = EditorController.Instance.CastRayToPlane(new Plane(arrow.transform.up, arrow.transform.position), true);
-            if (start == null)
-            {
-                currentHandleMouseStart = Vector3.zero;
-                return;
-            }
-            currentHandleMouseStart = arrow.transform.position - LockPositionOntoForward(arrow.transform, start.Value);
-        }
-
-        public void LatticeClickUpdate(Transform lattice)
-        {
-            Vector3? pos = EditorController.Instance.CastRayToPlane(new Plane(lattice.forward, lattice.position), true);
-            if (pos == null)
-            {
-                return;
-            }
-            mySelector.UpdateObjectPosition(pos.Value - lattice.transform.position);
-        }
-
-        public void ClickUpdate(HandleArrow arrow)
-        {
-            Vector3? pos = EditorController.Instance.CastRayToPlane(new Plane(arrow.transform.up, arrow.transform.position), true);
-            if (pos == null)
-            {
-                return;
-            }
-            mySelector.UpdateObjectPosition(LockPositionOntoForward(arrow.transform, pos.Value) - (arrow.transform.position - currentHandleMouseStart));
-        }
-
-        public void ClickEnd(HandleArrow arrow)
-        {
-
-        }
-
-        protected Vector3 LockPositionOntoForward(Transform relativeTo, Vector3 point)
-        {
-            // get the forward rotation in local space
-            Vector3 localForward = relativeTo.InverseTransformDirection(relativeTo.forward);
-            // get our point relative to the transform
-            Vector3 localPoint = relativeTo.InverseTransformPoint(point);
-
-            Vector3 output = new Vector3(localPoint.x,localPoint.y, localPoint.z);
-            // there should be 2 zeros and one one
-            output.Scale(new Vector3(Mathf.Abs(localForward.x), Mathf.Abs(localForward.y), Mathf.Abs(localForward.z)));
-            return relativeTo.TransformPoint(output); // convert back to world space
-        }
-
-        public void GoToTarget(Transform t)
-        {
-            transform.position = t.position;
-            if (!worldSpace)
-            {
-                transform.rotation = t.rotation;
-            }
-            else
-            {
-                transform.rotation = Quaternion.identity;
-            }
-        }
-
-    }
-
-    public class HandleLattice : MonoBehaviour, IEditorInteractable
-    {
-        public MoveHandles myHandles;
-        public bool InteractableByTool(EditorTool tool)
-        {
-            // shouldn't be called by this, since the layer we SHOULD be on doesn't support being clicked by tools
-            throw new NotImplementedException();
-        }
-
-        public bool OnClicked()
-        {
-            return true;
-            //throw new NotImplementedException();
-        }
-
-        public bool OnHeld()
-        {
-            myHandles.LatticeClickUpdate(transform);
-            return true;
-            //throw new NotImplementedException();
-        }
-
-        public void OnReleased()
-        {
-            
-        }
-    }
-
-    public class HandleArrow : MonoBehaviour, IEditorInteractable
-    {
-        public MoveHandles myHandles;
-        public bool InteractableByTool(EditorTool tool)
-        {
-            // shouldn't be called by this, since the layer we SHOULD be on doesn't support being clicked by tools
-            throw new NotImplementedException();
-        }
-
-        public bool OnClicked()
-        {
-            myHandles.ClickBegin(this);
-            return true;
-        }
-
-        public bool OnHeld()
-        {
-            myHandles.ClickUpdate(this);
-            return true;
-        }
-
-        public void OnReleased()
-        {
-            myHandles.ClickEnd(this);
-        }
-    }
-
     public class SelectorArrow : MonoBehaviour, IEditorInteractable
     {
         public Selector selector;
@@ -376,8 +213,12 @@ namespace PlusLevelStudio.Editor
 
         public void UpdateObjectPosition(Vector3 offset)
         {
-            if (offset.sqrMagnitude == 0) return; // no change made, dont bother sending down
-            selectedMovable.MoveUpdate(offset, EditorController.Instance.gridSnap);
+            selectedMovable.MoveUpdate(offset, null);
+        }
+
+        public void UpdateObjectRotation(Quaternion rotation)
+        {
+            selectedMovable.MoveUpdate(null, rotation);
         }
 
         void PositionArrow(Direction d, float additionalDistanceFromEdge)

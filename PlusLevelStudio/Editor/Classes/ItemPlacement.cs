@@ -33,16 +33,13 @@ namespace PlusLevelStudio.Editor
             UpdateVisual(visualObject);
         }
 
-        public void MoveUpdate(Vector3 moveBy, float gridSnap)
+        public void MoveUpdate(Vector3? position, Quaternion? rotation)
         {
-            moved = true;
-            if (gridSnap == 0)
+            if (position.HasValue)
             {
-                position += new Vector2(moveBy.x, moveBy.z);
-                EditorController.Instance.UpdateVisual(this);
-                return;
+                moved = true;
+                this.position = new Vector2(position.Value.x, position.Value.z);
             }
-            position = new Vector2(Mathf.Round((position.x + moveBy.x) / gridSnap) * gridSnap, Mathf.Round((position.y + moveBy.z) / gridSnap) * gridSnap);
             EditorController.Instance.UpdateVisual(this);
         }
 

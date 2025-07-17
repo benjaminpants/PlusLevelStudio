@@ -19,8 +19,7 @@ namespace PlusLevelStudio.Editor
         /// <summary>
         /// Called when the arrow is moved.
         /// </summary>
-        /// <param name="moveBy"></param>
-        void MoveUpdate(Vector3 moveBy, float gridSnap);
+        void MoveUpdate(Vector3? position, Quaternion? rotation);
 
         /// <summary>
         /// Gets the transform that the handle should go to.

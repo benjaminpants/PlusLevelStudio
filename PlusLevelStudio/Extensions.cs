@@ -145,6 +145,15 @@ namespace PlusLevelStudio
             return new IntVector2(Mathf.Max(me.x, max.x), Mathf.Max(me.z, max.z));
         }
 
+        public static Vector3 SnapToGrid(this Vector3 me, float gridSnap)
+        {
+            if (gridSnap <= 0f)
+            {
+                return new Vector3(me.x,me.y,me.z);
+            }
+            return new Vector3(Mathf.Round(me.x / gridSnap) * gridSnap, Mathf.Round(me.y / gridSnap) * gridSnap, Mathf.Round(me.z / gridSnap) * gridSnap);
+        }
+
         // TODO: move this to the LevelLoader when the time is right
         public static IntVector2 ToInt(this ByteVector2 me)
         {

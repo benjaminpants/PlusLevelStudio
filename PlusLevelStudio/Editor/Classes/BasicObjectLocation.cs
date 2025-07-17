@@ -31,15 +31,16 @@ namespace PlusLevelStudio.Editor
             UpdateVisual(visualObject);
         }
 
-        public void MoveUpdate(Vector3 moveBy, float gridSnap)
+        public void MoveUpdate(Vector3? position, Quaternion? rotation)
         {
-            if (gridSnap == 0)
+            if (position.HasValue)
             {
-                position += moveBy;
-                EditorController.Instance.UpdateVisual(this);
-                return;
+                this.position = position.Value;
             }
-            position = new Vector3(Mathf.Round((position.x + moveBy.x) / gridSnap) * gridSnap, Mathf.Round((position.y + moveBy.y) / gridSnap) * gridSnap, Mathf.Round((position.z + moveBy.z) / gridSnap) * gridSnap);
+            if (rotation.HasValue)
+            {
+                this.rotation = rotation.Value;
+            }
             EditorController.Instance.UpdateVisual(this);
         }
 
@@ -52,12 +53,12 @@ namespace PlusLevelStudio.Editor
 
         public void Selected()
         {
-            //throw new NotImplementedException();
+            EditorController.Instance.GetVisual(this).GetComponent<EditorDeletableObject>().Highlight("yellow");
         }
 
         public void Unselected()
         {
-            //throw new NotImplementedException();
+            EditorController.Instance.GetVisual(this).GetComponent<EditorDeletableObject>().Highlight("none");
         }
 
         public void UpdateVisual(GameObject visualObject)
