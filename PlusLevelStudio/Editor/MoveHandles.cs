@@ -138,7 +138,9 @@ namespace PlusLevelStudio.Editor
                 Vector3 rotation = transform.eulerAngles;
                 rotation.Scale(ring.axisMultipliers);
                 rotation += ring.axisVector * dir;
-                mySelector.UpdateObjectRotation(Quaternion.Euler(rotation));
+                Vector3 originalRotation = transform.eulerAngles;
+                originalRotation.Scale(ring.axisVector);
+                mySelector.UpdateObjectRotation(Quaternion.Euler(rotation + originalRotation));
                 return;
             }
 

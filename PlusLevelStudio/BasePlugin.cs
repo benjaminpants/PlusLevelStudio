@@ -422,6 +422,22 @@ namespace PlusLevelStudio
             yawRing.GetComponent<HandleRing>().axisVector = Vector3.up;
             yawRing.SetActive(true);
 
+            GameObject rollRing = GameObject.Instantiate(ringModelBase);
+            rollRing.transform.SetParent(handles.transform, true);
+            rollRing.GetComponentsInChildren<MeshRenderer>().Do(x => x.material.SetTexture("_LightMap", lightmaps["red"]));
+            rollRing.name = "RollRing";
+            rollRing.GetComponent<HandleRing>().axisVector = Vector3.right;
+            rollRing.transform.up = Vector3.right;
+            rollRing.SetActive(true);
+
+            GameObject pitchRing = GameObject.Instantiate(ringModelBase);
+            pitchRing.transform.SetParent(handles.transform, true);
+            pitchRing.GetComponentsInChildren<MeshRenderer>().Do(x => x.material.SetTexture("_LightMap", lightmaps["blue"]));
+            pitchRing.name = "PitchRing";
+            pitchRing.GetComponent<HandleRing>().axisVector = Vector3.forward;
+            pitchRing.transform.up = Vector3.forward;
+            pitchRing.SetActive(true);
+
             DestroyImmediate(baseLattice);
             DestroyImmediate(ringModelBase);
             DestroyImmediate(handleModelBase);
