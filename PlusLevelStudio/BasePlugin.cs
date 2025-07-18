@@ -37,7 +37,7 @@ namespace PlusLevelStudio
         public const int editorInteractableLayer = 13; // CollidableEntities
         public const int editorInteractableLayerMask = 1 << editorInteractableLayer;
 
-        public const int editorHandleLayer = 14; // ClickableEntities
+        public const int editorHandleLayer = 12; // ClickableEntities
         public const int editorHandleLayerMask = 1 << editorHandleLayer;
 
         public Dictionary<string, DoorDisplay> doorDisplays = new Dictionary<string, DoorDisplay>();
@@ -159,6 +159,8 @@ namespace PlusLevelStudio
                     { "activities", new List<EditorTool>()
                     {
                         new ActivityTool("notebook", 5f),
+                        new ActivityTool("mathmachine", 0f),
+                        new ActivityTool("mathmachine_corner", 0f),
                     } },
                     { "objects", new List<EditorTool>()
                     {
@@ -532,6 +534,29 @@ namespace PlusLevelStudio
             // activities
             GameObject notebookVisual = EditorInterface.AddActivityVisual("notebook", Resources.FindObjectsOfTypeAll<Notebook>().First(x => x.GetInstanceID() >= 0).gameObject);
             notebookVisual.GetComponent<MovableObjectInteraction>().allowedAxis = MoveAxis.Horizontal; // notebooks are just activities that instantly spawn their book so the Y value does nothing.
+            GameObject mathMachineVisual = EditorInterface.CloneToPrefabStripMonoBehaviors(LevelLoaderPlugin.Instance.activityAliases["mathmachine"].gameObject, new Type[] { typeof(TMP_Text) });
+            mathMachineVisual.name = mathMachineVisual.name.Replace("_Stripped", "_Visual");
+            BoxCollider mathMachineCollider = mathMachineVisual.transform.Find("Model").GetComponent<BoxCollider>();
+            MovableObjectInteraction mathMachineMovableObjectInteract = mathMachineCollider.gameObject.AddComponent<MovableObjectInteraction>();
+            mathMachineMovableObjectInteract.allowedRotations = RotateAxis.Flat;
+            mathMachineMovableObjectInteract.allowedAxis = MoveAxis.All;
+            mathMachineCollider.gameObject.AddComponent<EditorDeletableObject>().AddRendererRange(mathMachineVisual.GetComponentsInChildren<Renderer>(), "none");
+            mathMachineVisual.gameObject.layer = LevelStudioPlugin.editorInteractableLayer;
+            mathMachineCollider.gameObject.layer = LevelStudioPlugin.editorInteractableLayer;
+
+            GameObject mathMachineCornerVisual = EditorInterface.CloneToPrefabStripMonoBehaviors(LevelLoaderPlugin.Instance.activityAliases["mathmachine_corner"].gameObject, new Type[] { typeof(TMP_Text) });
+            mathMachineCornerVisual.name = mathMachineCornerVisual.name.Replace("_Stripped", "_Visual");
+            BoxCollider mathMachineCornerCollider = mathMachineCornerVisual.transform.Find("Model").GetComponent<BoxCollider>();
+            MovableObjectInteraction mathMachineCornermovableObjectInteract = mathMachineCornerCollider.gameObject.AddComponent<MovableObjectInteraction>();
+            mathMachineCornermovableObjectInteract.allowedRotations = RotateAxis.Flat;
+            mathMachineCornermovableObjectInteract.allowedAxis = MoveAxis.All;
+            mathMachineCornerCollider.gameObject.AddComponent<EditorDeletableObject>().AddRendererRange(mathMachineCornerVisual.GetComponentsInChildren<Renderer>(), "none");
+            mathMachineCornerVisual.gameObject.layer = LevelStudioPlugin.editorInteractableLayer;
+            mathMachineCornerCollider.gameObject.layer = LevelStudioPlugin.editorInteractableLayer;
+
+            LevelStudioPlugin.Instance.activityDisplays.Add("mathmachine", mathMachineVisual);
+            LevelStudioPlugin.Instance.activityDisplays.Add("mathmachine_corner", mathMachineCornerVisual);
+
 
             yield return "Setting up Editor Controller...";
             GameObject editorControllerObject = new GameObject("StandardEditorController");

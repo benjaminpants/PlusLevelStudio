@@ -69,7 +69,7 @@
 		{
 			"name":"Title",
 			"type":"text",
-			"anchoredPosition":[60,-73],
+			"anchoredPosition":[68,-73],
 			"size":[256,26],
 			"pivot":"#topCenter",
 			"anchorMin":"#center",
@@ -82,7 +82,7 @@
 		{
 			"name":"Description",
 			"type":"text",
-			"anchoredPosition":[60,-99],
+			"anchoredPosition":[68,-99],
 			"size":[240,64],
 			"pivot":"#topCenter",
 			"anchorMin":"#center",

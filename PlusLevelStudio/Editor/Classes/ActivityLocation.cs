@@ -57,8 +57,8 @@ namespace PlusLevelStudio.Editor
 
         public void InitializeVisual(GameObject visualObject)
         {
-            visualObject.GetComponent<MovableObjectInteraction>().target = this;
-            visualObject.GetComponent<EditorDeletableObject>().toDelete = this;
+            visualObject.GetComponentInChildren<MovableObjectInteraction>().target = this;
+            visualObject.GetComponentInChildren<EditorDeletableObject>().toDelete = this;
             UpdateVisual(visualObject);
         }
 
@@ -87,12 +87,12 @@ namespace PlusLevelStudio.Editor
 
         public void Selected()
         {
-            EditorController.Instance.GetVisual(this).GetComponent<EditorDeletableObject>().Highlight("yellow");
+            EditorController.Instance.GetVisual(this).GetComponentInChildren<EditorDeletableObject>().Highlight("yellow");
         }
 
         public void Unselected()
         {
-            EditorController.Instance.GetVisual(this).GetComponent<EditorDeletableObject>().Highlight("none");
+            EditorController.Instance.GetVisual(this).GetComponentInChildren<EditorDeletableObject>().Highlight("none");
             // re-attempt setup so we can see if our room is null now
             Setup(EditorController.Instance.levelData);
             if (myRoom == null)
