@@ -117,6 +117,20 @@ namespace PlusLevelStudio
             return obj;
         }
 
+        public static GameObject AddActivityVisual(string key, GameObject obj)
+        {
+            GameObject clone = CloneToPrefabStripMonoBehaviors(obj);
+            clone.name = clone.name.Replace("_Stripped", "_Visual");
+            MovableObjectInteraction movableObjectInteract = clone.AddComponent<MovableObjectInteraction>();
+            movableObjectInteract.allowedRotations = RotateAxis.Flat;
+            movableObjectInteract.allowedAxis = MoveAxis.All;
+            clone.AddComponent<EditorDeletableObject>().AddRendererRange(clone.GetComponentsInChildren<Renderer>(), "none");
+            clone.gameObject.layer = LevelStudioPlugin.editorInteractableLayer;
+            
+            LevelStudioPlugin.Instance.activityDisplays.Add(key, clone);
+            return clone;
+        }
+
         public static EditorBasicObject AddObjectVisual(string key, GameObject obj, bool useRegularColliderAsEditorHitbox)
         {
             GameObject clone = CloneToPrefabStripMonoBehaviors(obj);

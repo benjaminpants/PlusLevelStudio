@@ -174,7 +174,14 @@ namespace PlusStudioLevelFormat
             {
                 objectsCompressor.AddStrings(room.items.Select(x => x.item));
                 objectsCompressor.AddStrings(room.basicObjects.Select(x => x.prefab));
-                objectsCompressor.AddString(room.activity.type);
+                if (room.activity == null)
+                {
+                    objectsCompressor.AddString("null");
+                }
+                else
+                {
+                    objectsCompressor.AddString(room.activity.type);
+                }
             }
             objectsCompressor.AddStrings(lights.Select(x => x.prefab));
             objectsCompressor.AddStrings(doors.Select(x => x.prefab));

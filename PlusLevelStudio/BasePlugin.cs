@@ -45,6 +45,7 @@ namespace PlusLevelStudio
         public Dictionary<string, DoorDisplay> windowDisplays = new Dictionary<string, DoorDisplay>();
         public Dictionary<string, GameObject> exitDisplays = new Dictionary<string, GameObject>();
         public Dictionary<string, EditorBasicObject> basicObjectDisplays = new Dictionary<string, EditorBasicObject>();
+        public Dictionary<string, GameObject> activityDisplays = new Dictionary<string, GameObject>();
         public GameObject pickupVisual;
 
         void Awake()
@@ -155,6 +156,10 @@ namespace PlusLevelStudio
                         new LightTool("cordedhanging"),
                         new LightTool("standardhanging")
                     } },
+                    { "activities", new List<EditorTool>()
+                    {
+                        new ActivityTool("notebook", 5f),
+                    } },
                     { "objects", new List<EditorTool>()
                     {
                         new ObjectTool("bigdesk"),
@@ -178,6 +183,7 @@ namespace PlusLevelStudio
                     "rooms",
                     "doors",
                     "items",
+                    "activities",
                     "objects",
                     "lights",
                     "tools"
@@ -515,12 +521,17 @@ namespace PlusLevelStudio
             EditorInterface.AddObjectVisualWithMeshCollider("desk", LevelLoaderPlugin.Instance.basicObjects["desk"], true);
             EditorInterface.AddObjectVisualWithMeshCollider("chair", LevelLoaderPlugin.Instance.basicObjects["chair"], true);
             EditorInterface.AddObjectVisualWithMeshCollider("bigdesk", LevelLoaderPlugin.Instance.basicObjects["bigdesk"], true);
+
             // machines
             EditorInterface.AddObjectVisual("dietbsodamachine", LevelLoaderPlugin.Instance.basicObjects["dietbsodamachine"], true);
             EditorInterface.AddObjectVisualWithMeshCollider("bsodamachine", LevelLoaderPlugin.Instance.basicObjects["bsodamachine"], true);
             EditorInterface.AddObjectVisualWithMeshCollider("zestymachine", LevelLoaderPlugin.Instance.basicObjects["zestymachine"], true);
             EditorInterface.AddObjectVisualWithMeshCollider("crazymachine_bsoda", LevelLoaderPlugin.Instance.basicObjects["crazymachine_bsoda"], true);
             EditorInterface.AddObjectVisualWithMeshCollider("crazymachine_zesty", LevelLoaderPlugin.Instance.basicObjects["crazymachine_zesty"], true);
+
+            // activities
+            GameObject notebookVisual = EditorInterface.AddActivityVisual("notebook", Resources.FindObjectsOfTypeAll<Notebook>().First(x => x.GetInstanceID() >= 0).gameObject);
+            notebookVisual.GetComponent<MovableObjectInteraction>().allowedAxis = MoveAxis.Horizontal; // notebooks are just activities that instantly spawn their book so the Y value does nothing.
 
             yield return "Setting up Editor Controller...";
             GameObject editorControllerObject = new GameObject("StandardEditorController");

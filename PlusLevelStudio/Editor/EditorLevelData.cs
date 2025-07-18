@@ -247,6 +247,11 @@ namespace PlusLevelStudio.Editor
             {
                 objects[i].position -= new Vector3(posDif.x * 10f, 0f, posDif.z * 10f);
             }
+            for (int i = 0; i < rooms.Count; i++)
+            {
+                if (rooms[i].activity == null) continue;
+                rooms[i].activity.position -= new Vector3(posDif.x * 10f, 0f, posDif.z * 10f);
+            }
             return true;
         }
 
@@ -334,7 +339,17 @@ namespace PlusLevelStudio.Editor
             }
             for (int i = 0; i < rooms.Count; i++)
             {
-                compiled.rooms.Add(new RoomInfo(rooms[i].roomType, new TextureContainer(rooms[i].textureContainer)));
+                RoomInfo room = new RoomInfo(rooms[i].roomType, new TextureContainer(rooms[i].textureContainer));
+                if (rooms[i].activity != null)
+                {
+                    room.activity = new ActivityInfo()
+                    {
+                        type = rooms[i].activity.type,
+                        position = rooms[i].activity.position.ToData(),
+                        direction = (PlusDirection)rooms[i].activity.direction
+                    };
+                }
+                compiled.rooms.Add(room);
             }
             for (int i = 0; i < lights.Count; i++)
             {
@@ -428,6 +443,8 @@ namespace PlusLevelStudio.Editor
             stringComp.AddStrings(rooms.Select(x => x.textureContainer.floor));
             stringComp.AddStrings(rooms.Select(x => x.textureContainer.wall));
             stringComp.AddStrings(rooms.Select(x => x.textureContainer.ceiling));
+            stringComp.AddStrings(rooms.Where(x => x.activity != null).Select(x => x.activity.type));
+            stringComp.AddString("null");
             stringComp.FinalizeDatabase();
             stringComp.WriteStringDatabase(writer);
             writer.Write((byte)mapSize.x);
@@ -444,6 +461,17 @@ namespace PlusLevelStudio.Editor
                 stringComp.WriteStoredString(writer, rooms[i].textureContainer.floor);
                 stringComp.WriteStoredString(writer, rooms[i].textureContainer.wall);
                 stringComp.WriteStoredString(writer, rooms[i].textureContainer.ceiling);
+                // write our activity
+                if (rooms[i].activity == null)
+                {
+                    stringComp.WriteStoredString(writer, "null");
+                }
+                else
+                {
+                    stringComp.WriteStoredString(writer, rooms[i].activity.type);
+                    writer.Write(rooms[i].activity.position.ToData());
+                    writer.Write((byte)rooms[i].activity.direction);
+                }
             }
 
             writer.Write((ushort)lightGroups.Count); // we will only allow ushort.Max amount of light groups because why the fuck would you ever need more?
@@ -513,7 +541,19 @@ namespace PlusLevelStudio.Editor
             int roomCount = reader.ReadInt32();
             for (int i = 0; i < roomCount; i++)
             {
-                levelData.rooms.Add(new EditorRoom(stringComp.ReadStoredString(reader), new TextureContainer(stringComp.ReadStoredString(reader), stringComp.ReadStoredString(reader), stringComp.ReadStoredString(reader))));
+                EditorRoom room = new EditorRoom(stringComp.ReadStoredString(reader), new TextureContainer(stringComp.ReadStoredString(reader), stringComp.ReadStoredString(reader), stringComp.ReadStoredString(reader)));
+                string activityName = stringComp.ReadStoredString(reader);
+                if (activityName != "null")
+                {
+                    ActivityLocation activity = new ActivityLocation()
+                    {
+                        type=activityName,
+                        position=reader.ReadUnityVector3().ToUnity(),
+                        direction=(Direction)reader.ReadByte()
+                    };
+                    activity.Setup(room);
+                }
+                levelData.rooms.Add(room);
             }
             ushort lightGroupCount = reader.ReadUInt16();
             for (int i = 0; i < lightGroupCount; i++)

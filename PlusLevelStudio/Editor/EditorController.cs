@@ -186,6 +186,11 @@ namespace PlusLevelStudio.Editor
             {
                 AddVisual(item);
             }
+            foreach (EditorRoom room in levelData.rooms)
+            {
+                if (room.activity == null) continue;
+                AddVisual(room.activity);
+            }
             RefreshCells();
             CancelHeldUndo();
             if (wipeUndoHistory)
