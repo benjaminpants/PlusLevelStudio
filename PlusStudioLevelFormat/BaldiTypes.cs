@@ -24,12 +24,20 @@ namespace PlusStudioLevelFormat
         }
     }
 
+    public class ActivityInfo
+    {
+        public string type;
+        public UnityVector3 position;
+        public PlusDirection direction;
+    }
+
     public class RoomInfo
     {
         public string type;
         public TextureContainer textureContainer;
         public List<ItemInfo> items = new List<ItemInfo>();
         public List<BasicObjectInfo> basicObjects = new List<BasicObjectInfo>();
+        public ActivityInfo activity;
 
         public RoomInfo(string roomType, TextureContainer container)
         {

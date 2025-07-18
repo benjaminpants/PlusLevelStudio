@@ -110,6 +110,8 @@ namespace PlusLevelStudio
                         new DoorTool("oneway"),
                         new DoorTool("coinswinging"),
                         new DoorTool("swinging_silent"),
+                        new DoorTool("autodoor"),
+                        new DoorTool("flaps"),
                         new WindowTool("standard"),
                     } },
                     { "items", new List<EditorTool>()
@@ -157,7 +159,12 @@ namespace PlusLevelStudio
                     {
                         new ObjectTool("bigdesk"),
                         new ObjectTool("desk"),
-                        new ObjectTool("chair")
+                        new ObjectTool("chair"),
+                        new ObjectTool("dietbsodamachine"),
+                        new ObjectTool("bsodamachine"),
+                        new ObjectTool("zestymachine"),
+                        new ObjectTool("crazymachine_zesty"),
+                        new ObjectTool("crazymachine_bsoda"),
                     } },
                     { "tools", new List<EditorTool>()
                     {
@@ -201,6 +208,10 @@ namespace PlusLevelStudio
             assetMan.Add<Material>("swingingDoorMask", materials.First(x => x.name == "SwingDoorMask"));
             assetMan.Add<Material>("SwingingDoorMat", materials.First(x => x.name == "SwingDoorTexture_Closed"));
             assetMan.Add<Material>("CoinDoorMat", materials.First(x => x.name == "CoinDoor"));
+            assetMan.Add<Material>("AutoDoorMask", materials.First(x => x.name == "AutoDoorMask"));
+            assetMan.Add<Material>("AutoDoorMat", materials.First(x => x.name == "AutoDoor_Closed"));
+            assetMan.Add<Material>("FlapDoorMask", materials.First(x => x.name == "FlapDoorMask"));
+            assetMan.Add<Material>("FlapDoorMat", materials.First(x => x.name == "FlapDoorTexture_Closed"));
 
             assetMan.Add<Material>("OneWayRight", materials.First(x => x.name == "SwingDoorRightWay_Closed"));
             assetMan.Add<Material>("OneWayWrong", materials.First(x => x.name == "SwingDoorTextureOneWay_Closed"));
@@ -484,6 +495,8 @@ namespace PlusLevelStudio
             EditorInterface.AddDoor<DoorDisplay>("oneway", true, assetMan.Get<Material>("swingingDoorMask"), new Material[] { assetMan.Get<Material>("OneWayRight"), assetMan.Get<Material>("OneWayWrong") });
             EditorInterface.AddDoor<DoorDisplay>("swinging_silent", true, assetMan.Get<Material>("swingingDoorMask"), new Material[] { silentDoorMat, silentDoorMat });
             EditorInterface.AddDoor<DoorDisplay>("coinswinging", true, assetMan.Get<Material>("swingingDoorMask"), new Material[] { assetMan.Get<Material>("CoinDoorMat"), assetMan.Get<Material>("CoinDoorMat") });
+            EditorInterface.AddDoor<DoorDisplay>("autodoor", false, assetMan.Get<Material>("AutoDoorMask"), new Material[] { assetMan.Get<Material>("AutoDoorMat"), assetMan.Get<Material>("AutoDoorMat") });
+            EditorInterface.AddDoor<DoorDisplay>("flaps", true, assetMan.Get<Material>("FlapDoorMask"), new Material[] { assetMan.Get<Material>("FlapDoorMat"), assetMan.Get<Material>("FlapDoorMat") });
 
             WindowObject standardWindowObject = Resources.FindObjectsOfTypeAll<WindowObject>().First(x => x.name == "WoodWindow" && x.GetInstanceID() >= 0);
             EditorInterface.AddWindow<DoorDisplay>("standard", standardWindowObject.mask, standardWindowObject.overlay);
@@ -502,6 +515,12 @@ namespace PlusLevelStudio
             EditorInterface.AddObjectVisualWithMeshCollider("desk", LevelLoaderPlugin.Instance.basicObjects["desk"], true);
             EditorInterface.AddObjectVisualWithMeshCollider("chair", LevelLoaderPlugin.Instance.basicObjects["chair"], true);
             EditorInterface.AddObjectVisualWithMeshCollider("bigdesk", LevelLoaderPlugin.Instance.basicObjects["bigdesk"], true);
+            // machines
+            EditorInterface.AddObjectVisual("dietbsodamachine", LevelLoaderPlugin.Instance.basicObjects["dietbsodamachine"], true);
+            EditorInterface.AddObjectVisualWithMeshCollider("bsodamachine", LevelLoaderPlugin.Instance.basicObjects["bsodamachine"], true);
+            EditorInterface.AddObjectVisualWithMeshCollider("zestymachine", LevelLoaderPlugin.Instance.basicObjects["zestymachine"], true);
+            EditorInterface.AddObjectVisualWithMeshCollider("crazymachine_bsoda", LevelLoaderPlugin.Instance.basicObjects["crazymachine_bsoda"], true);
+            EditorInterface.AddObjectVisualWithMeshCollider("crazymachine_zesty", LevelLoaderPlugin.Instance.basicObjects["crazymachine_zesty"], true);
 
             yield return "Setting up Editor Controller...";
             GameObject editorControllerObject = new GameObject("StandardEditorController");

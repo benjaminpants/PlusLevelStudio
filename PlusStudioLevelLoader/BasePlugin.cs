@@ -29,6 +29,7 @@ namespace PlusStudioLevelLoader
         public Dictionary<string, LoaderExitData> exitDatas = new Dictionary<string, LoaderExitData>();
         public Dictionary<string, ItemObject> itemObjects = new Dictionary<string, ItemObject>();
         public Dictionary<string, GameObject> basicObjects = new Dictionary<string, GameObject>();
+        public Dictionary<string, Activity> activityAliases = new Dictionary<string, Activity>();
 
         public static Texture2D RoomTextureFromAlias(string alias)
         {
@@ -96,16 +97,15 @@ namespace PlusStudioLevelLoader
             lightTransforms.Add("cordedhanging", transforms.First(x => x.name == "CordedHangingLight"));
             lightTransforms.Add("standardhanging", transforms.First(x => x.name == "HangingLight"));
 
-            // doors
-            // ClassDoor_Standard
-            // Door_Swinging
-            // Door_SwingingOneWay
+
             Door[] doors = Resources.FindObjectsOfTypeAll<Door>().Where(x => x.GetInstanceID() >= 0 && x.transform.parent == null).ToArray();
             doorPrefabs.Add("standard", doors.First(x => x.name == "ClassDoor_Standard"));
             tileBasedObjectPrefabs.Add("swinging", doors.First(x => x.name == "Door_Swinging")); // swinging doors aren't "doors" and don't belong to any room.
             tileBasedObjectPrefabs.Add("oneway", doors.First(x => x.name == "Door_SwingingOneWay")); // swinging doors aren't "doors" and don't belong to any room.
             tileBasedObjectPrefabs.Add("swinging_silent", doors.First(x => x.name == "SilentDoor_Swinging")); // swinging doors aren't "doors" and don't belong to any room.
             tileBasedObjectPrefabs.Add("coinswinging", doors.First(x => x.name == "Door_SwingingCoin")); // swinging doors aren't "doors" and don't belong to any room.
+            tileBasedObjectPrefabs.Add("flaps", doors.First(x => x.name == "Door_FlapDoor")); // swinging doors aren't "doors" and don't belong to any room.
+            doorPrefabs.Add("autodoor", doors.First(x => x.name == "Door_Auto")); // swinging doors aren't "doors" and don't belong to any room.
 
             WindowObject[] windows = Resources.FindObjectsOfTypeAll<WindowObject>().Where(x => x.GetInstanceID() >= 0).ToArray();
             windowObjects.Add("standard", windows.First(x => x.name == "WoodWindow"));
@@ -195,6 +195,12 @@ namespace PlusStudioLevelLoader
             basicObjects.Add("rock", objects.First(x => (x.name == "Rock")));
             basicObjects.Add("picnicbasket", objects.First(x => (x.name == "PicnicBasket")));
             basicObjects.Add("pedestal", objects.First(x => (x.name == "Decor_Pedestal")));
+
+            // activities
+            Activity[] activites = Resources.FindObjectsOfTypeAll<Activity>().Where(x => x.GetInstanceID() >= 0).ToArray();
+            activityAliases.Add("notebook", activites.First(x => x.name == "NoActivity"));
+            activityAliases.Add("mathmachine", activites.First(x => (x.name == "MathMachine" && (x.transform.parent == null))));
+            activityAliases.Add("mathmachine_corner", activites.First(x => (x.name == "MathMachine_Corner" && (x.transform.parent == null))));
         }
     }
 }

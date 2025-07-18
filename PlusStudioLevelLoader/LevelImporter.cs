@@ -57,7 +57,7 @@ namespace PlusStudioLevelLoader
             for (int i = 0; i < level.rooms.Count; i++)
             {
                 RoomSettings settings = LevelLoaderPlugin.Instance.roomSettings[level.rooms[i].type];
-                asset.rooms.Add(new RoomData()
+                RoomData data = new RoomData()
                 {
                     name = level.rooms[i].type + "_" + i,
                     florTex = LevelLoaderPlugin.RoomTextureFromAlias(level.rooms[i].textureContainer.floor),
@@ -68,7 +68,7 @@ namespace PlusStudioLevelLoader
                     category = settings.category,
                     type = settings.type,
                     doorMats = settings.doorMat,
-                    hasActivity = false,
+                    hasActivity = level.rooms[i].activity != null,
                     roomFunctionContainer = settings.container,
                     activity = new ActivityData(),
                     items = level.rooms[i].items.Select(x => new ItemData()
@@ -79,10 +79,17 @@ namespace PlusStudioLevelLoader
                     basicObjects = level.rooms[i].basicObjects.Select(x => new BasicObjectData()
                     {
                         position = x.position.ToUnity(),
-                        rotation= x.rotation.ToUnity(),
+                        rotation = x.rotation.ToUnity(),
                         prefab = LevelLoaderPlugin.Instance.basicObjects[x.prefab].transform
                     }).ToList()
-                });
+                };
+                if (data.hasActivity)
+                {
+                    data.activity.position = level.rooms[i].activity.position.ToUnity();
+                    data.activity.prefab = LevelLoaderPlugin.Instance.activityAliases[level.rooms[i].activity.type];
+                    data.activity.direction = (Direction)level.rooms[i].activity.direction;
+                }
+                asset.rooms.Add(data);
             }
             asset.spawnDirection = (Direction)level.spawnDirection;
             asset.spawnPoint = level.spawnPoint.ToUnity();

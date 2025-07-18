@@ -93,6 +93,17 @@ namespace PlusStudioLevelFormat
                         rotation = reader.ReadUnityQuaternion()
                     });
                 }
+                string activityName = objectsCompressor.ReadStoredString(reader);
+                if (activityName != "null")
+                {
+                    ActivityInfo activity = new ActivityInfo()
+                    {
+                        type=activityName,
+                        position=reader.ReadUnityVector3(),
+                        direction=(PlusDirection)reader.ReadByte()
+                    };
+                    room.activity = activity;
+                }
                 level.rooms.Add(room);
             }
             int lightCount = reader.ReadInt32();
@@ -163,6 +174,7 @@ namespace PlusStudioLevelFormat
             {
                 objectsCompressor.AddStrings(room.items.Select(x => x.item));
                 objectsCompressor.AddStrings(room.basicObjects.Select(x => x.prefab));
+                objectsCompressor.AddString(room.activity.type);
             }
             objectsCompressor.AddStrings(lights.Select(x => x.prefab));
             objectsCompressor.AddStrings(doors.Select(x => x.prefab));
@@ -219,6 +231,16 @@ namespace PlusStudioLevelFormat
                     objectsCompressor.WriteStoredString(writer, rooms[i].basicObjects[j].prefab);
                     writer.Write(rooms[i].basicObjects[j].position);
                     writer.Write(rooms[i].basicObjects[j].rotation);
+                }
+                if (rooms[i].activity == null)
+                {
+                    objectsCompressor.WriteStoredString(writer, "null");
+                }
+                else
+                {
+                    objectsCompressor.WriteStoredString(writer, rooms[i].activity.type);
+                    writer.Write(rooms[i].activity.position);
+                    writer.Write((byte)rooms[i].activity.direction);
                 }
             }
             writer.Write(lights.Count);
