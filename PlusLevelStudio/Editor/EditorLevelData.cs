@@ -25,6 +25,7 @@ namespace PlusLevelStudio.Editor
         public List<ExitLocation> exits = new List<ExitLocation>();
         public List<ItemPlacement> items = new List<ItemPlacement>();
         public List<BasicObjectLocation> objects = new List<BasicObjectLocation>();
+        public List<StructureLocation> structures = new List<StructureLocation>();
         public EditorRoom hall => rooms[0];
 
         public Vector3 spawnPoint = new Vector3(5f,5f,5f);
@@ -161,6 +162,18 @@ namespace PlusLevelStudio.Editor
                     changedSomething = true;
                 }
             }
+            for (int i = structures.Count - 1; i >= 0; i--)
+            {
+                if (!structures[i].ValidatePosition(this))
+                {
+                    if (updateVisuals)
+                    {
+                        EditorController.Instance.RemoveVisual(structures[i]);
+                    }
+                    structures.RemoveAt(i);
+                    changedSomething = true;
+                }
+            }
             return changedSomething;
         }
 
@@ -208,6 +221,7 @@ namespace PlusLevelStudio.Editor
             ApplyCellModifiers(doors, forEditor);
             ApplyCellModifiers(windows, forEditor);
             ApplyCellModifiers(exits, forEditor);
+            ApplyCellModifiers(structures, forEditor);
         }
 
         // TODO: figure out if we even NEED to manually recalculate all cells, or if we'd just be better off moving only areas
@@ -275,6 +289,10 @@ namespace PlusLevelStudio.Editor
             {
                 if (rooms[i].activity == null) continue;
                 rooms[i].activity.position -= new Vector3(posDif.x * 10f, 0f, posDif.z * 10f);
+            }
+            for (int i = 0; i < structures.Count; i++)
+            {
+                structures[i].ShiftBy(new Vector3(posDif.x * 10f, 0f, posDif.z * 10f), posDif, sizeDif);
             }
             spawnPoint -= new Vector3(posDif.x * 10f, 0f, posDif.z * 10f);
             return true;
@@ -451,6 +469,10 @@ namespace PlusLevelStudio.Editor
                     rotation = objects[i].rotation.ToData()
                 });
             }
+            for (int i = 0; i < structures.Count; i++)
+            {
+                compiled.structures.Add(structures[i].Compile());
+            }
             return compiled;
         }
 
@@ -471,6 +493,7 @@ namespace PlusLevelStudio.Editor
             stringComp.AddStrings(rooms.Select(x => x.textureContainer.wall));
             stringComp.AddStrings(rooms.Select(x => x.textureContainer.ceiling));
             stringComp.AddStrings(rooms.Where(x => x.activity != null).Select(x => x.activity.type));
+            stringComp.AddStrings(structures.Select(x => x.type));
             stringComp.AddString("null");
             stringComp.FinalizeDatabase();
             stringComp.WriteStringDatabase(writer);
@@ -548,6 +571,12 @@ namespace PlusLevelStudio.Editor
                 stringComp.WriteStoredString(writer, objects[i].prefab);
                 writer.Write(objects[i].position.ToData());
                 writer.Write(objects[i].rotation.ToData());
+            }
+            writer.Write(structures.Count);
+            for (int i = 0; i < structures.Count; i++)
+            {
+                stringComp.WriteStoredString(writer, structures[i].type);
+                structures[i].Write(writer);
             }
             writer.Write(spawnPoint.ToData());
             writer.Write((byte)spawnDirection);
@@ -651,6 +680,14 @@ namespace PlusLevelStudio.Editor
                     position = reader.ReadUnityVector3().ToUnity(),
                     rotation = reader.ReadUnityQuaternion().ToUnity()
                 });
+            }
+            int structureCount = reader.ReadInt32();
+            for (int i = 0; i < structureCount; i++)
+            {
+                string type = stringComp.ReadStoredString(reader);
+                StructureLocation structure = LevelStudioPlugin.Instance.ConstructStructureOfType(type);
+                structure.ReadInto(reader);
+                levelData.structures.Add(structure);
             }
             levelData.spawnPoint = reader.ReadUnityVector3().ToUnity();
             levelData.spawnDirection = (Direction)reader.ReadByte();

@@ -150,6 +150,20 @@ namespace PlusStudioLevelLoader
                     room = LevelLoaderPlugin.Instance.exitDatas[level.exits[i].type].room
                 });
             }
+
+            for (int i = 0; i < level.structures.Count; i++)
+            {
+                StructureBuilderData structureData = new StructureBuilderData();
+                Debug.Log(level.structures[i].type);
+                LoaderStructureData converter = LevelLoaderPlugin.Instance.structureAliases[level.structures[i].type];
+                structureData.prefab = converter.structure;
+                for (int j = 0; j < level.structures[i].data.Count; j++)
+                {
+                    StructureDataInfo info = level.structures[i].data[j];
+                    structureData.data.Add(new StructureData(converter.prefabAliases.ContainsKey(info.prefab) ? converter.prefabAliases[info.prefab] : null, info.position.ToInt(), (Direction)info.direction, info.data));
+                }
+                asset.structures.Add(structureData);
+            }
             return asset;
         }
     }

@@ -51,6 +51,20 @@ namespace PlusStudioLevelFormat
         }
     }
 
+    public class StructureInfo
+    {
+        public string type;
+        public List<StructureDataInfo> data = new List<StructureDataInfo>();
+    }
+
+    public class StructureDataInfo
+    {
+        public string prefab = string.Empty;
+        public ByteVector2 position = new ByteVector2();
+        public PlusDirection direction = PlusDirection.Null;
+        public int data = 0;
+    }
+
     public class LightInfo
     {
         public string prefab;

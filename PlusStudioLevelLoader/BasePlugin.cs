@@ -30,6 +30,7 @@ namespace PlusStudioLevelLoader
         public Dictionary<string, ItemObject> itemObjects = new Dictionary<string, ItemObject>();
         public Dictionary<string, GameObject> basicObjects = new Dictionary<string, GameObject>();
         public Dictionary<string, Activity> activityAliases = new Dictionary<string, Activity>();
+        public Dictionary<string, LoaderStructureData> structureAliases = new Dictionary<string, LoaderStructureData>();
 
         public static Texture2D RoomTextureFromAlias(string alias)
         {
@@ -205,6 +206,11 @@ namespace PlusStudioLevelLoader
             activityAliases.Add("notebook", activites.First(x => x.name == "NoActivity"));
             activityAliases.Add("mathmachine", activites.First(x => (x.name == "MathMachine" && (x.transform.parent == null))));
             activityAliases.Add("mathmachine_corner", activites.First(x => (x.name == "MathMachine_Corner" && (x.transform.parent == null))));
+
+            // structures
+
+            StructureBuilder[] builders = Resources.FindObjectsOfTypeAll<StructureBuilder>().Where(x => x.GetInstanceID() >= 0).ToArray();
+            structureAliases.Add("facultyonlydoor", new LoaderStructureData(builders.First(x => x.name == "FacultyOnlyDoorConstructor")));
         }
     }
 }

@@ -194,6 +194,10 @@ namespace PlusLevelStudio.Editor
                 if (room.activity == null) continue;
                 AddVisual(room.activity);
             }
+            foreach (StructureLocation item in levelData.structures)
+            {
+                AddVisual(item);
+            }
             RefreshCells();
             EditorController.Instance.UpdateSpawnVisual();
             CancelHeldUndo();
@@ -201,6 +205,19 @@ namespace PlusLevelStudio.Editor
             {
                 undoStreams.Clear(); // memorystreams dont need .dispose
             }
+        }
+
+        public StructureLocation AddOrGetStructureToData(string type, bool onlyOne)
+        {
+            if (onlyOne)
+            {
+                StructureLocation foundStructure = levelData.structures.FirstOrDefault(x => x.type == type);
+                if (foundStructure != null) return foundStructure;
+            }
+            StructureLocation structure = LevelStudioPlugin.Instance.ConstructStructureOfType(type);
+            levelData.structures.Add(structure);
+            AddVisual(structure);
+            return structure;
         }
 
         /// <summary>
@@ -260,6 +277,7 @@ namespace PlusLevelStudio.Editor
 
         public void RemoveVisual(IEditorVisualizable visualizable)
         {
+            if (!objectVisuals.ContainsKey(visualizable)) return;
             visualizable.CleanupVisual(objectVisuals[visualizable]);
             GameObject.DestroyImmediate(objectVisuals[visualizable]); // TODO: Destroy or DestroyImmediate?
             objectVisuals.Remove(visualizable);
@@ -312,6 +330,7 @@ namespace PlusLevelStudio.Editor
             level.eventSafeCells = CompileSafeCells(levelData, 4f);
             // write to file for testing purposes
             /*
+            File.Delete(Path.Combine(Application.streamingAssetsPath, "test.bpl"));
             BinaryWriter writer = new BinaryWriter(File.OpenWrite(Path.Combine(Application.streamingAssetsPath, "test.bpl")));
             level.Write(writer);
             writer.Close();
@@ -358,6 +377,7 @@ namespace PlusLevelStudio.Editor
         /// <param name="visualizable"></param>
         public GameObject GetVisual(IEditorVisualizable visualizable)
         {
+            if (!objectVisuals.ContainsKey(visualizable)) return null;
             return objectVisuals[visualizable];
         }
 

@@ -47,6 +47,8 @@ namespace PlusLevelStudio
         public Dictionary<string, GameObject> exitDisplays = new Dictionary<string, GameObject>();
         public Dictionary<string, EditorBasicObject> basicObjectDisplays = new Dictionary<string, EditorBasicObject>();
         public Dictionary<string, GameObject> activityDisplays = new Dictionary<string, GameObject>();
+        public Dictionary<string, Type> structureTypes = new Dictionary<string, Type>();
+        public Dictionary<string, GameObject> genericStructureDisplays = new Dictionary<string, GameObject>();
         public GameObject pickupVisual;
 
         void Awake()
@@ -69,6 +71,13 @@ namespace PlusLevelStudio
             tex.SetPixels(0, 0, 256, 256, colors);
             tex.Apply();
             lightmaps.Add(name, tex);
+        }
+
+        public StructureLocation ConstructStructureOfType(string type)
+        {
+            StructureLocation structure = (StructureLocation)LevelStudioPlugin.Instance.structureTypes[type].GetConstructor(new Type[0]).Invoke(new object[0]);
+            structure.type = type;
+            return structure;
         }
 
         public IEnumerator LoadEditorScene()
@@ -175,6 +184,10 @@ namespace PlusLevelStudio
                         new ObjectTool("crazymachine_zesty"),
                         new ObjectTool("crazymachine_bsoda"),
                     } },
+                    { "structures", new List<EditorTool>()
+                    {
+                        new HallDoorStructureTool("facultyonlydoor"),
+                    } },
                     { "tools", new List<EditorTool>()
                     {
                         new ElevatorTool("elevator", true),
@@ -190,6 +203,7 @@ namespace PlusLevelStudio
                     "items",
                     "activities",
                     "objects",
+                    "structures",
                     "lights",
                     "tools"
                 },
@@ -567,6 +581,14 @@ namespace PlusLevelStudio
             LevelStudioPlugin.Instance.activityDisplays.Add("mathmachine", mathMachineVisual);
             LevelStudioPlugin.Instance.activityDisplays.Add("mathmachine_corner", mathMachineCornerVisual);
 
+            // structures
+            GameObject facultyOnlyDoorVisual = EditorInterface.AddStructureGenericVisual("facultyonlydoor", Resources.FindObjectsOfTypeAll<FacultyOnlyDoor>().First(x => x.GetInstanceID() >= 0 && x.name == "FacultyOnlyDoor").gameObject);
+            DestroyImmediate(facultyOnlyDoorVisual.GetComponent<SphereCollider>());
+            BoxCollider facultyOnlyCollider = facultyOnlyDoorVisual.AddComponent<BoxCollider>();
+            BoxCollider facultyOnlyOGCollider = facultyOnlyDoorVisual.transform.Find("ShutCollider").GetComponent<BoxCollider>();
+            facultyOnlyCollider.size = facultyOnlyOGCollider.size;
+            facultyOnlyCollider.center = facultyOnlyOGCollider.center + (Vector3.up * 10f);
+            structureTypes.Add("facultyonlydoor", typeof(HallDoorStructureLocation));
 
             yield return "Setting up Editor Controller...";
             GameObject editorControllerObject = new GameObject("StandardEditorController");

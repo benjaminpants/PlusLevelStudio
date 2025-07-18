@@ -131,6 +131,16 @@ namespace PlusLevelStudio
             return clone;
         }
 
+        public static GameObject AddStructureGenericVisual(string key, GameObject obj)
+        {
+            GameObject clone = CloneToPrefabStripMonoBehaviors(obj);
+            clone.name = clone.name.Replace("_Stripped", "_GenericVisual");
+            clone.gameObject.AddComponent<EditorDeletableObject>().AddRendererRange(clone.GetComponentsInChildren<Renderer>(), "none");
+            clone.layer = LevelStudioPlugin.editorInteractableLayer;
+            LevelStudioPlugin.Instance.genericStructureDisplays.Add(key, clone);
+            return clone;
+        }
+
         public static EditorBasicObject AddObjectVisual(string key, GameObject obj, bool useRegularColliderAsEditorHitbox)
         {
             GameObject clone = CloneToPrefabStripMonoBehaviors(obj);

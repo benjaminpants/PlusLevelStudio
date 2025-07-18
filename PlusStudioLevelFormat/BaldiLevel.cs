@@ -18,6 +18,7 @@ namespace PlusStudioLevelFormat
         public List<DoorInfo> doors = new List<DoorInfo>();
         public List<WindowInfo> windows = new List<WindowInfo>();
         public List<ExitInfo> exits = new List<ExitInfo>();
+        public List<StructureInfo> structures = new List<StructureInfo>();
         public UnityVector3 spawnPoint = new UnityVector3(5f,5f,5f);
         public UnityVector3 UnitySpawnPoint
         {
@@ -181,6 +182,24 @@ namespace PlusStudioLevelFormat
                     isSpawn = reader.ReadBoolean()
                 });
             }
+            int structureCount = reader.ReadInt32();
+            for (int i = 0; i < structureCount; i++)
+            {
+                StructureInfo info = new StructureInfo();
+                info.type = objectsCompressor.ReadStoredString(reader);
+                int dataCount = reader.ReadInt32();
+                for (int j = 0; j < dataCount; j++)
+                {
+                    info.data.Add(new StructureDataInfo()
+                    {
+                        prefab=objectsCompressor.ReadStoredString(reader),
+                        position=reader.ReadByteVector2(),
+                        direction=(PlusDirection)reader.ReadByte(),
+                        data=reader.ReadInt32()
+                    });
+                }
+                level.structures.Add(info);
+            }
             return level;
         }
 
@@ -210,6 +229,11 @@ namespace PlusStudioLevelFormat
             objectsCompressor.AddStrings(windows.Select(x => x.prefab));
             objectsCompressor.AddStrings(tileObjects.Select(x => x.prefab));
             objectsCompressor.AddStrings(exits.Select(x => x.type));
+            objectsCompressor.AddStrings(structures.Select(x => x.type));
+            foreach (var structure in structures)
+            {
+                objectsCompressor.AddStrings(structure.data.Where(x => x.prefab != null).Select(x => x.prefab));
+            }
             objectsCompressor.FinalizeDatabase();
             roomCompressor.FinalizeDatabase();
             writer.Write(version);
@@ -327,6 +351,20 @@ namespace PlusStudioLevelFormat
                 writer.Write(exits[i].position);
                 writer.Write((byte)exits[i].direction);
                 writer.Write(exits[i].isSpawn);
+            }
+            writer.Write(structures.Count);
+            for (int i = 0; i < structures.Count; i++)
+            {
+                objectsCompressor.WriteStoredString(writer, structures[i].type);
+                writer.Write(structures[i].data.Count);
+                for (int j = 0; j < structures[i].data.Count; j++)
+                {
+                    StructureDataInfo data = structures[i].data[j];
+                    objectsCompressor.WriteStoredString(writer, data.prefab);
+                    writer.Write(data.position);
+                    writer.Write((byte)data.direction);
+                    writer.Write(data.data);
+                }
             }
         }
     }

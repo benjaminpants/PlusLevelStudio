@@ -25,6 +25,8 @@
 {"key":"Ed_Tool_room_outside_Desc","value":"The player can run infinitely in this room, and all rule violations will be forgotten!"},
 {"key":"Ed_Tool_room_cafeteria_Title","value":"Cafeteria"},
 {"key":"Ed_Tool_room_cafeteria_Desc","value":"Bananas are literred across the floor in this room."},
+{"key":"Ed_Tool_room_lightbulbtesting_Title","value":"Light Bulb Testing Room"},
+{"key":"Ed_Tool_room_lightbulbtesting_Desc","value":"Lights placed in this room flicker! I suggest using low strength hanging lights."},
 
 {"key":"Ed_Tool_door_standard_Title","value":"Standard Door"},
 {"key":"Ed_Tool_door_standard_Desc","value":"It's textures automatically adapt to the room its placed in or by."},
@@ -36,7 +38,10 @@
 {"key":"Ed_Tool_door_coinswinging_Desc","value":"A yellow door that requires a quarter to unlock."},
 {"key":"Ed_Tool_door_oneway_Title","value":"Oneway Door"},
 {"key":"Ed_Tool_door_oneway_Desc","value":"This door can only be entered from the direction you assign it."},
-{"key":"Ed_Tool_door_oneway_Title","value":"Oneway Door"},
+{"key":"Ed_Tool_door_flaps_Title","value":"Flaps"},
+{"key":"Ed_Tool_door_flaps_Desc","value":"A yellow door reskin. Flappy flappy flappy.. Flap door. Door."},
+{"key":"Ed_Tool_door_autodoor_Title","value":"Auto Door"},
+{"key":"Ed_Tool_door_autodoor_Desc","value":"Beloved by all store-goers and store-owners everywhere."},
 
 {"key":"Ed_Tool_window_standard_Title","value":"Wooden Window"},
 {"key":"Ed_Tool_window_standard_Desc","value":"Although not a door at first glance, this 'door' can be opened by First-Prize slamming into it!"},
@@ -112,6 +117,9 @@
 {"key":"Ed_Tool_activity_mathmachine_Title","value":"Math Machine"},
 {"key":"Ed_Tool_activity_mathmachine_Desc","value":"Solve math, get book. What more is there to say?"},
 {"key":"Ed_Tool_activity_mathmachine_corner_Title","value":"Corner Math Machine"},
-{"key":"Ed_Tool_activity_mathmachine_corner_Desc","value":"Solve corner math? Get corner book? Listen it's just the math machine rotated 45 degrees."}
+{"key":"Ed_Tool_activity_mathmachine_corner_Desc","value":"Solve corner math? Get corner book? Listen it's just the math machine rotated 45 degrees."},
+
+{"key":"Ed_Tool_structure_facultyonlydoor_Title","value":"Faculty Only Door"},
+{"key":"Ed_Tool_structure_facultyonlydoor_Desc","value":"This door closes if the player gets too close! It can be bypassed by going fast! (Or wearing a nametag...)"}
 
 ]}
