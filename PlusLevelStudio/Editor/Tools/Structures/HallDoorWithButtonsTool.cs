@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace PlusLevelStudio.Editor.Tools
 {
@@ -85,8 +86,13 @@ namespace PlusLevelStudio.Editor.Tools
             PlusStudioLevelFormat.Cell cell = EditorController.Instance.levelData.GetCellSafe(firstPos.Value);
             if (cell == null) return; // cell doesn't exist
             if (cell.type == 16) return; // the cell is empty
+            if (!EditorController.Instance.levelData.WallFree(buttonPos.Value, dir, false))
+            {
+                return;
+            }
+            EditorController.Instance.AddUndo();
             HallDoorStructureLocationWithButtons structure = (HallDoorStructureLocationWithButtons)EditorController.Instance.AddOrGetStructureToData(type, true);
-            SimpleLocation button = structure.CreateNewButton();
+            SimpleButtonLocation button = structure.CreateNewButton();
             button.position = buttonPos.Value;
             button.direction = dir;
             structure.myChildren.Add(first);

@@ -7,13 +7,27 @@ using UnityEngine;
 
 namespace PlusLevelStudio.Editor
 {
-    public class SimpleLeverLocation : SimpleLocation
+    public class SimpleLeverLocation : SimpleButtonLocation
     {
         public Func<SimpleLeverLocation, bool> shouldBeDown;
         public override void UpdateVisual(GameObject visualObject)
         {
             base.UpdateVisual(visualObject);
             visualObject.GetComponent<LeverVisual>().SetDirection(shouldBeDown(this));
+        }
+    }
+
+    public class SimpleButtonLocation : SimpleLocation
+    {
+        public override bool ValidatePosition(EditorLevelData data, bool ignoreSelf)
+        {
+            bool ret = base.ValidatePosition(data,ignoreSelf);
+            if (ret == false) return false;
+            if (!data.WallFree(position, direction, ignoreSelf))
+            {
+                return false;
+            }
+            return true;
         }
     }
 
@@ -34,7 +48,7 @@ namespace PlusLevelStudio.Editor
             return LevelStudioPlugin.Instance.genericStructureDisplays[prefab];
         }
 
-        public virtual bool ValidatePosition(EditorLevelData data)
+        public virtual bool ValidatePosition(EditorLevelData data, bool ignoreSelf)
         {
             PlusStudioLevelFormat.Cell cell = data.GetCellSafe(position);
             if (cell == null) return false; // cell doesn't exist
@@ -164,7 +178,7 @@ namespace PlusLevelStudio.Editor
         {
             for (int i = myChildren.Count - 1; i >= 0; i--)
             {
-                if (!myChildren[i].ValidatePosition(data))
+                if (!myChildren[i].ValidatePosition(data, true))
                 {
                     OnSubDelete(data, myChildren[i], false);
                 }
@@ -188,7 +202,7 @@ namespace PlusLevelStudio.Editor
     {
         public override string buttonPrefab => "lever";
 
-        public override SimpleLocation CreateNewButton()
+        public override SimpleButtonLocation CreateNewButton()
         {
             SimpleLeverLocation simple = new SimpleLeverLocation();
             simple.prefab = buttonPrefab;
@@ -208,9 +222,9 @@ namespace PlusLevelStudio.Editor
         public List<SimpleLocation> buttons = new List<SimpleLocation>();
         public virtual string buttonPrefab => "button";
 
-        public virtual SimpleLocation CreateNewButton()
+        public virtual SimpleButtonLocation CreateNewButton()
         {
-            SimpleLocation simple = new SimpleLocation();
+            SimpleButtonLocation simple = new SimpleButtonLocation();
             simple.prefab = buttonPrefab;
             simple.deleteAction = OnButtonDelete;
             return simple;
@@ -257,12 +271,24 @@ namespace PlusLevelStudio.Editor
             }
         }
 
+        public override bool OccupiesWall(IntVector2 pos, Direction dir)
+        {
+            for (int i = 0; i < buttons.Count; i++)
+            {
+                if (buttons[i].position == pos && buttons[i].direction == dir)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public override bool ValidatePosition(EditorLevelData data)
         {
             bool initValue = base.ValidatePosition(data);
             for (int i = buttons.Count - 1; i >= 0; i--)
             {
-                if (!buttons[i].ValidatePosition(data))
+                if (!buttons[i].ValidatePosition(data, true))
                 {
                     OnButtonDelete(data, buttons[i], false);
                 }

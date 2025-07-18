@@ -621,7 +621,7 @@ namespace PlusLevelStudio
             
             GameObject lockdownDoorVisual = EditorInterface.AddStructureGenericVisual("lockdowndoor", Resources.FindObjectsOfTypeAll<LockdownDoor>().First(x => x.GetInstanceID() >= 0 && x.name == "LockdownDoor").gameObject);
             lockdownDoorVisual.GetComponent<BoxCollider>().center += Vector3.up * 10f; // fix the collision
-            lockdownDoorVisual.AddComponent<SettingsComponent>().offset = new Vector3(0f,20f,5f);
+            lockdownDoorVisual.AddComponent<SettingsComponent>().offset = new Vector3(0f,25f,0f);
             structureTypes.Add("lockdowndoor", typeof(LockdownDoorStructureLocation));
 
             GameObject shutLockdownDoorVisual = EditorInterface.AddStructureGenericVisual("lockdowndoor_shut", Resources.FindObjectsOfTypeAll<LockdownDoor>().First(x => x.GetInstanceID() >= 0 && x.name == "LockdownDoor").gameObject);
@@ -697,6 +697,7 @@ namespace PlusLevelStudio
             gameLoaderPre.cgmPre = Resources.FindObjectsOfTypeAll<CoreGameManager>().First(x => x.name == "CoreGameManager" && x.GetInstanceID() >= 0);
             standardEditorController.gameLoaderPrefab = gameLoaderPre;
             standardEditorController.elevatorScreenPrefab = Resources.FindObjectsOfTypeAll<ElevatorScreen>().First(x => x.GetInstanceID() >= 0 && x.transform.parent == null);
+            standardEditorController.gameObject.AddComponent<BillboardManager>();
 
             standardEditorController.spawnpointVisualPrefab = sm;
 

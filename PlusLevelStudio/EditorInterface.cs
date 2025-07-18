@@ -133,7 +133,7 @@ namespace PlusLevelStudio
 
         public static GameObject AddNPCVisual(string key, NPC npc)
         {
-            GameObject clone = CloneToPrefabStripMonoBehaviors(npc.gameObject);
+            GameObject clone = CloneToPrefabStripMonoBehaviors(npc.gameObject, new Type[] { typeof(BillboardUpdater) });
             Collider[] colliders = clone.GetComponentsInChildren<Collider>();
             for (int i = 0; i < colliders.Length; i++)
             {
@@ -166,7 +166,7 @@ namespace PlusLevelStudio
 
         public static EditorBasicObject AddObjectVisual(string key, GameObject obj, bool useRegularColliderAsEditorHitbox)
         {
-            GameObject clone = CloneToPrefabStripMonoBehaviors(obj);
+            GameObject clone = CloneToPrefabStripMonoBehaviors(obj, new Type[] { typeof(BillboardUpdater) });
             clone.name = clone.name.Replace("_Stripped", "_Visual");
             EditorBasicObject basic = clone.AddComponent<EditorBasicObject>();
             clone.AddComponent<EditorDeletableObject>().AddRendererRange(clone.GetComponentsInChildren<Renderer>(), "none");

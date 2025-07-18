@@ -491,6 +491,29 @@ namespace PlusLevelStudio.Editor
 
         public const byte version = 0;
 
+        public bool WallFree(IntVector2 pos, Direction dir, bool ignoreSelf)
+        {
+            PlusStudioLevelFormat.Cell cell = GetCellSafe(pos);
+            if (cell == null) return false;
+            if ((((int)cell.walls) & dir.ToBinary()) == 0)
+            {
+                return false;
+            }
+            int thingsOccupying = 0;
+            for (int i = 0; i < structures.Count; i++)
+            {
+                if (structures[i].OccupiesWall(pos, dir))
+                {
+                    thingsOccupying++;
+                }
+            }
+            if (ignoreSelf)
+            {
+                thingsOccupying--;
+            }
+            return thingsOccupying <= 0;
+        }
+
         public void Write(BinaryWriter writer)
         {
             writer.Write(version);

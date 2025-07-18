@@ -783,6 +783,7 @@ namespace PlusLevelStudio.Editor
             HighlightCells(area.CalculateOwnedCells(), "none");
             if (sizeDif.x != 0 || sizeDif.z != 0)
             {
+                AddUndo();
                 area.ResizeWithSafety(sizeDif, posDif);
                 RefreshCells();
             }

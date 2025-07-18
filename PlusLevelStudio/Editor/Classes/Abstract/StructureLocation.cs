@@ -21,6 +21,11 @@ namespace PlusLevelStudio.Editor
             
         }
 
+        public virtual bool OccupiesWall(IntVector2 pos, Direction dir)
+        {
+            return false;
+        }
+
         /// <summary>
         /// Called when cells change, use this to validate your structure.
         /// </summary>
