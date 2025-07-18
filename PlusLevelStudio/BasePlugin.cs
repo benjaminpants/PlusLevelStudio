@@ -177,6 +177,7 @@ namespace PlusLevelStudio
                     {
                         new ElevatorTool("elevator", true),
                         new ElevatorTool("elevator", false),
+                        new SpawnpointTool(),
                         new MergeTool(),
                         new DeleteTool(),
                     } }
@@ -255,6 +256,11 @@ namespace PlusLevelStudio
             Material gridArrowMat = new Material(gridMat);
             gridArrowMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "GridArrow.png"));
             gridArrowMat.name = "GridArrowMaterial";
+
+            Material spawnpointMat = new Material(assetMan.Get<Material>("tileAlpha"));
+            spawnpointMat.name = "SpawnpointMat";
+            spawnpointMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "SpawnpointSprite.png"));
+            spawnpointMat.SetTexture("_LightMap", lightmaps["white"]);
 
             yield return "Setting up GridManager...";
             GameObject gridManagerObject = new GameObject("GridManager");
@@ -568,7 +574,19 @@ namespace PlusLevelStudio
             editorCanvas.gameObject.AddComponent<PlaneDistance>();
             editorCanvas.renderMode = RenderMode.ScreenSpaceCamera;
 
-            // attempt to set up tooltips
+            GameObject spawnPointVisual = new GameObject("SpawnpointVisual");
+            GameObject spawnPointVisualVisual = CreateQuad("Visual", spawnpointMat, Vector3.zero, Vector3.zero);
+            spawnPointVisualVisual.transform.forward = Vector3.down;
+            spawnPointVisualVisual.transform.SetParent(spawnPointVisual.transform, true);
+            spawnPointVisual.ConvertToPrefab(true);
+            spawnPointVisual.AddComponent<BoxCollider>().size = new Vector3(10f, 0.025f, 10f);
+            spawnPointVisual.layer = editorInteractableLayer;
+            SpawnpointMoverAndVisualizerScript sm = spawnPointVisual.AddComponent<SpawnpointMoverAndVisualizerScript>();
+
+            sm.actualTransform = new GameObject("SpawnDummy").transform;
+            sm.actualTransform.SetParent(sm.transform);
+
+            // set up tooltips
             RectTransform tooltipBase = workerCgm.pauseScreen.transform.Find("Options").Find("TooltipBase").GetComponent<RectTransform>();
             RectTransform editorTooltip = GameObject.Instantiate<RectTransform>(tooltipBase, editorCanvas.transform);
             editorTooltip.name = "TooltipBase";
@@ -596,6 +614,8 @@ namespace PlusLevelStudio
             gameLoaderPre.cgmPre = Resources.FindObjectsOfTypeAll<CoreGameManager>().First(x => x.name == "CoreGameManager" && x.GetInstanceID() >= 0);
             standardEditorController.gameLoaderPrefab = gameLoaderPre;
             standardEditorController.elevatorScreenPrefab = Resources.FindObjectsOfTypeAll<ElevatorScreen>().First(x => x.GetInstanceID() >= 0 && x.transform.parent == null);
+
+            standardEditorController.spawnpointVisualPrefab = sm;
 
             assetMan.Add<EditorController>("MainEditorController", standardEditorController);
 

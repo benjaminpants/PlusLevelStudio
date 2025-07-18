@@ -4,6 +4,9 @@
 {"key":"Ed_Tool_merge_Desc","value":"Click two rooms of the same kind to merge them together and remove the walls between them."},
 {"key":"Ed_Tool_delete_Title","value":"Delete Tool"},
 {"key":"Ed_Tool_delete_Desc","value":"Click anything, anything at all to delete it!"},
+{"key":"Ed_Tool_spawnpoint_Title","value":"Spawnpoint Tool"},
+{"key":"Ed_Tool_spawnpoint_Desc","value":"Click a position and direction to set the spawnpoint there. (You can also just click it and move it that way!)"},
+
 {"key":"Ed_Tool_room_hall_Title","value":"Hallway"},
 {"key":"Ed_Tool_room_hall_Desc","value":"The building block of any level! There can only be one room of this type in a level!"},
 {"key":"Ed_Tool_room_class_Title","value":"Classroom"},
@@ -22,6 +25,7 @@
 {"key":"Ed_Tool_room_outside_Desc","value":"The player can run infinitely in this room, and all rule violations will be forgotten!"},
 {"key":"Ed_Tool_room_cafeteria_Title","value":"Cafeteria"},
 {"key":"Ed_Tool_room_cafeteria_Desc","value":"Bananas are literred across the floor in this room."},
+
 {"key":"Ed_Tool_door_standard_Title","value":"Standard Door"},
 {"key":"Ed_Tool_door_standard_Desc","value":"It's textures automatically adapt to the room its placed in or by."},
 {"key":"Ed_Tool_door_swinging_Title","value":"Swinging Door"},
@@ -33,8 +37,10 @@
 {"key":"Ed_Tool_door_oneway_Title","value":"Oneway Door"},
 {"key":"Ed_Tool_door_oneway_Desc","value":"This door can only be entered from the direction you assign it."},
 {"key":"Ed_Tool_door_oneway_Title","value":"Oneway Door"},
+
 {"key":"Ed_Tool_window_standard_Title","value":"Wooden Window"},
 {"key":"Ed_Tool_window_standard_Desc","value":"Although not a door at first glance, this 'door' can be opened by First-Prize slamming into it!"},
+
 {"key":"Ed_Tool_light_fluorescent_Title","value":"Fluorescent Light"},
 {"key":"Ed_Tool_light_fluorescent_Desc","value":"An all time classic since 1999!"},
 {"key":"Ed_Tool_light_caged_Title","value":"Caged Light"},
@@ -43,6 +49,7 @@
 {"key":"Ed_Tool_light_cordedhanging_Desc","value":"Most ceilings cannot handle the vast power of this light..."},
 {"key":"Ed_Tool_light_standardhanging_Title","value":"Hanging Light"},
 {"key":"Ed_Tool_light_standardhanging_Desc","value":"Snazzy!"},
+
 {"key":"Ed_Tool_exit_elevator_Title","value":"Elevator"},
 {"key":"Ed_Tool_exit_elevator_Desc","value":"An elevator that can be used to exit the level."},
 {"key":"Ed_Tool_exit_elevator_start_Title","value":"Entrance Elevator"},

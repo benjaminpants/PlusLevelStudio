@@ -28,6 +28,7 @@ namespace PlusLevelStudio.Editor
         public void InitializeVisual(GameObject visualObject)
         {
             UpdateVisual(visualObject);
+            EditorController.Instance.UpdateSpawnVisual();
         }
 
         public bool CellOwned(IntVector2 pos)

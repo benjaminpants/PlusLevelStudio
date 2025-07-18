@@ -14,5 +14,6 @@ namespace PlusLevelStudio.Editor
         public string[] defaultTools = new string[0];
         public string[] categoryOrder = new string[0];
         public bool supportsNPCProperties = true;
+        public bool showSpawnpoint = true;
     }
 }

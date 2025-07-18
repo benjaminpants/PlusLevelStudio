@@ -27,6 +27,29 @@ namespace PlusLevelStudio.Editor
         public List<BasicObjectLocation> objects = new List<BasicObjectLocation>();
         public EditorRoom hall => rooms[0];
 
+        public Vector3 spawnPoint = new Vector3(5f,5f,5f);
+        public Direction spawnDirection = Direction.North;
+
+        public Vector3 PracticalSpawnPoint
+        {
+            get
+            {
+                if (exits.Where(x => x.isSpawn).Count() == 0) return spawnPoint;
+                ExitLocation exit = exits.Last(x => x.isSpawn);
+                return new Vector3(exit.position.x * 10f + 5f, 5f, exit.position.z * 10f + 5f);
+            }
+        }
+
+        public Direction PracticalSpawnDirection
+        {
+            get
+            {
+                if (exits.Where(x => x.isSpawn).Count() == 0) return spawnDirection;
+                ExitLocation exit = exits.Last(x => x.isSpawn);
+                return exit.direction;
+            }
+        }
+
         private Dictionary<string, TextureContainer> defaultTextures = new Dictionary<string, TextureContainer>();
 
         // TODO: CHANGE THIS!
@@ -252,6 +275,7 @@ namespace PlusLevelStudio.Editor
                 if (rooms[i].activity == null) continue;
                 rooms[i].activity.position -= new Vector3(posDif.x * 10f, 0f, posDif.z * 10f);
             }
+            spawnPoint -= new Vector3(posDif.x * 10f, 0f, posDif.z * 10f);
             return true;
         }
 
@@ -329,6 +353,8 @@ namespace PlusLevelStudio.Editor
         public BaldiLevel Compile()
         {
             BaldiLevel compiled = new BaldiLevel(mapSize.ToByte());
+            compiled.spawnPoint = spawnPoint.ToData();
+            compiled.spawnDirection = (PlusDirection)spawnDirection;
             UpdateCells(false); // update our cells
             for (int x = 0; x < mapSize.x; x++)
             {
@@ -522,6 +548,8 @@ namespace PlusLevelStudio.Editor
                 writer.Write(objects[i].position.ToData());
                 writer.Write(objects[i].rotation.ToData());
             }
+            writer.Write(spawnPoint.ToData());
+            writer.Write((byte)spawnDirection);
         }
 
         public static EditorLevelData ReadFrom(BinaryReader reader)
@@ -623,6 +651,8 @@ namespace PlusLevelStudio.Editor
                     rotation = reader.ReadUnityQuaternion().ToUnity()
                 });
             }
+            levelData.spawnPoint = reader.ReadUnityVector3().ToUnity();
+            levelData.spawnDirection = (Direction)reader.ReadByte();
             return levelData;
         }
 

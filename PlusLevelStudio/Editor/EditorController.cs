@@ -57,6 +57,9 @@ namespace PlusLevelStudio.Editor
         public TooltipController tooltipController;
         public RectTransform tooltipBase;
 
+        public SpawnpointMoverAndVisualizerScript spawnpointVisualPrefab;
+        public SpawnpointMoverAndVisualizerScript spawnpointVisual;
+
         public bool toolboxOnNullTool;
         public GameCamera cameraPrefab;
         public GameCamera camera;
@@ -192,6 +195,7 @@ namespace PlusLevelStudio.Editor
                 AddVisual(room.activity);
             }
             RefreshCells();
+            EditorController.Instance.UpdateSpawnVisual();
             CancelHeldUndo();
             if (wipeUndoHistory)
             {
@@ -454,6 +458,9 @@ namespace PlusLevelStudio.Editor
                 }
                 //hotSlots[i].currentTool = currentMode.availableTools.Values.Select(x => x.First(z => z.id == currentMode.defaultTools[i])).First();
             }
+            if (!currentMode.showSpawnpoint) return;
+            spawnpointVisual = GameObject.Instantiate(spawnpointVisualPrefab);
+            spawnpointVisual.UpdateTransform();
         }
 
         protected void UpdateMouseRay()
@@ -546,10 +553,17 @@ namespace PlusLevelStudio.Editor
                 TriggerError("RoomClipped");
                 return;
             }
-
+            UpdateSpawnVisual();
             RegenerateGridAndCells();
             // move camera so the change isn't noticable
             transform.position -= new Vector3(posDif.x * 10f, 0f, posDif.z * 10f);
+        }
+
+
+        public void UpdateSpawnVisual()
+        {
+            if (spawnpointVisual == null) return;
+            spawnpointVisual.UpdateTransform();
         }
 
         void Update()

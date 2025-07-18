@@ -60,6 +60,7 @@ namespace PlusLevelStudio.Editor.Tools
                 EditorController.Instance.levelData.exits.Remove(lastFoundExit);
                 EditorController.Instance.RemoveVisual(lastFoundExit);
                 EditorController.Instance.RefreshCells();
+                EditorController.Instance.UpdateSpawnVisual();
             }
             if (lastFoundArea != null)
             {
