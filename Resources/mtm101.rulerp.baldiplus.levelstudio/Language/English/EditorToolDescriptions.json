@@ -88,6 +88,23 @@
 {"key":"Ed_Tool_object_bigdesk_Title","value":"Big Desk"},
 {"key":"Ed_Tool_object_bigdesk_Desc","value":"Notebooks are usually placed on these, but don't have to be!"},
 {"key":"Ed_Tool_object_chair_Title","value":"Chair"},
-{"key":"Ed_Tool_object_chair_Desc","value":"A chair is a piece of furniture with a raised surface supported by legs, commonly used to seat a single person."}
+{"key":"Ed_Tool_object_chair_Desc","value":"A chair is a piece of furniture with a raised surface supported by legs, commonly used to seat a single person."},
+{"key":"Ed_Tool_object_dietbsodamachine_Title","value":"Diet BSODA Machine"},
+{"key":"Ed_Tool_object_dietbsodamachine_Desc","value":"Gives you a Diet BSODA when you put a quarter in! How are you supposed to rot your teeth out?"},
+{"key":"Ed_Tool_object_bsodamachine_Title","value":"BSODA Machine"},
+{"key":"Ed_Tool_object_bsodamachine_Desc","value":"Gives you a BSODA when you put a quarter in! Tasty blue."},
+{"key":"Ed_Tool_object_zestymachine_Title","value":"Zesty Bar Machine"},
+{"key":"Ed_Tool_object_zestymachine_Desc","value":"Gives you a Zesty Bar when you put a quarter in! *CRUNCH*"},
+{"key":"Ed_Tool_object_crazymachine_zesty_Title","value":"Crazy Machine (Zesty)"},
+{"key":"Ed_Tool_object_crazymachine_zesty_Desc","value":"Get a CRaAaAZY Item when you put a quarter into this machine!"},
+{"key":"Ed_Tool_object_crazymachine_bsoda_Title","value":"Crazy Machine (BSODA)"},
+{"key":"Ed_Tool_object_crazymachine_bsoda_Desc","value":"Get a CRaAaAZY Item when you put a quarter into this machine!"},
+
+{"key":"Ed_Tool_activity_notebook_Title","value":"Notebook"},
+{"key":"Ed_Tool_activity_notebook_Desc","value":"You need to collect these to complete your level!"},
+{"key":"Ed_Tool_activity_mathmachine_Title","value":"Math Machine"},
+{"key":"Ed_Tool_activity_mathmachine_Desc","value":"Solve math, get book. What more is there to say?"},
+{"key":"Ed_Tool_activity_mathmachine_corner_Title","value":"Corner Math Machine"},
+{"key":"Ed_Tool_activity_mathmachine_corner_Desc","value":"Solve corner math? Get corner book? Listen it's just the math machine rotated 45 degrees."}
 
 ]}
