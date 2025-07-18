@@ -273,9 +273,43 @@ namespace PlusLevelStudio.Editor
             Destroy(gameObject);
         }
 
+        public bool[,] CompileSafeCells(EditorLevelData data, float capsuleRadius)
+        {
+            bool[,] returnValue = new bool[data.mapSize.x, data.mapSize.z];
+            Collider[] foundColliders = new Collider[64];
+            for (int x = 0; x < data.mapSize.x; x++)
+            {
+                for (int y = 0; y < data.mapSize.z; y++)
+                {
+                    if (data.cells[x, y].roomId == 0)
+                    {
+                        returnValue[x, y] = false;
+                        continue; // this is an empty cell, do not bother
+                    }
+                    Vector3 cellWorldPos = new IntVector2(x, y).ToWorld();
+                    Physics.OverlapCapsuleNonAlloc(cellWorldPos - (Vector3.down * 5f), cellWorldPos - (Vector3.up * 5f), capsuleRadius, foundColliders);
+                    returnValue[x, y] = true;
+                    //Debug.Log("processing: " + x + "," + y);
+                    for (int i = 0; i < foundColliders.Length; i++)
+                    {
+                        if (foundColliders[i] == null) continue;
+                        if (foundColliders[i].isTrigger) continue;
+                        if (!returnValue[x, y]) continue;
+                        //Debug.Log(foundColliders[i].name);
+                        returnValue[x, y] = false;
+                        
+                    }
+                }
+            }
+            return returnValue;
+        }
+
         public void CompileAndPlay()
         {
+            selector.DisableSelection();
             BaldiLevel level = levelData.Compile();
+            level.entitySafeCells = CompileSafeCells(levelData, 2f);
+            level.eventSafeCells = CompileSafeCells(levelData, 4f);
             // write to file for testing purposes
             /*
             BinaryWriter writer = new BinaryWriter(File.OpenWrite(Path.Combine(Application.streamingAssetsPath, "test.bpl")));

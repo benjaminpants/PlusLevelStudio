@@ -89,6 +89,18 @@ namespace PlusStudioLevelLoader
                     data.activity.prefab = LevelLoaderPlugin.Instance.activityAliases[level.rooms[i].activity.type];
                     data.activity.direction = (Direction)level.rooms[i].activity.direction;
                 }
+                CellData[] foundCells = asset.tile.Where(x => x.roomId == i).ToArray();
+                for (int j = 0; j < foundCells.Length; j++)
+                {
+                    if (level.entitySafeCells[foundCells[j].pos.x, foundCells[j].pos.z])
+                    {
+                        data.entitySafeCells.Add(foundCells[j].pos);
+                    }
+                    if (level.eventSafeCells[foundCells[j].pos.x, foundCells[j].pos.z])
+                    {
+                        data.eventSafeCells.Add(foundCells[j].pos);
+                    }
+                }
                 asset.rooms.Add(data);
             }
             asset.spawnDirection = (Direction)level.spawnDirection;

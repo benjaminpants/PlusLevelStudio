@@ -10,6 +10,8 @@ namespace PlusStudioLevelFormat
     {
         public ByteVector2 levelSize;
         public Cell[,] cells;
+        public bool[,] entitySafeCells;
+        public bool[,] eventSafeCells;
         public List<RoomInfo> rooms = new List<RoomInfo>();
         public List<LightInfo> lights = new List<LightInfo>();
         public List<TileObjectInfo> tileObjects = new List<TileObjectInfo>();
@@ -33,11 +35,15 @@ namespace PlusStudioLevelFormat
         {
             levelSize = size;
             cells = new Cell[size.x, size.y];
+            entitySafeCells = new bool[size.x, size.y];
+            eventSafeCells = new bool[size.x, size.y];
             for (int x = 0; x < levelSize.x; x++)
             {
                 for (int y = 0; y < levelSize.y; y++)
                 {
                     cells[x, y] = new Cell(new ByteVector2(x, y));
+                    entitySafeCells[x, y] = false;
+                    eventSafeCells[x, y] = false;
                 }
             }
         }
@@ -68,6 +74,22 @@ namespace PlusStudioLevelFormat
                 for (int y = 0; y < level.levelSize.y; y++)
                 {
                     level.cells[x, y].roomId = reader.ReadUInt16();
+                }
+            }
+            bool[] entitySafe = reader.ReadBoolArray();
+            for (int x = 0; x < level.levelSize.x; x++)
+            {
+                for (int y = 0; y < level.levelSize.y; y++)
+                {
+                    level.entitySafeCells[x, y] = entitySafe[(x * level.levelSize.y) + y];
+                }
+            }
+            bool[] eventSafe = reader.ReadBoolArray();
+            for (int x = 0; x < level.levelSize.x; x++)
+            {
+                for (int y = 0; y < level.levelSize.y; y++)
+                {
+                    level.eventSafeCells[x, y] = eventSafe[(x * level.levelSize.y) + y];
                 }
             }
             int roomCount = reader.ReadInt32();
@@ -216,6 +238,24 @@ namespace PlusStudioLevelFormat
                     writer.Write(cells[x,y].roomId);
                 }
             }
+            List<bool> bools = new List<bool>();
+            for (int x = 0; x < levelSize.x; x++)
+            {
+                for (int y = 0; y < levelSize.y; y++)
+                {
+                    bools.Add(entitySafeCells[x, y]);
+                }
+            }
+            writer.Write(bools.ToArray()); // write entitySafeCells
+            bools.Clear();
+            for (int x = 0; x < levelSize.x; x++)
+            {
+                for (int y = 0; y < levelSize.y; y++)
+                {
+                    bools.Add(eventSafeCells[x, y]);
+                }
+            }
+            writer.Write(bools.ToArray()); // write eventSafeCells
             // write rooms
             writer.Write(rooms.Count);
             for (int i = 0; i < rooms.Count; i++)

@@ -17,6 +17,7 @@ using PlusLevelStudio.UI;
 using PlusLevelStudio.Editor.Tools;
 using TMPro;
 using PlusStudioLevelLoader;
+using PlusStudioLevelFormat;
 
 namespace PlusLevelStudio
 {
@@ -542,6 +543,7 @@ namespace PlusLevelStudio
             notebookVisual.GetComponent<MovableObjectInteraction>().allowedAxis = MoveAxis.Horizontal; // notebooks are just activities that instantly spawn their book so the Y value does nothing.
             GameObject mathMachineVisual = EditorInterface.CloneToPrefabStripMonoBehaviors(LevelLoaderPlugin.Instance.activityAliases["mathmachine"].gameObject, new Type[] { typeof(TMP_Text) });
             mathMachineVisual.name = mathMachineVisual.name.Replace("_Stripped", "_Visual");
+            DestroyImmediate(mathMachineVisual.transform.Find("Buffer").gameObject);
             BoxCollider mathMachineCollider = mathMachineVisual.transform.Find("Model").GetComponent<BoxCollider>();
             MovableObjectInteraction mathMachineMovableObjectInteract = mathMachineCollider.gameObject.AddComponent<MovableObjectInteraction>();
             mathMachineMovableObjectInteract.allowedRotations = RotateAxis.Flat;
@@ -552,6 +554,7 @@ namespace PlusLevelStudio
 
             GameObject mathMachineCornerVisual = EditorInterface.CloneToPrefabStripMonoBehaviors(LevelLoaderPlugin.Instance.activityAliases["mathmachine_corner"].gameObject, new Type[] { typeof(TMP_Text) });
             mathMachineCornerVisual.name = mathMachineCornerVisual.name.Replace("_Stripped", "_Visual");
+            DestroyImmediate(mathMachineCornerVisual.transform.Find("Buffer").gameObject);
             BoxCollider mathMachineCornerCollider = mathMachineCornerVisual.transform.Find("Model").GetComponent<BoxCollider>();
             MovableObjectInteraction mathMachineCornermovableObjectInteract = mathMachineCornerCollider.gameObject.AddComponent<MovableObjectInteraction>();
             mathMachineCornermovableObjectInteract.allowedRotations = RotateAxis.Flat;
