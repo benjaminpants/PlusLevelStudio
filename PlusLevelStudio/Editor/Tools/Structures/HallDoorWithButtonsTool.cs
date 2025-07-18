@@ -1,0 +1,142 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using UnityEngine;
+
+namespace PlusLevelStudio.Editor.Tools
+{
+    public class HallDoorWithButtonsTool : EditorTool
+    {
+        public string type;
+        public override string id => "structure_" + type;
+        protected IntVector2? firstPos;
+        protected bool firstPlaced = false;
+        public SimpleLocation first;
+        protected IntVector2? buttonPos;
+
+        public HallDoorWithButtonsTool(string type) : this(type, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/structure_" + type))
+        {
+
+        }
+
+        public HallDoorWithButtonsTool(string type, Sprite sprite)
+        {
+            this.type = type;
+            this.sprite = sprite;
+        }
+
+        public override void Begin()
+        {
+
+        }
+
+        public override bool Cancelled()
+        {
+            if (buttonPos != null)
+            {
+                buttonPos = null;
+                return false;
+            }
+            if (firstPlaced)
+            {
+                EditorController.Instance.RemoveVisual(first);
+                first = null;
+                firstPlaced = false;
+                firstPos = null;
+                return false;
+            }
+            if (firstPos != null)
+            {
+                firstPos = null;
+                return false;
+            }
+            return true;
+        }
+
+        public override void Exit()
+        {
+            firstPos = null;
+            buttonPos = null;
+            if (first != null)
+            {
+                EditorController.Instance.RemoveVisual(first);
+                first = null;
+            }
+            firstPlaced = false;
+        }
+
+        public virtual void PlaceFirst(Direction dir)
+        {
+            PlusStudioLevelFormat.Cell cell = EditorController.Instance.levelData.GetCellSafe(firstPos.Value);
+            if (cell == null) return; // cell doesn't exist
+            if (cell.type == 16) return; // the cell is empty
+            HallDoorStructureLocationWithButtons structure = (HallDoorStructureLocationWithButtons)EditorController.Instance.AddOrGetStructureToData(type, true);
+            SimpleLocation local = structure.CreateNewChild();
+            local.position = firstPos.Value;
+            local.direction = dir;
+            EditorController.Instance.AddVisual(local);
+            first = local;
+            firstPlaced = true;
+            EditorController.Instance.selector.DisableSelection();
+        }
+
+        public virtual void PlaceButton(Direction dir)
+        {
+            PlusStudioLevelFormat.Cell cell = EditorController.Instance.levelData.GetCellSafe(firstPos.Value);
+            if (cell == null) return; // cell doesn't exist
+            if (cell.type == 16) return; // the cell is empty
+            HallDoorStructureLocationWithButtons structure = (HallDoorStructureLocationWithButtons)EditorController.Instance.AddOrGetStructureToData(type, true);
+            SimpleLocation button = structure.CreateNewButton();
+            button.position = buttonPos.Value;
+            button.direction = dir;
+            structure.myChildren.Add(first);
+            structure.buttons.Add(button);
+            EditorController.Instance.UpdateVisual(structure);
+            first = null; // so we dont accidentally destroy the visual our first object
+            EditorController.Instance.SwitchToTool(null);
+        }
+
+        public override bool MousePressed()
+        {
+            if (firstPlaced)
+            {
+                if (EditorController.Instance.levelData.RoomIdFromPos(EditorController.Instance.mouseGridPosition, true) != 0)
+                {
+                    buttonPos = EditorController.Instance.mouseGridPosition;
+                    EditorController.Instance.selector.SelectRotation(buttonPos.Value, PlaceButton);
+                    return false;
+                }
+                return false;
+            }
+            if (firstPos != null) return false;
+            if (EditorController.Instance.levelData.RoomIdFromPos(EditorController.Instance.mouseGridPosition, true) != 0)
+            {
+                firstPos = EditorController.Instance.mouseGridPosition;
+                EditorController.Instance.selector.SelectRotation(firstPos.Value, PlaceFirst);
+                return false;
+            }
+            return false;
+        }
+
+        public override bool MouseReleased()
+        {
+            return false;
+        }
+
+        public override void Update()
+        {
+            if (firstPlaced)
+            {
+                if (buttonPos == null)
+                {
+                    EditorController.Instance.selector.SelectTile(EditorController.Instance.mouseGridPosition);
+                }
+                return;
+            }
+            if (firstPos == null)
+            {
+                EditorController.Instance.selector.SelectTile(EditorController.Instance.mouseGridPosition);
+            }
+        }
+    }
+}

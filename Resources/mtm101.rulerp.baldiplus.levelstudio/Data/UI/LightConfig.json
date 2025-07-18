@@ -146,7 +146,7 @@
 			"onPressed":"strengthAdd"
 		},
 		{
-			"name":"Category0",
+			"name":"ApplyToSameType",
 			"type":"textbutton",
 			"anchoredPosition":[70,-64],
 			"size":[174,32],

@@ -187,6 +187,7 @@ namespace PlusLevelStudio
                     { "structures", new List<EditorTool>()
                     {
                         new HallDoorStructureTool("facultyonlydoor"),
+                        new HallDoorWithButtonsTool("lockdowndoor")
                     } },
                     { "tools", new List<EditorTool>()
                     {
@@ -589,6 +590,27 @@ namespace PlusLevelStudio
             facultyOnlyCollider.size = facultyOnlyOGCollider.size;
             facultyOnlyCollider.center = facultyOnlyOGCollider.center + (Vector3.up * 10f);
             structureTypes.Add("facultyonlydoor", typeof(HallDoorStructureLocation));
+
+            EditorInterface.AddStructureGenericVisual("button", Resources.FindObjectsOfTypeAll<GameButton>().First(x => x.GetInstanceID() >= 0 && x.name == "GameButton" && x.transform.parent == null).gameObject);
+
+            GameLever lever = Resources.FindObjectsOfTypeAll<GameLever>().First(x => x.GetInstanceID() >= 0 && x.name == "GameLever" && x.transform.parent == null);
+
+
+            GameObject leverVisual = EditorInterface.AddStructureGenericVisual("lever", lever.gameObject);
+            LeverVisual leverVisualComp = leverVisual.AddComponent<LeverVisual>();
+            leverVisualComp.target = leverVisual.GetComponentInChildren<MeshRenderer>();
+            leverVisualComp.leverDownMaterial = (Material)lever.ReflectionGetVariable("offMat");
+            leverVisualComp.leverUpMaterial = (Material)lever.ReflectionGetVariable("onMat");
+            
+            GameObject lockdownDoorVisual = EditorInterface.AddStructureGenericVisual("lockdowndoor", Resources.FindObjectsOfTypeAll<LockdownDoor>().First(x => x.GetInstanceID() >= 0 && x.name == "LockdownDoor").gameObject);
+            lockdownDoorVisual.GetComponent<BoxCollider>().center += Vector3.up * 10f; // fix the collision
+            lockdownDoorVisual.AddComponent<SettingsComponent>().offset = new Vector3(0f,20f,5f);
+            structureTypes.Add("lockdowndoor", typeof(LockdownDoorStructureLocation));
+
+            GameObject shutLockdownDoorVisual = EditorInterface.AddStructureGenericVisual("lockdowndoor_shut", Resources.FindObjectsOfTypeAll<LockdownDoor>().First(x => x.GetInstanceID() >= 0 && x.name == "LockdownDoor").gameObject);
+            shutLockdownDoorVisual.GetComponent<BoxCollider>();
+            shutLockdownDoorVisual.transform.Find("LockdownDoor_Model").transform.position += Vector3.down * 10f;
+            shutLockdownDoorVisual.AddComponent<SettingsComponent>().offset = new Vector3(0f, 20f, 5f);
 
             yield return "Setting up Editor Controller...";
             GameObject editorControllerObject = new GameObject("StandardEditorController");

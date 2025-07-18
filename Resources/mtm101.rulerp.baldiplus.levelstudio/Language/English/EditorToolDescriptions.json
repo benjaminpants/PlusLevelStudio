@@ -120,6 +120,8 @@
 {"key":"Ed_Tool_activity_mathmachine_corner_Desc","value":"Solve corner math? Get corner book? Listen it's just the math machine rotated 45 degrees."},
 
 {"key":"Ed_Tool_structure_facultyonlydoor_Title","value":"Faculty Only Door"},
-{"key":"Ed_Tool_structure_facultyonlydoor_Desc","value":"This door closes if the player gets too close! It can be bypassed by going fast! (Or wearing a nametag...)"}
+{"key":"Ed_Tool_structure_facultyonlydoor_Desc","value":"This door closes if the player gets too close! It can be bypassed by going fast! (Or wearing a nametag...)"},
+{"key":"Ed_Tool_structure_lockdowndoor_Title","value":"Lockdown Door"},
+{"key":"Ed_Tool_structure_lockdowndoor_Desc","value":"This door can be toggled by a lever into being shut or open, now without power restrictions!"}
 
 ]}

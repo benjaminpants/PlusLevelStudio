@@ -211,6 +211,7 @@ namespace PlusStudioLevelLoader
 
             StructureBuilder[] builders = Resources.FindObjectsOfTypeAll<StructureBuilder>().Where(x => x.GetInstanceID() >= 0).ToArray();
             structureAliases.Add("facultyonlydoor", new LoaderStructureData(builders.First(x => x.name == "FacultyOnlyDoorConstructor")));
+            structureAliases.Add("lockdowndoor", new LoaderStructureData(builders.First(x => x.name == "LockdownDoorConstructor"), new Dictionary<string, GameObject>() { { "lockdowndoor_shut", Resources.FindObjectsOfTypeAll<LockdownDoor>().First(x => x.GetInstanceID() >= 0 && x.name == "LockdownDoor_Shut").gameObject } }));
         }
     }
 }

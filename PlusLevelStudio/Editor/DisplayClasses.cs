@@ -40,6 +40,7 @@ namespace PlusLevelStudio.Editor
     public class SettingsComponent : MonoBehaviour, IEditorInteractable
     {
         public IEditorSettingsable activateSettingsOn;
+        public Vector3 offset = Vector3.up * 7f;
         public bool InteractableByTool(EditorTool tool)
         {
             return false;
@@ -47,7 +48,7 @@ namespace PlusLevelStudio.Editor
 
         public bool OnClicked()
         {
-            EditorController.Instance.selector.ShowSettings(transform.position + (Vector3.up * 7f), activateSettingsOn.SettingsClicked);
+            EditorController.Instance.selector.ShowSettings(transform.TransformPoint(offset), activateSettingsOn.SettingsClicked);
             return false;
         }
 
@@ -59,6 +60,20 @@ namespace PlusLevelStudio.Editor
         public void OnReleased()
         {
             throw new NotImplementedException();
+        }
+    }
+
+    public class LeverVisual : MonoBehaviour
+    {
+        public Material leverDownMaterial;
+        public Material leverUpMaterial;
+        public Renderer target;
+
+        public void SetDirection(bool down)
+        {
+            Texture2D lightMap = (Texture2D)target.material.GetTexture("_LightMap");
+            target.material = down ? leverDownMaterial : leverUpMaterial;
+            target.material.SetTexture("_LightMap", lightMap);
         }
     }
 }

@@ -368,6 +368,10 @@ namespace PlusLevelStudio.Editor
         /// <param name="visualizable"></param>
         public void UpdateVisual(IEditorVisualizable visualizable)
         {
+            if (!objectVisuals.ContainsKey(visualizable))
+            {
+                throw new Exception("Attempted to non-existant visual: " + visualizable.ToString() + "!");
+            }
             visualizable.UpdateVisual(objectVisuals[visualizable]);
         }
 
@@ -693,6 +697,7 @@ namespace PlusLevelStudio.Editor
                 bool mousePressedThisFrame = Singleton<InputManager>.Instance.GetDigitalInput("Interact", false);
                 if (mousePressedLastFrame != mousePressedThisFrame)
                 {
+                    mousePressedLastFrame = mousePressedThisFrame;
                     if (mousePressedThisFrame)
                     {
                         if (HandleInteractableClicking()) return;
@@ -704,7 +709,6 @@ namespace PlusLevelStudio.Editor
                         if (currentTool.MouseReleased()) { SwitchToTool(null); return; }
                     }
                 }
-                mousePressedLastFrame = mousePressedThisFrame;
                 currentTool.Update();
                 if (Singleton<InputManager>.Instance.GetDigitalInput("Pause", true))
                 {

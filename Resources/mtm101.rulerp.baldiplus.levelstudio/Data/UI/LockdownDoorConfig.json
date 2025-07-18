@@ -1,0 +1,47 @@
+{
+	"defines":{
+	},
+	"elements":[
+		{
+			"type":"blocker",
+			"transparency":1
+		},
+		{
+			"name":"Chalkboard",
+			"type":"image",
+			"graphic":"ChalkBoardStandard",
+			"anchoredPosition":[0,0],
+			"size":[480,360],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+		},
+		{
+			"name":"DoorShutText",
+			"type":"textbutton",
+			"anchoredPosition":[0,0],
+			"size":[174,64],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"font":"ComicSans24",
+			"color":[255,255,255],
+			"text":"Starts Open",
+			"alignment":"Center",
+			"onPressed":"toggleShut",
+			"localized":false
+		},
+		{
+			"name":"ExitButton",
+			"type":"imageButton",
+			"graphic":"Exit",
+			"hoverGraphic":"ExitHigh",
+			"anchoredPosition":[-194,144],
+			"size":[64,64],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"onPressed":"exit"
+		},
+	]
+}

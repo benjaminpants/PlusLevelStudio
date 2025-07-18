@@ -24,7 +24,7 @@ namespace PlusLevelStudio.Editor.Tools
             if (cell == null) return; // cell doesn't exist
             if (cell.type == 16) return; // the cell is empty
             EditorController.Instance.AddUndo();
-            HallDoorStructureLocation structure = (HallDoorStructureLocation)EditorController.Instance.AddOrGetStructureToData("facultyonlydoor", true);
+            HallDoorStructureLocation structure = (HallDoorStructureLocation)EditorController.Instance.AddOrGetStructureToData(type, true);
             SimpleLocation local = structure.CreateNewChild();
             local.position = pos.Value;
             local.direction = dir;

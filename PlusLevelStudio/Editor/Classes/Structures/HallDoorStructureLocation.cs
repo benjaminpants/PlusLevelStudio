@@ -7,9 +7,20 @@ using UnityEngine;
 
 namespace PlusLevelStudio.Editor
 {
+    public class SimpleLeverLocation : SimpleLocation
+    {
+        public Func<SimpleLeverLocation, bool> shouldBeDown;
+        public override void UpdateVisual(GameObject visualObject)
+        {
+            base.UpdateVisual(visualObject);
+            visualObject.GetComponent<LeverVisual>().SetDirection(shouldBeDown(this));
+        }
+    }
+
+
     public class SimpleLocation : IEditorVisualizable, IEditorDeletable
     {
-        public HallDoorStructureLocation owner;
+        public Func<EditorLevelData, SimpleLocation, bool> deleteAction;
         public string prefab;
         public IntVector2 position;
         public Direction direction;
@@ -31,7 +42,7 @@ namespace PlusLevelStudio.Editor
             return true;
         }
 
-        public void InitializeVisual(GameObject visualObject)
+        public virtual void InitializeVisual(GameObject visualObject)
         {
             visualObject.GetComponent<EditorDeletableObject>().toDelete = this;
             UpdateVisual(visualObject);
@@ -39,10 +50,10 @@ namespace PlusLevelStudio.Editor
 
         public bool OnDelete(EditorLevelData data)
         {
-            return owner.OnSubDelete(data, this, true);
+            return deleteAction(data, this);
         }
 
-        public void UpdateVisual(GameObject visualObject)
+        public virtual void UpdateVisual(GameObject visualObject)
         {
             visualObject.transform.position = position.ToWorld();
             visualObject.transform.rotation = direction.ToRotation();
@@ -64,11 +75,11 @@ namespace PlusLevelStudio.Editor
         {
             SimpleLocation simple = new SimpleLocation();
             simple.prefab = type;
-            simple.owner = this;
+            simple.deleteAction = OnSubDelete;
             return simple;
         }
 
-        public bool OnSubDelete(EditorLevelData data, SimpleLocation local, bool deleteSelf)
+        public virtual bool OnSubDelete(EditorLevelData data, SimpleLocation local, bool deleteSelf)
         {
             myChildren.Remove(local);
             EditorController.Instance.RemoveVisual(local);
@@ -77,6 +88,11 @@ namespace PlusLevelStudio.Editor
                 OnDelete(data);
             }
             return true;
+        }
+
+        public bool OnSubDelete(EditorLevelData data, SimpleLocation local)
+        {
+            return OnSubDelete(data, local, true);
         }
 
         public override StructureInfo Compile()
@@ -104,6 +120,7 @@ namespace PlusLevelStudio.Editor
         {
             for (int i = 0; i < myChildren.Count; i++)
             {
+                if (EditorController.Instance.GetVisual(myChildren[i]) != null) continue;
                 EditorController.Instance.AddVisual(myChildren[i]);
             }
         }
@@ -164,6 +181,165 @@ namespace PlusLevelStudio.Editor
                 writer.Write(myChildren[i].position.ToByte());
                 writer.Write((byte)myChildren[i].direction);
             }
+        }
+    }
+
+    public class HallDoorStructureLocationWithLevers : HallDoorStructureLocationWithButtons
+    {
+        public override string buttonPrefab => "lever";
+
+        public override SimpleLocation CreateNewButton()
+        {
+            SimpleLeverLocation simple = new SimpleLeverLocation();
+            simple.prefab = buttonPrefab;
+            simple.deleteAction = OnButtonDelete;
+            simple.shouldBeDown = ShouldLeverBeDown;
+            return simple;
+        }
+
+        public virtual bool ShouldLeverBeDown(SimpleLeverLocation lever)
+        {
+            return false;
+        }
+    }
+
+    public class HallDoorStructureLocationWithButtons : HallDoorStructureLocation
+    {
+        public List<SimpleLocation> buttons = new List<SimpleLocation>();
+        public virtual string buttonPrefab => "button";
+
+        public virtual SimpleLocation CreateNewButton()
+        {
+            SimpleLocation simple = new SimpleLocation();
+            simple.prefab = buttonPrefab;
+            simple.deleteAction = OnButtonDelete;
+            return simple;
+        }
+
+        public override void CleanupVisual(GameObject visualObject)
+        {
+            base.CleanupVisual(visualObject);
+            for (int i = 0; i < buttons.Count; i++)
+            {
+                EditorController.Instance.RemoveVisual(buttons[i]);
+            }
+        }
+
+        public override StructureInfo Compile()
+        {
+            StructureInfo finalStructure = new StructureInfo();
+            finalStructure.type = type;
+            for (int i = 0; i < myChildren.Count; i++)
+            {
+                finalStructure.data.Add(new StructureDataInfo()
+                {
+                    position = myChildren[i].position.ToByte(),
+                    direction = (PlusDirection)myChildren[i].direction,
+                    prefab = myChildren[i].prefab,
+                });
+                // this is how we establish a button/lever
+                finalStructure.data.Add(new StructureDataInfo()
+                {
+                    position = buttons[i].position.ToByte(),
+                    direction = (PlusDirection)buttons[i].direction,
+                    data = 1,
+                });
+            }
+            return finalStructure;
+        }
+
+        public override void InitializeVisual(GameObject visualObject)
+        {
+            base.InitializeVisual(visualObject);
+            for (int i = 0; i < buttons.Count; i++)
+            {
+                EditorController.Instance.AddVisual(buttons[i]);
+            }
+        }
+
+        public override bool ValidatePosition(EditorLevelData data)
+        {
+            bool initValue = base.ValidatePosition(data);
+            for (int i = buttons.Count - 1; i >= 0; i--)
+            {
+                if (!buttons[i].ValidatePosition(data))
+                {
+                    OnButtonDelete(data, buttons[i], false);
+                }
+            }
+            return initValue && myChildren.Count > 0;
+        }
+
+        // we just call the delete method of our associated object since that will delete us as well
+        public virtual bool OnButtonDelete(EditorLevelData data, SimpleLocation local, bool deleteSelf)
+        {
+            Debug.Log("deleting button!");
+            int associatedIndex = buttons.IndexOf(local);
+            Debug.Log(associatedIndex);
+            return OnSubDelete(data, myChildren[associatedIndex], deleteSelf);
+        }
+
+        public bool OnButtonDelete(EditorLevelData data, SimpleLocation local)
+        {
+            return OnButtonDelete(data, local, false);
+        }
+
+        public override void ShiftBy(Vector3 worldOffset, IntVector2 cellOffset, IntVector2 sizeDifference)
+        {
+            base.ShiftBy(worldOffset, cellOffset, sizeDifference);
+            for (int i = 0; i < buttons.Count; i++)
+            {
+                buttons[i].position -= cellOffset;
+            }
+        }
+
+        public override void UpdateVisual(GameObject visualObject)
+        {
+            base.UpdateVisual(visualObject);
+            for (int i = 0; i < buttons.Count; i++)
+            {
+                if (EditorController.Instance.GetVisual(buttons[i]) == null)
+                {
+                    EditorController.Instance.AddVisual(buttons[i]);
+                }
+                EditorController.Instance.UpdateVisual(buttons[i]);
+            }
+        }
+
+        public override void Write(BinaryWriter writer)
+        {
+            base.Write(writer);
+            writer.Write((byte)0);
+            writer.Write(buttons.Count);
+            for (int i = 0; i < myChildren.Count; i++)
+            {
+                writer.Write(buttons[i].position.ToByte());
+                writer.Write((byte)buttons[i].direction);
+            }
+        }
+        public override void ReadInto(BinaryReader reader)
+        {
+            base.ReadInto(reader);
+            byte version = reader.ReadByte();
+            int buttonCount = reader.ReadInt32();
+            for (int i = 0; i < buttonCount; i++)
+            {
+                SimpleLocation button = CreateNewButton();
+                button.position = reader.ReadByteVector2().ToInt();
+                button.direction = (Direction)reader.ReadByte();
+                buttons.Add(button);
+            }
+        }
+
+        public override bool OnSubDelete(EditorLevelData data, SimpleLocation local, bool deleteSelf)
+        {
+            Debug.Log("deleting sub!");
+            int oldIndex = myChildren.IndexOf(local);
+            Debug.Log(oldIndex);
+            bool val = base.OnSubDelete(data, local, deleteSelf);
+            EditorController.Instance.RemoveVisual(buttons[oldIndex]);
+            buttons.RemoveAt(oldIndex);
+            return val;
         }
     }
 }
