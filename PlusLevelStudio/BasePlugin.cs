@@ -104,6 +104,7 @@ namespace PlusLevelStudio
                         new RoomTool("cafeteria"),
                         new RoomTool("outside"),
                         new RoomTool("library"),
+                        new RoomTool("lightbulbtesting")
                     } },
                     { "doors", new List<EditorTool>()
                     {

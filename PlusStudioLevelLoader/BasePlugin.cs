@@ -66,6 +66,8 @@ namespace PlusStudioLevelLoader
             roomTextureAliases.Add("None", textures.First(x => x.name == "Transparent"));
             roomTextureAliases.Add("PlaceholderWall", textures.First(x => x.name == "Placeholder_Wall"));
             roomTextureAliases.Add("SaloonWall", textures.First(x => x.name == "SaloonWall"));
+            roomTextureAliases.Add("MaintenanceFloor", textures.First(x => x.name == "MaintenanceFloor"));
+            roomTextureAliases.Add("RedBrickWall", textures.First(x => x.name == "ColoredBrickWall"));
             yield return "Fetching materials...";
             // TODO: this is placeholder
             assetMan.AddFromResourcesNoClones<Material>();
@@ -83,6 +85,7 @@ namespace PlusStudioLevelLoader
             roomSettings.Add("cafeteria", new RoomSettings(RoomCategory.Special, RoomType.Room, new Color(0f, 1f, 1f), assetMan.Get<StandardDoorMats>("ClassDoorSet")));
             roomSettings.Add("outside", new RoomSettings(RoomCategory.Special, RoomType.Room, new Color(0f, 1f, 1f), assetMan.Get<StandardDoorMats>("ClassDoorSet")));
             roomSettings.Add("shop", new RoomSettings(RoomCategory.Store, RoomType.Room, new Color(1f, 1f, 1f), assetMan.Get<StandardDoorMats>("ClassDoorSet")));
+            roomSettings.Add("lightbulbtesting", new RoomSettings(RoomCategory.Special, RoomType.Room, new Color(1f, 1f, 1f), assetMan.Get<StandardDoorMats>("ClassDoorSet")));
             roomSettings["faculty"].container = roomFunctions.Find(x => x.name == "FacultyRoomFunction");
             roomSettings["office"].container = roomFunctions.Find(x => x.name == "OfficeRoomFunction");
             roomSettings["class"].container = roomFunctions.Find(x => x.name == "ClassRoomFunction");
@@ -90,6 +93,7 @@ namespace PlusStudioLevelLoader
             roomSettings["cafeteria"].container = roomFunctions.Find(x => x.name == "CafeteriaRoomFunction");
             roomSettings["outside"].container = roomFunctions.Find(x => x.name == "PlaygroundRoomFunction");
             roomSettings["shop"].container = roomFunctions.Find(x => x.name == "JohnnyStoreRoomFunction");
+            roomSettings["lightbulbtesting"].container = roomFunctions.Find(x => x.name == "LightbulbTestRoomFunction");
             yield return "Fetching prefabs...";
             Transform[] transforms = Resources.FindObjectsOfTypeAll<Transform>().Where(x => x.GetInstanceID() >= 0 && x.transform.parent == null).ToArray();
             lightTransforms.Add("fluorescent", transforms.First(x => x.name == "FluorescentLight"));
