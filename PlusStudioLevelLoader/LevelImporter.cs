@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace PlusStudioLevelLoader
 {
@@ -32,7 +31,12 @@ namespace PlusStudioLevelLoader
             scene.levelAsset = LoadLevelAsset(level);
             scene.extraAsset.lightMode = LightMode.Cumulative;
             scene.extraAsset.minLightColor = Color.black;
-            scene.extraAsset.name = "LoadedExtraAsset_" + level.levelSize.x + "_" + level.levelSize.y + "_" + level.rooms.Count; ;
+            scene.extraAsset.name = "LoadedExtraAsset_" + level.levelSize.x + "_" + level.levelSize.y + "_" + level.rooms.Count;
+            for (int i = 0; i < level.npcs.Count; i++)
+            {
+                scene.extraAsset.npcsToSpawn.Add(LevelLoaderPlugin.Instance.npcAliases[level.npcs[i].npc]);
+                scene.extraAsset.npcSpawnPoints.Add(level.npcs[i].position.ToInt());
+            }
             return scene;
         }
 

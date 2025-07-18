@@ -31,6 +31,7 @@ namespace PlusStudioLevelLoader
         public Dictionary<string, GameObject> basicObjects = new Dictionary<string, GameObject>();
         public Dictionary<string, Activity> activityAliases = new Dictionary<string, Activity>();
         public Dictionary<string, LoaderStructureData> structureAliases = new Dictionary<string, LoaderStructureData>();
+        public Dictionary<string, NPC> npcAliases = new Dictionary<string, NPC>();
 
         public static Texture2D RoomTextureFromAlias(string alias)
         {
@@ -212,6 +213,21 @@ namespace PlusStudioLevelLoader
             StructureBuilder[] builders = Resources.FindObjectsOfTypeAll<StructureBuilder>().Where(x => x.GetInstanceID() >= 0).ToArray();
             structureAliases.Add("facultyonlydoor", new LoaderStructureData(builders.First(x => x.name == "FacultyOnlyDoorConstructor")));
             structureAliases.Add("lockdowndoor", new LoaderStructureData(builders.First(x => x.name == "LockdownDoorConstructor"), new Dictionary<string, GameObject>() { { "lockdowndoor_shut", Resources.FindObjectsOfTypeAll<LockdownDoor>().First(x => x.GetInstanceID() >= 0 && x.name == "LockdownDoor_Shut").gameObject } }));
+
+            // npcs
+            npcAliases.Add("baldi", MTM101BaldiDevAPI.npcMetadata.Get(Character.Baldi).value);
+            npcAliases.Add("principal", MTM101BaldiDevAPI.npcMetadata.Get(Character.Principal).value);
+            npcAliases.Add("sweep", MTM101BaldiDevAPI.npcMetadata.Get(Character.Sweep).value);
+            npcAliases.Add("playtime", MTM101BaldiDevAPI.npcMetadata.Get(Character.Playtime).value);
+            npcAliases.Add("chalkface", MTM101BaldiDevAPI.npcMetadata.Get(Character.Chalkles).value);
+            npcAliases.Add("bully", MTM101BaldiDevAPI.npcMetadata.Get(Character.Bully).value);
+            npcAliases.Add("beans", MTM101BaldiDevAPI.npcMetadata.Get(Character.Beans).value);
+            npcAliases.Add("prize", MTM101BaldiDevAPI.npcMetadata.Get(Character.Prize).value);
+            npcAliases.Add("crafters", MTM101BaldiDevAPI.npcMetadata.Get(Character.Crafters).value);
+            npcAliases.Add("pomp", MTM101BaldiDevAPI.npcMetadata.Get(Character.Pomp).value);
+            npcAliases.Add("test", MTM101BaldiDevAPI.npcMetadata.Get(Character.LookAt).value);
+            npcAliases.Add("cloudy", MTM101BaldiDevAPI.npcMetadata.Get(Character.Cumulo).value);
+            npcAliases.Add("reflex", MTM101BaldiDevAPI.npcMetadata.Get(Character.DrReflex).value);
         }
     }
 }

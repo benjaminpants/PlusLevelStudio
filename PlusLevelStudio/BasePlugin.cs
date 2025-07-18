@@ -49,6 +49,7 @@ namespace PlusLevelStudio
         public Dictionary<string, GameObject> activityDisplays = new Dictionary<string, GameObject>();
         public Dictionary<string, Type> structureTypes = new Dictionary<string, Type>();
         public Dictionary<string, GameObject> genericStructureDisplays = new Dictionary<string, GameObject>();
+        public Dictionary<string, GameObject> npcDisplays = new Dictionary<string, GameObject>();
         public GameObject pickupVisual;
 
         void Awake()
@@ -189,6 +190,22 @@ namespace PlusLevelStudio
                         new HallDoorStructureTool("facultyonlydoor"),
                         new HallDoorWithButtonsTool("lockdowndoor")
                     } },
+                    { "npcs", new List<EditorTool>()
+                    {
+                        new NPCTool("baldi"),
+                        new NPCTool("principal"),
+                        new NPCTool("sweep"),
+                        new NPCTool("playtime"),
+                        new NPCTool("bully"),
+                        new NPCTool("crafters"),
+                        new NPCTool("prize"),
+                        new NPCTool("cloudy"),
+                        new NPCTool("chalkface"),
+                        new NPCTool("beans"),
+                        new NPCTool("pomp"),
+                        new NPCTool("test"),
+                        new NPCTool("reflex"),
+                    } },
                     { "tools", new List<EditorTool>()
                     {
                         new ElevatorTool("elevator", true),
@@ -201,6 +218,7 @@ namespace PlusLevelStudio
                 categoryOrder = new string[] {
                     "rooms",
                     "doors",
+                    "npcs",
                     "items",
                     "activities",
                     "objects",
@@ -595,7 +613,6 @@ namespace PlusLevelStudio
 
             GameLever lever = Resources.FindObjectsOfTypeAll<GameLever>().First(x => x.GetInstanceID() >= 0 && x.name == "GameLever" && x.transform.parent == null);
 
-
             GameObject leverVisual = EditorInterface.AddStructureGenericVisual("lever", lever.gameObject);
             LeverVisual leverVisualComp = leverVisual.AddComponent<LeverVisual>();
             leverVisualComp.target = leverVisual.GetComponentInChildren<MeshRenderer>();
@@ -611,6 +628,24 @@ namespace PlusLevelStudio
             shutLockdownDoorVisual.GetComponent<BoxCollider>();
             shutLockdownDoorVisual.transform.Find("LockdownDoor_Model").transform.position += Vector3.down * 10f;
             shutLockdownDoorVisual.AddComponent<SettingsComponent>().offset = new Vector3(0f, 20f, 5f);
+
+            // npcs
+
+            EditorInterface.AddNPCVisual("baldi", LevelLoaderPlugin.Instance.npcAliases["baldi"]);
+            EditorInterface.AddNPCVisual("principal", LevelLoaderPlugin.Instance.npcAliases["principal"]);
+            EditorInterface.AddNPCVisual("sweep", LevelLoaderPlugin.Instance.npcAliases["sweep"]);
+            EditorInterface.AddNPCVisual("playtime", LevelLoaderPlugin.Instance.npcAliases["playtime"]);
+            GameObject chalklesVisual = EditorInterface.AddNPCVisual("chalkface", LevelLoaderPlugin.Instance.npcAliases["chalkface"]);
+            chalklesVisual.transform.Find("SpriteBase").Find("Sprite").gameObject.SetActive(true);
+            chalklesVisual.GetComponent<EditorDeletableObject>().AddRenderer(chalklesVisual.GetComponentInChildren<Renderer>(), "none");
+            EditorInterface.AddNPCVisual("bully", LevelLoaderPlugin.Instance.npcAliases["bully"]);
+            EditorInterface.AddNPCVisual("beans", LevelLoaderPlugin.Instance.npcAliases["beans"]);
+            EditorInterface.AddNPCVisual("prize", LevelLoaderPlugin.Instance.npcAliases["prize"]);
+            EditorInterface.AddNPCVisual("crafters", LevelLoaderPlugin.Instance.npcAliases["crafters"]);
+            EditorInterface.AddNPCVisual("pomp", LevelLoaderPlugin.Instance.npcAliases["pomp"]);
+            EditorInterface.AddNPCVisual("test", LevelLoaderPlugin.Instance.npcAliases["test"]);
+            EditorInterface.AddNPCVisual("cloudy", LevelLoaderPlugin.Instance.npcAliases["cloudy"]);
+            EditorInterface.AddNPCVisual("reflex", LevelLoaderPlugin.Instance.npcAliases["reflex"]);
 
             yield return "Setting up Editor Controller...";
             GameObject editorControllerObject = new GameObject("StandardEditorController");

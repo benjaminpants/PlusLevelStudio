@@ -1,23 +1,27 @@
-﻿using System;
+﻿using PlusStudioLevelLoader;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
 namespace PlusLevelStudio.Editor.Tools
 {
-    public class LightTool : EditorTool
-    {
-        public string lightType;
-        public override string id => "light_" + lightType;
 
-        public LightTool(string lightType) : this(lightType, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/light_" + lightType))
+    public class NPCTool : EditorTool
+    {
+        public string npc;
+        public override string id => "npc_" + npc;
+        public override string titleKey => LevelLoaderPlugin.Instance.npcAliases[npc].Poster.textData[0].textKey;
+        public override string descKey => LevelLoaderPlugin.Instance.npcAliases[npc].Poster.textData[1].textKey;
+
+        public NPCTool(string npc) : this(npc, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/npc_" + npc))
         {
         }
 
-        public LightTool(string lightType, Sprite sprite)
+        public NPCTool(string npc, Sprite sprite)
         {
             this.sprite = sprite;
-            this.lightType = lightType;
+            this.npc = npc;
         }
 
         public override void Begin()
@@ -40,12 +44,11 @@ namespace PlusLevelStudio.Editor.Tools
             if (EditorController.Instance.levelData.RoomIdFromPos(EditorController.Instance.mouseGridPosition, true) != 0)
             {
                 EditorController.Instance.AddUndo();
-                LightPlacement lightPlace = new LightPlacement();
-                lightPlace.type = lightType;
-                lightPlace.position = EditorController.Instance.mouseGridPosition;
-                EditorController.Instance.AddVisual(lightPlace);
-                EditorController.Instance.levelData.lights.Add(lightPlace);
-                EditorController.Instance.RefreshLights();
+                NPCPlacement placement = new NPCPlacement();
+                placement.npc = npc;
+                placement.position = EditorController.Instance.mouseGridPosition;
+                EditorController.Instance.levelData.npcs.Add(placement);
+                EditorController.Instance.AddVisual(placement);
                 return true;
             }
             return false;

@@ -19,6 +19,7 @@ namespace PlusStudioLevelFormat
         public List<WindowInfo> windows = new List<WindowInfo>();
         public List<ExitInfo> exits = new List<ExitInfo>();
         public List<StructureInfo> structures = new List<StructureInfo>();
+        public List<NPCInfo> npcs = new List<NPCInfo>();
         public UnityVector3 spawnPoint = new UnityVector3(5f,5f,5f);
         public UnityVector3 UnitySpawnPoint
         {
@@ -200,6 +201,15 @@ namespace PlusStudioLevelFormat
                 }
                 level.structures.Add(info);
             }
+            int npcCount = reader.ReadInt32();
+            for (int i = 0; i < npcCount; i++)
+            {
+                level.npcs.Add(new NPCInfo()
+                {
+                    npc=objectsCompressor.ReadStoredString(reader),
+                    position=reader.ReadByteVector2(),
+                });
+            }
             return level;
         }
 
@@ -229,6 +239,7 @@ namespace PlusStudioLevelFormat
             objectsCompressor.AddStrings(windows.Select(x => x.prefab));
             objectsCompressor.AddStrings(tileObjects.Select(x => x.prefab));
             objectsCompressor.AddStrings(exits.Select(x => x.type));
+            objectsCompressor.AddStrings(npcs.Select(x => x.npc));
             objectsCompressor.AddStrings(structures.Select(x => x.type));
             foreach (var structure in structures)
             {
@@ -365,6 +376,12 @@ namespace PlusStudioLevelFormat
                     writer.Write((byte)data.direction);
                     writer.Write(data.data);
                 }
+            }
+            writer.Write(npcs.Count);
+            for (int i = 0; i < npcs.Count; i++)
+            {
+                objectsCompressor.WriteStoredString(writer, npcs[i].npc);
+                writer.Write(npcs[i].position);
             }
         }
     }

@@ -73,6 +73,12 @@ namespace PlusStudioLevelFormat
         public byte strength = 10;
     }
 
+    public class NPCInfo
+    {
+        public string npc;
+        public ByteVector2 position;
+    }
+
     public class DoorInfo
     {
         public string prefab;

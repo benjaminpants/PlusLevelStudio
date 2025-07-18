@@ -26,6 +26,7 @@ namespace PlusLevelStudio.Editor
         public List<ItemPlacement> items = new List<ItemPlacement>();
         public List<BasicObjectLocation> objects = new List<BasicObjectLocation>();
         public List<StructureLocation> structures = new List<StructureLocation>();
+        public List<NPCPlacement> npcs = new List<NPCPlacement>();
         public EditorRoom hall => rooms[0];
 
         public Vector3 spawnPoint = new Vector3(5f,5f,5f);
@@ -294,6 +295,10 @@ namespace PlusLevelStudio.Editor
             {
                 structures[i].ShiftBy(new Vector3(posDif.x * 10f, 0f, posDif.z * 10f), posDif, sizeDif);
             }
+            for (int i = 0; i < npcs.Count; i++)
+            {
+                npcs[i].position -= posDif;
+            }
             spawnPoint -= new Vector3(posDif.x * 10f, 0f, posDif.z * 10f);
             return true;
         }
@@ -473,6 +478,14 @@ namespace PlusLevelStudio.Editor
             {
                 compiled.structures.Add(structures[i].Compile());
             }
+            for (int i = 0; i < npcs.Count; i++)
+            {
+                compiled.npcs.Add(new NPCInfo()
+                {
+                    npc = npcs[i].npc,
+                    position = npcs[i].position.ToByte()
+                });
+            }
             return compiled;
         }
 
@@ -488,6 +501,7 @@ namespace PlusLevelStudio.Editor
             stringComp.AddStrings(windows.Select(x => x.type));
             stringComp.AddStrings(items.Select(x => x.item));
             stringComp.AddStrings(objects.Select(x => x.prefab));
+            stringComp.AddStrings(npcs.Select(x => x.npc));
             stringComp.AddStrings(rooms.Select(x => x.roomType));
             stringComp.AddStrings(rooms.Select(x => x.textureContainer.floor));
             stringComp.AddStrings(rooms.Select(x => x.textureContainer.wall));
@@ -577,6 +591,12 @@ namespace PlusLevelStudio.Editor
             {
                 stringComp.WriteStoredString(writer, structures[i].type);
                 structures[i].Write(writer);
+            }
+            writer.Write(npcs.Count);
+            for (int i = 0; i < npcs.Count; i++)
+            {
+                stringComp.WriteStoredString(writer, npcs[i].npc);
+                writer.Write(npcs[i].position.ToByte());
             }
             writer.Write(spawnPoint.ToData());
             writer.Write((byte)spawnDirection);
@@ -688,6 +708,15 @@ namespace PlusLevelStudio.Editor
                 StructureLocation structure = LevelStudioPlugin.Instance.ConstructStructureOfType(type);
                 structure.ReadInto(reader);
                 levelData.structures.Add(structure);
+            }
+            int npcCount = reader.ReadInt32();
+            for (int i = 0; i < npcCount; i++)
+            {
+                levelData.npcs.Add(new NPCPlacement()
+                {
+                    npc=stringComp.ReadStoredString(reader),
+                    position=reader.ReadByteVector2().ToInt()
+                });
             }
             levelData.spawnPoint = reader.ReadUnityVector3().ToUnity();
             levelData.spawnDirection = (Direction)reader.ReadByte();

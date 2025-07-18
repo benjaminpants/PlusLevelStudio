@@ -86,7 +86,7 @@ namespace PlusLevelStudio.Editor
 
         protected IEditorInteractable heldInteractable = null;
 
-        public int maxUndos = 5;
+        public int maxUndos = 15;
         public List<MemoryStream> undoStreams = new List<MemoryStream>();
         public MemoryStream currentlyHeldUndo = null;
 
@@ -198,8 +198,12 @@ namespace PlusLevelStudio.Editor
             {
                 AddVisual(item);
             }
+            foreach (NPCPlacement item in levelData.npcs)
+            {
+                AddVisual(item);
+            }
             RefreshCells();
-            EditorController.Instance.UpdateSpawnVisual();
+            UpdateSpawnVisual();
             CancelHeldUndo();
             if (wipeUndoHistory)
             {

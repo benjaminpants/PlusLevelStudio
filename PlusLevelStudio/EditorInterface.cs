@@ -131,6 +131,29 @@ namespace PlusLevelStudio
             return clone;
         }
 
+        public static GameObject AddNPCVisual(string key, NPC npc)
+        {
+            GameObject clone = CloneToPrefabStripMonoBehaviors(npc.gameObject);
+            Collider[] colliders = clone.GetComponentsInChildren<Collider>();
+            for (int i = 0; i < colliders.Length; i++)
+            {
+                GameObject.DestroyImmediate(colliders[i]);
+            }
+            Animator[] animators = clone.GetComponentsInChildren<Animator>();
+            for (int i = 0; i < animators.Length; i++)
+            {
+                GameObject.DestroyImmediate(animators[i]);
+            }
+            clone.layer = LevelStudioPlugin.editorInteractableLayer;
+            BoxCollider collider = clone.AddComponent<BoxCollider>();
+            collider.center = Vector3.down * 5f;
+            collider.size = new Vector3(10f, 0.1f, 10f);
+            collider.isTrigger = true;
+            clone.gameObject.AddComponent<EditorDeletableObject>().AddRendererRange(clone.GetComponentsInChildren<Renderer>(), "none");
+            LevelStudioPlugin.Instance.npcDisplays.Add(key, clone);
+            return clone;
+        }
+
         public static GameObject AddStructureGenericVisual(string key, GameObject obj)
         {
             GameObject clone = CloneToPrefabStripMonoBehaviors(obj);
