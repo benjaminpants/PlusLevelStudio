@@ -26,7 +26,7 @@ namespace PlusLevelStudio.Editor
 
         public bool OnClicked()
         {
-            EditorController.Instance.selector.SelectObject(myLocation, MoveAxis.All);
+            EditorController.Instance.selector.SelectObject(myLocation, MoveAxis.All, RotateAxis.Full);
             return false;
         }
 

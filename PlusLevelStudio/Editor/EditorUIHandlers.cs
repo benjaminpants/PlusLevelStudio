@@ -155,18 +155,22 @@ namespace PlusLevelStudio.Editor
     public class EditorUIMainHandler : UIExchangeHandler
     {
         public TextMeshProUGUI gridScaleTextBox;
+        public TextMeshProUGUI angleSnapTextBox;
         public List<GameObject> translationSettings = new List<GameObject>();
         bool settingsHidden = true;
 
         public override bool GetStateBoolean(string key)
         {
-            if (key == "worldSpace")
+            switch (key)
             {
-                return EditorController.Instance.selector.moveHandles.worldSpace;
-            }
-            else if (key == "localSpace")
-            {
-                return !EditorController.Instance.selector.moveHandles.worldSpace;
+                case "worldSpace":
+                    return EditorController.Instance.selector.moveHandles.worldSpace;
+                case "localSpace":
+                    return !EditorController.Instance.selector.moveHandles.worldSpace;
+                case "moveEnabled":
+                    return EditorController.Instance.selector.moveHandles.moveEnabled;
+                case "rotateEnabled":
+                    return EditorController.Instance.selector.moveHandles.rotateEnabled;
             }
             return false;
         }
@@ -179,15 +183,20 @@ namespace PlusLevelStudio.Editor
                 EditorController.Instance.hotSlots[foundSlotScripts[i].slotIndex] = foundSlotScripts[i];
             }
             gridScaleTextBox = transform.Find("MoveGridSizeBox").GetComponentInChildren<TextMeshProUGUI>();
+            angleSnapTextBox = transform.Find("AngleSnapBox").GetComponentInChildren<TextMeshProUGUI>();
             translationSettings.Add(transform.Find("GridGauge").gameObject);
             translationSettings.Add(transform.Find("MoveGridSizeText").gameObject);
             translationSettings.Add(transform.Find("MoveGridSizeBox").gameObject);
             translationSettings.Add(transform.Find("AngleSnapText").gameObject);
+            translationSettings.Add(transform.Find("AngleSnapBox").gameObject);
             translationSettings.Add(transform.Find("WorldSpaceButton").gameObject);
             translationSettings.Add(transform.Find("LocalSpaceButton").gameObject);
+            translationSettings.Add(transform.Find("MoveVisibleButton").gameObject);
+            translationSettings.Add(transform.Find("RotateVisibleButton").gameObject);
             translationSettings.ForEach(x => x.SetActive(false));
             // EditorController exists by this point
             gridScaleTextBox.text = EditorController.Instance.gridSnap.ToString();
+            angleSnapTextBox.text = EditorController.Instance.angleSnap.ToString();
         }
 
         public override void SendInteractionMessage(string message, object data)
@@ -218,6 +227,13 @@ namespace PlusLevelStudio.Editor
                     }
                     gridScaleTextBox.text = EditorController.Instance.gridSnap.ToString();
                     break;
+                case "changeAngleSnap":
+                    if (float.TryParse((string)data, out float angleResult))
+                    {
+                        EditorController.Instance.angleSnap = angleResult;
+                    }
+                    angleSnapTextBox.text = EditorController.Instance.angleSnap.ToString();
+                    break;
                 case "showTranslateSettings":
                     if (settingsHidden)
                     {
@@ -237,6 +253,14 @@ namespace PlusLevelStudio.Editor
                     break;
                 case "switchToLocal":
                     EditorController.Instance.selector.moveHandles.worldSpace = false;
+                    break;
+                case "toggleMove":
+                    EditorController.Instance.selector.moveHandles.moveEnabled = !EditorController.Instance.selector.moveHandles.moveEnabled;
+                    EditorController.Instance.selector.moveHandles.SetArrows(EditorController.Instance.selector.moveHandles.enabledMoveAxis);
+                    break;
+                case "toggleRotate":
+                    EditorController.Instance.selector.moveHandles.rotateEnabled = !EditorController.Instance.selector.moveHandles.rotateEnabled;
+                    EditorController.Instance.selector.moveHandles.SetRings(EditorController.Instance.selector.moveHandles.enabledRotateAxis);
                     break;
             }
         }

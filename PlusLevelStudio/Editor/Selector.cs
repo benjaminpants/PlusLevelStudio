@@ -124,7 +124,7 @@ namespace PlusLevelStudio.Editor
             UpdateSelectionObjects();
         }
 
-        public void SelectObject(IEditorMovable movable, MoveAxis enabledAxis)
+        public void SelectObject(IEditorMovable movable, MoveAxis enabledAxis, RotateAxis enabledRotations)
         {
             // TODO: REMOVE HACK! ACK ACK ACK ITS SO HACKY IN HERE
             EditorController.Instance.UnhighlightAllCells();
@@ -132,6 +132,7 @@ namespace PlusLevelStudio.Editor
             selectedMovable = movable;
             state = SelectorState.Object;
             moveHandles.SetArrows(enabledAxis);
+            moveHandles.SetRings(enabledRotations);
             UpdateSelectionObjects();
             selectedMovable.Selected();
         }

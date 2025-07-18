@@ -19,6 +19,7 @@ namespace PlusLevelStudio.Editor
 
     public enum RotateAxis
     {
+        None = 0,
         Pitch = 1,
         Yaw = 2,
         Roll = 4,
@@ -28,19 +29,35 @@ namespace PlusLevelStudio.Editor
 
     public class MoveHandles : MonoBehaviour
     {
+
+        protected MoveAxis _enabledMove;
+        protected RotateAxis _enabledRotate;
+
+        public bool moveEnabled = true;
+        public bool rotateEnabled = true;
+
         public MoveAxis enabledMoveAxis
         {
             get
             {
-                return (arrows[0].gameObject.activeSelf ? MoveAxis.Z : MoveAxis.None) | (arrows[1].gameObject.activeSelf ? MoveAxis.Y : MoveAxis.None) | (arrows[2].gameObject.activeSelf ? MoveAxis.X : MoveAxis.None);
+                return _enabledMove;
             }
-            set
+        }
+
+        public RotateAxis enabledRotateAxis
+        {
+            get
             {
-                SetArrows(value);
+                return _enabledRotate;
             }
         }
         public void SetArrows(MoveAxis flags)
         {
+            _enabledMove = flags;
+            if (!moveEnabled)
+            {
+                flags = MoveAxis.None;
+            }
             arrows[0].gameObject.SetActive(flags.HasFlag(MoveAxis.Z));
             arrows[0].transform.localPosition = Vector3.forward;
             arrows[1].gameObject.SetActive(flags.HasFlag(MoveAxis.Y));
@@ -54,10 +71,17 @@ namespace PlusLevelStudio.Editor
 
         public void SetRings(RotateAxis flags)
         {
+            _enabledRotate = flags;
+            if (!rotateEnabled)
+            {
+                flags = RotateAxis.None;
+            }
             // yaw
             rings[0].gameObject.SetActive(flags.HasFlag(RotateAxis.Yaw));
             // pitch
+            rings[2].gameObject.SetActive(flags.HasFlag(RotateAxis.Pitch));
             // roll
+            rings[1].gameObject.SetActive(flags.HasFlag(RotateAxis.Roll));
         }
 
         public HandleArrow[] arrows = new HandleArrow[3];
@@ -103,16 +127,22 @@ namespace PlusLevelStudio.Editor
 
 
         Quaternion startRotation;
+        float startAngle = 0f;
         public void RingClickBegin(HandleRing ring)
         {
             currentRingPlane = new Plane(ring.transform.up, ring.transform.position);
             Vector3? start = EditorController.Instance.CastMouseRayToPlane(currentRingPlane, true);
             if (start == null)
             {
-                currentHandleMouseStart = Vector3.zero;
+                //currentHandleMouseStart = Vector3.zero;
+                startAngle = 0f;
                 return;
             }
-            currentHandleMouseStart = currentRingPlane.ClosestPointOnPlane(ring.transform.position) - start.Value;
+            //currentHandleMouseStart = currentRingPlane.ClosestPointOnPlane(ring.transform.position) - start.Value;
+
+            // calculate the initial angle:
+            Vector3 pointOnPlane = PointOnPlaneToPlaneSpace(currentRingPlane, start.Value, transform.position);
+            startAngle = Mathf.Atan2(pointOnPlane.x, pointOnPlane.y) * Mathf.Rad2Deg;
             startRotation = targetQuaternion;
         }
 
@@ -125,14 +155,15 @@ namespace PlusLevelStudio.Editor
             }
             Vector3 pointOnPlane = PointOnPlaneToPlaneSpace(currentRingPlane, pos.Value, transform.position);
             float dir = Mathf.Atan2(pointOnPlane.x, pointOnPlane.y) * Mathf.Rad2Deg; // do not unflip these it breaks it for some reason i know what the documentation says
-
+            dir -= startAngle;
             // apply snapping
-            if (angleSnap >= 0f)
+            if (angleSnap > 0f)
             {
                 dir = Mathf.Round(dir / angleSnap) * angleSnap;
             }
 
-            // only case of hardcoding worldSpace
+            // only case of hardcoding worldSpace checks
+            // TODO: fix, appears to be broken
             if (worldSpace)
             {
                 Vector3 rotation = transform.eulerAngles;
@@ -144,11 +175,9 @@ namespace PlusLevelStudio.Editor
                 return;
             }
 
-            // TODO: change this to not use dummyTransform
-            dummyTransform.position = transform.position;
-            dummyTransform.rotation = startRotation;
-            dummyTransform.rotation *= Quaternion.AngleAxis(dir, ring.axisVector);
-            mySelector.UpdateObjectRotation(dummyTransform.rotation);
+            Quaternion finalQuaternion = startRotation;
+            finalQuaternion *= Quaternion.AngleAxis(dir, ring.axisVector);
+            mySelector.UpdateObjectRotation(finalQuaternion);
         }
 
         public float gridSnap => EditorController.Instance.gridSnap;

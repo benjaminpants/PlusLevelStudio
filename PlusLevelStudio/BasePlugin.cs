@@ -421,6 +421,7 @@ namespace PlusLevelStudio
             yawRing.name = "YawRing";
             yawRing.GetComponent<HandleRing>().axisVector = Vector3.up;
             yawRing.SetActive(true);
+            handles.rings[0] = yawRing.GetComponent<HandleRing>();
 
             GameObject rollRing = GameObject.Instantiate(ringModelBase);
             rollRing.transform.SetParent(handles.transform, true);
@@ -429,6 +430,7 @@ namespace PlusLevelStudio
             rollRing.GetComponent<HandleRing>().axisVector = Vector3.right;
             rollRing.transform.up = Vector3.right;
             rollRing.SetActive(true);
+            handles.rings[1] = rollRing.GetComponent<HandleRing>();
 
             GameObject pitchRing = GameObject.Instantiate(ringModelBase);
             pitchRing.transform.SetParent(handles.transform, true);
@@ -437,6 +439,7 @@ namespace PlusLevelStudio
             pitchRing.GetComponent<HandleRing>().axisVector = Vector3.forward;
             pitchRing.transform.up = Vector3.forward;
             pitchRing.SetActive(true);
+            handles.rings[2] = pitchRing.GetComponent<HandleRing>();
 
             DestroyImmediate(baseLattice);
             DestroyImmediate(ringModelBase);

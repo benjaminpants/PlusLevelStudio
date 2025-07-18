@@ -71,7 +71,7 @@ namespace PlusLevelStudio.Editor
 
         // TODO: consider moving to selector?
         public float gridSnap = 0.25f;
-        public float angleSnap = 22.5f;
+        public float angleSnap = 11.25f;
 
         public bool MovementEnabled
         {

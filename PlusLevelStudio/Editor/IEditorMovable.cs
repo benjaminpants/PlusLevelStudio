@@ -33,6 +33,7 @@ namespace PlusLevelStudio.Editor
     {
         public IEditorMovable target;
         public MoveAxis allowedAxis = MoveAxis.None;
+        public RotateAxis allowedRotations = RotateAxis.None;
         public bool InteractableByTool(EditorTool tool)
         {
             return false;
@@ -40,7 +41,7 @@ namespace PlusLevelStudio.Editor
 
         public bool OnClicked()
         {
-            EditorController.Instance.selector.SelectObject(target, allowedAxis);
+            EditorController.Instance.selector.SelectObject(target, allowedAxis, allowedRotations);
             return false;
         }
 

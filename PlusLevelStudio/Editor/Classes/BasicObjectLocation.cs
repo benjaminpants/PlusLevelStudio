@@ -10,6 +10,7 @@ namespace PlusLevelStudio.Editor
         public string prefab;
         public Vector3 position;
         public Quaternion rotation;
+        bool moved = false;
         public void CleanupVisual(GameObject visualObject)
         {
             
@@ -35,10 +36,12 @@ namespace PlusLevelStudio.Editor
         {
             if (position.HasValue)
             {
+                moved = true;
                 this.position = position.Value;
             }
             if (rotation.HasValue)
             {
+                moved = true;
                 this.rotation = rotation.Value;
             }
             EditorController.Instance.UpdateVisual(this);
@@ -54,11 +57,21 @@ namespace PlusLevelStudio.Editor
         public void Selected()
         {
             EditorController.Instance.GetVisual(this).GetComponent<EditorDeletableObject>().Highlight("yellow");
+            EditorController.Instance.HoldUndo();
         }
 
         public void Unselected()
         {
             EditorController.Instance.GetVisual(this).GetComponent<EditorDeletableObject>().Highlight("none");
+            if (!moved)
+            {
+                EditorController.Instance.CancelHeldUndo();
+            }   
+            else
+            {
+                EditorController.Instance.AddHeldUndo();
+            }
+            moved = false;
         }
 
         public void UpdateVisual(GameObject visualObject)
