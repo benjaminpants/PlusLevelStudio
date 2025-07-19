@@ -80,6 +80,8 @@ namespace PlusLevelStudio.Editor
         public float gridSnap = 0.25f;
         public float angleSnap = 11.25f;
 
+        public string currentFileName = "test";
+
         public bool MovementEnabled
         {
             get
@@ -472,6 +474,13 @@ namespace PlusLevelStudio.Editor
             handler.transform.Find("Title").GetComponent<TextMeshProUGUI>().text = text;
             handler.OnYes = onYes;
             handler.OnNo = onNo;
+        }
+
+        public void CreateUIFileBrowser(string path, string extension, Action<string> onSubmit)
+        {
+            EditorUIFileBrowser fileBrowser = EditorController.Instance.CreateUI<EditorUIFileBrowser>("FileBrowser");
+            fileBrowser.Setup(path, extension, onSubmit);
+
         }
 
         public void RemoveUI(GameObject obj)

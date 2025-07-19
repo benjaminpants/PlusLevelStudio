@@ -3,8 +3,10 @@
 {"key":"Ed_Menu_Lightgroup_Text","value":"Light Group:"},
 {"key":"Ed_Menu_Strength","value":"Strength:"},
 {"key":"Ed_Menu_GridSize","value":"Grid-Size:"},
+{"key":"Ed_Menu_ApplyTexturesToSameType","value":"Apply to all rooms of same type"},
 {"key":"Ed_Menu_LightMassDeleteWarning","value":"This will delete {0} other light(s) that use this light group! Are you sure?"},
 {"key":"Ed_Menu_LightMassChangeWarning","value":"This will change {0} light(s)! Are you sure?"},
+{"key":"Ed_Menu_RoomMassChangeWarning","value":"This will change {0} rooms(s)! Are you sure?"},
 {"key":"Ed_Menu_ApplyLightGroupToSameType","value":"Apply light group to all lights of same type"}
 
 ]}

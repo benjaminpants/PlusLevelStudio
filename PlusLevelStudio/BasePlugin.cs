@@ -54,6 +54,8 @@ namespace PlusLevelStudio
         public GameObject pickupVisual;
         public GameObject posterVisual;
 
+        public static string levelFilePath => Path.Combine(Application.persistentDataPath, "Custom Levels");
+
         private Dictionary<Texture2D, Sprite> smallIconsFromTextures = new Dictionary<Texture2D, Sprite>();
 
         public Sprite GenerateOrGetSmallPosterSprite(PosterObject obj)
@@ -205,11 +207,34 @@ namespace PlusLevelStudio
                         new ObjectTool("bigdesk"),
                         new ObjectTool("desk"),
                         new ObjectTool("chair"),
+                        new ObjectTool("roundtable"),
+                        new ObjectTool("cabinet"),
+                        new ObjectTool("cafeteriatable"),
+                        new ObjectTool("waterfountain"),
                         new ObjectTool("dietbsodamachine"),
                         new ObjectTool("bsodamachine"),
                         new ObjectTool("zestymachine"),
                         new ObjectTool("crazymachine_zesty"),
                         new ObjectTool("crazymachine_bsoda"),
+                        new ObjectTool("payphone"),
+                        new ObjectTool("tapeplayer", 5f),
+                        new ObjectTool("locker"),
+                        new ObjectTool("bluelocker"),
+                        new ObjectTool("greenlocker"),
+                        new ObjectTool("computer", 3.75f),
+                        new ObjectTool("computer_off", 3.75f),
+                        new ObjectTool("rounddesk"),
+                        new ObjectTool("bookshelf"),
+                        new ObjectTool("bookshelf_hole"),
+                        new ObjectTool("pedestal"),
+                        new ObjectTool("tree"),
+                        new ObjectTool("appletree"),
+                        new ObjectTool("bananatree"),
+                        new ObjectTool("hopscotch"),
+                        new ObjectTool("hoop"),
+                        new ObjectTool("merrygoround"),
+                        new ObjectTool("counter"),
+                        new ObjectTool("examinationtable"),
                     } },
                     { "structures", new List<EditorTool>()
                     {
@@ -619,6 +644,36 @@ namespace PlusLevelStudio
             EditorInterface.AddObjectVisualWithMeshCollider("desk", LevelLoaderPlugin.Instance.basicObjects["desk"], true);
             EditorInterface.AddObjectVisualWithMeshCollider("chair", LevelLoaderPlugin.Instance.basicObjects["chair"], true);
             EditorInterface.AddObjectVisualWithMeshCollider("bigdesk", LevelLoaderPlugin.Instance.basicObjects["bigdesk"], true);
+            EditorInterface.AddObjectVisual("waterfountain", LevelLoaderPlugin.Instance.basicObjects["waterfountain"], true);
+            EditorInterface.AddObjectVisual("rounddesk", LevelLoaderPlugin.Instance.basicObjects["rounddesk"], true);
+            EditorInterface.AddObjectVisual("roundtable", LevelLoaderPlugin.Instance.basicObjects["roundtable"], true);
+
+            EditorInterface.AddObjectVisual("computer", LevelLoaderPlugin.Instance.basicObjects["computer"], true);
+            EditorInterface.AddObjectVisual("computer_off", LevelLoaderPlugin.Instance.basicObjects["computer_off"], true);
+            EditorInterface.AddObjectVisual("locker", LevelLoaderPlugin.Instance.basicObjects["locker"], true);
+            EditorInterface.AddObjectVisual("bluelocker", LevelLoaderPlugin.Instance.basicObjects["bluelocker"], true);
+            EditorInterface.AddObjectVisual("greenlocker", LevelLoaderPlugin.Instance.basicObjects["greenlocker"], true);
+
+            EditorInterface.AddObjectVisual("bookshelf", LevelLoaderPlugin.Instance.basicObjects["bookshelf"], true);
+            EditorInterface.AddObjectVisual("bookshelf_hole", LevelLoaderPlugin.Instance.basicObjects["bookshelf_hole"], true);
+
+            EditorInterface.AddObjectVisual("cabinet", LevelLoaderPlugin.Instance.basicObjects["cabinet"], true);
+            EditorBasicObject pedestalVisual = EditorInterface.AddObjectVisual("pedestal", LevelLoaderPlugin.Instance.basicObjects["pedestal"], true);
+            pedestalVisual.GetComponent<CapsuleCollider>().height = 3f;
+            pedestalVisual.GetComponent<CapsuleCollider>().center = new Vector3(0f,2f,0f);
+
+            EditorInterface.AddObjectVisualWithMeshCollider("cafeteriatable", LevelLoaderPlugin.Instance.basicObjects["cafeteriatable"], true);
+            EditorInterface.AddObjectVisual("hoop", LevelLoaderPlugin.Instance.basicObjects["hoop"], true);
+            EditorInterface.AddObjectVisualWithCustomBoxCollider("hopscotch", LevelLoaderPlugin.Instance.basicObjects["hopscotch"], new Vector3(30f,0.01f,30f), Vector3.zero);
+            EditorInterface.AddObjectVisual("tree", LevelLoaderPlugin.Instance.basicObjects["tree"], true);
+            // gotta fix this up
+            EditorBasicObject appleTreeVisual = EditorInterface.AddObjectVisual("appletree", LevelLoaderPlugin.Instance.basicObjects["appletree"], true);
+            appleTreeVisual.transform.Find("Sprite").Find("Pickup").Find("ItemSprite").GetComponent<SpriteRenderer>().sprite = ItemMetaStorage.Instance.FindByEnum(Items.Apple).value.itemSpriteLarge;
+            EditorInterface.AddObjectVisual("bananatree", LevelLoaderPlugin.Instance.basicObjects["bananatree"], true);
+
+            EditorInterface.AddObjectVisual("counter", LevelLoaderPlugin.Instance.basicObjects["counter"], true);
+            EditorInterface.AddObjectVisual("examinationtable", LevelLoaderPlugin.Instance.basicObjects["examinationtable"], true);
+            EditorInterface.AddObjectVisual("merrygoround", LevelLoaderPlugin.Instance.basicObjects["merrygoround"], true);
 
             // machines
             EditorInterface.AddObjectVisual("dietbsodamachine", LevelLoaderPlugin.Instance.basicObjects["dietbsodamachine"], true);
@@ -626,6 +681,8 @@ namespace PlusLevelStudio
             EditorInterface.AddObjectVisualWithMeshCollider("zestymachine", LevelLoaderPlugin.Instance.basicObjects["zestymachine"], true);
             EditorInterface.AddObjectVisualWithMeshCollider("crazymachine_bsoda", LevelLoaderPlugin.Instance.basicObjects["crazymachine_bsoda"], true);
             EditorInterface.AddObjectVisualWithMeshCollider("crazymachine_zesty", LevelLoaderPlugin.Instance.basicObjects["crazymachine_zesty"], true);
+            EditorInterface.AddObjectVisual("payphone", LevelLoaderPlugin.Instance.basicObjects["payphone"], true);
+            EditorInterface.AddObjectVisual("tapeplayer", LevelLoaderPlugin.Instance.basicObjects["tapeplayer"], true);
 
             // activities
             GameObject notebookVisual = EditorInterface.AddActivityVisual("notebook", Resources.FindObjectsOfTypeAll<Notebook>().First(x => x.GetInstanceID() >= 0).gameObject);

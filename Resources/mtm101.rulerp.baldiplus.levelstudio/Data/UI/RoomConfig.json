@@ -125,6 +125,21 @@
 			"tooltip":"Ed_Tip_ChangeTexture"
 		},
 		{
+			"name":"ApplyToSameTypeButton",
+			"type":"textbutton",
+			"anchoredPosition":[0,-60],
+			"size":[174,16],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"font":"ComicSans12",
+			"color":[255,255,255],
+			"text":"Ed_Menu_ApplyTexturesToSameType",
+			"alignment":"Center",
+			"onPressed":"changeToMatch",
+			"localized":true
+		},
+		{
 			"name":"ExitButton",
 			"type":"imageButton",
 			"graphic":"Exit",

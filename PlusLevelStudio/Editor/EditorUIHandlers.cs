@@ -10,6 +10,35 @@ using TMPro;
 
 namespace PlusLevelStudio.Editor
 {
+    public class EditorUIFileBrowser : EditorOverlayUIExchangeHandler
+    {
+        Action<string> onSubmit;
+        TextMeshProUGUI textbox;
+
+        public override void OnElementsCreated()
+        {
+            base.OnElementsCreated();
+            textbox = transform.Find("Textbox").GetComponent<TextMeshProUGUI>();
+        }
+
+        public void Setup(string path, string filename, Action<string> action)
+        {
+            onSubmit = action;
+            textbox.text = EditorController.Instance.currentFileName;
+        }
+
+        public override void SendInteractionMessage(string message, object data)
+        {
+            if (message == "submit")
+            {
+                onSubmit(textbox.text);
+                base.SendInteractionMessage("exit", null);
+                return;
+            }
+            base.SendInteractionMessage(message, data);
+        }
+    }
+
     public class EditorUIToolboxHandler : UIExchangeHandler
     {
         public string currentCategory = "tools";
@@ -211,6 +240,23 @@ namespace PlusLevelStudio.Editor
                     break;
                 case "play":
                     EditorController.Instance.CompileAndPlay();
+                    break;
+                case "load":
+                    EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.levelFilePath, "ebpl", (string typedName) =>
+                    {
+                        BinaryReader reader = new BinaryReader(new FileStream(Path.Combine(LevelStudioPlugin.levelFilePath, typedName + ".ebpl"), FileMode.Open, FileAccess.Read));
+                        EditorController.Instance.LoadEditorLevel(EditorLevelData.ReadFrom(reader), true);
+                        reader.Close();
+                    });
+                    break;
+                case "save":
+                    EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.levelFilePath, "ebpl", (string typedName) =>
+                    {
+                        Directory.CreateDirectory(LevelStudioPlugin.levelFilePath);
+                        BinaryWriter writer = new BinaryWriter(new FileStream(Path.Combine(LevelStudioPlugin.levelFilePath, typedName + ".ebpl"), FileMode.Create, FileAccess.Write));
+                        EditorController.Instance.levelData.Write(writer);
+                        writer.Close();
+                    });
                     break;
                 case "undo":
                     EditorController.Instance.PopUndo();

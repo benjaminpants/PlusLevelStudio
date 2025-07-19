@@ -168,7 +168,7 @@ namespace PlusStudioLevelLoader
             GameObject[] objects = Resources.FindObjectsOfTypeAll<GameObject>().Where(x => (x.GetInstanceID() >= 0) && (x.transform.parent == null)).ToArray();
             basicObjects.Add("desk", objects.First(x => (x.name == "Table_Test")));
             basicObjects.Add("bigdesk", objects.First(x => (x.name == "BigDesk")));
-            basicObjects.Add("cabinettall", objects.First(x => (x.name == "FilingCabinet_Tall")));
+            basicObjects.Add("cabinet", objects.First(x => (x.name == "FilingCabinet_Tall")));
             basicObjects.Add("chair", objects.First(x => (x.name == "Chair_Test")));
             basicObjects.Add("computer", objects.First(x => (x.name == "MyComputer")));
             basicObjects.Add("computer_off", objects.First(x => (x.name == "MyComputer_Off")));

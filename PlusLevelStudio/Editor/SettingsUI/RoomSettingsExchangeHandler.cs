@@ -2,6 +2,7 @@
 using PlusStudioLevelLoader;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using TMPro;
 using UnityEngine;
@@ -90,12 +91,35 @@ namespace PlusLevelStudio.Editor.SettingsUI
         public RawImage floorImage;
         public RawImage wallImage;
         public RawImage ceilingImage;
+        bool somethingChanged = false;
         EditorRoom myRoom;
         int changingFor = 0;
         public void AssignRoom(EditorRoom room)
         {
             myRoom = room;
             UpdateTextures();
+        }
+
+        public void ApplyToAllRooms(bool confirm)
+        {
+            EditorRoom[] nonMatchingRooms = EditorController.Instance.levelData.rooms.Where(x => 
+            ((x.textureContainer.floor != myRoom.textureContainer.floor) || 
+            (x.textureContainer.wall != myRoom.textureContainer.wall) || 
+            (x.textureContainer.floor != myRoom.textureContainer.floor)) && (x != myRoom) && (x.roomType == myRoom.roomType)).ToArray();
+            if ((nonMatchingRooms.Length > 0) && !confirm)
+            {
+                EditorController.Instance.CreateUIPopup(String.Format(LocalizationManager.Instance.GetLocalizedText("Ed_Menu_RoomMassChangeWarning"), nonMatchingRooms.Length), () => { ApplyToAllRooms(true); }, () => { });
+                return;
+            }
+            somethingChanged = true;
+            for (int i = 0; i < nonMatchingRooms.Length; i++)
+            {
+                nonMatchingRooms[i].textureContainer.floor = myRoom.textureContainer.floor;
+                nonMatchingRooms[i].textureContainer.wall = myRoom.textureContainer.wall;
+                nonMatchingRooms[i].textureContainer.ceiling = myRoom.textureContainer.ceiling;
+            }
+            EditorController.Instance.RefreshCells();
+            EditorController.Instance.levelData.doors.ForEach(x => EditorController.Instance.UpdateVisual(x));
         }
 
         public void ChangeTextures(string tex)
@@ -114,6 +138,7 @@ namespace PlusLevelStudio.Editor.SettingsUI
             }
             EditorController.Instance.RefreshCells();
             EditorController.Instance.levelData.doors.ForEach(x => EditorController.Instance.UpdateVisual(x));
+            somethingChanged = true;
             UpdateTextures();
         }
 
@@ -123,6 +148,21 @@ namespace PlusLevelStudio.Editor.SettingsUI
             floorImage = transform.Find("FloorTex").GetComponent<RawImage>();
             wallImage = transform.Find("WallTex").GetComponent<RawImage>();
             ceilingImage = transform.Find("CeilTex").GetComponent<RawImage>();
+            EditorController.Instance.HoldUndo();
+        }
+
+        public override bool OnExit()
+        {
+            if (somethingChanged)
+            {
+                EditorController.Instance.AddHeldUndo();
+            }
+            else
+            {
+                EditorController.Instance.CancelHeldUndo();
+            }
+            somethingChanged = false;
+            return base.OnExit();
         }
 
         public void UpdateTextures()
@@ -156,6 +196,9 @@ namespace PlusLevelStudio.Editor.SettingsUI
                     break;
                 case "changeTexture":
                     ChangeTextures((string)data);
+                    break;
+                case "changeToMatch":
+                    ApplyToAllRooms(false);
                     break;
             }
             base.SendInteractionMessage(message, data);

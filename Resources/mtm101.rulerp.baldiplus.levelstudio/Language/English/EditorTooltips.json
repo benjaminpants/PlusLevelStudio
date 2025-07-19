@@ -5,6 +5,7 @@
 {"key":"Ed_Tip_Worldspace","value":"World space translations"},
 {"key":"Ed_Tip_Localspace","value":"Local space translations"},
 {"key":"Ed_Tip_MoveSetting","value":"Move Handles Visible"},
-{"key":"Ed_Tip_RotateSetting","value":"Rotation Handles Visible"}
+{"key":"Ed_Tip_RotateSetting","value":"Rotation Handles Visible"},
+{"key":"Ed_Tip_ChangeTexture","value":"Change Texture"}
 
 ]}

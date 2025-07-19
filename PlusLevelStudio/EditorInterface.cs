@@ -200,7 +200,17 @@ namespace PlusLevelStudio
                 {
                     MeshCollider mesh = basic.gameObject.AddComponent<MeshCollider>();
                     mesh.convex = ((MeshCollider)baseCollider).convex;
+                    mesh.sharedMesh = ((MeshCollider)baseCollider).sharedMesh; // ????
                     edCollider = mesh;
+                }
+                else if (baseCollider is CapsuleCollider)
+                {
+                    CapsuleCollider capsule = basic.gameObject.AddComponent<CapsuleCollider>();
+                    capsule.radius = ((CapsuleCollider)baseCollider).radius;
+                    capsule.height = ((CapsuleCollider)baseCollider).height;
+                    capsule.center = ((CapsuleCollider)baseCollider).center;
+                    capsule.direction = ((CapsuleCollider)baseCollider).direction;
+                    edCollider = capsule;
                 }
                 else
                 {

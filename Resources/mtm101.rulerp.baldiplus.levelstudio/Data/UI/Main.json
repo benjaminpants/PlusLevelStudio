@@ -141,6 +141,32 @@
 			"tooltip":"Ed_Tip_PlayButton"
 		},
 		{
+			"name":"LoadButton",
+			"type":"imageButton",
+			"graphic":"LoadButton",
+			"hoverGraphic":"LoadButtonHover",
+			"anchoredPosition":[-32,0],
+			"size":[32,32],
+			"pivot":"#bottomRight",
+			"anchorMin":"#bottomRight",
+			"anchorMax":"#bottomRight",
+			"onPressed":"load",
+			"tooltip":"Ed_Tip_LoadButton"
+		},
+		{
+			"name":"SaveButton",
+			"type":"imageButton",
+			"graphic":"SaveButton",
+			"hoverGraphic":"SaveButtonHover",
+			"anchoredPosition":[-64,0],
+			"size":[32,32],
+			"pivot":"#bottomRight",
+			"anchorMin":"#bottomRight",
+			"anchorMax":"#bottomRight",
+			"onPressed":"save",
+			"tooltip":"Ed_Tip_SaveButton"
+		},
+		{
 			"name":"ObjectBox",
 			"type":"imageButton",
 			"graphic":"ObjectBoxBigger",
