@@ -231,6 +231,29 @@ namespace PlusLevelStudio
             basic.editorCollider = col;
             return basic;
         }
+
+        public static EditorBasicObject AddObjectVisualWithCustomSphereCollider(string key, GameObject obj, float radius, Vector3 center)
+        {
+            EditorBasicObject basic = AddObjectVisual(key, obj, false);
+            SphereCollider col = basic.gameObject.AddComponent<SphereCollider>();
+            col.radius = radius;
+            col.center = center;
+            basic.editorCollider = col;
+            return basic;
+        }
+
+        public static EditorBasicObject AddObjectVisualWithCustomCapsuleCollider(string key, GameObject obj, float radius, float height, int direction, Vector3 center)
+        {
+            EditorBasicObject basic = AddObjectVisual(key, obj, false);
+            CapsuleCollider col = basic.gameObject.AddComponent<CapsuleCollider>();
+            col.radius = radius;
+            col.height = height;
+            col.direction = direction;
+            col.center = center;
+            basic.editorCollider = col;
+            return basic;
+        }
+
         public static EditorBasicObject AddObjectVisualWithMeshCollider(string key, GameObject obj, bool convex)
         {
             EditorBasicObject basic = AddObjectVisual(key, obj, false);

@@ -356,6 +356,10 @@ namespace PlusLevelStudio.Editor
         {
             selector.DisableSelection();
             BaldiLevel level = levelData.Compile();
+            for (int i = 0; i < levelData.objects.Count; i++)
+            {
+                EditorController.Instance.GetVisual(levelData.objects[i]).GetComponent<EditorBasicObject>().SetMode(false); // revert to regular hitboxes
+            }
             level.entitySafeCells = CompileSafeCells(levelData, 2f);
             level.eventSafeCells = CompileSafeCells(levelData, 4f);
             // write to file for testing purposes

@@ -81,6 +81,7 @@ namespace PlusStudioLevelLoader
             roomTextureAliases.Add("Ground2", textures.First(x => x.name == "ground2"));
             roomTextureAliases.Add("DiamondPlateFloor", textures.First(x => x.name == "DiamongPlateFloor"));
             roomTextureAliases.Add("Corn", textures.First(x => x.name == "Corn"));
+            roomTextureAliases.Add("BasicFloor", textures.First(x => x.name == "BasicFloor"));
             yield return "Fetching materials...";
             // TODO: this is placeholder
             assetMan.AddFromResourcesNoClones<Material>();

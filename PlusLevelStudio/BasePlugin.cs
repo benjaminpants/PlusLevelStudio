@@ -214,25 +214,38 @@ namespace PlusLevelStudio
                         new ObjectTool("dietbsodamachine"),
                         new ObjectTool("bsodamachine"),
                         new ObjectTool("zestymachine"),
-                        new ObjectTool("crazymachine_zesty"),
                         new ObjectTool("crazymachine_bsoda"),
-                        new ObjectTool("payphone"),
-                        new ObjectTool("tapeplayer", 5f),
+                        new ObjectTool("crazymachine_zesty"),
+                        new ObjectToolNoRotation("payphone"),
+                        new ObjectToolNoRotation("tapeplayer", 5f),
                         new ObjectTool("locker"),
                         new ObjectTool("bluelocker"),
                         new ObjectTool("greenlocker"),
+                        new ObjectToolNoRotation("plant"),
+                        new ObjectToolNoRotation("decor_banana", 3.75f),
+                        new ObjectToolNoRotation("decor_globe", 3.75f),
+                        new ObjectToolNoRotation("decor_lunch", 3.75f),
+                        new ObjectToolNoRotation("decor_notebooks", 3.75f),
+                        new ObjectToolNoRotation("decor_papers", 3.75f),
+                        new ObjectToolNoRotation("decor_pencilnotes", 3.75f),
                         new ObjectTool("computer", 3.75f),
                         new ObjectTool("computer_off", 3.75f),
                         new ObjectTool("rounddesk"),
                         new ObjectTool("bookshelf"),
                         new ObjectTool("bookshelf_hole"),
                         new ObjectTool("pedestal"),
-                        new ObjectTool("tree"),
-                        new ObjectTool("appletree"),
-                        new ObjectTool("bananatree"),
+                        new ObjectToolNoRotation("pinetree"),
+                        new ObjectToolNoRotation("tree"),
+                        new ObjectToolNoRotation("appletree"),
+                        new ObjectToolNoRotation("bananatree"),
+                        new ObjectTool("merrygoround"),
                         new ObjectTool("hopscotch"),
                         new ObjectTool("hoop"),
-                        new ObjectTool("merrygoround"),
+                        new ObjectTool("picnictable"),
+                        new ObjectToolNoRotation("picnicbasket"),
+                        new ObjectToolNoRotation("rock"),
+                        new ObjectTool("tent"),
+                        new ObjectToolNoRotation("decor_zoneflag"),
                         new ObjectTool("counter"),
                         new ObjectTool("examinationtable"),
                     } },
@@ -666,6 +679,8 @@ namespace PlusLevelStudio
             EditorInterface.AddObjectVisual("hoop", LevelLoaderPlugin.Instance.basicObjects["hoop"], true);
             EditorInterface.AddObjectVisualWithCustomBoxCollider("hopscotch", LevelLoaderPlugin.Instance.basicObjects["hopscotch"], new Vector3(30f,0.01f,30f), Vector3.zero);
             EditorInterface.AddObjectVisual("tree", LevelLoaderPlugin.Instance.basicObjects["tree"], true);
+            EditorInterface.AddObjectVisual("pinetree", LevelLoaderPlugin.Instance.basicObjects["pinetree"], true);
+            EditorInterface.AddObjectVisualWithMeshCollider("picnictable", LevelLoaderPlugin.Instance.basicObjects["picnictable"], true);
             // gotta fix this up
             EditorBasicObject appleTreeVisual = EditorInterface.AddObjectVisual("appletree", LevelLoaderPlugin.Instance.basicObjects["appletree"], true);
             appleTreeVisual.transform.Find("Sprite").Find("Pickup").Find("ItemSprite").GetComponent<SpriteRenderer>().sprite = ItemMetaStorage.Instance.FindByEnum(Items.Apple).value.itemSpriteLarge;
@@ -674,6 +689,19 @@ namespace PlusLevelStudio
             EditorInterface.AddObjectVisual("counter", LevelLoaderPlugin.Instance.basicObjects["counter"], true);
             EditorInterface.AddObjectVisual("examinationtable", LevelLoaderPlugin.Instance.basicObjects["examinationtable"], true);
             EditorInterface.AddObjectVisual("merrygoround", LevelLoaderPlugin.Instance.basicObjects["merrygoround"], true);
+            EditorInterface.AddObjectVisual("tent", LevelLoaderPlugin.Instance.basicObjects["tent"], true);
+
+            // the ones with no hitboxes
+            EditorInterface.AddObjectVisualWithCustomSphereCollider("picnicbasket", LevelLoaderPlugin.Instance.basicObjects["picnicbasket"], 2f, Vector3.up);
+            EditorInterface.AddObjectVisualWithCustomSphereCollider("rock", LevelLoaderPlugin.Instance.basicObjects["rock"], 1f, Vector3.up);
+            EditorInterface.AddObjectVisualWithCustomSphereCollider("decor_banana", LevelLoaderPlugin.Instance.basicObjects["decor_banana"], 1f, Vector3.up);
+            EditorInterface.AddObjectVisualWithCustomSphereCollider("decor_globe", LevelLoaderPlugin.Instance.basicObjects["decor_globe"], 1f, Vector3.up);
+            EditorInterface.AddObjectVisualWithCustomSphereCollider("decor_lunch", LevelLoaderPlugin.Instance.basicObjects["decor_lunch"], 1f, Vector3.up);
+            EditorInterface.AddObjectVisualWithCustomSphereCollider("decor_notebooks", LevelLoaderPlugin.Instance.basicObjects["decor_notebooks"], 1f, Vector3.up);
+            EditorInterface.AddObjectVisualWithCustomSphereCollider("decor_papers", LevelLoaderPlugin.Instance.basicObjects["decor_papers"], 1f, Vector3.up);
+            EditorInterface.AddObjectVisualWithCustomSphereCollider("decor_pencilnotes", LevelLoaderPlugin.Instance.basicObjects["decor_pencilnotes"], 1f, Vector3.up);
+            EditorInterface.AddObjectVisualWithCustomSphereCollider("decor_zoneflag", LevelLoaderPlugin.Instance.basicObjects["decor_zoneflag"], 1f, Vector3.up);
+            EditorInterface.AddObjectVisualWithCustomCapsuleCollider("plant", LevelLoaderPlugin.Instance.basicObjects["plant"], 1f, 7f, 1, Vector3.up * 3.5f);
 
             // machines
             EditorInterface.AddObjectVisual("dietbsodamachine", LevelLoaderPlugin.Instance.basicObjects["dietbsodamachine"], true);
@@ -782,6 +810,7 @@ namespace PlusLevelStudio
             selectableTextures.Add("Grass");
             selectableTextures.Add("Fence");
             selectableTextures.Add("JohnnyWall");
+            selectableTextures.Add("BasicFloor");
             selectableTextures.Add("None");
             selectableTextures.Add("PlaceholderFloor");
             selectableTextures.Add("PlaceholderWall");
