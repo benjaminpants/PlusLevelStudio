@@ -69,9 +69,18 @@ namespace PlusStudioLevelLoader
             roomTextureAliases.Add("JohnnyWall", textures.First(x => x.name == "JohnnyWall"));
             roomTextureAliases.Add("None", textures.First(x => x.name == "Transparent"));
             roomTextureAliases.Add("PlaceholderWall", textures.First(x => x.name == "Placeholder_Wall"));
+            roomTextureAliases.Add("PlaceholderCeiling", textures.First(x => x.name == "Placeholder_Celing"));
+            roomTextureAliases.Add("PlaceholderFloor", textures.First(x => x.name == "Placeholder_Floor"));
             roomTextureAliases.Add("SaloonWall", textures.First(x => x.name == "SaloonWall"));
             roomTextureAliases.Add("MaintenanceFloor", textures.First(x => x.name == "MaintenanceFloor"));
             roomTextureAliases.Add("RedBrickWall", textures.First(x => x.name == "ColoredBrickWall"));
+            roomTextureAliases.Add("FactoryCeiling", textures.First(x => x.name == "Factory_Ceiling"));
+            roomTextureAliases.Add("LabFloor", textures.First(x => x.name == "LabFloor_Texture"));
+            roomTextureAliases.Add("LabWall", textures.First(x => x.name == "LabWall_Texture"));
+            roomTextureAliases.Add("LabCeiling", textures.First(x => x.name == "LabCeiling_Texture"));
+            roomTextureAliases.Add("Ground2", textures.First(x => x.name == "ground2"));
+            roomTextureAliases.Add("DiamondPlateFloor", textures.First(x => x.name == "DiamongPlateFloor"));
+            roomTextureAliases.Add("Corn", textures.First(x => x.name == "Corn"));
             yield return "Fetching materials...";
             // TODO: this is placeholder
             assetMan.AddFromResourcesNoClones<Material>();

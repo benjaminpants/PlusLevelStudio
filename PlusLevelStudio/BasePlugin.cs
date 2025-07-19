@@ -50,6 +50,7 @@ namespace PlusLevelStudio
         public Dictionary<string, Type> structureTypes = new Dictionary<string, Type>();
         public Dictionary<string, GameObject> genericStructureDisplays = new Dictionary<string, GameObject>();
         public Dictionary<string, GameObject> npcDisplays = new Dictionary<string, GameObject>();
+        public List<string> selectableTextures = new List<string>();
         public GameObject pickupVisual;
         public GameObject posterVisual;
 
@@ -283,7 +284,7 @@ namespace PlusLevelStudio
         IEnumerator FindObjectsAndSetupEditor()
         {
             List<Direction> directions = Directions.All();
-            yield return 9;
+            yield return 10;
             yield return "Grabbing necessary resources...";
             assetMan.Add<Mesh>("Quad", Resources.FindObjectsOfTypeAll<Mesh>().First(x => x.GetInstanceID() >= 0 && x.name == "Quad"));
             Material[] materials = Resources.FindObjectsOfTypeAll<Material>().Where(x => x.GetInstanceID() >= 0).ToArray();
@@ -701,6 +702,44 @@ namespace PlusLevelStudio
             EditorInterface.AddNPCVisual("cloudy", LevelLoaderPlugin.Instance.npcAliases["cloudy"]);
             EditorInterface.AddNPCVisual("reflex", LevelLoaderPlugin.Instance.npcAliases["reflex"]);
 
+            yield return "Configuring Misc...";
+
+            /*
+            roomTextureAliases.Add("ElevatorBack", textures.First(x => x.name == "ElBack"));
+            roomTextureAliases.Add("FactoryCeiling", textures.First(x => x.name == "Factory_Ceiling"));
+            roomTextureAliases.Add("FactoryBeams", textures.First(x => x.name == "FactoryBeams_Texture"));
+            roomTextureAliases.Add("LabFloor", textures.First(x => x.name == "LabFloor_Texture"));
+            roomTextureAliases.Add("LabWall", textures.First(x => x.name == "LabWall_Texture"));
+            roomTextureAliases.Add("LabCeiling", textures.First(x => x.name == "LabCeiling_Texture"));
+            roomTextureAliases.Add("Ground2", textures.First(x => x.name == "ground2"));
+            roomTextureAliases.Add("DiamondPlateFloor", textures.First(x => x.name == "DiamongPlateFloor"));
+            roomTextureAliases.Add("Corn", textures.First(x => x.name == "Corn"));
+            */
+            selectableTextures.Add("HallFloor");
+            selectableTextures.Add("Wall");
+            selectableTextures.Add("Ceiling");
+            selectableTextures.Add("BlueCarpet");
+            selectableTextures.Add("WallWithMolding");
+            selectableTextures.Add("TileFloor");
+            selectableTextures.Add("ElevatorCeiling");
+            selectableTextures.Add("Grass");
+            selectableTextures.Add("Fence");
+            selectableTextures.Add("JohnnyWall");
+            selectableTextures.Add("None");
+            selectableTextures.Add("PlaceholderFloor");
+            selectableTextures.Add("PlaceholderWall");
+            selectableTextures.Add("PlaceholderCeiling");
+            selectableTextures.Add("SaloonWall");
+            selectableTextures.Add("MaintenanceFloor");
+            selectableTextures.Add("RedBrickWall");
+            selectableTextures.Add("FactoryCeiling");
+            selectableTextures.Add("LabFloor");
+            selectableTextures.Add("LabWall");
+            selectableTextures.Add("LabCeiling");
+            selectableTextures.Add("Ground2");
+            selectableTextures.Add("DiamondPlateFloor");
+            selectableTextures.Add("Corn");
+
             yield return "Setting up Editor Controller...";
             GameObject editorControllerObject = new GameObject("StandardEditorController");
             editorControllerObject.ConvertToPrefab(true);
@@ -784,6 +823,8 @@ namespace PlusLevelStudio
             UIBuilder.elementBuilders.Add("dragdetect", new DragDetectorBuilder());
             UIBuilder.elementBuilders.Add("textbox", new TextBoxBuilder());
             UIBuilder.elementBuilders.Add("textbutton", new TextButtonBuilder());
+            UIBuilder.elementBuilders.Add("rawimage", new RawImageBuilder());
+            UIBuilder.elementBuilders.Add("rawimagebutton", new RawImageButtonBuilder());
             SpritesFromPath(Path.Combine(AssetLoader.GetModPath(this), "UI", "Editor"), "");
         }
 

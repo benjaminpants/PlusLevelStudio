@@ -17,6 +17,7 @@ using PlusStudioLevelFormat;
 using PlusStudioLevelLoader;
 using System.Linq;
 using MidiPlayerTK;
+using PlusLevelStudio.Editor.SettingsUI;
 
 namespace PlusLevelStudio.Editor
 {
@@ -459,6 +460,7 @@ namespace PlusLevelStudio.Editor
                 uiObjects[i].transform.SetAsFirstSibling();
             }*/
             CursorController.Instance.transform.SetAsLastSibling();
+            tooltipBase.transform.SetAsLastSibling();
             uiOverlays.Add(obj.gameObject);
             SetChannelsMuted(true);
             return obj;
@@ -812,6 +814,16 @@ namespace PlusLevelStudio.Editor
             }
             HighlightCells(area.CalculateOwnedCells(), "yellow");
             selector.SelectArea(area.rect.Value, (IntVector2 sd, IntVector2 pd) => AreaResize(area, sd, pd));
+            selector.ShowSettings(((area.rect.Value.min.ToMystVector().ToWorld() + area.rect.Value.max.ToMystVector().ToWorld()) / 2f) + Vector3.up * 25f - new Vector3(5f,0f,5f), () =>
+            {
+                OpenRoomSettings(levelData.RoomFromId(area.roomId));
+            });
+        }
+
+        protected void OpenRoomSettings(EditorRoom room)
+        {
+            RoomSettingsExchangeHandler settings = CreateUI<RoomSettingsExchangeHandler>("RoomConfig");
+            settings.AssignRoom(room);
         }
 
         protected virtual void SelectTile(IntVector2 tileSelected)

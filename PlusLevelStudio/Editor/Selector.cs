@@ -30,7 +30,7 @@ namespace PlusLevelStudio.Editor
         /// </summary>
         Object,
         /// <summary>
-        /// An object that only can have its settings changed. Show the settings.
+        /// An object that only can have its settings changed. Show the settings. Legacy.
         /// </summary>
         Settings
     }
@@ -70,6 +70,7 @@ namespace PlusLevelStudio.Editor
 
         public IntVector2 selectedTile { get; private set; } = new IntVector2(0, 0);
 
+        protected bool showSettings = false;
         public RectInt selectedArea { get; private set; } = new RectInt(new Vector2Int(0,0), new Vector2Int(0, 0));
 
         protected Direction currentArrow = Direction.Null;
@@ -107,6 +108,7 @@ namespace PlusLevelStudio.Editor
         /// </summary>
         public void DisableSelection()
         {
+            HideSettings();
             state = SelectorState.None;
             NullActions();
             UpdateSelectionObjects();
@@ -118,6 +120,7 @@ namespace PlusLevelStudio.Editor
         /// <param name="tile"></param>
         public void SelectTile(IntVector2 tile)
         {
+            HideSettings();
             selectedTile = tile;
             state = SelectorState.Tile;
             NullActions();
@@ -126,6 +129,7 @@ namespace PlusLevelStudio.Editor
 
         public void SelectObject(IEditorMovable movable, MoveAxis enabledAxis, RotateAxis enabledRotations)
         {
+            HideSettings();
             // TODO: REMOVE HACK! ACK ACK ACK ITS SO HACKY IN HERE
             EditorController.Instance.UnhighlightAllCells();
             NullActions();
@@ -145,6 +149,7 @@ namespace PlusLevelStudio.Editor
         /// <param name="directionSelectAction"></param>
         public void SelectRotation(IntVector2 tile, Action<Direction> directionSelectAction)
         {
+            HideSettings();
             selectedTile = tile;
             selectedArea = new RectInt(new Vector2Int(tile.x,tile.z), new Vector2Int(1,1));
             state = SelectorState.Direction;
@@ -164,6 +169,7 @@ namespace PlusLevelStudio.Editor
         /// <param name="resizeAction">First parameter is the change in size, the second parameter is the change in position.</param>
         public void SelectArea(RectInt rect, Action<IntVector2, IntVector2> resizeAction)
         {
+            HideSettings();
             NullActions();
             selectedArea = rect;
             state = SelectorState.Area;
@@ -175,14 +181,28 @@ namespace PlusLevelStudio.Editor
             }
         }
 
+
+
         public void ShowSettings(Vector3 position, Action onClicked)
+        {
+            showSettings = true;
+            gearButton.clickedAction = onClicked;
+            gearButton.transform.position = position;
+            gearButton.gameObject.SetActive(true);
+        }
+        public void HideSettings()
+        {
+            showSettings = false;
+            gearButton.gameObject.SetActive(false);
+        }
+
+        public void ShowSettingsSelect(Vector3 position, Action onClicked)
         {
             // TODO: REMOVE HACK! ACK ACK ACK ITS SO HACKY IN HERE
             EditorController.Instance.UnhighlightAllCells();
             state = SelectorState.Settings;
-            gearButton.clickedAction = onClicked;
+            ShowSettings(position, onClicked);
             UpdateSelectionObjects();
-            gearButton.transform.position = position;
         }
 
 
@@ -266,7 +286,7 @@ namespace PlusLevelStudio.Editor
                 tileArrows[i].SetActive(false);
             }
             moveHandles.gameObject.SetActive(false);
-            gearButton.gameObject.SetActive(false);
+            gearButton.gameObject.SetActive(showSettings);
             switch (state)
             {
                 case SelectorState.None:

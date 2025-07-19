@@ -48,7 +48,7 @@ namespace PlusLevelStudio.Editor
 
         public bool OnClicked()
         {
-            EditorController.Instance.selector.ShowSettings(transform.TransformPoint(offset), activateSettingsOn.SettingsClicked);
+            EditorController.Instance.selector.ShowSettingsSelect(transform.TransformPoint(offset), activateSettingsOn.SettingsClicked);
             return false;
         }
 

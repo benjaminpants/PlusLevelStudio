@@ -96,7 +96,7 @@ namespace PlusLevelStudio.Editor
 
         public void RefreshPage(int page)
         {
-            int startIndex = page * hotSlots.Length; // TODO: evaluate
+            int startIndex = page * hotSlots.Length;
             List<EditorTool> toolList = EditorController.Instance.currentMode.availableTools[currentCategory];
             for (int i = startIndex; i < startIndex + hotSlots.Length; i++)
             {
