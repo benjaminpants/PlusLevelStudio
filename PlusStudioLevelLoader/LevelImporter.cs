@@ -154,7 +154,6 @@ namespace PlusStudioLevelLoader
                     room = LevelLoaderPlugin.Instance.exitDatas[level.exits[i].type].room
                 });
             }
-
             for (int i = 0; i < level.structures.Count; i++)
             {
                 StructureBuilderData structureData = new StructureBuilderData();
@@ -166,6 +165,15 @@ namespace PlusStudioLevelLoader
                     structureData.data.Add(new StructureData(converter.prefabAliases.ContainsKey(info.prefab) ? converter.prefabAliases[info.prefab] : null, info.position.ToInt(), (Direction)info.direction, info.data));
                 }
                 asset.structures.Add(structureData);
+            }
+            for (int i = 0; i < level.posters.Count; i++)
+            {
+                asset.posters.Add(new PosterData()
+                {
+                    position = level.posters[i].position.ToInt(),
+                    direction = (Direction)level.posters[i].direction,
+                    poster = LevelLoaderPlugin.Instance.posterAliases[level.posters[i].poster]
+                });
             }
             return asset;
         }

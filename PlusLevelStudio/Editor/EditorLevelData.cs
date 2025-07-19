@@ -27,6 +27,7 @@ namespace PlusLevelStudio.Editor
         public List<BasicObjectLocation> objects = new List<BasicObjectLocation>();
         public List<StructureLocation> structures = new List<StructureLocation>();
         public List<NPCPlacement> npcs = new List<NPCPlacement>();
+        public List<PosterPlacement> posters = new List<PosterPlacement>();
         public EditorRoom hall => rooms[0];
 
         public Vector3 spawnPoint = new Vector3(5f,5f,5f);
@@ -175,6 +176,18 @@ namespace PlusLevelStudio.Editor
                     changedSomething = true;
                 }
             }
+            for (int i = posters.Count - 1; i >= 0; i--)
+            {
+                if (!posters[i].ValidatePosition(this))
+                {
+                    if (updateVisuals)
+                    {
+                        EditorController.Instance.RemoveVisual(posters[i]);
+                    }
+                    posters.RemoveAt(i);
+                    changedSomething = true;
+                }
+            }
             return changedSomething;
         }
 
@@ -298,6 +311,10 @@ namespace PlusLevelStudio.Editor
             for (int i = 0; i < npcs.Count; i++)
             {
                 npcs[i].position -= posDif;
+            }
+            for (int i = 0; i < posters.Count; i++)
+            {
+                posters[i].position -= posDif;
             }
             spawnPoint -= new Vector3(posDif.x * 10f, 0f, posDif.z * 10f);
             return true;
@@ -486,6 +503,15 @@ namespace PlusLevelStudio.Editor
                     position = npcs[i].position.ToByte()
                 });
             }
+            for (int i = 0; i < posters.Count; i++)
+            {
+                compiled.posters.Add(new PosterInfo()
+                {
+                    poster = posters[i].type,
+                    direction = (PlusDirection)posters[i].direction,
+                    position = posters[i].position.ToByte()
+                });
+            }
             return compiled;
         }
 
@@ -503,6 +529,13 @@ namespace PlusLevelStudio.Editor
             for (int i = 0; i < structures.Count; i++)
             {
                 if (structures[i].OccupiesWall(pos, dir))
+                {
+                    thingsOccupying++;
+                }
+            }
+            for (int i = 0; i < posters.Count; i++)
+            {
+                if (posters[i].OccupiesWall(pos, dir))
                 {
                     thingsOccupying++;
                 }
@@ -525,6 +558,7 @@ namespace PlusLevelStudio.Editor
             stringComp.AddStrings(items.Select(x => x.item));
             stringComp.AddStrings(objects.Select(x => x.prefab));
             stringComp.AddStrings(npcs.Select(x => x.npc));
+            stringComp.AddStrings(posters.Select(x => x.type));
             stringComp.AddStrings(rooms.Select(x => x.roomType));
             stringComp.AddStrings(rooms.Select(x => x.textureContainer.floor));
             stringComp.AddStrings(rooms.Select(x => x.textureContainer.wall));
@@ -620,6 +654,13 @@ namespace PlusLevelStudio.Editor
             {
                 stringComp.WriteStoredString(writer, npcs[i].npc);
                 writer.Write(npcs[i].position.ToByte());
+            }
+            writer.Write(posters.Count);
+            for (int i = 0; i < posters.Count; i++)
+            {
+                stringComp.WriteStoredString(writer, posters[i].type);
+                writer.Write(posters[i].position.ToByte());
+                writer.Write((byte)posters[i].direction);
             }
             writer.Write(spawnPoint.ToData());
             writer.Write((byte)spawnDirection);
@@ -739,6 +780,16 @@ namespace PlusLevelStudio.Editor
                 {
                     npc=stringComp.ReadStoredString(reader),
                     position=reader.ReadByteVector2().ToInt()
+                });
+            }
+            int posterCount = reader.ReadInt32();
+            for (int i = 0; i < posterCount; i++)
+            {
+                levelData.posters.Add(new PosterPlacement()
+                {
+                    type=stringComp.ReadStoredString(reader),
+                    position=reader.ReadByteVector2().ToInt(),
+                    direction=(Direction)reader.ReadByte()
                 });
             }
             levelData.spawnPoint = reader.ReadUnityVector3().ToUnity();

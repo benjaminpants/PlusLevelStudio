@@ -20,6 +20,7 @@ namespace PlusStudioLevelFormat
         public List<ExitInfo> exits = new List<ExitInfo>();
         public List<StructureInfo> structures = new List<StructureInfo>();
         public List<NPCInfo> npcs = new List<NPCInfo>();
+        public List<PosterInfo> posters = new List<PosterInfo>();
         public UnityVector3 spawnPoint = new UnityVector3(5f,5f,5f);
         public UnityVector3 UnitySpawnPoint
         {
@@ -210,6 +211,16 @@ namespace PlusStudioLevelFormat
                     position=reader.ReadByteVector2(),
                 });
             }
+            int posterCount = reader.ReadInt32();
+            for (int i = 0; i < posterCount; i++)
+            {
+                level.posters.Add(new PosterInfo()
+                {
+                    poster = objectsCompressor.ReadStoredString(reader),
+                    position = reader.ReadByteVector2(),
+                    direction = (PlusDirection)reader.ReadByte(),
+                });
+            }
             return level;
         }
 
@@ -240,6 +251,7 @@ namespace PlusStudioLevelFormat
             objectsCompressor.AddStrings(tileObjects.Select(x => x.prefab));
             objectsCompressor.AddStrings(exits.Select(x => x.type));
             objectsCompressor.AddStrings(npcs.Select(x => x.npc));
+            objectsCompressor.AddStrings(posters.Select(x => x.poster));
             objectsCompressor.AddStrings(structures.Select(x => x.type));
             foreach (var structure in structures)
             {
@@ -382,6 +394,13 @@ namespace PlusStudioLevelFormat
             {
                 objectsCompressor.WriteStoredString(writer, npcs[i].npc);
                 writer.Write(npcs[i].position);
+            }
+            writer.Write(posters.Count);
+            for (int i = 0; i < posters.Count; i++)
+            {
+                objectsCompressor.WriteStoredString(writer, posters[i].poster);
+                writer.Write(posters[i].position);
+                writer.Write((byte)posters[i].direction);
             }
         }
     }

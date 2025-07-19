@@ -79,6 +79,13 @@ namespace PlusStudioLevelFormat
         public ByteVector2 position;
     }
 
+    public class PosterInfo
+    {
+        public string poster;
+        public ByteVector2 position;
+        public PlusDirection direction = PlusDirection.Null;
+    }
+
     public class DoorInfo
     {
         public string prefab;

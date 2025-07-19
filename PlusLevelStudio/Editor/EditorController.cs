@@ -60,6 +60,8 @@ namespace PlusLevelStudio.Editor
         public SpawnpointMoverAndVisualizerScript spawnpointVisualPrefab;
         public SpawnpointMoverAndVisualizerScript spawnpointVisual;
 
+        protected Dictionary<PosterObject, Texture2D> generatedTextures = new Dictionary<PosterObject, Texture2D>();
+
         public bool toolboxOnNullTool;
         public GameCamera cameraPrefab;
         public GameCamera camera;
@@ -70,6 +72,7 @@ namespace PlusLevelStudio.Editor
         public Ray mouseRay;
         public Vector3 mousePlanePosition = Vector3.zero;
         protected bool mousePressedLastFrame = false; // used for handling tools
+        public TextTextureGenerator textTextureGenerator;
         public IntVector2 mouseGridPosition => mousePlanePosition.ToCellVector();
 
         // TODO: consider moving to selector?
@@ -150,6 +153,22 @@ namespace PlusLevelStudio.Editor
             reader.Close();
         }
 
+        static FieldInfo _TextTextureGenerator = AccessTools.Field(typeof(EnvironmentController), "TextTextureGenerator");
+        public Texture2D GetOrGeneratePoster(PosterObject p)
+        {
+            if ((p.textData == null) || (p.textData.Length == 0))
+            {
+                return p.baseTexture;
+            }
+            if (generatedTextures.ContainsKey(p))
+            {
+                return generatedTextures[p];
+            }
+            Texture2D tex = ((TextTextureGenerator)_TextTextureGenerator.GetValue(workerEc)).GenerateTextTexture(p);
+            generatedTextures.Add(p, tex);
+            return tex;
+        }
+
         public void LoadEditorLevel(EditorLevelData newData, bool wipeUndoHistory = true)
         {
             if (heldInteractable != null)
@@ -199,6 +218,10 @@ namespace PlusLevelStudio.Editor
                 AddVisual(item);
             }
             foreach (NPCPlacement item in levelData.npcs)
+            {
+                AddVisual(item);
+            }
+            foreach (PosterPlacement item in levelData.posters)
             {
                 AddVisual(item);
             }
@@ -939,6 +962,8 @@ namespace PlusLevelStudio.Editor
             workerEc.gameObject.SetActive(false);
             workerEc.name = "WorkerEnvironmentController";
             workerEc.lightMode = LightMode.Cumulative;
+            textTextureGenerator = (TextTextureGenerator)_TextTextureGenerator.GetValue(workerEc);
+            textTextureGenerator.transform.SetParent(null);
             workerRc = workerEc.transform.Find("NullRoom").GetComponent<RoomController>();
             workerRc.ec = workerEc;
             workerRc.ReflectionInvoke("Awake", null);

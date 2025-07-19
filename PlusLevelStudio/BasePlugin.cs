@@ -51,6 +51,31 @@ namespace PlusLevelStudio
         public Dictionary<string, GameObject> genericStructureDisplays = new Dictionary<string, GameObject>();
         public Dictionary<string, GameObject> npcDisplays = new Dictionary<string, GameObject>();
         public GameObject pickupVisual;
+        public GameObject posterVisual;
+
+        private Dictionary<Texture2D, Sprite> smallIconsFromTextures = new Dictionary<Texture2D, Sprite>();
+
+        public Sprite GenerateOrGetSmallPosterSprite(PosterObject obj)
+        {
+            if (smallIconsFromTextures.ContainsKey(obj.baseTexture))
+            {
+                return smallIconsFromTextures[obj.baseTexture];
+            }
+            Texture2D smallTex = new Texture2D(32,32, TextureFormat.RGBA32, false);
+            smallTex.filterMode = FilterMode.Point;
+            smallTex.name = obj.baseTexture.name + "_Tiny";
+            Texture2D texToCopy = obj.baseTexture;
+            if (!obj.baseTexture.isReadable)
+            {
+                texToCopy = obj.baseTexture.MakeReadableCopy(false);
+            }
+            Color[] colors = MaterialModifier.GetColorsForTileTexture(texToCopy, 32);
+            smallTex.SetPixels(colors);
+            smallTex.Apply();
+            Sprite generatedSprite = AssetLoader.SpriteFromTexture2D(smallTex, 1f);
+            smallIconsFromTextures.Add(obj.baseTexture, generatedSprite);
+            return generatedSprite;
+        }
 
         void Awake()
         {
@@ -206,6 +231,7 @@ namespace PlusLevelStudio
                         new NPCTool("test"),
                         new NPCTool("reflex"),
                     } },
+                    { "posters", new List<EditorTool>()},
                     { "tools", new List<EditorTool>()
                     {
                         new ElevatorTool("elevator", true),
@@ -224,10 +250,26 @@ namespace PlusLevelStudio
                     "objects",
                     "structures",
                     "lights",
+                    "posters",
                     "tools"
                 },
                 defaultTools = new string[] { "room_hall", "room_class", "room_faculty", "room_office", "room_closet", "light_fluorescent", "door_standard", "merge", "delete"}
             };
+
+            List<PosterObject> allPosters = LevelLoaderPlugin.Instance.posterAliases.Values.Where(x => x.GetInstanceID() >= 0).ToList();
+            allPosters.Sort((a, b) =>
+            {
+                int texNameCompare = a.baseTexture.name.CompareTo(b.baseTexture.name);
+                if (texNameCompare != 0)
+                {
+                    return texNameCompare;
+                }
+                return a.name.CompareTo(b.name);
+            });
+            foreach (PosterObject poster in allPosters)
+            {
+                editorController.currentMode.availableTools["posters"].Add(new PosterTool(LevelLoaderPlugin.Instance.posterAliases.First(x => x.Value == poster).Key));
+            }
 
             editorController.EditorModeAssigned();
 
@@ -559,6 +601,18 @@ namespace PlusLevelStudio
             pickupVisual.name = "PickupVisual";
             pickupVisual.AddComponent<MovableObjectInteraction>().allowedAxis = MoveAxis.Horizontal;
             pickupVisual.layer = editorInteractableLayer;
+
+            // poster visual
+            GameObject posterVisualBase = new GameObject("PosterVisual");
+            posterVisualBase.ConvertToPrefab(true);
+            GameObject wallQuad = CreateQuad("PosterWall", new Material(assetMan.Get<Material>("tileAlpha")), new Vector3(0f,5f,4.999f), Vector3.zero);
+            wallQuad.transform.SetParent(posterVisualBase.transform, true);
+            BoxCollider collider = posterVisualBase.AddComponent<BoxCollider>();
+            collider.size = new Vector3(10f,10f,0.02f);
+            collider.center = wallQuad.transform.localPosition;
+            posterVisualBase.layer = editorInteractableLayer;
+            collider.gameObject.AddComponent<EditorDeletableObject>().AddRenderer(wallQuad.GetComponent<MeshRenderer>(), "none");
+            posterVisual = posterVisualBase;
 
             // object visuals
             EditorInterface.AddObjectVisualWithMeshCollider("desk", LevelLoaderPlugin.Instance.basicObjects["desk"], true);

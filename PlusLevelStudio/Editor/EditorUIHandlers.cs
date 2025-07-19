@@ -64,7 +64,7 @@ namespace PlusLevelStudio.Editor
 
         public void Open()
         {
-            RefreshPage(0);
+            RefreshPage(currentPage);
             SetTip(null);
             RefreshCategories();
         }

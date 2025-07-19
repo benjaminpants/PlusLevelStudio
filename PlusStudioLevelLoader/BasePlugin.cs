@@ -9,6 +9,7 @@ using System.Collections;
 using MTM101BaldAPI.Registers;
 using System.Linq;
 using MTM101BaldAPI.AssetTools;
+using System.IO;
 
 namespace PlusStudioLevelLoader
 {
@@ -32,6 +33,7 @@ namespace PlusStudioLevelLoader
         public Dictionary<string, Activity> activityAliases = new Dictionary<string, Activity>();
         public Dictionary<string, LoaderStructureData> structureAliases = new Dictionary<string, LoaderStructureData>();
         public Dictionary<string, NPC> npcAliases = new Dictionary<string, NPC>();
+        public Dictionary<string, PosterObject> posterAliases = new Dictionary<string, PosterObject>();
 
         public static Texture2D RoomTextureFromAlias(string alias)
         {
@@ -228,6 +230,30 @@ namespace PlusStudioLevelLoader
             npcAliases.Add("test", MTM101BaldiDevAPI.npcMetadata.Get(Character.LookAt).value);
             npcAliases.Add("cloudy", MTM101BaldiDevAPI.npcMetadata.Get(Character.Cumulo).value);
             npcAliases.Add("reflex", MTM101BaldiDevAPI.npcMetadata.Get(Character.DrReflex).value);
+
+            // auto add all posters i cant be bothered
+            List<PosterObject> allBasePosters = Resources.FindObjectsOfTypeAll<PosterObject>().Where(x => x.GetInstanceID() >= 0).ToList();
+            List<PosterObject> toRemove = new List<PosterObject>();
+            foreach (PosterObject poster in allBasePosters)
+            {
+                if (poster.multiPosterArray.Length == 0) continue;
+                toRemove.AddRange(poster.multiPosterArray);
+                toRemove.Remove(poster);
+            }
+            allBasePosters.RemoveAll(x => toRemove.Contains(x));
+            foreach (PosterObject poster in allBasePosters)
+            {
+                if (poster.name.StartsWith("Chk_Tut_"))
+                {
+                    continue;
+                }
+                if (poster.name == ("StoreNeon_4_wRestockBase"))
+                {
+                    continue;
+                }
+                
+                posterAliases.Add(poster.name, poster);
+            }
         }
     }
 }
