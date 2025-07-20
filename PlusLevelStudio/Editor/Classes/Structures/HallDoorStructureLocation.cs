@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using UnityEngine;
 
@@ -139,7 +140,7 @@ namespace PlusLevelStudio.Editor
             }
         }
 
-        public override void ReadInto(BinaryReader reader)
+        public override void ReadInto(BinaryReader reader, StringCompressor compressor)
         {
             byte version = reader.ReadByte();
             int childCount = reader.ReadInt32();
@@ -148,7 +149,14 @@ namespace PlusLevelStudio.Editor
                 SimpleLocation child = CreateNewChild();
                 if (version > 0)
                 {
-                    child.prefab = reader.ReadString();
+                    if (version > 1)
+                    {
+                        child.prefab = compressor.ReadStoredString(reader);
+                    }
+                    else
+                    {
+                        child.prefab = reader.ReadString();
+                    }
                 }
                 child.position = reader.ReadByteVector2().ToInt();
                 child.direction = (Direction)reader.ReadByte();
@@ -190,16 +198,21 @@ namespace PlusLevelStudio.Editor
             return myChildren.Count > 0;
         }
 
-        public override void Write(BinaryWriter writer)
+        public override void Write(BinaryWriter writer, StringCompressor compressor)
         {
             writer.Write((byte)1); // incase i change this in the future
             writer.Write(myChildren.Count);
             for (int i = 0; i < myChildren.Count; i++)
             {
-                writer.Write(myChildren[i].prefab);
+                compressor.WriteStoredString(writer, myChildren[i].prefab);
                 writer.Write(myChildren[i].position.ToByte());
                 writer.Write((byte)myChildren[i].direction);
             }
+        }
+
+        public override void AddStringsToCompressor(StringCompressor compressor)
+        {
+            compressor.AddStrings(myChildren.Select(x => x.prefab));
         }
     }
 
@@ -335,25 +348,30 @@ namespace PlusLevelStudio.Editor
             }
         }
 
-        public override void Write(BinaryWriter writer)
+        public override void Write(BinaryWriter writer, StringCompressor compressor)
         {
-            base.Write(writer);
-            writer.Write((byte)0);
+            base.Write(writer, compressor);
+            writer.Write((byte)1);
             writer.Write(buttons.Count);
             for (int i = 0; i < myChildren.Count; i++)
             {
+                compressor.WriteStoredString(writer, buttons[i].prefab);
                 writer.Write(buttons[i].position.ToByte());
                 writer.Write((byte)buttons[i].direction);
             }
         }
-        public override void ReadInto(BinaryReader reader)
+        public override void ReadInto(BinaryReader reader, StringCompressor compressor)
         {
-            base.ReadInto(reader);
+            base.ReadInto(reader, compressor);
             byte version = reader.ReadByte();
             int buttonCount = reader.ReadInt32();
             for (int i = 0; i < buttonCount; i++)
             {
                 SimpleLocation button = CreateNewButton();
+                if (version > 0)
+                {
+                    button.prefab = compressor.ReadStoredString(reader);
+                }
                 button.position = reader.ReadByteVector2().ToInt();
                 button.direction = (Direction)reader.ReadByte();
                 buttons.Add(button);
@@ -367,6 +385,12 @@ namespace PlusLevelStudio.Editor
             EditorController.Instance.RemoveVisual(buttons[oldIndex]);
             buttons.RemoveAt(oldIndex);
             return val;
+        }
+
+        public override void AddStringsToCompressor(StringCompressor compressor)
+        {
+            base.AddStringsToCompressor(compressor);
+            compressor.AddStrings(buttons.Select(x => x.prefab));
         }
     }
 }

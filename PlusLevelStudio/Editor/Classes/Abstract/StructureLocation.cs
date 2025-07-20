@@ -42,18 +42,25 @@ namespace PlusLevelStudio.Editor
         public abstract void ShiftBy(Vector3 worldOffset, IntVector2 cellOffset, IntVector2 sizeDifference);
 
         /// <summary>
+        /// Called before writing, passes in a string compressor you can add your structures strings to reduce file size.
+        /// Be sure to use the appropiate methods from the compressor in your reader and writer.
+        /// </summary>
+        /// <param name="compressor"></param>
+        public abstract void AddStringsToCompressor(StringCompressor compressor);
+
+        /// <summary>
         /// Write the data for your structure to be saved in the editor level file.
         /// Do not write the type, as that has already been done.
         /// </summary>
         /// <param name="writer"></param>
-        public abstract void Write(BinaryWriter writer);
+        public abstract void Write(BinaryWriter writer, StringCompressor compressor);
 
         /// <summary>
         /// Read the data for your structure to be loaded from the editor level file.
         /// Do not read the type, as that has already been done.
         /// </summary>
         /// <param name="reader"></param>
-        public abstract void ReadInto(BinaryReader reader);
+        public abstract void ReadInto(BinaryReader reader, StringCompressor compressor);
 
         /// <summary>
         /// Compile this structure into the StructureInfo class that will later get converted into StructureData by the level loader.

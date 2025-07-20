@@ -577,6 +577,7 @@ namespace PlusLevelStudio.Editor
             stringComp.AddStrings(rooms.Select(x => x.textureContainer.ceiling));
             stringComp.AddStrings(rooms.Where(x => x.activity != null).Select(x => x.activity.type));
             stringComp.AddStrings(structures.Select(x => x.type));
+            structures.ForEach(x => x.AddStringsToCompressor(stringComp));
             stringComp.AddString("null");
             stringComp.FinalizeDatabase();
             stringComp.WriteStringDatabase(writer);
@@ -659,7 +660,7 @@ namespace PlusLevelStudio.Editor
             for (int i = 0; i < structures.Count; i++)
             {
                 stringComp.WriteStoredString(writer, structures[i].type);
-                structures[i].Write(writer);
+                structures[i].Write(writer, stringComp);
             }
             writer.Write(npcs.Count);
             for (int i = 0; i < npcs.Count; i++)
@@ -782,7 +783,7 @@ namespace PlusLevelStudio.Editor
             {
                 string type = stringComp.ReadStoredString(reader);
                 StructureLocation structure = LevelStudioPlugin.Instance.ConstructStructureOfType(type);
-                structure.ReadInto(reader);
+                structure.ReadInto(reader, stringComp);
                 levelData.structures.Add(structure);
             }
             int npcCount = reader.ReadInt32();
