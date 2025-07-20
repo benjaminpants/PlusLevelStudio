@@ -304,9 +304,7 @@ namespace PlusLevelStudio.Editor
         // we just call the delete method of our associated object since that will delete us as well
         public virtual bool OnButtonDelete(EditorLevelData data, SimpleLocation local, bool deleteSelf)
         {
-            Debug.Log("deleting button!");
             int associatedIndex = buttons.IndexOf(local);
-            Debug.Log(associatedIndex);
             return OnSubDelete(data, myChildren[associatedIndex], deleteSelf);
         }
 
@@ -364,9 +362,7 @@ namespace PlusLevelStudio.Editor
 
         public override bool OnSubDelete(EditorLevelData data, SimpleLocation local, bool deleteSelf)
         {
-            Debug.Log("deleting sub!");
             int oldIndex = myChildren.IndexOf(local);
-            Debug.Log(oldIndex);
             bool val = base.OnSubDelete(data, local, deleteSelf);
             EditorController.Instance.RemoveVisual(buttons[oldIndex]);
             buttons.RemoveAt(oldIndex);
