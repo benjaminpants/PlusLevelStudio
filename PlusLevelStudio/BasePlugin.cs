@@ -57,6 +57,8 @@ namespace PlusLevelStudio
         public GameObject pickupVisual;
         public GameObject posterVisual;
 
+        public Dictionary<string, EditorMode> modes = new Dictionary<string, EditorMode>();
+
         public static string levelFilePath => Path.Combine(Application.persistentDataPath, "Custom Levels");
 
         private Dictionary<Texture2D, Sprite> smallIconsFromTextures = new Dictionary<Texture2D, Sprite>();
@@ -89,6 +91,7 @@ namespace PlusLevelStudio
             Harmony harmony = new Harmony("mtm101.rulerp.baldiplus.levelstudio");
             LoadingEvents.RegisterOnAssetsLoaded(Info, LoadAssets(), LoadingEventOrder.Start);
             LoadingEvents.RegisterOnAssetsLoaded(Info, FindObjectsAndSetupEditor(), LoadingEventOrder.Pre);
+            LoadingEvents.RegisterOnAssetsLoaded(Info, SetupModes(), LoadingEventOrder.Post);
             harmony.PatchAllConditionals();
         }
 
@@ -112,7 +115,7 @@ namespace PlusLevelStudio
             return structure;
         }
 
-        public IEnumerator LoadEditorScene(string pathToLoad = null)
+        public IEnumerator LoadEditorScene(string modeToLoad, string pathToLoad = null)
         {
             AsyncOperation waitForSceneLoad = SceneManager.LoadSceneAsync("Game");
             while (!waitForSceneLoad.isDone)
@@ -128,229 +131,8 @@ namespace PlusLevelStudio
 
             EditorController editorController = GameObject.Instantiate<EditorController>(assetMan.Get<EditorController>("MainEditorController"));
 
-            // TODO: put code that actually does logic for assigning editor mode here instead of just creating it on the fly
-            editorController.currentMode = new EditorMode()
-            {
-                id = "full",
-                availableTools = new Dictionary<string, List<EditorTool>>()
-                {
-                    { "rooms", new List<EditorTool>()
-                    {
-                        new RoomTool("hall"),
-                        new RoomTool("class"),
-                        new RoomTool("faculty"),
-                        new RoomTool("office"),
-                        new RoomTool("closet"),
-                        new RoomTool("reflex"),
-                        new RoomTool("cafeteria"),
-                        new RoomTool("outside"),
-                        new RoomTool("library"),
-                        new RoomTool("lightbulbtesting")
-                    } },
-                    { "doors", new List<EditorTool>()
-                    {
-                        new DoorTool("standard"),
-                        new DoorTool("swinging"),
-                        new DoorTool("oneway"),
-                        new DoorTool("coinswinging"),
-                        new DoorTool("swinging_silent"),
-                        new DoorTool("autodoor"),
-                        new DoorTool("flaps"),
-                        new WindowTool("standard"),
-                    } },
-                    { "items", new List<EditorTool>()
-                    {
-                        new ItemTool("quarter"),
-                        new ItemTool("dietbsoda"),
-                        new ItemTool("bsoda"),
-                        new ItemTool("zesty"),
-                        new ItemTool("banana"),
-                        new ItemTool("scissors"),
-                        new ItemTool("boots"),
-                        new ItemTool("nosquee"),
-                        new ItemTool("keys"),
-                        new ItemTool("tape"),
-                        new ItemTool("clock"),
-                        new ItemTool("swinglock"),
-                        new ItemTool("whistle"),
-                        new ItemTool("dirtychalk"),
-                        new ItemTool("nametag"),
-                        new ItemTool("inviselixer"),
-                        new ItemTool("reachextend"),
-                        new ItemTool("teleporter"),
-                        new ItemTool("portalposter"),
-                        new ItemTool("grapple"),
-                        new ItemTool("apple"),
-                        new ItemTool("buspass"),
-                        new ItemTool("shapekey_circle"),
-                        new ItemTool("shapekey_triangle"),
-                        new ItemTool("shapekey_square"),
-                        new ItemTool("shapekey_star"),
-                        new ItemTool("shapekey_heart"),
-                        new ItemTool("shapekey_weird"),
-                        new ItemTool("points25", uiAssetMan.Get<Sprite>("Tools/items_points25")),
-                        new ItemTool("points50", uiAssetMan.Get<Sprite>("Tools/items_points50")),
-                        new ItemTool("points100", uiAssetMan.Get<Sprite>("Tools/items_points100")),
-                    } },
-                    { "lights", new List<EditorTool>()
-                    {
-                        new LightTool("fluorescent"),
-                        new LightTool("caged"),
-                        new LightTool("cordedhanging"),
-                        new LightTool("standardhanging")
-                    } },
-                    { "activities", new List<EditorTool>()
-                    {
-                        new ActivityTool("notebook", 5f),
-                        new ActivityTool("mathmachine", 0f),
-                        new ActivityTool("mathmachine_corner", 0f),
-                    } },
-                    { "objects", new List<EditorTool>()
-                    {
-                        new ObjectTool("bigdesk"),
-                        new ObjectTool("desk"),
-                        new ObjectTool("chair"),
-                        new BulkObjectTool("chairdesk", new BulkObjectData[]
-                        {
-                            new BulkObjectData("chair", new Vector3(0f,0f,-2f)),
-                            new BulkObjectData("desk", new Vector3(0f,0f,0f)),
-                        }),
-                        new ObjectTool("roundtable"),
-                        new BulkObjectTool("roundtable1", new BulkObjectData[]
-                        {
-                            new BulkObjectData("roundtable", new Vector3(0f,0f,0f)),
-                            new BulkObjectData("chair", new Vector3(0f,0f,-5f)),
-                            new BulkObjectData("chair", new Vector3(-5f,0f,0f), new Vector3(0f, 90f, 0f)),
-                            new BulkObjectData("chair", new Vector3(0f,0f,5f), new Vector3(0f, 180f, 0f)),
-                            new BulkObjectData("chair", new Vector3(5f,0f,0f), new Vector3(0f, 270f, 0f))
-                        }),
-                        new BulkObjectTool("roundtable2", new BulkObjectData[]
-                        {
-                            new BulkObjectData("roundtable", new Vector3(0f,0f,0f)),
-                            new BulkObjectData("chair", new Vector3(3.5355f,0f,-3.535f), new Vector3(0f, 315f, 0f)),
-                            new BulkObjectData("chair", new Vector3(-3.5355f,0f,-3.535f), new Vector3(0f, 45f, 0f)),
-                            new BulkObjectData("chair", new Vector3(-3.5355f,0f,3.535f), new Vector3(0f, 135f, 0f)),
-                            new BulkObjectData("chair", new Vector3(3.5355f,0f,3.535f), new Vector3(0f, 225f, 0f))
-                        }),
-                        new ObjectTool("cabinet"),
-                        new ObjectTool("cafeteriatable"),
-                        new ObjectTool("waterfountain"),
-                        new ObjectTool("dietbsodamachine"),
-                        new ObjectTool("bsodamachine"),
-                        new ObjectTool("zestymachine"),
-                        new ObjectTool("crazymachine_bsoda"),
-                        new ObjectTool("crazymachine_zesty"),
-                        new ObjectToolNoRotation("payphone"),
-                        new ObjectToolNoRotation("tapeplayer", 5f),
-                        new ObjectTool("locker"),
-                        new ObjectTool("bluelocker"),
-                        new ObjectTool("greenlocker"),
-                        new BulkObjectTool("multilockers", new BulkObjectData[]
-                        {
-                            new BulkObjectData("locker", new Vector3(-4f,0f,4f)),
-                            new BulkObjectData("locker", new Vector3(-2f,0f,4f)),
-                            new BulkObjectData("locker", new Vector3(0f,0f,4f)),
-                            new BulkObjectData("locker", new Vector3(2f,0f,4f)),
-                            new BulkObjectData("locker", new Vector3(4f,0f,4f))
-                        }),
-                        new BulkObjectRandomizedTool("lockerrandomblue", new BulkObjectData[]
-                        {
-                            new BulkObjectData("locker", new Vector3(-4f,0f,4f)),
-                            new BulkObjectData("locker", new Vector3(-2f,0f,4f)),
-                            new BulkObjectData("locker", new Vector3(0f,0f,4f)),
-                            new BulkObjectData("locker", new Vector3(2f,0f,4f)),
-                            new BulkObjectData("locker", new Vector3(4f,0f,4f))
-                        }, new List<KeyValuePair<string, string>>() { new KeyValuePair<string, string>("locker", "bluelocker") }),
-                        new ObjectToolNoRotation("plant"),
-                        new ObjectToolNoRotation("decor_banana", 3.75f),
-                        new ObjectToolNoRotation("decor_globe", 3.75f),
-                        new ObjectToolNoRotation("decor_lunch", 3.75f),
-                        new ObjectToolNoRotation("decor_notebooks", 3.75f),
-                        new ObjectToolNoRotation("decor_papers", 3.75f),
-                        new ObjectToolNoRotation("decor_pencilnotes", 3.75f),
-                        new ObjectToolNoRotation("ceilingfan"),
-                        new ObjectTool("computer", 3.75f),
-                        new ObjectTool("computer_off", 3.75f),
-                        new ObjectTool("rounddesk"),
-                        new ObjectTool("bookshelf"),
-                        new ObjectTool("bookshelf_hole"),
-                        new ObjectTool("counter"),
-                        new ObjectTool("examinationtable"),
-                        new ObjectTool("pedestal"),
-                        new ObjectToolNoRotation("pinetree"),
-                        new ObjectToolNoRotation("tree"),
-                        new ObjectToolNoRotation("appletree"),
-                        new ObjectToolNoRotation("bananatree"),
-                        new ObjectTool("merrygoround"),
-                        new ObjectTool("hopscotch"),
-                        new ObjectTool("hoop"),
-                        new ObjectTool("picnictable"),
-                        new ObjectToolNoRotation("picnicbasket"),
-                        new ObjectToolNoRotation("rock"),
-                        new ObjectTool("tent"),
-                        new ObjectToolNoRotation("decor_zoneflag"),
-                        new ObjectTool("arrow", 5f),
-                    } },
-                    { "structures", new List<EditorTool>()
-                    {
-                        new HallDoorStructureTool("facultyonlydoor"),
-                        new HallDoorWithButtonsTool("lockdowndoor")
-                    } },
-                    { "npcs", new List<EditorTool>()
-                    {
-                        new NPCTool("baldi"),
-                        new NPCTool("principal"),
-                        new NPCTool("sweep"),
-                        new NPCTool("playtime"),
-                        new NPCTool("bully"),
-                        new NPCTool("crafters"),
-                        new NPCTool("prize"),
-                        new NPCTool("cloudy"),
-                        new NPCTool("chalkface"),
-                        new NPCTool("beans"),
-                        new NPCTool("pomp"),
-                        new NPCTool("test"),
-                        new NPCTool("reflex"),
-                    } },
-                    { "posters", new List<EditorTool>()},
-                    { "tools", new List<EditorTool>()
-                    {
-                        new ElevatorTool("elevator", true),
-                        new ElevatorTool("elevator", false),
-                        new SpawnpointTool(),
-                        new MergeTool(),
-                        new DeleteTool(),
-                    } }
-                },
-                categoryOrder = new string[] {
-                    "rooms",
-                    "doors",
-                    "npcs",
-                    "items",
-                    "activities",
-                    "objects",
-                    "structures",
-                    "lights",
-                    "posters",
-                    "tools"
-                },
-                defaultTools = new string[] { "room_hall", "room_class", "room_faculty", "room_office", "room_closet", "light_fluorescent", "door_standard", "merge", "delete"}
-            };
-
-            List<PosterObject> allPosters = LevelLoaderPlugin.Instance.posterAliases.Values.Where(x => x.GetInstanceID() >= 0).ToList();
-            allPosters.Sort((a, b) =>
-            {
-                int texNameCompare = a.baseTexture.name.CompareTo(b.baseTexture.name);
-                if (texNameCompare != 0)
-                {
-                    return texNameCompare;
-                }
-                return a.name.CompareTo(b.name);
-            });
-            foreach (PosterObject poster in allPosters)
-            {
-                editorController.currentMode.availableTools["posters"].Add(new PosterTool(LevelLoaderPlugin.Instance.posterAliases.First(x => x.Value == poster).Key));
-            }
+            editorController.currentMode = modes[modeToLoad];
+            Debug.Log(editorController.currentMode);
 
             editorController.EditorModeAssigned();
 
@@ -363,7 +145,46 @@ namespace PlusLevelStudio
 
         public void GoToEditor()
         {
-            StartCoroutine(LoadEditorScene());
+            StartCoroutine(LoadEditorScene("full"));
+        }
+
+        IEnumerator SetupModes()
+        {
+            yield return 1;
+            yield return "Setting up editor modes...";
+            // setup modes
+
+            EditorMode fullMode = new EditorMode()
+            {
+                id = "full",
+                availableTools = new Dictionary<string, List<EditorTool>>(),
+                categoryOrder = new string[] {
+                    "rooms",
+                    "doors",
+                    "npcs",
+                    "items",
+                    "activities",
+                    "objects",
+                    "structures",
+                    "lights",
+                    "posters",
+                    "tools"
+                },
+                defaultTools = new string[] { "room_hall", "room_class", "room_faculty", "room_office", "light_fluorescent", "door_swinging", "door_standard", "merge", "delete" }
+            };
+
+            EditorInterfaceModes.AddVanillaRooms(fullMode);
+            EditorInterfaceModes.AddVanillaDoors(fullMode);
+            EditorInterfaceModes.AddVanillaNPCs(fullMode);
+            EditorInterfaceModes.AddVanillaItems(fullMode);
+            EditorInterfaceModes.AddVanillaActivities(fullMode);
+            EditorInterfaceModes.AddVanillaObjects(fullMode);
+            EditorInterfaceModes.AddVanillaStructures(fullMode, true);
+            EditorInterfaceModes.AddVanillaLights(fullMode);
+            EditorInterfaceModes.AddVanillaPosters(fullMode);
+            EditorInterfaceModes.AddVanillaToolTools(fullMode);
+
+            modes.Add("full", fullMode);
         }
 
         IEnumerator FindObjectsAndSetupEditor()
