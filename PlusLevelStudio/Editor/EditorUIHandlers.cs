@@ -264,6 +264,10 @@ namespace PlusLevelStudio.Editor
                             SendInteractionMessage("saveAndPlay", null);
                         }, PlayLevel);
                     }
+                    else
+                    {
+                        PlayLevel();
+                    }
                     break;
                 case "load":
                     EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.levelFilePath, "ebpl", (string typedName) =>
