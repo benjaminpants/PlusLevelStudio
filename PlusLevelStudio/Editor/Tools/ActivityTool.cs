@@ -9,7 +9,7 @@ namespace PlusLevelStudio.Editor.Tools
     {
         protected float height = 0f;
         public override string id => "activity_" + type;
-        public ActivityTool(string type, float heightOffset) : base(type, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/activity_" + type))
+        internal ActivityTool(string type, float heightOffset) : base(type, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/activity_" + type))
         {
             height = heightOffset;
         }

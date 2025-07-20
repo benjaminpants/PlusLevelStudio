@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using UnityEngine;
 
 namespace PlusLevelStudio.Editor.Tools
 {
@@ -11,8 +12,14 @@ namespace PlusLevelStudio.Editor.Tools
         public override string id => "poster_" + LevelLoaderPlugin.Instance.posterAliases[type];
         public override string titleKey => "Ed_Poster_Title_" + type;
         public override string descKey => "Ed_Poster_Desc_" + type;
+        // not internalizing this one because auto generated poster sprites work regardless of the mod origin assuming they have been added to the loader
         public PosterTool(string type) : base(type, LevelStudioPlugin.Instance.GenerateOrGetSmallPosterSprite(LevelLoaderPlugin.Instance.posterAliases[type]))
         {
+        }
+
+        public PosterTool(string type, Sprite sprite) : base(type, sprite)
+        {
+
         }
 
         public override void OnPlaced(Direction dir)

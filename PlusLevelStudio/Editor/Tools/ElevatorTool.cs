@@ -11,7 +11,7 @@ namespace PlusLevelStudio.Editor.Tools
         protected IntVector2? pos;
         public bool isSpawn = false;
         public override string id => "exit_" + type + (isSpawn ? "_start" : "");
-        public ElevatorTool(string type, bool isSpawn) : this(type, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/exit_" + type + (isSpawn ? "_start" : "")), isSpawn)
+        internal ElevatorTool(string type, bool isSpawn) : this(type, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/exit_" + type + (isSpawn ? "_start" : "")), isSpawn)
         {
         }
         public ElevatorTool(string type, Sprite sprite, bool isSpawn)

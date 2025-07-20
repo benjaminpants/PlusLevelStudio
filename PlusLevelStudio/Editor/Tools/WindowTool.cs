@@ -8,7 +8,7 @@ namespace PlusLevelStudio.Editor.Tools
     public class WindowTool : DoorTool
     {
         public override string id => "window_" + type;
-        public WindowTool(string type) : base(type, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/window_" + type))
+        internal WindowTool(string type) : base(type, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/window_" + type))
         {
         }
         public WindowTool(string type, Sprite sprite) : base(type, sprite)

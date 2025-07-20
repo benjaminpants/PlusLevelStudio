@@ -10,7 +10,7 @@ namespace PlusLevelStudio.Editor.Tools
         public string lightType;
         public override string id => "light_" + lightType;
 
-        public LightTool(string lightType) : this(lightType, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/light_" + lightType))
+        internal LightTool(string lightType) : this(lightType, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/light_" + lightType))
         {
         }
 

@@ -13,7 +13,7 @@ namespace PlusLevelStudio.Editor.Tools
         protected IntVector2? startVector = null;
         public override string id => "room_" + roomType;
 
-        public RoomTool(string roomId) : this(roomId, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/room_" + roomId))
+        internal RoomTool(string roomId) : this(roomId, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/room_" + roomId))
         {
 
         }

@@ -11,7 +11,7 @@ namespace PlusLevelStudio.Editor.Tools
         public override string id => "door_" + type;
         protected IntVector2? pos;
 
-        public DoorTool(string type) : this(type, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/door_" + type))
+        internal DoorTool(string type) : this(type, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/door_" + type))
         {
             
         }

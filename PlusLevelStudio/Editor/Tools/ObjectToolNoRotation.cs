@@ -11,11 +11,11 @@ namespace PlusLevelStudio.Editor.Tools
         public string type;
         public override string id => "object_" + type;
         public float verticalOffset = 0f;
-        public ObjectToolNoRotation(string type) : this(type, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/object_" + type), 0f)
+        internal ObjectToolNoRotation(string type) : this(type, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/object_" + type), 0f)
         {
         }
 
-        public ObjectToolNoRotation(string type, float offset) : this(type, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/object_" + type), offset)
+        internal ObjectToolNoRotation(string type, float offset) : this(type, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/object_" + type), offset)
         {
         }
 

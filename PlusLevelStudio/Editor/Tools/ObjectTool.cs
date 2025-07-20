@@ -9,19 +9,20 @@ namespace PlusLevelStudio.Editor.Tools
     {
         public float verticalOffset = 0f;
         public override string id => "object_" + type;
-        public ObjectTool(string type) : this(type, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/object_" + type), 0f)
+        internal ObjectTool(string type) : this(type, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/object_" + type), 0f)
         {
         }
+
+        internal ObjectTool(string type, float offset) : this(type)
+        {
+            verticalOffset = offset;
+        }
+
         public ObjectTool(string type, Sprite sprite) : this(type, sprite, 0f)
         {
         }
 
         public ObjectTool(string type, Sprite sprite, float offset) : base(type, sprite)
-        {
-            verticalOffset = offset;
-        }
-
-        public ObjectTool(string type, float offset) : this(type)
         {
             verticalOffset = offset;
         }

@@ -73,7 +73,7 @@ namespace PlusLevelStudio.Editor.Tools
         public List<KeyValuePair<string, string>> replacements = new List<KeyValuePair<string, string>>();
         public BulkObjectData[] originalData = new BulkObjectData[0];
 
-        public BulkObjectRandomizedTool(string type, BulkObjectData[] data, List<KeyValuePair<string, string>> replacements) : base(type, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/bulkobject_" + type), data)
+        internal BulkObjectRandomizedTool(string type, BulkObjectData[] data, List<KeyValuePair<string, string>> replacements) : base(type, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/bulkobject_" + type), data)
         {
             originalData = data;
             this.replacements = replacements;

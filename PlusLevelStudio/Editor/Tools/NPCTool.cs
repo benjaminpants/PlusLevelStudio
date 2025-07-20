@@ -14,7 +14,7 @@ namespace PlusLevelStudio.Editor.Tools
         public override string titleKey => LevelLoaderPlugin.Instance.npcAliases[npc].Poster.textData[0].textKey;
         public override string descKey => LevelLoaderPlugin.Instance.npcAliases[npc].Poster.textData[1].textKey;
 
-        public NPCTool(string npc) : this(npc, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/npc_" + npc))
+        internal NPCTool(string npc) : this(npc, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/npc_" + npc))
         {
         }
 
