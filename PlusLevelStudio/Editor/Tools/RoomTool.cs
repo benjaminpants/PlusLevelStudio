@@ -67,6 +67,7 @@ namespace PlusLevelStudio.Editor.Tools
                 else
                 {
                     edRoomData = EditorController.Instance.levelData.CreateRoomWithDefaultSettings(roomType);
+                    EditorController.Instance.SetupVisualsForRoom(edRoomData);
                     areaToAdd = new RectCellArea(rect.position.ToMystVector(), rect.size.ToMystVector(), (ushort)(EditorController.Instance.levelData.rooms.Count + 1));
                 }
                 if (EditorController.Instance.levelData.AreaValid(areaToAdd))

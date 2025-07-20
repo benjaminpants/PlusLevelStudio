@@ -267,5 +267,14 @@ namespace PlusLevelStudio
             basic.editorCollider = col;
             return basic;
         }
+
+        public static T AddRoomVisualManager<T>(string forType) where T : EditorRoomVisualManager
+        {
+            GameObject roomVisual = new GameObject(forType + "_VisualManager");
+            roomVisual.ConvertToPrefab(true);
+            T visual = roomVisual.AddComponent<T>();
+            LevelStudioPlugin.Instance.roomVisuals.Add(forType, visual);
+            return visual;
+        }
     }
 }

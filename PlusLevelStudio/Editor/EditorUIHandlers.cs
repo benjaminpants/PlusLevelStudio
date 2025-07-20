@@ -21,10 +21,14 @@ namespace PlusLevelStudio.Editor
             textbox = transform.Find("Textbox").GetComponent<TextMeshProUGUI>();
         }
 
-        public void Setup(string path, string filename, Action<string> action)
+        public void Setup(string path, string extension, Action<string> action)
         {
             onSubmit = action;
-            textbox.text = EditorController.Instance.currentFileName;
+            textbox.text = "MyFirstLevel";
+            if (!string.IsNullOrEmpty(EditorController.Instance.currentFileName))
+            {
+                textbox.text = EditorController.Instance.currentFileName;
+            }
         }
 
         public override void SendInteractionMessage(string message, object data)
@@ -32,6 +36,7 @@ namespace PlusLevelStudio.Editor
             if (message == "submit")
             {
                 onSubmit(textbox.text);
+                EditorController.Instance.currentFileName = textbox.text;
                 base.SendInteractionMessage("exit", null);
                 return;
             }
@@ -228,6 +233,19 @@ namespace PlusLevelStudio.Editor
             angleSnapTextBox.text = EditorController.Instance.angleSnap.ToString();
         }
 
+        public void PlayLevel()
+        {
+            if ((EditorController.Instance.currentFileName != null) && (File.Exists(Path.Combine(LevelStudioPlugin.levelFilePath, EditorController.Instance.currentFileName + ".ebpl"))))
+            {
+                EditorController.lastPlayedLevel = EditorController.Instance.currentFileName;
+            }
+            else
+            {
+                EditorController.lastPlayedLevel = null;
+            }
+            EditorController.Instance.CompileAndPlay();
+        }
+
         public override void SendInteractionMessage(string message, object data)
         {
             switch (message)
@@ -239,23 +257,31 @@ namespace PlusLevelStudio.Editor
                     SceneManager.LoadScene("MainMenu");
                     break;
                 case "play":
-                    EditorController.Instance.CompileAndPlay();
+                    if (EditorController.Instance.hasUnsavedChanges)
+                    {
+                        EditorController.Instance.CreateUIPopup(LocalizationManager.Instance.GetLocalizedText("Ed_Menu_UnsavedChanges"), () =>
+                        {
+                            SendInteractionMessage("saveAndPlay", null);
+                        }, PlayLevel);
+                    }
                     break;
                 case "load":
                     EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.levelFilePath, "ebpl", (string typedName) =>
                     {
-                        BinaryReader reader = new BinaryReader(new FileStream(Path.Combine(LevelStudioPlugin.levelFilePath, typedName + ".ebpl"), FileMode.Open, FileAccess.Read));
-                        EditorController.Instance.LoadEditorLevel(EditorLevelData.ReadFrom(reader), true);
-                        reader.Close();
+                        EditorController.Instance.LoadEditorLevelFromFile(Path.Combine(LevelStudioPlugin.levelFilePath, typedName + ".ebpl"));
                     });
                     break;
                 case "save":
                     EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.levelFilePath, "ebpl", (string typedName) =>
                     {
-                        Directory.CreateDirectory(LevelStudioPlugin.levelFilePath);
-                        BinaryWriter writer = new BinaryWriter(new FileStream(Path.Combine(LevelStudioPlugin.levelFilePath, typedName + ".ebpl"), FileMode.Create, FileAccess.Write));
-                        EditorController.Instance.levelData.Write(writer);
-                        writer.Close();
+                        EditorController.Instance.SaveEditorLevelToFile(Path.Combine(LevelStudioPlugin.levelFilePath, typedName + ".ebpl"));
+                    });
+                    break;
+                case "saveAndPlay":
+                    EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.levelFilePath, "ebpl", (string typedName) =>
+                    {
+                        EditorController.Instance.SaveEditorLevelToFile(Path.Combine(LevelStudioPlugin.levelFilePath, typedName + ".ebpl"));
+                        PlayLevel();
                     });
                     break;
                 case "undo":

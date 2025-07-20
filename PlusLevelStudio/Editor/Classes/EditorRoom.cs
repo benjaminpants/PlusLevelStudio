@@ -12,6 +12,7 @@ namespace PlusLevelStudio.Editor
         public string roomType;
         public TextureContainer textureContainer;
         public ActivityLocation activity;
+        public EditorRoomVisualManager myVisual;
 
         public Texture2D floorTex => LevelLoaderPlugin.RoomTextureFromAlias(textureContainer.floor);
         public Texture2D wallTex => LevelLoaderPlugin.RoomTextureFromAlias(textureContainer.wall);

@@ -18,6 +18,8 @@ using PlusLevelStudio.Editor.Tools;
 using TMPro;
 using PlusStudioLevelLoader;
 using PlusStudioLevelFormat;
+using MTM101BaldAPI.ObjectCreation;
+using PlusLevelStudio.Editor.Ingame;
 
 namespace PlusLevelStudio
 {
@@ -51,6 +53,7 @@ namespace PlusLevelStudio
         public Dictionary<string, GameObject> genericStructureDisplays = new Dictionary<string, GameObject>();
         public Dictionary<string, GameObject> npcDisplays = new Dictionary<string, GameObject>();
         public List<string> selectableTextures = new List<string>();
+        public Dictionary<string, EditorRoomVisualManager> roomVisuals = new Dictionary<string, EditorRoomVisualManager>();
         public GameObject pickupVisual;
         public GameObject posterVisual;
 
@@ -109,7 +112,7 @@ namespace PlusLevelStudio
             return structure;
         }
 
-        public IEnumerator LoadEditorScene()
+        public IEnumerator LoadEditorScene(string pathToLoad = null)
         {
             AsyncOperation waitForSceneLoad = SceneManager.LoadSceneAsync("Game");
             while (!waitForSceneLoad.isDone)
@@ -314,6 +317,11 @@ namespace PlusLevelStudio
 
             editorController.EditorModeAssigned();
 
+            if (pathToLoad != null)
+            {
+                editorController.LoadEditorLevelFromFile(pathToLoad);
+            }
+
         }
 
         public void GoToEditor()
@@ -324,11 +332,10 @@ namespace PlusLevelStudio
         IEnumerator FindObjectsAndSetupEditor()
         {
             List<Direction> directions = Directions.All();
-            yield return 10;
+            yield return 11;
             yield return "Grabbing necessary resources...";
             assetMan.Add<Mesh>("Quad", Resources.FindObjectsOfTypeAll<Mesh>().First(x => x.GetInstanceID() >= 0 && x.name == "Quad"));
             Material[] materials = Resources.FindObjectsOfTypeAll<Material>().Where(x => x.GetInstanceID() >= 0).ToArray();
-            EnvironmentController ecPrefab = Resources.FindObjectsOfTypeAll<EnvironmentController>().First(x => x.GetInstanceID() >= 0);
             assetMan.Add<Material>("tileAlpha", materials.First(x => x.name == "TileBase_Alpha"));
             assetMan.Add<Material>("spriteBillboard", materials.First(x => x.name == "SpriteStandard_Billboard"));
             assetMan.Add<Material>("doorMask", materials.First(x => x.name == "DoorMask"));
@@ -682,7 +689,7 @@ namespace PlusLevelStudio
             EditorInterface.AddObjectVisualWithCustomBoxCollider("hopscotch", LevelLoaderPlugin.Instance.basicObjects["hopscotch"], new Vector3(30f,0.01f,30f), Vector3.zero);
             EditorInterface.AddObjectVisual("tree", LevelLoaderPlugin.Instance.basicObjects["tree"], true);
             EditorInterface.AddObjectVisual("pinetree", LevelLoaderPlugin.Instance.basicObjects["pinetree"], true);
-            EditorInterface.AddObjectVisualWithMeshCollider("picnictable", LevelLoaderPlugin.Instance.basicObjects["picnictable"], true);
+            EditorInterface.AddObjectVisual("picnictable", LevelLoaderPlugin.Instance.basicObjects["picnictable"], true);
             // gotta fix this up
             EditorBasicObject appleTreeVisual = EditorInterface.AddObjectVisual("appletree", LevelLoaderPlugin.Instance.basicObjects["appletree"], true);
             appleTreeVisual.transform.Find("Sprite").Find("Pickup").Find("ItemSprite").GetComponent<SpriteRenderer>().sprite = ItemMetaStorage.Instance.FindByEnum(Items.Apple).value.itemSpriteLarge;
@@ -810,6 +817,9 @@ namespace PlusLevelStudio
             EditorInterface.AddNPCVisual("cloudy", LevelLoaderPlugin.Instance.npcAliases["cloudy"]);
             EditorInterface.AddNPCVisual("reflex", LevelLoaderPlugin.Instance.npcAliases["reflex"]);
 
+            // rooms
+            EditorInterface.AddRoomVisualManager<OutsideRoomVisualManager>("outside");
+
             yield return "Configuring Misc...";
 
             /*
@@ -849,6 +859,35 @@ namespace PlusLevelStudio
             selectableTextures.Add("DiamondPlateFloor");
             selectableTextures.Add("Corn");
 
+            yield return "Setting up GameManagers...";
+
+            SoundObject balAllBooks = ObjectCreators.CreateSoundObject(AssetLoader.AudioClipFromMod(this, "Sounds", "Ingame", "BAL_AllNotebooks_Generic.wav"), "Vfx_BAL_Tutorial_AllNotebooks_0", SoundType.Voice, Color.green);
+            balAllBooks.additionalKeys = new SubtitleTimedKey[]
+            {
+                new SubtitleTimedKey()
+                {
+                    time=5.5f,
+                    key="Vfx_BAL_AllNotebooks_3"
+                },
+                new SubtitleTimedKey()
+                {
+                    time=9f,
+                    key="Vfx_BAL_AllNotebooks_4"
+                },
+                new SubtitleTimedKey()
+                {
+                    time=15.5f,
+                    key="Vfx_BAL_AllNotebooks_5"
+                }
+            };
+
+            EditorMainGameManager emg = new MainGameManagerBuilder<EditorMainGameManager>()
+                .SetAllNotebooksSound(balAllBooks)
+                .SetHappyBaldi(Resources.FindObjectsOfTypeAll<HappyBaldi>().First(x => x.name == "HappyBaldi" && x.GetInstanceID() >= 0 && (x.transform.parent == null)))
+                .SetObjectName("EditorMainGameManager")
+                .SetLevelNumber(99)
+                .Build();
+
             yield return "Setting up Editor Controller...";
             GameObject editorControllerObject = new GameObject("StandardEditorController");
             editorControllerObject.ConvertToPrefab(true);
@@ -881,6 +920,13 @@ namespace PlusLevelStudio
             toolTipController.ReflectionSetVariable("tooltipTmp", editorTooltip.transform.Find("Tooltip").Find("Tmp").GetComponent<TextMeshProUGUI>());
             toolTipController.ReflectionSetVariable("tooltipRect", editorTooltip.transform.Find("Tooltip").GetComponent<RectTransform>());
 
+            EnvironmentController ecPrefab = GameObject.Instantiate<EnvironmentController>(Resources.FindObjectsOfTypeAll<EnvironmentController>().First(x => x.GetInstanceID() >= 0), MTM101BaldiDevAPI.prefabTransform);
+            ecPrefab.name = "WorkerEnvironmentController";
+            Tile newTilePrefab = GameObject.Instantiate<Tile>(Resources.FindObjectsOfTypeAll<Tile>().First(x => x.GetInstanceID() >= 0), MTM101BaldiDevAPI.prefabTransform);
+            newTilePrefab.name = "EditorTile";
+            newTilePrefab.MeshRenderer.material = assetMan.Get<Material>("tileAlpha");
+            ecPrefab.ReflectionSetVariable("tilePre", newTilePrefab);
+
             UIHelpers.AddCursorInitiatorToCanvas(editorCanvas).useRawPosition = true;
             EditorController standardEditorController = editorControllerObject.AddComponent<EditorController>();
             standardEditorController.ReflectionSetVariable("destroyOnLoad", true);
@@ -892,6 +938,7 @@ namespace PlusLevelStudio
             standardEditorController.cgmPrefab = workerCgm;
             standardEditorController.tooltipController = toolTipController;
             standardEditorController.tooltipBase = editorTooltip;
+            standardEditorController.baseGameManagerPrefab = emg;
             // quick pause to create the gameloader prefab
             GameObject gameLoaderPreObject = new GameObject("EditorGameLoader");
             gameLoaderPreObject.ConvertToPrefab(true);

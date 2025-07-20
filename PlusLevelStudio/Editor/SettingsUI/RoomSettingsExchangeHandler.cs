@@ -120,6 +120,8 @@ namespace PlusLevelStudio.Editor.SettingsUI
             }
             EditorController.Instance.RefreshCells();
             EditorController.Instance.levelData.doors.ForEach(x => EditorController.Instance.UpdateVisual(x));
+            EditorController.Instance.levelData.windows.ForEach(x => EditorController.Instance.UpdateVisual(x)); // why isn't this working
+            EditorController.Instance.UpdateVisualsForRoom(myRoom);
         }
 
         public void ChangeTextures(string tex)

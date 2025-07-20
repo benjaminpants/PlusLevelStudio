@@ -43,6 +43,11 @@ namespace PlusLevelStudio.Editor
             data.cells[position.x + pos2.x, position.z + pos2.z].walls = (Nybble)(data.cells[position.x + pos2.x, position.z + pos2.z].walls & ~direction.GetOpposite().ToBinary());
         }
 
+        public void ModifyLightsForEditor(EnvironmentController workerEc)
+        {
+            throw new NotImplementedException();
+        }
+
         public virtual bool OnDelete(EditorLevelData data)
         {
             data.doors.Remove(this);

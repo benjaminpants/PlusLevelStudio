@@ -7,5 +7,7 @@ namespace PlusLevelStudio.Editor
     public interface IEditorCellModifier
     {
         void ModifyCells(EditorLevelData data, bool forEditor);
+
+        void ModifyLightsForEditor(EnvironmentController workerEc);
     }
 }

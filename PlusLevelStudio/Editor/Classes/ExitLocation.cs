@@ -108,5 +108,10 @@ namespace PlusLevelStudio.Editor
             visualObject.transform.position = new Vector3((float)position.x * 10f + 5f, 0f, (float)position.z * 10f + 5f);
             visualObject.transform.rotation = direction.ToRotation();
         }
+
+        public void ModifyLightsForEditor(EnvironmentController workerEc)
+        {
+            // TODO: implement
+        }
     }
 }

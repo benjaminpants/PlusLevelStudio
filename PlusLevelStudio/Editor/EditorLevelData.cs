@@ -71,6 +71,17 @@ namespace PlusLevelStudio.Editor
             defaultTextures.Add("lightbulbtesting", new TextureContainer("MaintenanceFloor", "RedBrickWall", "ElevatorCeiling"));
         }
 
+        public IntVector2[] GetCellsOwnedByRoom(EditorRoom room)
+        {
+            CellArea[] foundAreas = areas.Where(x => x.roomId == IdFromRoom(room)).ToArray();
+            List<IntVector2> foundOwnedCells = new List<IntVector2>();
+            foreach (CellArea area in foundAreas)
+            {
+                foundOwnedCells.AddRange(area.CalculateOwnedCells());
+            }
+            return foundOwnedCells.ToArray();
+        }
+
         public EditorRoom CreateRoomWithDefaultSettings(string type)
         {
             return new EditorRoom(type, defaultTextures[type]);
@@ -101,6 +112,7 @@ namespace PlusLevelStudio.Editor
 
         public void RemoveRoom(EditorRoom toRemove)
         {
+            EditorController.Instance.CleanupVisualsForRoom(toRemove);
             Dictionary<EditorRoom, ushort> oldValues = new Dictionary<EditorRoom, ushort>();
             Dictionary<EditorRoom, ushort> newValues = new Dictionary<EditorRoom, ushort>();
             foreach (EditorRoom rm in rooms)

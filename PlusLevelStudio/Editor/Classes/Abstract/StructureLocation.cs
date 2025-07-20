@@ -69,5 +69,10 @@ namespace PlusLevelStudio.Editor
         }
 
         public abstract void UpdateVisual(GameObject visualObject);
+
+        public virtual void ModifyLightsForEditor(EnvironmentController workerEc)
+        {
+            
+        }
     }
 }

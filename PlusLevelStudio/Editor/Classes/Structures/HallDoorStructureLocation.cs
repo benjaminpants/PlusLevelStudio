@@ -146,6 +146,10 @@ namespace PlusLevelStudio.Editor
             for (int i = 0; i < childCount; i++)
             {
                 SimpleLocation child = CreateNewChild();
+                if (version > 0)
+                {
+                    child.prefab = reader.ReadString();
+                }
                 child.position = reader.ReadByteVector2().ToInt();
                 child.direction = (Direction)reader.ReadByte();
                 myChildren.Add(child);
@@ -188,10 +192,11 @@ namespace PlusLevelStudio.Editor
 
         public override void Write(BinaryWriter writer)
         {
-            writer.Write((byte)0); // incase i change this in the future
+            writer.Write((byte)1); // incase i change this in the future
             writer.Write(myChildren.Count);
             for (int i = 0; i < myChildren.Count; i++)
             {
+                writer.Write(myChildren[i].prefab);
                 writer.Write(myChildren[i].position.ToByte());
                 writer.Write((byte)myChildren[i].direction);
             }

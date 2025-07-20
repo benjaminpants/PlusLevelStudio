@@ -1,6 +1,8 @@
 {"items":[
 
 {"key":"Ed_Tip_PlayButton","value":"Play your level!"},
+{"key":"Ed_Tip_SaveButton","value":"Save your level!"},
+{"key":"Ed_Tip_LoadButton","value":"Load a level!"},
 {"key":"Ed_Tip_Undo","value":"Undo"},
 {"key":"Ed_Tip_Worldspace","value":"World space translations"},
 {"key":"Ed_Tip_Localspace","value":"Local space translations"},

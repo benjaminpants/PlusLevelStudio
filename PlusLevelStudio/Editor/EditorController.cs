@@ -30,6 +30,7 @@ namespace PlusLevelStudio.Editor
         public Dictionary<IEditorVisualizable, GameObject> objectVisuals = new Dictionary<IEditorVisualizable, GameObject>();
 
         public EditorTool currentTool => _currentTool;
+        public BaseGameManager baseGameManagerPrefab;
         protected EditorTool _currentTool;
 
         public EditorMode currentMode;
@@ -80,7 +81,9 @@ namespace PlusLevelStudio.Editor
         public float gridSnap = 0.25f;
         public float angleSnap = 11.25f;
 
-        public string currentFileName = "test";
+        public string currentFileName = null;
+        public bool hasUnsavedChanges = false;
+        public static string lastPlayedLevel = null;
 
         public bool MovementEnabled
         {
@@ -88,6 +91,45 @@ namespace PlusLevelStudio.Editor
             {
                 return (uiOverlays.Count == 0 && (uiObjects[1] == null || !uiObjects[1].activeSelf) && (CursorController.Instance != null && CursorController.Instance.cursorTransform.gameObject.activeSelf));
             }
+        }
+
+        public List<EditorRoomVisualManager> roomVisuals = new List<EditorRoomVisualManager>();
+
+        public void SetupVisualsForRoom(EditorRoom room)
+        {
+            if (!LevelStudioPlugin.Instance.roomVisuals.ContainsKey(room.roomType)) return;
+            room.myVisual = GameObject.Instantiate<EditorRoomVisualManager>(LevelStudioPlugin.Instance.roomVisuals[room.roomType]);
+            roomVisuals.Add(room.myVisual);
+            room.myVisual.myLevelData = levelData;
+            room.myVisual.myRoom = room;
+            room.myVisual.Initialize();
+        }
+
+        public void SetupVisualsForAllRooms()
+        {
+            while (roomVisuals.Count > 0)
+            {
+                CleanupVisualsForRoom(roomVisuals[0].myRoom);
+            }
+            foreach (EditorRoom room in levelData.rooms)
+            {
+                SetupVisualsForRoom(room);
+            }
+        }
+
+        public void UpdateVisualsForRoom(EditorRoom room)
+        {
+            if (room.myVisual == null) return;
+            room.myVisual.RoomUpdated();
+        }
+
+        public void CleanupVisualsForRoom(EditorRoom room)
+        {
+            if (room.myVisual == null) return;
+            room.myVisual.Cleanup();
+            roomVisuals.Remove(room.myVisual);
+            GameObject.Destroy(room.myVisual.gameObject);
+            room.myVisual = null;
         }
 
         protected IEditorInteractable heldInteractable = null;
@@ -135,6 +177,7 @@ namespace PlusLevelStudio.Editor
         /// </summary>
         public void AddHeldUndo()
         {
+            hasUnsavedChanges = true;
             if (undoStreams.Count >= maxUndos) //we already have 5 undos
             {
                 undoStreams.RemoveAt(0); // memory streams dont need .Dispose to be called
@@ -170,6 +213,22 @@ namespace PlusLevelStudio.Editor
             Texture2D tex = ((TextTextureGenerator)_TextTextureGenerator.GetValue(workerEc)).GenerateTextTexture(p);
             generatedTextures.Add(p, tex);
             return tex;
+        }
+
+        public void LoadEditorLevelFromFile(string path)
+        {
+            BinaryReader reader = new BinaryReader(new FileStream(path, FileMode.Open, FileAccess.Read));
+            EditorController.Instance.LoadEditorLevel(EditorLevelData.ReadFrom(reader), true);
+            reader.Close();
+        }
+
+        public void SaveEditorLevelToFile(string path)
+        {
+            Directory.CreateDirectory(LevelStudioPlugin.levelFilePath);
+            BinaryWriter writer = new BinaryWriter(new FileStream(path, FileMode.Create, FileAccess.Write));
+            EditorController.Instance.levelData.Write(writer);
+            writer.Close();
+            hasUnsavedChanges = false;
         }
 
         public void LoadEditorLevel(EditorLevelData newData, bool wipeUndoHistory = true)
@@ -228,7 +287,9 @@ namespace PlusLevelStudio.Editor
             {
                 AddVisual(item);
             }
-            RefreshCells();
+            RefreshCells(false);
+            SetupVisualsForAllRooms(); // need to do this first before lighting
+            RefreshLights();
             UpdateSpawnVisual();
             CancelHeldUndo();
             if (wipeUndoHistory)
@@ -301,8 +362,20 @@ namespace PlusLevelStudio.Editor
                 workerEc.GenerateLight(cell, group.color, group.strength);
                 workerEc.RegenerateLight(cell);
             }
+            // now handle anything that might change light
+            HandleLightChanges(levelData.exits);
+            HandleLightChanges(levelData.structures);
+            roomVisuals.ForEach(x => x.ModifyLightsForEditor(workerEc));
             workerEc.UpdateQueuedLightChanges();
             LevelStudioPlugin.Instance.lightmaps["none"].Apply(false, false);
+        }
+
+        protected void HandleLightChanges(IEnumerable<IEditorCellModifier> todo)
+        {
+            foreach (var item in todo)
+            {
+                item.ModifyLightsForEditor(workerEc);
+            }
         }
 
         public void RemoveVisual(IEditorVisualizable visualizable)
@@ -372,12 +445,13 @@ namespace PlusLevelStudio.Editor
             level = BaldiLevel.Read(reader);
             reader.Close();*/
             SceneObject sceneObj = LevelImporter.CreateSceneObject(level);
-            sceneObj.manager = Resources.FindObjectsOfTypeAll<MainGameManager>().First(x => x.name == "Lvl1_MainGameManager");
+            sceneObj.manager = baseGameManagerPrefab;
             GameLoader loader = GameObject.Instantiate<GameLoader>(gameLoaderPrefab);
             ElevatorScreen screen = GameObject.Instantiate<ElevatorScreen>(elevatorScreenPrefab);
             AccessTools.Field(typeof(Singleton<CoreGameManager>), "m_Instance").SetValue(null, null); // so coregamemanager gets created properly
             loader.AssignElevatorScreen(screen);
             loader.Initialize(0);
+            loader.SetMode(0);
             loader.LoadLevel(sceneObj);
             screen.Initialize();
             loader.SetSave(false);
@@ -394,6 +468,7 @@ namespace PlusLevelStudio.Editor
             {
                 kvp.Key.UpdateVisual(kvp.Value);
             }
+            roomVisuals.ForEach(x => x.RoomUpdated());
         }
 
         /// <summary>
@@ -910,7 +985,7 @@ namespace PlusLevelStudio.Editor
 
 
         static FieldInfo _initialized = AccessTools.Field(typeof(Cell), "initalized"); // seriously mystman? "initalized"?
-        public void RefreshCells()
+        public void RefreshCells(bool refreshLights = true)
         {
             levelData.UpdateCells(true);
             for (int x = 0; x < workerEc.cells.GetLength(0); x++)
@@ -938,6 +1013,7 @@ namespace PlusLevelStudio.Editor
                 }
             }
             UnhighlightAllCells();
+            if (!refreshLights) return;
             RefreshLights();
         }
 
@@ -963,6 +1039,7 @@ namespace PlusLevelStudio.Editor
                 {
                     workerEc.cells[x, y].LoadTile();
                     workerEc.cells[x, y].Tile.transform.SetParent(gridManager.transform, true);
+                    //workerEc.cells[x, y].Tile.MeshRenderer.material = new Material(workerRc.defaultAlphaMat); // TODO: make a new TilePre and assign that to the workerEc.
                     if (levelData.cells[x,y].type == 16)
                     {
                         workerEc.cells[x, y].Tile.gameObject.SetActive(false);
