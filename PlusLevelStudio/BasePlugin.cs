@@ -132,7 +132,6 @@ namespace PlusLevelStudio
             EditorController editorController = GameObject.Instantiate<EditorController>(assetMan.Get<EditorController>("MainEditorController"));
 
             editorController.currentMode = modes[modeToLoad];
-            Debug.Log(editorController.currentMode);
 
             editorController.EditorModeAssigned();
 
