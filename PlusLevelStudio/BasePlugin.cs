@@ -233,6 +233,8 @@ namespace PlusLevelStudio
                         new ObjectTool("rounddesk"),
                         new ObjectTool("bookshelf"),
                         new ObjectTool("bookshelf_hole"),
+                        new ObjectTool("counter"),
+                        new ObjectTool("examinationtable"),
                         new ObjectTool("pedestal"),
                         new ObjectToolNoRotation("pinetree"),
                         new ObjectToolNoRotation("tree"),
@@ -246,8 +248,7 @@ namespace PlusLevelStudio
                         new ObjectToolNoRotation("rock"),
                         new ObjectTool("tent"),
                         new ObjectToolNoRotation("decor_zoneflag"),
-                        new ObjectTool("counter"),
-                        new ObjectTool("examinationtable"),
+                        new ObjectTool("arrow", 5f),
                     } },
                     { "structures", new List<EditorTool>()
                     {
@@ -702,6 +703,26 @@ namespace PlusLevelStudio
             EditorInterface.AddObjectVisualWithCustomSphereCollider("decor_pencilnotes", LevelLoaderPlugin.Instance.basicObjects["decor_pencilnotes"], 1f, Vector3.up);
             EditorInterface.AddObjectVisualWithCustomSphereCollider("decor_zoneflag", LevelLoaderPlugin.Instance.basicObjects["decor_zoneflag"], 1f, Vector3.up);
             EditorInterface.AddObjectVisualWithCustomCapsuleCollider("plant", LevelLoaderPlugin.Instance.basicObjects["plant"], 1f, 7f, 1, Vector3.up * 3.5f);
+            
+            EditorBasicObject arrowObjectVisual = EditorInterface.AddObjectVisualWithCustomSphereCollider("arrow", LevelLoaderPlugin.Instance.basicObjects["arrow"], 1f, Vector3.zero);
+            AnimatedSpriteRotator[] rotators = arrowObjectVisual.GetComponentsInChildren<AnimatedSpriteRotator>();
+            // this was originally a more generic solution until i had to figure out that i needed to rotate the sprites. yuck.
+            for (int i = 0; i < rotators.Length; i++)
+            {
+                SpriteRotationMap[] map = (SpriteRotationMap[])rotators[i].ReflectionGetVariable("spriteMap");
+                if (map.Length == 0) continue; // how?
+                SpriteRenderer target = (SpriteRenderer)rotators[i].ReflectionGetVariable("renderer");
+                SpriteRotator regularRotator = rotators[i].gameObject.AddComponent<SpriteRotator>();
+                regularRotator.ReflectionSetVariable("spriteRenderer", target);
+                Sprite[] spriteSheet = (Sprite[])map[0].ReflectionGetVariable("spriteSheet");
+                Sprite[] alteredSheet = new Sprite[spriteSheet.Length];
+                for (int h = 0; h < spriteSheet.Length; h++)
+                {
+                    alteredSheet[h] = spriteSheet[(h + 9) % spriteSheet.Length];
+                }
+                regularRotator.ReflectionSetVariable("sprites", alteredSheet); //mystman why
+                GameObject.DestroyImmediate(rotators[i]);
+            }
 
             // machines
             EditorInterface.AddObjectVisual("dietbsodamachine", LevelLoaderPlugin.Instance.basicObjects["dietbsodamachine"], true);

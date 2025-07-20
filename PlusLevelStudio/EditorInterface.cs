@@ -1,9 +1,11 @@
 ﻿using HarmonyLib;
 using MTM101BaldAPI;
+using MTM101BaldAPI.Reflection;
 using PlusLevelStudio.Editor;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using UnityEngine;
 
@@ -134,6 +136,7 @@ namespace PlusLevelStudio
         public static GameObject AddNPCVisual(string key, NPC npc)
         {
             GameObject clone = CloneToPrefabStripMonoBehaviors(npc.gameObject, new Type[] { typeof(BillboardUpdater) });
+            clone.name = clone.name.Replace("_Stripped", "_Visual");
             Collider[] colliders = clone.GetComponentsInChildren<Collider>();
             for (int i = 0; i < colliders.Length; i++)
             {
@@ -166,7 +169,7 @@ namespace PlusLevelStudio
 
         public static EditorBasicObject AddObjectVisual(string key, GameObject obj, bool useRegularColliderAsEditorHitbox)
         {
-            GameObject clone = CloneToPrefabStripMonoBehaviors(obj, new Type[] { typeof(BillboardUpdater) });
+            GameObject clone = CloneToPrefabStripMonoBehaviors(obj, new Type[] { typeof(BillboardUpdater), typeof(AnimatedSpriteRotator) });
             clone.name = clone.name.Replace("_Stripped", "_Visual");
             EditorBasicObject basic = clone.AddComponent<EditorBasicObject>();
             clone.AddComponent<EditorDeletableObject>().AddRendererRange(clone.GetComponentsInChildren<Renderer>(), "none");
@@ -174,6 +177,8 @@ namespace PlusLevelStudio
             basic.ingameColliders.AddRange(clone.GetComponentsInChildren<Collider>());
             basic.ingameColliders.ForEach(x => x.enabled = false);
             basic.gameObject.layer = LevelStudioPlugin.editorInteractableLayer;
+
+
             if (useRegularColliderAsEditorHitbox)
             {
                 if (basic.ingameColliders.Count == 0)

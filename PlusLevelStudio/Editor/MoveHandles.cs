@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace PlusLevelStudio.Editor
 {
-
+    [Flags]
     public enum MoveAxis
     {
         None = 0,
@@ -17,6 +17,7 @@ namespace PlusLevelStudio.Editor
         Forward = Z
     }
 
+    [Flags]
     public enum RotateAxis
     {
         None = 0,
