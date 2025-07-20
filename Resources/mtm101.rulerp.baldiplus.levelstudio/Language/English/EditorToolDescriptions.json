@@ -188,6 +188,17 @@
 {"key":"Ed_Tool_object_ceilingfan_Title","value":"Ceiling Fan"},
 {"key":"Ed_Tool_object_ceilingfan_Desc","value":"A fan, but for the ceiling!"},
 
+{"key":"Ed_Tool_bulkobject_multilockers_Title","value":"Bulk Lockers"},
+{"key":"Ed_Tool_bulkobject_multilockers_Desc","value":"5 lockers placed side by side, covering a whole wall!"},
+{"key":"Ed_Tool_bulkobject_lockerrandomblue_Title","value":"Bulk Lockers + Random Blue"},
+{"key":"Ed_Tool_bulkobject_lockerrandomblue_Desc","value":"5 lockers placed side by side, but a random one is a blue locker!"},
+{"key":"Ed_Tool_bulkobject_roundtable1_Title","value":"Round Table With Chairs"},
+{"key":"Ed_Tool_bulkobject_roundtable1_Desc","value":"A roundtable with 4 chairs surrounding it... strange."},
+{"key":"Ed_Tool_bulkobject_roundtable2_Title","value":"Round Table With Chairs (2)"},
+{"key":"Ed_Tool_bulkobject_roundtable2_Desc","value":"A roundtable with 4 diagonal chairs surrounding it... stranger."},
+{"key":"Ed_Tool_bulkobject_chairdesk_Title","value":"Chair + Desk"},
+{"key":"Ed_Tool_bulkobject_chairdesk_Desc","value":"A complete setup for a complete student! Seriously you need limbs."},
+
 {"key":"Ed_Tool_activity_notebook_Title","value":"Notebook"},
 {"key":"Ed_Tool_activity_notebook_Desc","value":"You need to collect these to complete your level!"},
 {"key":"Ed_Tool_activity_mathmachine_Title","value":"Math Machine"},

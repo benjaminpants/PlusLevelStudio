@@ -270,6 +270,7 @@ namespace PlusLevelStudio
 
         public static T AddRoomVisualManager<T>(string forType) where T : EditorRoomVisualManager
         {
+            if (forType == "hall") throw new Exception("Can't create RoomVisualManager for hallways!");
             GameObject roomVisual = new GameObject(forType + "_VisualManager");
             roomVisual.ConvertToPrefab(true);
             T visual = roomVisual.AddComponent<T>();

@@ -210,7 +210,28 @@ namespace PlusLevelStudio
                         new ObjectTool("bigdesk"),
                         new ObjectTool("desk"),
                         new ObjectTool("chair"),
+                        new BulkObjectTool("chairdesk", new BulkObjectData[]
+                        {
+                            new BulkObjectData("chair", new Vector3(0f,0f,-2f)),
+                            new BulkObjectData("desk", new Vector3(0f,0f,0f)),
+                        }),
                         new ObjectTool("roundtable"),
+                        new BulkObjectTool("roundtable1", new BulkObjectData[]
+                        {
+                            new BulkObjectData("roundtable", new Vector3(0f,0f,0f)),
+                            new BulkObjectData("chair", new Vector3(0f,0f,-5f)),
+                            new BulkObjectData("chair", new Vector3(-5f,0f,0f), new Vector3(0f, 90f, 0f)),
+                            new BulkObjectData("chair", new Vector3(0f,0f,5f), new Vector3(0f, 180f, 0f)),
+                            new BulkObjectData("chair", new Vector3(5f,0f,0f), new Vector3(0f, 270f, 0f))
+                        }),
+                        new BulkObjectTool("roundtable2", new BulkObjectData[]
+                        {
+                            new BulkObjectData("roundtable", new Vector3(0f,0f,0f)),
+                            new BulkObjectData("chair", new Vector3(3.5355f,0f,-3.535f), new Vector3(0f, 315f, 0f)),
+                            new BulkObjectData("chair", new Vector3(-3.5355f,0f,-3.535f), new Vector3(0f, 45f, 0f)),
+                            new BulkObjectData("chair", new Vector3(-3.5355f,0f,3.535f), new Vector3(0f, 135f, 0f)),
+                            new BulkObjectData("chair", new Vector3(3.5355f,0f,3.535f), new Vector3(0f, 225f, 0f))
+                        }),
                         new ObjectTool("cabinet"),
                         new ObjectTool("cafeteriatable"),
                         new ObjectTool("waterfountain"),
@@ -224,6 +245,22 @@ namespace PlusLevelStudio
                         new ObjectTool("locker"),
                         new ObjectTool("bluelocker"),
                         new ObjectTool("greenlocker"),
+                        new BulkObjectTool("multilockers", new BulkObjectData[]
+                        {
+                            new BulkObjectData("locker", new Vector3(-4f,0f,4f)),
+                            new BulkObjectData("locker", new Vector3(-2f,0f,4f)),
+                            new BulkObjectData("locker", new Vector3(0f,0f,4f)),
+                            new BulkObjectData("locker", new Vector3(2f,0f,4f)),
+                            new BulkObjectData("locker", new Vector3(4f,0f,4f))
+                        }),
+                        new BulkObjectRandomizedTool("lockerrandomblue", new BulkObjectData[]
+                        {
+                            new BulkObjectData("locker", new Vector3(-4f,0f,4f)),
+                            new BulkObjectData("locker", new Vector3(-2f,0f,4f)),
+                            new BulkObjectData("locker", new Vector3(0f,0f,4f)),
+                            new BulkObjectData("locker", new Vector3(2f,0f,4f)),
+                            new BulkObjectData("locker", new Vector3(4f,0f,4f))
+                        }, new List<KeyValuePair<string, string>>() { new KeyValuePair<string, string>("locker", "bluelocker") }),
                         new ObjectToolNoRotation("plant"),
                         new ObjectToolNoRotation("decor_banana", 3.75f),
                         new ObjectToolNoRotation("decor_globe", 3.75f),
