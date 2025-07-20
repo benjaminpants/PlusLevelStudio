@@ -185,6 +185,8 @@
 {"key":"Ed_Tool_object_plant_Desc","value":"A classic!"},
 {"key":"Ed_Tool_object_arrow_Title","value":"Arrow"},
 {"key":"Ed_Tool_object_arrow_Desc","value":"Steer people into a specific direction for some reason!"},
+{"key":"Ed_Tool_object_ceilingfan_Title","value":"Ceiling Fan"},
+{"key":"Ed_Tool_object_ceilingfan_Desc","value":"A fan, but for the ceiling!"},
 
 {"key":"Ed_Tool_activity_notebook_Title","value":"Notebook"},
 {"key":"Ed_Tool_activity_notebook_Desc","value":"You need to collect these to complete your level!"},

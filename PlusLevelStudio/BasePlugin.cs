@@ -228,6 +228,7 @@ namespace PlusLevelStudio
                         new ObjectToolNoRotation("decor_notebooks", 3.75f),
                         new ObjectToolNoRotation("decor_papers", 3.75f),
                         new ObjectToolNoRotation("decor_pencilnotes", 3.75f),
+                        new ObjectToolNoRotation("ceilingfan"),
                         new ObjectTool("computer", 3.75f),
                         new ObjectTool("computer_off", 3.75f),
                         new ObjectTool("rounddesk"),
@@ -703,7 +704,8 @@ namespace PlusLevelStudio
             EditorInterface.AddObjectVisualWithCustomSphereCollider("decor_pencilnotes", LevelLoaderPlugin.Instance.basicObjects["decor_pencilnotes"], 1f, Vector3.up);
             EditorInterface.AddObjectVisualWithCustomSphereCollider("decor_zoneflag", LevelLoaderPlugin.Instance.basicObjects["decor_zoneflag"], 1f, Vector3.up);
             EditorInterface.AddObjectVisualWithCustomCapsuleCollider("plant", LevelLoaderPlugin.Instance.basicObjects["plant"], 1f, 7f, 1, Vector3.up * 3.5f);
-            
+            EditorInterface.AddObjectVisualWithCustomBoxCollider("ceilingfan", LevelLoaderPlugin.Instance.basicObjects["ceilingfan"], new Vector3(10f,2f,10f), Vector3.up * 9f);
+
             EditorBasicObject arrowObjectVisual = EditorInterface.AddObjectVisualWithCustomSphereCollider("arrow", LevelLoaderPlugin.Instance.basicObjects["arrow"], 1f, Vector3.zero);
             AnimatedSpriteRotator[] rotators = arrowObjectVisual.GetComponentsInChildren<AnimatedSpriteRotator>();
             // this was originally a more generic solution until i had to figure out that i needed to rotate the sprites. yuck.
