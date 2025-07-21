@@ -18,16 +18,28 @@ namespace PlusLevelStudio
 
         public static void AddVanillaToolTools(EditorMode modeToModify)
         {
+            if (modeToModify.caresAboutSpawn)
+            {
+                AddToolsToCategory(modeToModify, "tools", new EditorTool[]
+                {
+                    new ElevatorTool("elevator", true),
+                    new ElevatorTool("elevator", false),
+                }, true);
+            }
             AddToolsToCategory(modeToModify, "tools", new EditorTool[]
             {
-                new ElevatorTool("elevator", true),
-                new ElevatorTool("elevator", false),
                 new WallTool(true),
                 new WallTool(false),
-                new SpawnpointTool(),
+            }, true);
+            if (modeToModify.caresAboutSpawn)
+            {
+                AddToolToCategory(modeToModify, "tools", new SpawnpointTool());
+            }
+            AddToolsToCategory(modeToModify, "tools", new EditorTool[]
+            {
                 new MergeTool(),
                 new DeleteTool(),
-            }, true);
+            });
         }
 
         public static void AddVanillaDoors(EditorMode modeToModify)
@@ -248,7 +260,7 @@ namespace PlusLevelStudio
                 new ObjectTool("bookshelf_hole"),
                 new ObjectTool("counter"),
                 new ObjectTool("examinationtable"),
-                new ObjectTool("pedestal"),
+                new ObjectToolNoRotation("pedestal"),
                 new ObjectToolNoRotation("pinetree"),
                 new ObjectToolNoRotation("tree"),
                 new ObjectToolNoRotation("appletree"),
@@ -262,6 +274,7 @@ namespace PlusLevelStudio
                 new ObjectTool("tent"),
                 new ObjectToolNoRotation("decor_zoneflag"),
                 new ObjectTool("arrow", 5f),
+                new ObjectToolNoRotation("exitsign", 10f),
             }, true);
         }
 

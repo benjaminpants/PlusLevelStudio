@@ -144,9 +144,9 @@ namespace PlusLevelStudio
 
         }
 
-        public void GoToEditor()
+        public void GoToEditor(string mode)
         {
-            StartCoroutine(LoadEditorScene("full"));
+            StartCoroutine(LoadEditorScene(mode));
         }
 
         IEnumerator SetupModes()
@@ -155,6 +155,7 @@ namespace PlusLevelStudio
             yield return "Setting up editor modes...";
             // setup modes
 
+            // full mode
             EditorMode fullMode = new EditorMode()
             {
                 id = "full",
@@ -186,6 +187,63 @@ namespace PlusLevelStudio
             EditorInterfaceModes.AddVanillaToolTools(fullMode);
 
             modes.Add("full", fullMode);
+
+            EditorMode complaintMode = new EditorMode()
+            {
+                id = "full",
+                availableTools = new Dictionary<string, List<EditorTool>>(),
+                categoryOrder = new string[] {
+                    "rooms",
+                    "doors",
+                    "npcs",
+                    "items",
+                    "activities",
+                    "objects",
+                    "structures",
+                    "lights",
+                    "posters",
+                    "tools"
+                },
+                defaultTools = new string[] { "room_hall", "room_class", "room_faculty", "room_office", "light_fluorescent", "door_swinging", "door_standard", "merge", "delete" },
+                supportsNPCProperties = false,
+            };
+
+            EditorInterfaceModes.AddVanillaRooms(complaintMode);
+            EditorInterfaceModes.AddVanillaDoors(complaintMode);
+            EditorInterfaceModes.AddVanillaNPCs(complaintMode);
+            EditorInterfaceModes.AddVanillaItems(complaintMode);
+            EditorInterfaceModes.AddVanillaActivities(complaintMode);
+            EditorInterfaceModes.AddVanillaObjects(complaintMode);
+            EditorInterfaceModes.AddVanillaStructures(complaintMode, false);
+            EditorInterfaceModes.AddVanillaLights(complaintMode);
+            EditorInterfaceModes.AddVanillaPosters(complaintMode);
+            EditorInterfaceModes.AddVanillaToolTools(complaintMode);
+
+            modes.Add("compliant", complaintMode);
+
+            EditorMode roomsMode = new EditorMode()
+            {
+                id = "rooms",
+                availableTools = new Dictionary<string, List<EditorTool>>(),
+                categoryOrder = new string[] {
+                    "rooms",
+                    "doors",
+                    "objects",
+                    "lights",
+                    "tools"
+                },
+                defaultTools = new string[] { "room_hall", "room_class", "room_faculty", "room_office", "room_closet", "room_reflex", "room_cafeteria", "merge", "delete" },
+                supportsNPCProperties = false,
+                caresAboutSpawn = false
+            };
+
+            EditorInterfaceModes.AddVanillaRooms(roomsMode);
+            EditorInterfaceModes.AddVanillaDoors(roomsMode);
+            EditorInterfaceModes.AddVanillaObjects(roomsMode);
+            EditorInterfaceModes.AddVanillaLights(roomsMode);
+            EditorInterfaceModes.AddVanillaToolTools(roomsMode);
+
+            modes.Add("rooms", roomsMode);
         }
 
         IEnumerator FindObjectsAndSetupEditor()
@@ -613,6 +671,7 @@ namespace PlusLevelStudio
             EditorInterface.AddObjectVisualWithCustomSphereCollider("decor_zoneflag", LevelLoaderPlugin.Instance.basicObjects["decor_zoneflag"], 1f, Vector3.up);
             EditorInterface.AddObjectVisualWithCustomCapsuleCollider("plant", LevelLoaderPlugin.Instance.basicObjects["plant"], 1f, 7f, 1, Vector3.up * 3.5f);
             EditorInterface.AddObjectVisualWithCustomBoxCollider("ceilingfan", LevelLoaderPlugin.Instance.basicObjects["ceilingfan"], new Vector3(10f,2f,10f), Vector3.up * 9f);
+            EditorInterface.AddObjectVisualWithCustomSphereCollider("exitsign", LevelLoaderPlugin.Instance.basicObjects["exitsign"], 1f, Vector3.down);
 
             EditorBasicObject arrowObjectVisual = EditorInterface.AddObjectVisualWithCustomSphereCollider("arrow", LevelLoaderPlugin.Instance.basicObjects["arrow"], 1f, Vector3.zero);
             AnimatedSpriteRotator[] rotators = arrowObjectVisual.GetComponentsInChildren<AnimatedSpriteRotator>();
@@ -734,17 +793,6 @@ namespace PlusLevelStudio
 
             yield return "Configuring Misc...";
 
-            /*
-            roomTextureAliases.Add("ElevatorBack", textures.First(x => x.name == "ElBack"));
-            roomTextureAliases.Add("FactoryCeiling", textures.First(x => x.name == "Factory_Ceiling"));
-            roomTextureAliases.Add("FactoryBeams", textures.First(x => x.name == "FactoryBeams_Texture"));
-            roomTextureAliases.Add("LabFloor", textures.First(x => x.name == "LabFloor_Texture"));
-            roomTextureAliases.Add("LabWall", textures.First(x => x.name == "LabWall_Texture"));
-            roomTextureAliases.Add("LabCeiling", textures.First(x => x.name == "LabCeiling_Texture"));
-            roomTextureAliases.Add("Ground2", textures.First(x => x.name == "ground2"));
-            roomTextureAliases.Add("DiamondPlateFloor", textures.First(x => x.name == "DiamongPlateFloor"));
-            roomTextureAliases.Add("Corn", textures.First(x => x.name == "Corn"));
-            */
             selectableTextures.Add("HallFloor");
             selectableTextures.Add("Wall");
             selectableTextures.Add("Ceiling");

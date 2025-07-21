@@ -20,13 +20,26 @@
 			"type":"imageButton",
 			"graphic":"UndoButton",
 			"hoverGraphic":"UndoButtonHover",
-			"anchoredPosition":[0,0],
+			"anchoredPosition":[32,0],
 			"size":[32,32],
 			"pivot":"#bottomLeft",
 			"anchorMin":"#bottomLeft",
 			"anchorMax":"#bottomLeft",
 			"onPressed":"undo",
 			"tooltip":"Ed_Tip_Undo"
+		},
+		{
+			"name":"globalSettingsButton",
+			"type":"imageButton",
+			"graphic":"GlobalSettingsButton",
+			"hoverGraphic":"GlobalSettingsButtonGlow",
+			"anchoredPosition":[0,0],
+			"size":[32,32],
+			"pivot":"#bottomLeft",
+			"anchorMin":"#bottomLeft",
+			"anchorMax":"#bottomLeft",
+			"onPressed":"globalsettings",
+			"tooltip":"Ed_Tip_GlobalSettings"
 		},
 		{
 			"name":"HotSlot1",

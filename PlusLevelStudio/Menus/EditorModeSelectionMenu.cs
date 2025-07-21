@@ -52,12 +52,14 @@ namespace PlusLevelStudio.Menus
             editText.raycastTarget = true;
             StandardMenuButton editButton = editText.gameObject.ConvertToButton<StandardMenuButton>();
             editButton.underlineOnHigh = true;
-            //editButton.transitionOnPress = true;
-            //editButton.transitionTime = 0.0167f;
-            //editButton.transitionType = UiTransition.Dither;
+            editButton.transitionOnPress = true;
+            editButton.transitionTime = 0.0167f;
+            editButton.transitionType = UiTransition.Dither;
             editButton.OnPress.AddListener(() =>
             {
-                LevelStudioPlugin.Instance.GoToEditor();
+                emms.editorTypeParent.SetActive(true);
+                emms.playOrEditParent.SetActive(false);
+                //LevelStudioPlugin.Instance.GoToEditor();
             });
 
 
@@ -101,19 +103,30 @@ namespace PlusLevelStudio.Menus
                 emms.playOrEditParent.SetActive(true);
             });
 
+            emms.editorTypeParent = new GameObject("EditorTypeSelection");
+            emms.editorTypeParent.SetActive(false);
+            emms.editorTypeParent.transform.SetParent(canvas.transform, false);
+            emms.editorTypeParent.transform.localPosition = Vector3.zero;
+
+            AddBackButton(emms.editorTypeParent.transform, () =>
+            {
+                emms.playOrEditParent.SetActive(true);
+                emms.editorTypeParent.SetActive(false);
+            });
 
             // create the editor type selection
             // todo
 
-            //CreateMenuButton(emms.playOrEditParent.transform, "EditButton", "Edit", new Vector3(0f, 96f, 0f));
-            //CreateMenuButton(emms.playOrEditParent.transform, "EditButton", "Play", new Vector3(0f, -32f, 0f));
+            CreateMenuButton(emms.editorTypeParent.transform, "FullButton", "Full", new Vector3(0f, 64f, 0f), () => { LevelStudioPlugin.Instance.GoToEditor("full"); });
+            CreateMenuButton(emms.editorTypeParent.transform, "ComplaintButton", "Compliant", new Vector3(0f, 0f, 0f), () => { LevelStudioPlugin.Instance.GoToEditor("compliant"); });
+            CreateMenuButton(emms.editorTypeParent.transform, "RoomsButton", "Rooms", new Vector3(0f, -64f, 0f), () => { LevelStudioPlugin.Instance.GoToEditor("rooms"); });
 
             UIHelpers.AddBordersToCanvas(canvas);
             return emms;
         }
 
         // yoinked from classic reimplemented
-        static StandardMenuButton CreateMenuButton(Transform parent, string name, string text, Vector3 localPosition)
+        static StandardMenuButton CreateMenuButton(Transform parent, string name, string text, Vector3 localPosition, UnityAction action)
         {
             Image mainButton = new GameObject(name).AddComponent<Image>();
             mainButton.transform.SetParent(parent, false);
@@ -131,6 +144,7 @@ namespace PlusLevelStudio.Menus
             StandardMenuButton but = mainButton.gameObject.ConvertToButton<StandardMenuButton>();
             but.text = textObj;
             but.underlineOnHigh = true;
+            but.OnPress.AddListener(action);
             return but;
         }
 

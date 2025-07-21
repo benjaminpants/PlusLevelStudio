@@ -560,7 +560,6 @@ namespace PlusLevelStudio.Editor
             CursorController.Instance.transform.SetAsLastSibling();
             tooltipBase.transform.SetAsLastSibling();
             uiOverlays.Add(obj.gameObject);
-            SetChannelsMuted(true);
             return obj;
         }
 
@@ -583,10 +582,6 @@ namespace PlusLevelStudio.Editor
         {
             uiOverlays.Remove(obj);
             Destroy(obj);
-            if (uiOverlays.Count == 0)
-            {
-                SetChannelsMuted(false);
-            }
         }
 
         protected static FieldInfo _xMin = AccessTools.Field(typeof(TooltipController), "xMin");
@@ -650,7 +645,7 @@ namespace PlusLevelStudio.Editor
                 }
                 //hotSlots[i].currentTool = currentMode.availableTools.Values.Select(x => x.First(z => z.id == currentMode.defaultTools[i])).First();
             }
-            if (!currentMode.showSpawnpoint) return;
+            if (!currentMode.caresAboutSpawn) return;
             spawnpointVisual = GameObject.Instantiate(spawnpointVisualPrefab);
             spawnpointVisual.UpdateTransform();
         }
@@ -957,22 +952,24 @@ namespace PlusLevelStudio.Editor
             }
         }
 
+        protected int mutedChannels = 0;
         protected void SetChannelsMuted(bool inMenu)
         {
-            MidiFilePlayer midiPlayer = (MidiFilePlayer)_midiPlayer.GetValue(Singleton<MusicManager>.Instance);
-            for (int i = 0; i < midiPlayer.Channels.Length; i++)
-            {
-                midiPlayer.MPTK_ChannelEnableSet(i, inMenu ? (i == 1 || i == 9) : true);
-            }
-            /*
             if (inMenu)
             {
-                Singleton<MusicManager>.Instance.SetSpeed(0.8f);
+                mutedChannels++;
             }
             else
             {
-                Singleton<MusicManager>.Instance.SetSpeed(1f);
-            }*/
+                mutedChannels = Mathf.Max(mutedChannels - 1, 0);
+            }
+
+            bool shouldMute = mutedChannels > 0;
+            MidiFilePlayer midiPlayer = (MidiFilePlayer)_midiPlayer.GetValue(Singleton<MusicManager>.Instance);
+            for (int i = 0; i < midiPlayer.Channels.Length; i++)
+            {
+                midiPlayer.MPTK_ChannelEnableSet(i, shouldMute ? (i == 1 || i == 9) : true);
+            }
         }
 
         protected virtual void UpdateCamera()
