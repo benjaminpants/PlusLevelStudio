@@ -22,6 +22,8 @@ namespace PlusLevelStudio
             {
                 new ElevatorTool("elevator", true),
                 new ElevatorTool("elevator", false),
+                new WallTool(true),
+                new WallTool(false),
                 new SpawnpointTool(),
                 new MergeTool(),
                 new DeleteTool(),
@@ -105,6 +107,16 @@ namespace PlusLevelStudio
             {
                 new HallDoorStructureTool("facultyonlydoor"),
                 new HallDoorWithButtonsTool("lockdowndoor")
+            }, true);
+            if (!includeNonVanillaComplaintTools) return;
+            AddToolsToCategory(modeToModify, "structures", new EditorTool[]
+            {
+                new ShapeLockTool("shapelock_circle"),
+                new ShapeLockTool("shapelock_triangle"),
+                new ShapeLockTool("shapelock_square"),
+                new ShapeLockTool("shapelock_star"),
+                new ShapeLockTool("shapelock_heart"),
+                new ShapeLockTool("shapelock_weird")
             }, true);
         }
 

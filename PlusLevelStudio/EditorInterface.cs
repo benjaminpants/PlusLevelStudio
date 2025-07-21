@@ -11,6 +11,13 @@ using UnityEngine;
 
 namespace PlusLevelStudio
 {
+    public enum DoorIngameStatus
+    {
+        AlwaysDoor,
+        AlwaysObject,
+        Smart
+    }
+
     public static class EditorInterface
     {
 
@@ -44,15 +51,15 @@ namespace PlusLevelStudio
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
-        /// <param name="isTileBasedObject"></param>
+        /// <param name="ingameState"></param>
         /// <param name="mask"></param>
         /// <param name="sideMaterials"></param>
         /// <returns></returns>
-        public static T AddDoor<T>(string key, bool isTileBasedObject, Material mask, Material[] sideMaterials = null) where T : DoorDisplay
+        public static T AddDoor<T>(string key, DoorIngameStatus ingameState, Material mask, Material[] sideMaterials = null) where T : DoorDisplay
         {
             T standardDoorDisplayBehavior = AddDoorNoArray<T>(key + "_" + typeof(T).Name,mask, sideMaterials);
             LevelStudioPlugin.Instance.doorDisplays.Add(key, standardDoorDisplayBehavior);
-            LevelStudioPlugin.Instance.doorIsTileBased.Add(key, isTileBasedObject);
+            LevelStudioPlugin.Instance.doorIngameStatus.Add(key, ingameState);
             return standardDoorDisplayBehavior;
         }
 

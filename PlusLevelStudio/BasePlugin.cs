@@ -44,7 +44,7 @@ namespace PlusLevelStudio
         public const int editorHandleLayerMask = 1 << editorHandleLayer;
 
         public Dictionary<string, DoorDisplay> doorDisplays = new Dictionary<string, DoorDisplay>();
-        public Dictionary<string, bool> doorIsTileBased = new Dictionary<string, bool>();
+        public Dictionary<string, DoorIngameStatus> doorIngameStatus = new Dictionary<string, DoorIngameStatus>();
         public Dictionary<string, DoorDisplay> windowDisplays = new Dictionary<string, DoorDisplay>();
         public Dictionary<string, GameObject> exitDisplays = new Dictionary<string, GameObject>();
         public Dictionary<string, EditorBasicObject> basicObjectDisplays = new Dictionary<string, EditorBasicObject>();
@@ -56,6 +56,8 @@ namespace PlusLevelStudio
         public Dictionary<string, EditorRoomVisualManager> roomVisuals = new Dictionary<string, EditorRoomVisualManager>();
         public GameObject pickupVisual;
         public GameObject posterVisual;
+        public GameObject wallVisual;
+        public GameObject wallRemoveVisual;
 
         public Dictionary<string, EditorMode> modes = new Dictionary<string, EditorMode>();
 
@@ -189,7 +191,7 @@ namespace PlusLevelStudio
         IEnumerator FindObjectsAndSetupEditor()
         {
             List<Direction> directions = Directions.All();
-            yield return 11;
+            yield return 12;
             yield return "Grabbing necessary resources...";
             assetMan.Add<Mesh>("Quad", Resources.FindObjectsOfTypeAll<Mesh>().First(x => x.GetInstanceID() >= 0 && x.name == "Quad"));
             Material[] materials = Resources.FindObjectsOfTypeAll<Material>().Where(x => x.GetInstanceID() >= 0).ToArray();
@@ -238,6 +240,14 @@ namespace PlusLevelStudio
             Material gridArrowMat = new Material(gridMat);
             gridArrowMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "GridArrow.png"));
             gridArrowMat.name = "GridArrowMaterial";
+
+            Material wallAddMat = new Material(gridMat);
+            wallAddMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "WallAdd.png"));
+            wallAddMat.name = "WallAddMaterial";
+
+            Material wallRemoveMat = new Material(wallAddMat);
+            wallRemoveMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "WallRemove.png"));
+            wallRemoveMat.name = "WallRemoveMaterial";
 
             Material spawnpointMat = new Material(assetMan.Get<Material>("tileAlpha"));
             spawnpointMat.name = "SpawnpointMat";
@@ -463,6 +473,20 @@ namespace PlusLevelStudio
             workerCgm.gameObject.SetActive(false);
             workerCgm.name = "WorkerCoreGameManager";
 
+            yield return "Creating editor ingame objects...";
+            GameLock[] foundLocks = Resources.FindObjectsOfTypeAll<GameLock>().Where(x => x.GetInstanceID() >= 0).ToArray();
+            Structure_LockedRoom lockedRoomBuilder = new GameObject("LockedRoomBuilder").AddComponent<Structure_LockedRoom>();
+            lockedRoomBuilder.gameObject.ConvertToPrefab(true);
+            LevelLoaderPlugin.Instance.structureAliases.Add("shapelock", new LoaderStructureData(lockedRoomBuilder, new Dictionary<string, GameObject>()
+            {
+                { "shapelock_circle", foundLocks.First(x => x.name == "GameLock_0").gameObject },
+                { "shapelock_triangle", foundLocks.First(x => x.name == "GameLock_1").gameObject },
+                { "shapelock_square", foundLocks.First(x => x.name == "GameLock_2").gameObject },
+                { "shapelock_star", foundLocks.First(x => x.name == "GameLock_3").gameObject },
+                { "shapelock_heart", foundLocks.First(x => x.name == "GameLock_4").gameObject },
+                { "shapelock_weird", foundLocks.First(x => x.name == "GameLock_5").gameObject },
+            }));
+
             yield return "Creating editor prefab visuals...";
 
             // create light display
@@ -486,13 +510,13 @@ namespace PlusLevelStudio
             lightEdo.AddRenderer(lightSpriteRenderer, "white");
 
             // create door visuals
-            EditorInterface.AddDoor<StandardDoorDisplay>("standard", false, assetMan.Get<Material>("doorMask"), null);
-            EditorInterface.AddDoor<DoorDisplay>("swinging", true, assetMan.Get<Material>("swingingDoorMask"), new Material[] { assetMan.Get<Material>("SwingingDoorMat"), assetMan.Get<Material>("SwingingDoorMat") });
-            EditorInterface.AddDoor<DoorDisplay>("oneway", true, assetMan.Get<Material>("swingingDoorMask"), new Material[] { assetMan.Get<Material>("OneWayRight"), assetMan.Get<Material>("OneWayWrong") });
-            EditorInterface.AddDoor<DoorDisplay>("swinging_silent", true, assetMan.Get<Material>("swingingDoorMask"), new Material[] { silentDoorMat, silentDoorMat });
-            EditorInterface.AddDoor<DoorDisplay>("coinswinging", true, assetMan.Get<Material>("swingingDoorMask"), new Material[] { assetMan.Get<Material>("CoinDoorMat"), assetMan.Get<Material>("CoinDoorMat") });
-            EditorInterface.AddDoor<DoorDisplay>("autodoor", false, assetMan.Get<Material>("AutoDoorMask"), new Material[] { assetMan.Get<Material>("AutoDoorMat"), assetMan.Get<Material>("AutoDoorMat") });
-            EditorInterface.AddDoor<DoorDisplay>("flaps", true, assetMan.Get<Material>("FlapDoorMask"), new Material[] { assetMan.Get<Material>("FlapDoorMat"), assetMan.Get<Material>("FlapDoorMat") });
+            EditorInterface.AddDoor<StandardDoorDisplay>("standard", DoorIngameStatus.AlwaysDoor, assetMan.Get<Material>("doorMask"), null);
+            EditorInterface.AddDoor<DoorDisplay>("swinging", DoorIngameStatus.Smart, assetMan.Get<Material>("swingingDoorMask"), new Material[] { assetMan.Get<Material>("SwingingDoorMat"), assetMan.Get<Material>("SwingingDoorMat") });
+            EditorInterface.AddDoor<DoorDisplay>("oneway", DoorIngameStatus.AlwaysObject, assetMan.Get<Material>("swingingDoorMask"), new Material[] { assetMan.Get<Material>("OneWayRight"), assetMan.Get<Material>("OneWayWrong") });
+            EditorInterface.AddDoor<DoorDisplay>("swinging_silent", DoorIngameStatus.Smart, assetMan.Get<Material>("swingingDoorMask"), new Material[] { silentDoorMat, silentDoorMat });
+            EditorInterface.AddDoor<DoorDisplay>("coinswinging", DoorIngameStatus.AlwaysObject, assetMan.Get<Material>("swingingDoorMask"), new Material[] { assetMan.Get<Material>("CoinDoorMat"), assetMan.Get<Material>("CoinDoorMat") });
+            EditorInterface.AddDoor<DoorDisplay>("autodoor", DoorIngameStatus.AlwaysDoor, assetMan.Get<Material>("AutoDoorMask"), new Material[] { assetMan.Get<Material>("AutoDoorMat"), assetMan.Get<Material>("AutoDoorMat") });
+            EditorInterface.AddDoor<DoorDisplay>("flaps", DoorIngameStatus.AlwaysObject, assetMan.Get<Material>("FlapDoorMask"), new Material[] { assetMan.Get<Material>("FlapDoorMat"), assetMan.Get<Material>("FlapDoorMat") });
 
             WindowObject standardWindowObject = Resources.FindObjectsOfTypeAll<WindowObject>().First(x => x.name == "WoodWindow" && x.GetInstanceID() >= 0);
             EditorInterface.AddWindow<DoorDisplay>("standard", standardWindowObject.mask, standardWindowObject.overlay);
@@ -510,14 +534,34 @@ namespace PlusLevelStudio
             // poster visual
             GameObject posterVisualBase = new GameObject("PosterVisual");
             posterVisualBase.ConvertToPrefab(true);
-            GameObject wallQuad = CreateQuad("PosterWall", new Material(assetMan.Get<Material>("tileAlpha")), new Vector3(0f,5f,4.999f), Vector3.zero);
-            wallQuad.transform.SetParent(posterVisualBase.transform, true);
-            BoxCollider collider = posterVisualBase.AddComponent<BoxCollider>();
-            collider.size = new Vector3(10f,10f,0.02f);
-            collider.center = wallQuad.transform.localPosition;
+            GameObject posterQuad = CreateQuad("PosterWall", new Material(assetMan.Get<Material>("tileAlpha")), new Vector3(0f,5f,4.999f), Vector3.zero);
+            posterQuad.transform.SetParent(posterVisualBase.transform, true);
+            BoxCollider posterCollider = posterVisualBase.AddComponent<BoxCollider>();
+            posterCollider.size = new Vector3(10f,10f,0.02f);
+            posterCollider.center = posterQuad.transform.localPosition;
             posterVisualBase.layer = editorInteractableLayer;
-            collider.gameObject.AddComponent<EditorDeletableObject>().AddRenderer(wallQuad.GetComponent<MeshRenderer>(), "none");
+            posterCollider.gameObject.AddComponent<EditorDeletableObject>().AddRenderer(posterQuad.GetComponent<MeshRenderer>(), "none");
             posterVisual = posterVisualBase;
+
+            // wall add visual
+            GameObject wallVisualBase = new GameObject("WallAddVisual");
+            wallVisualBase.ConvertToPrefab(true);
+            GameObject wallQuad = CreateQuad("WallVisualA", wallAddMat, new Vector3(0f, 5f, 4.999f), Vector3.zero);
+            wallQuad.transform.SetParent(wallVisualBase.transform, true);
+            GameObject wallQuadB = CreateQuad("WallVisualB", wallAddMat, new Vector3(0f, 5f, 5.001f), new Vector3(0f,180f,0f));
+            wallQuadB.transform.SetParent(wallVisualBase.transform, true);
+            BoxCollider wallCollider = wallVisualBase.AddComponent<BoxCollider>();
+            wallCollider.size = new Vector3(10f, 10f, 0.015f);
+            wallCollider.center = wallQuad.transform.localPosition;
+            wallVisualBase.layer = editorInteractableLayer;
+            wallCollider.gameObject.AddComponent<EditorDeletableObject>().AddRendererRange(wallCollider.GetComponentsInChildren<MeshRenderer>(), "white");
+            wallVisual = wallVisualBase;
+
+            GameObject wallRemoveBase = GameObject.Instantiate(wallVisualBase, MTM101BaldiDevAPI.prefabTransform);
+            wallRemoveBase.name = "WallRemoveVisual";
+            wallRemoveBase.GetComponent<EditorDeletableObject>().myRenderers.ForEach(x => x.material = wallRemoveMat);
+            wallRemoveVisual = wallRemoveBase;
+
 
             // object visuals
             EditorInterface.AddObjectVisualWithMeshCollider("desk", LevelLoaderPlugin.Instance.basicObjects["desk"], true);
@@ -635,7 +679,6 @@ namespace PlusLevelStudio
             facultyOnlyCollider.size = facultyOnlyOGCollider.size;
             facultyOnlyCollider.center = facultyOnlyOGCollider.center + (Vector3.up * 10f);
             structureTypes.Add("facultyonlydoor", typeof(HallDoorStructureLocation));
-
             EditorInterface.AddStructureGenericVisual("button", Resources.FindObjectsOfTypeAll<GameButton>().First(x => x.GetInstanceID() >= 0 && x.name == "GameButton" && x.transform.parent == null).gameObject);
 
             GameLever lever = Resources.FindObjectsOfTypeAll<GameLever>().First(x => x.GetInstanceID() >= 0 && x.name == "GameLever" && x.transform.parent == null);
@@ -655,6 +698,18 @@ namespace PlusLevelStudio
             shutLockdownDoorVisual.GetComponent<BoxCollider>();
             shutLockdownDoorVisual.transform.Find("LockdownDoor_Model").transform.position += Vector3.down * 10f;
             shutLockdownDoorVisual.AddComponent<SettingsComponent>().offset = new Vector3(0f, 20f, 5f);
+
+            // shape locks
+
+            LoaderStructureData shapeLockData = LevelLoaderPlugin.Instance.structureAliases["shapelock"];
+
+            foreach (KeyValuePair<string, GameObject> kvp in shapeLockData.prefabAliases)
+            {
+                if (kvp.Value.GetInstanceID() < 0) continue;
+                EditorInterface.AddStructureGenericVisual(kvp.Key, kvp.Value);
+            }
+
+            structureTypes.Add("shapelock", typeof(ShapeLockStructureLocation));
 
             // npcs
 

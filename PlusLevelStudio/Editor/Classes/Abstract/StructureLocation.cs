@@ -7,6 +7,11 @@ using UnityEngine;
 
 namespace PlusLevelStudio.Editor
 {
+    public enum PotentialStructureUpdateReason
+    {
+        CellChange,
+        LightChange,
+    }
     public abstract class StructureLocation : IEditorDeletable, IEditorCellModifier, IEditorVisualizable
     {
         public string type;
@@ -53,20 +58,20 @@ namespace PlusLevelStudio.Editor
         /// Do not write the type, as that has already been done.
         /// </summary>
         /// <param name="writer"></param>
-        public abstract void Write(BinaryWriter writer, StringCompressor compressor);
+        public abstract void Write(EditorLevelData data, BinaryWriter writer, StringCompressor compressor);
 
         /// <summary>
         /// Read the data for your structure to be loaded from the editor level file.
         /// Do not read the type, as that has already been done.
         /// </summary>
         /// <param name="reader"></param>
-        public abstract void ReadInto(BinaryReader reader, StringCompressor compressor);
+        public abstract void ReadInto(EditorLevelData data, BinaryReader reader, StringCompressor compressor);
 
         /// <summary>
         /// Compile this structure into the StructureInfo class that will later get converted into StructureData by the level loader.
         /// </summary>
         /// <returns></returns>
-        public abstract StructureInfo Compile();
+        public abstract StructureInfo Compile(EditorLevelData data, BaldiLevel level);
 
         public virtual bool OnDelete(EditorLevelData data)
         {
@@ -80,6 +85,11 @@ namespace PlusLevelStudio.Editor
         public virtual void ModifyLightsForEditor(EnvironmentController workerEc)
         {
             
+        }
+
+        public virtual bool ShouldUpdateVisual(PotentialStructureUpdateReason reason)
+        {
+            return false;
         }
     }
 }

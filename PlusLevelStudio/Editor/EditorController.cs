@@ -287,6 +287,10 @@ namespace PlusLevelStudio.Editor
             {
                 AddVisual(item);
             }
+            foreach (WallLocation item in levelData.walls)
+            {
+                AddVisual(item);
+            }
             RefreshCells(false);
             SetupVisualsForAllRooms(); // need to do this first before lighting
             RefreshLights();
@@ -366,6 +370,7 @@ namespace PlusLevelStudio.Editor
             HandleLightChanges(levelData.exits);
             HandleLightChanges(levelData.structures);
             roomVisuals.ForEach(x => x.ModifyLightsForEditor(workerEc));
+            UpdateStructuresWithReason(PotentialStructureUpdateReason.LightChange);
             workerEc.UpdateQueuedLightChanges();
             LevelStudioPlugin.Instance.lightmaps["none"].Apply(false, false);
         }
@@ -423,6 +428,18 @@ namespace PlusLevelStudio.Editor
                 }
             }
             return returnValue;
+        }
+
+        public void UpdateStructuresWithReason(PotentialStructureUpdateReason reason)
+        {
+            foreach (StructureLocation structure in levelData.structures)
+            {
+                if (GetVisual(structure) == null) continue; // don't visual
+                if (structure.ShouldUpdateVisual(reason))
+                {
+                    UpdateVisual(structure);
+                }
+            }
         }
 
         public void CompileAndPlay()
@@ -1013,6 +1030,7 @@ namespace PlusLevelStudio.Editor
                 }
             }
             UnhighlightAllCells();
+            UpdateStructuresWithReason(PotentialStructureUpdateReason.CellChange);
             if (!refreshLights) return;
             RefreshLights();
         }

@@ -110,7 +110,7 @@ namespace PlusLevelStudio.Editor
             return OnSubDelete(data, local, true);
         }
 
-        public override StructureInfo Compile()
+        public override StructureInfo Compile(EditorLevelData data, BaldiLevel level)
         {
             StructureInfo finalStructure = new StructureInfo();
             finalStructure.type = type;
@@ -140,7 +140,7 @@ namespace PlusLevelStudio.Editor
             }
         }
 
-        public override void ReadInto(BinaryReader reader, StringCompressor compressor)
+        public override void ReadInto(EditorLevelData data, BinaryReader reader, StringCompressor compressor)
         {
             byte version = reader.ReadByte();
             int childCount = reader.ReadInt32();
@@ -198,9 +198,9 @@ namespace PlusLevelStudio.Editor
             return myChildren.Count > 0;
         }
 
-        public override void Write(BinaryWriter writer, StringCompressor compressor)
+        public override void Write(EditorLevelData data, BinaryWriter writer, StringCompressor compressor)
         {
-            writer.Write((byte)1); // incase i change this in the future
+            writer.Write((byte)2); // incase i change this in the future
             writer.Write(myChildren.Count);
             for (int i = 0; i < myChildren.Count; i++)
             {
@@ -257,7 +257,7 @@ namespace PlusLevelStudio.Editor
             }
         }
 
-        public override StructureInfo Compile()
+        public override StructureInfo Compile(EditorLevelData data, BaldiLevel level)
         {
             StructureInfo finalStructure = new StructureInfo();
             finalStructure.type = type;
@@ -348,21 +348,21 @@ namespace PlusLevelStudio.Editor
             }
         }
 
-        public override void Write(BinaryWriter writer, StringCompressor compressor)
+        public override void Write(EditorLevelData data, BinaryWriter writer, StringCompressor compressor)
         {
-            base.Write(writer, compressor);
+            base.Write(data, writer, compressor);
             writer.Write((byte)1);
             writer.Write(buttons.Count);
-            for (int i = 0; i < myChildren.Count; i++)
+            for (int i = 0; i < buttons.Count; i++)
             {
                 compressor.WriteStoredString(writer, buttons[i].prefab);
                 writer.Write(buttons[i].position.ToByte());
                 writer.Write((byte)buttons[i].direction);
             }
         }
-        public override void ReadInto(BinaryReader reader, StringCompressor compressor)
+        public override void ReadInto(EditorLevelData data, BinaryReader reader, StringCompressor compressor)
         {
-            base.ReadInto(reader, compressor);
+            base.ReadInto(data, reader, compressor);
             byte version = reader.ReadByte();
             int buttonCount = reader.ReadInt32();
             for (int i = 0; i < buttonCount; i++)

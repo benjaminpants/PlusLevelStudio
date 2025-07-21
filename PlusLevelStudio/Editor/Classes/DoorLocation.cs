@@ -28,10 +28,22 @@ namespace PlusLevelStudio.Editor
             UpdateVisual(visualObject);
         }
 
-        public void ModifyCells(EditorLevelData data, bool forEditor)
+        public bool DoorConnectedToRoom(EditorLevelData data, EditorRoom room, bool forEditor)
+        {
+            EditorRoom roomA = data.RoomFromPos(position, forEditor);
+            EditorRoom roomB = data.RoomFromPos(position + direction.ToIntVector2(), forEditor);
+            return (roomA == room) || (roomB == room);
+        }
+
+        public virtual void ModifyCells(EditorLevelData data, bool forEditor)
         {
             IntVector2 pos2;
-            if (!forEditor && !LevelStudioPlugin.Instance.doorIsTileBased[type])
+            bool shouldEnforceWall = LevelStudioPlugin.Instance.doorIngameStatus[type] == DoorIngameStatus.AlwaysDoor;
+            if (LevelStudioPlugin.Instance.doorIngameStatus[type] == DoorIngameStatus.Smart)
+            {
+                shouldEnforceWall = data.GetSmartDoorPosition(position, direction, out _, out _);
+            }
+            if (!forEditor && shouldEnforceWall)
             {
                 data.cells[position.x, position.z].walls = (Nybble)(data.cells[position.x, position.z].walls | direction.ToBinary());
                 pos2 = direction.ToIntVector2();
@@ -53,7 +65,6 @@ namespace PlusLevelStudio.Editor
             data.doors.Remove(this);
             EditorController.Instance.RemoveVisual(this);
             EditorController.Instance.RefreshCells();
-            EditorController.Instance.RefreshLights();
             return true;
         }
 

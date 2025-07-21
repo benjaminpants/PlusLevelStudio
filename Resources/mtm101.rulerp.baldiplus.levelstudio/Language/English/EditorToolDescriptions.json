@@ -6,6 +6,10 @@
 {"key":"Ed_Tool_delete_Desc","value":"Click anything, anything at all to delete it!"},
 {"key":"Ed_Tool_spawnpoint_Title","value":"Spawnpoint Tool"},
 {"key":"Ed_Tool_spawnpoint_Desc","value":"Click a position and direction to set the spawnpoint there. (You can also just click it and move it that way!)"},
+{"key":"Ed_Tool_wallplacer_Title","value":"Wall Tool"},
+{"key":"Ed_Tool_wallplacer_Desc","value":"Click anywhere with any rotation to add a wall there!"},
+{"key":"Ed_Tool_wallremover_Title","value":"Wall Remover Tool"},
+{"key":"Ed_Tool_wallremover_Desc","value":"Click anywhere with any rotation to remove a wall!"},
 
 {"key":"Ed_Tool_room_hall_Title","value":"Hallway"},
 {"key":"Ed_Tool_room_hall_Desc","value":"The building block of any level! There can only be one room of this type in a level!"},
@@ -209,6 +213,18 @@
 {"key":"Ed_Tool_structure_facultyonlydoor_Title","value":"Faculty Only Door"},
 {"key":"Ed_Tool_structure_facultyonlydoor_Desc","value":"This door closes if the player gets too close! It can be bypassed by going fast! (Or wearing a nametag...)"},
 {"key":"Ed_Tool_structure_lockdowndoor_Title","value":"Lockdown Door"},
-{"key":"Ed_Tool_structure_lockdowndoor_Desc","value":"This door can be toggled by a lever into being shut or open, now without power restrictions!"}
+{"key":"Ed_Tool_structure_lockdowndoor_Desc","value":"This door can be toggled by a lever into being shut or open, now without power restrictions!"},
+{"key":"Ed_Tool_structure_shapelock_circle_Title","value":"Circle Shapelock"},
+{"key":"Ed_Tool_structure_shapelock_circle_Desc","value":"Makes the room require a Circle Key to open!"},
+{"key":"Ed_Tool_structure_shapelock_triangle_Title","value":"Triangle Shapelock"},
+{"key":"Ed_Tool_structure_shapelock_triangle_Desc","value":"Makes the room require a Triangle Key to open!"},
+{"key":"Ed_Tool_structure_shapelock_square_Title","value":"Square Shapelock"},
+{"key":"Ed_Tool_structure_shapelock_square_Desc","value":"Makes the room require a Square Key to open!"},
+{"key":"Ed_Tool_structure_shapelock_star_Title","value":"Star Shapelock"},
+{"key":"Ed_Tool_structure_shapelock_star_Desc","value":"Makes the room require a Star Key to open!"},
+{"key":"Ed_Tool_structure_shapelock_heart_Title","value":"Heart Shapelock"},
+{"key":"Ed_Tool_structure_shapelock_heart_Desc","value":"Makes the room require a Heart Key to open!"},
+{"key":"Ed_Tool_structure_shapelock_weird_Title","value":"Weird Shapelock"},
+{"key":"Ed_Tool_structure_shapelock_weird_Desc","value":"Makes the room require a Weird Key to open..?"}
 
 ]}

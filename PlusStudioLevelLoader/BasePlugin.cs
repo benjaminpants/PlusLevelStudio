@@ -123,7 +123,9 @@ namespace PlusStudioLevelLoader
             tileBasedObjectPrefabs.Add("swinging_silent", doors.First(x => x.name == "SilentDoor_Swinging")); // swinging doors aren't "doors" and don't belong to any room.
             tileBasedObjectPrefabs.Add("coinswinging", doors.First(x => x.name == "Door_SwingingCoin")); // swinging doors aren't "doors" and don't belong to any room.
             tileBasedObjectPrefabs.Add("flaps", doors.First(x => x.name == "Door_FlapDoor")); // swinging doors aren't "doors" and don't belong to any room.
-            doorPrefabs.Add("autodoor", doors.First(x => x.name == "Door_Auto")); // swinging doors aren't "doors" and don't belong to any room.
+            doorPrefabs.Add("autodoor", doors.First(x => x.name == "Door_Auto"));
+            doorPrefabs.Add("swinging", doors.First(x => x.name == "Door_Swinging")); // swinging doors are smart and may be a regular door somethings
+            doorPrefabs.Add("swinging_silent", doors.First(x => x.name == "SilentDoor_Swinging")); // swinging doors are smart and may be a regular door somethings
 
             WindowObject[] windows = Resources.FindObjectsOfTypeAll<WindowObject>().Where(x => x.GetInstanceID() >= 0).ToArray();
             windowObjects.Add("standard", windows.First(x => x.name == "WoodWindow"));

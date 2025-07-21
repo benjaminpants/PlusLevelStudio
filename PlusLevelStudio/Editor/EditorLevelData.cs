@@ -28,6 +28,7 @@ namespace PlusLevelStudio.Editor
         public List<StructureLocation> structures = new List<StructureLocation>();
         public List<NPCPlacement> npcs = new List<NPCPlacement>();
         public List<PosterPlacement> posters = new List<PosterPlacement>();
+        public List<WallLocation> walls = new List<WallLocation>();
         public EditorRoom hall => rooms[0];
 
         public Vector3 spawnPoint = new Vector3(5f,5f,5f);
@@ -200,6 +201,18 @@ namespace PlusLevelStudio.Editor
                     changedSomething = true;
                 }
             }
+            for (int i = walls.Count - 1; i >= 0; i--)
+            {
+                if (!walls[i].ValidatePosition(this))
+                {
+                    if (updateVisuals)
+                    {
+                        EditorController.Instance.RemoveVisual(walls[i]);
+                    }
+                    walls.RemoveAt(i);
+                    changedSomething = true;
+                }
+            }
             return changedSomething;
         }
 
@@ -243,11 +256,12 @@ namespace PlusLevelStudio.Editor
                     }
                 }
             }
-            ValidatePlacements(forEditor);
             ApplyCellModifiers(doors, forEditor);
             ApplyCellModifiers(windows, forEditor);
             ApplyCellModifiers(exits, forEditor);
+            ApplyCellModifiers(walls, forEditor);
             ApplyCellModifiers(structures, forEditor);
+            ValidatePlacements(forEditor);
         }
 
         // TODO: figure out if we even NEED to manually recalculate all cells, or if we'd just be better off moving only areas
@@ -328,6 +342,10 @@ namespace PlusLevelStudio.Editor
             {
                 posters[i].position -= posDif;
             }
+            for (int i = 0; i < walls.Count; i++)
+            {
+                walls[i].position -= posDif;
+            }
             spawnPoint -= new Vector3(posDif.x * 10f, 0f, posDif.z * 10f);
             return true;
         }
@@ -369,6 +387,33 @@ namespace PlusLevelStudio.Editor
             if (y < 0) return null;
             if (y >= mapSize.z) return null;
             return cells[x, y];
+        }
+
+        public bool GetSmartDoorPosition(IntVector2 pos, Direction dir, out IntVector2 outPos, out Direction outDir)
+        {
+            outPos = pos;
+            outDir = dir;
+            // stop us from unnecessary changing our position and dir if we are already in a non-hall room
+            PlusStudioLevelFormat.Cell cellOnOurSide = GetCellSafe(pos);
+            if (cellOnOurSide == null) return false;
+            EditorRoom roomOnOurSide = RoomFromId(cellOnOurSide.roomId);
+            if (roomOnOurSide == null) return false;
+            if (roomOnOurSide.roomType != "hall") return true;
+            PlusStudioLevelFormat.Cell cellOnOtherSide = GetCellSafe(pos + dir.ToIntVector2());
+            if (cellOnOtherSide != null)
+            {
+                EditorRoom roomOnOtherSide = RoomFromId(cellOnOtherSide.roomId);
+                if ((roomOnOtherSide != null))
+                {
+                    if (roomOnOtherSide.roomType != "hall")
+                    {
+                        outPos = pos + dir.ToIntVector2();
+                        outDir = dir.GetOpposite();
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         public PlusStudioLevelFormat.Cell GetCellSafe(IntVector2 vec2)
@@ -441,11 +486,23 @@ namespace PlusLevelStudio.Editor
                     strength = (byte)group.strength
                 });
             }
-            // TODO: during compilation, figure out which side of us is the side with the room (if any) and prioritize that room as our room.
-            // this is to stop mrs pomp from dying a slow slow death if someone didnt intentionally click INSIDE the room
             for (int i = 0; i < doors.Count; i++)
             {
-                if (LevelStudioPlugin.Instance.doorIsTileBased[doors[i].type])
+                bool usedSmartPosition = GetSmartDoorPosition(doors[i].position, doors[i].direction, out IntVector2 smartPosition, out Direction smartDirection);
+                bool shouldBeTile = false;
+                switch (LevelStudioPlugin.Instance.doorIngameStatus[doors[i].type])
+                {
+                    case DoorIngameStatus.AlwaysDoor:
+                        shouldBeTile = false;
+                        break;
+                    case DoorIngameStatus.AlwaysObject:
+                        shouldBeTile = true;
+                        break;
+                    case DoorIngameStatus.Smart:
+                        shouldBeTile = !usedSmartPosition;
+                        break;
+                }
+                if (shouldBeTile)
                 {
                     compiled.tileObjects.Add(new TileObjectInfo()
                     {
@@ -459,9 +516,9 @@ namespace PlusLevelStudio.Editor
                     compiled.doors.Add(new DoorInfo()
                     {
                         prefab = doors[i].type,
-                        position = doors[i].position.ToByte(),
-                        direction = (PlusDirection)doors[i].direction,
-                        roomId = GetCellSafe(doors[i].position.x, doors[i].position.z).roomId
+                        position = smartPosition.ToByte(),
+                        direction = (PlusDirection)smartDirection,
+                        roomId = GetCellSafe(smartPosition.x, smartPosition.z).roomId
                     });
                 }
             }
@@ -505,7 +562,7 @@ namespace PlusLevelStudio.Editor
             }
             for (int i = 0; i < structures.Count; i++)
             {
-                compiled.structures.Add(structures[i].Compile());
+                compiled.structures.Add(structures[i].Compile(this, compiled));
             }
             for (int i = 0; i < npcs.Count; i++)
             {
@@ -527,7 +584,7 @@ namespace PlusLevelStudio.Editor
             return compiled;
         }
 
-        public const byte version = 0;
+        public const byte version = 1;
 
         public bool WallFree(IntVector2 pos, Direction dir, bool ignoreSelf)
         {
@@ -660,7 +717,7 @@ namespace PlusLevelStudio.Editor
             for (int i = 0; i < structures.Count; i++)
             {
                 stringComp.WriteStoredString(writer, structures[i].type);
-                structures[i].Write(writer, stringComp);
+                structures[i].Write(this, writer, stringComp);
             }
             writer.Write(npcs.Count);
             for (int i = 0; i < npcs.Count; i++)
@@ -674,6 +731,20 @@ namespace PlusLevelStudio.Editor
                 stringComp.WriteStoredString(writer, posters[i].type);
                 writer.Write(posters[i].position.ToByte());
                 writer.Write((byte)posters[i].direction);
+            }
+            WallLocation[] addWalls = walls.Where(x => x.wallState).ToArray();
+            writer.Write(addWalls.Length);
+            for (int i = 0; i < addWalls.Length; i++)
+            {
+                writer.Write(addWalls[i].position.ToByte());
+                writer.Write((byte)addWalls[i].direction);
+            }
+            WallLocation[] removeWalls = walls.Where(x => !x.wallState).ToArray();
+            writer.Write(removeWalls.Length);
+            for (int i = 0; i < removeWalls.Length; i++)
+            {
+                writer.Write(removeWalls[i].position.ToByte());
+                writer.Write((byte)removeWalls[i].direction);
             }
             writer.Write(spawnPoint.ToData());
             writer.Write((byte)spawnDirection);
@@ -783,7 +854,7 @@ namespace PlusLevelStudio.Editor
             {
                 string type = stringComp.ReadStoredString(reader);
                 StructureLocation structure = LevelStudioPlugin.Instance.ConstructStructureOfType(type);
-                structure.ReadInto(reader, stringComp);
+                structure.ReadInto(levelData, reader, stringComp);
                 levelData.structures.Add(structure);
             }
             int npcCount = reader.ReadInt32();
@@ -803,6 +874,32 @@ namespace PlusLevelStudio.Editor
                     type=stringComp.ReadStoredString(reader),
                     position=reader.ReadByteVector2().ToInt(),
                     direction=(Direction)reader.ReadByte()
+                });
+            }
+            if (version == 0)
+            {
+                levelData.spawnPoint = reader.ReadUnityVector3().ToUnity();
+                levelData.spawnDirection = (Direction)reader.ReadByte();
+                return levelData;
+            }
+            int addWallsCount = reader.ReadInt32();
+            for (int i = 0; i < addWallsCount; i++)
+            {
+                levelData.walls.Add(new WallLocation()
+                {
+                    wallState = true,
+                    position=reader.ReadByteVector2().ToInt(),
+                    direction=(Direction)reader.ReadByte()
+                });
+            }
+            int removeWallsCount = reader.ReadInt32();
+            for (int i = 0; i < removeWallsCount; i++)
+            {
+                levelData.walls.Add(new WallLocation()
+                {
+                    wallState = false,
+                    position = reader.ReadByteVector2().ToInt(),
+                    direction = (Direction)reader.ReadByte()
                 });
             }
             levelData.spawnPoint = reader.ReadUnityVector3().ToUnity();
