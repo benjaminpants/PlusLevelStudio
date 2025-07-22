@@ -44,6 +44,54 @@ namespace PlusLevelStudio.Editor
         }
     }
 
+    public class EditorUIGlobalSettingsHandler : UIExchangeHandler
+    {
+        bool somethingChanged = false;
+        TextMeshProUGUI elevatorText;
+        public override bool GetStateBoolean(string key)
+        {
+            return false;
+        }
+
+        public override void OnElementsCreated()
+        {
+            elevatorText = transform.Find("ElevatorTitle").GetComponent<TextMeshProUGUI>();
+        }
+
+        public void Refresh()
+        {
+            elevatorText.text = EditorController.Instance.levelData.elevatorTitle;
+        }
+
+        public void Open()
+        {
+            EditorController.Instance.HoldUndo();
+        }
+
+        public override void SendInteractionMessage(string message, object data = null)
+        {
+            switch (message)
+            {
+                case "elevatorTitleChanged":
+                    somethingChanged = true;
+                    EditorController.Instance.levelData.elevatorTitle = elevatorText.text;
+                    break;
+                case "exit":
+                    if (somethingChanged)
+                    {
+                        EditorController.Instance.AddHeldUndo();
+                    }
+                    else
+                    {
+                        EditorController.Instance.CancelHeldUndo();
+                    }
+                    EditorController.Instance.SetChannelsMuted(false);
+                    gameObject.SetActive(false);
+                    break;
+            }
+        }
+    }
+
     public class EditorUIToolboxHandler : UIExchangeHandler
     {
         public string currentCategory = "tools";
@@ -235,15 +283,7 @@ namespace PlusLevelStudio.Editor
 
         public void PlayLevel()
         {
-            if ((EditorController.Instance.currentFileName != null) && (File.Exists(Path.Combine(LevelStudioPlugin.levelFilePath, EditorController.Instance.currentFileName + ".ebpl"))))
-            {
-                EditorController.lastPlayedLevel = EditorController.Instance.currentFileName;
-            }
-            else
-            {
-                EditorController.lastPlayedLevel = null;
-            }
-            EditorController.Instance.CompileAndPlay();
+            EditorController.Instance.PlayLevel();
         }
 
         public override void SendInteractionMessage(string message, object data)
@@ -295,6 +335,12 @@ namespace PlusLevelStudio.Editor
                     EditorController.Instance.SwitchToTool(null);
                     EditorController.Instance.uiObjects[1].SetActive(true);
                     EditorController.Instance.uiObjects[1].GetComponent<EditorUIToolboxHandler>().Open();
+                    break;
+                case "globalSettings":
+                    EditorController.Instance.SwitchToTool(null);
+                    EditorController.Instance.uiObjects[2].SetActive(true);
+                    EditorController.Instance.uiObjects[2].GetComponent<EditorUIGlobalSettingsHandler>().Open();
+                    EditorController.Instance.SetChannelsMuted(true);
                     break;
                 case "changeGridScale":
                     if (float.TryParse((string)data, out float result))

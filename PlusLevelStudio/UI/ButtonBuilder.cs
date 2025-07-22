@@ -25,6 +25,10 @@ namespace PlusLevelStudio.UI
             {
                 button.OnPress.AddListener(() => handler.SendInteractionMessage(data["onPressed"].Value<string>()));
             }
+            if (data.ContainsKey("onReleased"))
+            {
+                button.OnRelease.AddListener(() => handler.SendInteractionMessage(data["onReleased"].Value<string>()));
+            }
             if (data.ContainsKey("tooltip"))
             {
                 string key = data["tooltip"].Value<string>();

@@ -37,6 +37,7 @@ namespace PlusStudioLevelLoader
                 scene.extraAsset.npcsToSpawn.Add(LevelLoaderPlugin.Instance.npcAliases[level.npcs[i].npc]);
                 scene.extraAsset.npcSpawnPoints.Add(level.npcs[i].position.ToInt());
             }
+            scene.levelTitle = level.levelTitle;
             return scene;
         }
 

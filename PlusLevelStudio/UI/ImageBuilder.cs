@@ -22,6 +22,10 @@ namespace PlusLevelStudio.UI
             {
                 img.sprite = GetSprite(data["graphic"].Value<string>());
             }
+            if (data.ContainsKey("color"))
+            {
+                img.color = ConvertToColor(data["color"]);
+            }
             img.rectTransform.anchoredPosition = ConvertToVector2(data["anchoredPosition"]);
             return baseObject;
         }

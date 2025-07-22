@@ -4,7 +4,6 @@
 	"elements":[
 		{
 			"type":"blocker",
-			"transparency":0.5
 		},
 		{
 			"name":"Chalkboard",

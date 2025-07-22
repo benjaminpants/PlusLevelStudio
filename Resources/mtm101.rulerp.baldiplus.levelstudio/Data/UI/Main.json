@@ -38,7 +38,7 @@
 			"pivot":"#bottomLeft",
 			"anchorMin":"#bottomLeft",
 			"anchorMax":"#bottomLeft",
-			"onPressed":"globalsettings",
+			"onPressed":"globalSettings",
 			"tooltip":"Ed_Tip_GlobalSettings"
 		},
 		{
@@ -178,6 +178,19 @@
 			"anchorMax":"#bottomRight",
 			"onPressed":"save",
 			"tooltip":"Ed_Tip_SaveButton"
+		},
+		{
+			"name":"ExportButton",
+			"type":"imageButton",
+			"graphic":"ExportButton",
+			"hoverGraphic":"ExportButtonHover",
+			"anchoredPosition":[-96,2],
+			"size":[32,32],
+			"pivot":"#bottomRight",
+			"anchorMin":"#bottomRight",
+			"anchorMax":"#bottomRight",
+			"onPressed":"export",
+			"tooltip":"Ed_Tip_ExportButton"
 		},
 		{
 			"name":"ObjectBox",

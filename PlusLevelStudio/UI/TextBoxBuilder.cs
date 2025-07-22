@@ -37,6 +37,7 @@ namespace PlusLevelStudio.UI
         }
     }
 
+    // TODO: replace with proper text box?
     public class EditorTextBox : MenuButton
     {
         public TextMeshProUGUI text;
@@ -47,6 +48,7 @@ namespace PlusLevelStudio.UI
         public string typeMessage = null;
         public string typeDoneMessage;
         public UIExchangeHandler handler;
+        float timeWithBackDown = 0f;
         public override void Press()
         {
             //base.Press();
@@ -70,6 +72,14 @@ namespace PlusLevelStudio.UI
             }
             highlighted = false;
             if (!typing) return;
+            if (Input.GetKey(KeyCode.Backspace))
+            {
+                timeWithBackDown += Time.deltaTime;
+            }
+            else
+            {
+                timeWithBackDown = -1f;
+            }
             text.fontStyle = FontStyles.Underline;
             bool sendUpdate = false;
             if (Input.anyKeyDown && Input.inputString.Length > 0 && !char.IsControl(Input.inputString, 0))
@@ -84,8 +94,9 @@ namespace PlusLevelStudio.UI
                     text.text = text.text.ToUpper();
                 }
             }
-            if (Input.GetKeyDown(KeyCode.Backspace))
+            if (Input.GetKeyDown(KeyCode.Backspace) || (timeWithBackDown > 0f))
             {
+                timeWithBackDown = Mathf.Min(timeWithBackDown, 0.05f);
                 if (text.text.Length > 0)
                 {
                     text.text = text.text.Remove(text.text.Length - 1);

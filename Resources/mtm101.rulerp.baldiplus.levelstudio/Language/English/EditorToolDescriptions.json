@@ -193,6 +193,8 @@
 {"key":"Ed_Tool_object_ceilingfan_Desc","value":"A fan, but for the ceiling!"},
 {"key":"Ed_Tool_object_exitsign_Title","value":"Exit Sign"},
 {"key":"Ed_Tool_object_exitsign_Desc","value":"An exit sign... who knows if it actually indicates the exit."},
+{"key":"Ed_Tool_object_cafeteriatable_Title","value":"Cafeteria Table"},
+{"key":"Ed_Tool_object_cafeteriatable_Desc","value":"Perfect for Cafeterias or other overly sized rooms!"},
 
 {"key":"Ed_Tool_bulkobject_multilockers_Title","value":"Bulk Lockers"},
 {"key":"Ed_Tool_bulkobject_multilockers_Desc","value":"5 lockers placed side by side, covering a whole wall!"},

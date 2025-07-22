@@ -131,9 +131,11 @@ namespace PlusLevelStudio
             Shader.SetGlobalFloat("_FogMaxDistance", 100f);
             Shader.SetGlobalFloat("_FogStrength", 0f);
 
-            EditorController editorController = GameObject.Instantiate<EditorController>(assetMan.Get<EditorController>("MainEditorController"));
+            EditorMode targetMode = modes[modeToLoad];
 
-            editorController.currentMode = modes[modeToLoad];
+            EditorController editorController = GameObject.Instantiate<EditorController>(targetMode.prefab);
+
+            editorController.currentMode = targetMode;
 
             editorController.EditorModeAssigned();
 
@@ -172,7 +174,8 @@ namespace PlusLevelStudio
                     "posters",
                     "tools"
                 },
-                defaultTools = new string[] { "room_hall", "room_class", "room_faculty", "room_office", "light_fluorescent", "door_swinging", "door_standard", "merge", "delete" }
+                defaultTools = new string[] { "room_hall", "room_class", "room_faculty", "room_office", "light_fluorescent", "door_swinging", "door_standard", "merge", "delete" },
+                prefab = assetMan.Get<EditorController>("MainEditorController")
             };
 
             EditorInterfaceModes.AddVanillaRooms(fullMode);
@@ -190,7 +193,7 @@ namespace PlusLevelStudio
 
             EditorMode complaintMode = new EditorMode()
             {
-                id = "full",
+                id = "compliant",
                 availableTools = new Dictionary<string, List<EditorTool>>(),
                 categoryOrder = new string[] {
                     "rooms",
@@ -206,6 +209,7 @@ namespace PlusLevelStudio
                 },
                 defaultTools = new string[] { "room_hall", "room_class", "room_faculty", "room_office", "light_fluorescent", "door_swinging", "door_standard", "merge", "delete" },
                 supportsNPCProperties = false,
+                prefab = assetMan.Get<EditorController>("MainEditorController")
             };
 
             EditorInterfaceModes.AddVanillaRooms(complaintMode);
@@ -221,6 +225,11 @@ namespace PlusLevelStudio
 
             modes.Add("compliant", complaintMode);
 
+            RoomEditorController rce = GameObject.Instantiate<EditorController>(assetMan.Get<EditorController>("MainEditorController"), MTM101BaldiDevAPI.prefabTransform).gameObject.SwapComponent<EditorController, RoomEditorController>();
+
+            rce.ReflectionSetVariable("destroyOnLoad", true); // the fuck
+            rce.name = "RoomEditorController";
+
             EditorMode roomsMode = new EditorMode()
             {
                 id = "rooms",
@@ -234,7 +243,8 @@ namespace PlusLevelStudio
                 },
                 defaultTools = new string[] { "room_hall", "room_class", "room_faculty", "room_office", "room_closet", "room_reflex", "room_cafeteria", "merge", "delete" },
                 supportsNPCProperties = false,
-                caresAboutSpawn = false
+                caresAboutSpawn = false,
+                prefab = rce
             };
 
             EditorInterfaceModes.AddVanillaRooms(roomsMode);
@@ -929,6 +939,20 @@ namespace PlusLevelStudio
             uiAssetMan.Add<Sprite>("MenuArrowLeftHigh", allVanillaSprites.First(x => x.name == "MenuArrowSheet_0"));
             uiAssetMan.Add<Sprite>("MenuArrowRight", allVanillaSprites.Where(x => x.name == "MenuArrowSheet_3").First());
             uiAssetMan.Add<Sprite>("MenuArrowRightHigh", allVanillaSprites.First(x => x.name == "MenuArrowSheet_1"));
+            uiAssetMan.Add<Sprite>("OptionsClipboard", allVanillaSprites.First(x => x.name == "OptionsClipboard"));
+
+            uiAssetMan.Add<Sprite>("Segment0", allVanillaSprites.First(x => x.name == "Segment_Sheet_0"));
+            uiAssetMan.Add<Sprite>("Segment1", allVanillaSprites.First(x => x.name == "Segment_Sheet_1"));
+            uiAssetMan.Add<Sprite>("Segment2", allVanillaSprites.First(x => x.name == "Segment_Sheet_2"));
+            uiAssetMan.Add<Sprite>("Segment3", allVanillaSprites.First(x => x.name == "Segment_Sheet_3"));
+            uiAssetMan.Add<Sprite>("Segment4", allVanillaSprites.First(x => x.name == "Segment_Sheet_4"));
+            uiAssetMan.Add<Sprite>("Segment5", allVanillaSprites.First(x => x.name == "Segment_Sheet_5"));
+            uiAssetMan.Add<Sprite>("Segment6", allVanillaSprites.First(x => x.name == "Segment_Sheet_6"));
+            uiAssetMan.Add<Sprite>("Segment7", allVanillaSprites.First(x => x.name == "Segment_Sheet_7"));
+            uiAssetMan.Add<Sprite>("Segment8", allVanillaSprites.First(x => x.name == "Segment_Sheet_8"));
+            uiAssetMan.Add<Sprite>("Segment9", allVanillaSprites.First(x => x.name == "Segment_Sheet_9"));
+            uiAssetMan.Add<Sprite>("SegmentD", allVanillaSprites.First(x => x.name == "Segment_Sheet_10"));
+
 
             UIBuilder.elementBuilders.Add("image", new ImageBuilder());
             UIBuilder.elementBuilders.Add("imageButton", new ButtonBuilder());

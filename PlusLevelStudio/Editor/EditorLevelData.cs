@@ -11,6 +11,9 @@ using UnityEngine.UIElements;
 
 namespace PlusLevelStudio.Editor
 {
+    /// <summary>
+    /// The level data class used by the editor itself.
+    /// </summary>
     public class EditorLevelData
     {
         public IntVector2 mapSize = new IntVector2(50,50);
@@ -29,6 +32,7 @@ namespace PlusLevelStudio.Editor
         public List<NPCPlacement> npcs = new List<NPCPlacement>();
         public List<PosterPlacement> posters = new List<PosterPlacement>();
         public List<WallLocation> walls = new List<WallLocation>();
+        public string elevatorTitle = "WIP";
         public EditorRoom hall => rooms[0];
 
         public Vector3 spawnPoint = new Vector3(5f,5f,5f);
@@ -451,6 +455,7 @@ namespace PlusLevelStudio.Editor
         public BaldiLevel Compile()
         {
             BaldiLevel compiled = new BaldiLevel(mapSize.ToByte());
+            compiled.levelTitle = elevatorTitle;
             compiled.spawnPoint = spawnPoint.ToData();
             compiled.spawnDirection = (PlusDirection)spawnDirection;
             UpdateCells(false); // update our cells
@@ -584,7 +589,7 @@ namespace PlusLevelStudio.Editor
             return compiled;
         }
 
-        public const byte version = 1;
+        public const byte version = 2;
 
         public bool WallFree(IntVector2 pos, Direction dir, bool ignoreSelf)
         {
@@ -638,6 +643,7 @@ namespace PlusLevelStudio.Editor
             stringComp.AddString("null");
             stringComp.FinalizeDatabase();
             stringComp.WriteStringDatabase(writer);
+            writer.Write(elevatorTitle);
             writer.Write((byte)mapSize.x);
             writer.Write((byte)mapSize.z);
             writer.Write(areas.Count);
@@ -753,8 +759,15 @@ namespace PlusLevelStudio.Editor
         public static EditorLevelData ReadFrom(BinaryReader reader)
         {
             byte version = reader.ReadByte();
+            if (version > EditorLevelData.version) throw new Exception("Attempted to read file with newer version number than the one supported! (Got: " + version + " expected: " + EditorLevelData.version + " or below)");
             StringCompressor stringComp = StringCompressor.ReadStringDatabase(reader);
+            string title = "WIP";
+            if (version > 1)
+            {
+                title = reader.ReadString();
+            }
             EditorLevelData levelData = new EditorLevelData(new IntVector2(reader.ReadByte(), reader.ReadByte()));
+            levelData.elevatorTitle = title;
             levelData.lightGroups.Clear();
             levelData.rooms.Clear();
             int areaCount = reader.ReadInt32();

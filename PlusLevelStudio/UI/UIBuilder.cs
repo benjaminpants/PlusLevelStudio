@@ -25,13 +25,13 @@ namespace PlusLevelStudio.UI
 
         protected Vector2 ConvertToVector2(JToken value)
         {
-            float[] floatArray = value.ToObject<float[]>(); //lets hope this works?
+            float[] floatArray = value.ToObject<float[]>();
             return new Vector2(floatArray[0], floatArray[1]);
         }
 
         protected Color ConvertToColor(JToken value)
         {
-            float[] floatArray = value.ToObject<float[]>(); //lets hope this works?
+            float[] floatArray = value.ToObject<float[]>();
             if (floatArray.Length == 3)
             {
                 return new Color(floatArray[0] / 255f, floatArray[1] / 255f, floatArray[2] / 255f);

@@ -34,11 +34,22 @@ namespace PlusLevelStudio.Editor
         protected EditorTool _currentTool;
 
         public EditorMode currentMode;
-        public EditorLevelData levelData;
+        public EditorFileContainer currentFile;
+        public EditorLevelData levelData
+        {
+            get
+            {
+                return currentFile.data;
+            }
+            set
+            {
+                currentFile.data = value;
+            }
+        }
         public Canvas canvas;
 
         public Tile[][] tiles = new Tile[0][];
-        public GameObject[] uiObjects = new GameObject[2];
+        public GameObject[] uiObjects = new GameObject[3];
         // todo: maybe make this a tuple list with (GameObject, bool) where the bool represents if it's a blocking UI element?
         public List<GameObject> uiOverlays = new List<GameObject>();
 
@@ -215,18 +226,35 @@ namespace PlusLevelStudio.Editor
             return tex;
         }
 
+        public void LoadEditorLevelAndMeta(EditorFileContainer file)
+        {
+            currentFile = file;
+            LoadEditorLevel(file.data);
+            if (file.meta == null)
+            {
+                file.meta = new EditorFileMeta();
+                UpdateMeta();
+            }
+            LoadToolbar(file.meta.toolbarTools);
+            transform.position = file.meta.cameraPosition;
+            transform.rotation = file.meta.cameraRotation;
+            cameraRotation = file.meta.cameraRotation.eulerAngles;
+        }
+
         public void LoadEditorLevelFromFile(string path)
         {
             BinaryReader reader = new BinaryReader(new FileStream(path, FileMode.Open, FileAccess.Read));
-            EditorController.Instance.LoadEditorLevel(EditorLevelData.ReadFrom(reader), true);
+            LoadEditorLevelAndMeta(EditorFileContainer.ReadMindful(reader));
+            //EditorController.Instance.LoadEditorLevel(EditorLevelData.ReadFrom(reader), true);
             reader.Close();
         }
 
         public void SaveEditorLevelToFile(string path)
         {
+            UpdateMeta();
             Directory.CreateDirectory(LevelStudioPlugin.levelFilePath);
             BinaryWriter writer = new BinaryWriter(new FileStream(path, FileMode.Create, FileAccess.Write));
-            EditorController.Instance.levelData.Write(writer);
+            currentFile.Write(writer);
             writer.Close();
             hasUnsavedChanges = false;
         }
@@ -549,6 +577,19 @@ namespace PlusLevelStudio.Editor
             yDeltaId = ""
         };
 
+        public virtual void PlayLevel()
+        {
+            if ((currentFileName != null) && (File.Exists(Path.Combine(LevelStudioPlugin.levelFilePath, currentFileName + ".ebpl"))))
+            {
+                lastPlayedLevel = currentFileName;
+            }
+            else
+            {
+                lastPlayedLevel = null;
+            }
+            CompileAndPlay();
+        }
+
         public T CreateUI<T>(string name) where T : UIExchangeHandler
         {
             T obj = UIBuilder.BuildUIFromFile<T>(canvas, name, Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", name + ".json"));
@@ -616,25 +657,31 @@ namespace PlusLevelStudio.Editor
             init.Inititate();
             tooltipBase.anchoredPosition = CursorController.Instance.GetComponent<RectTransform>().anchoredPosition;
             UIBuilder.LoadGlobalDefinesFromFile(Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "GlobalDefines.json"));
-            uiObjects[1] = UIBuilder.BuildUIFromFile<EditorUIToolboxHandler>(canvas, "Main", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "Toolbox.json")).gameObject;
+            uiObjects[2] = UIBuilder.BuildUIFromFile<EditorUIGlobalSettingsHandler>(canvas, "GlobalSettings", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "GlobalSettings.json")).gameObject;
+            uiObjects[2].transform.SetAsFirstSibling();
+            uiObjects[2].SetActive(false);
+            uiObjects[1] = UIBuilder.BuildUIFromFile<EditorUIToolboxHandler>(canvas, "Toolbox", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "Toolbox.json")).gameObject;
             uiObjects[1].transform.SetAsFirstSibling();
             uiObjects[1].SetActive(false);
             uiObjects[0] = UIBuilder.BuildUIFromFile<EditorUIMainHandler>(canvas, "Main", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "Main.json")).gameObject;
             uiObjects[0].transform.SetAsFirstSibling();
         }
 
-        // called when the editor mode is assigned or re-assigned
-        public void EditorModeAssigned()
+        public void LoadToolbar(string[] tools)
         {
             for (int i = 0; i < hotSlots.Length; i++)
             {
-                if (i >= currentMode.defaultTools.Length) continue;
+                if (i >= tools.Length)
+                {
+                    hotSlots[i].currentTool = null;
+                    continue;
+                }
                 foreach (List<EditorTool> list in currentMode.availableTools.Values)
                 {
                     bool breakOut = false;
                     for (int j = 0; j < list.Count; j++)
                     {
-                        if (list[j].id == currentMode.defaultTools[i])
+                        if (list[j].id == tools[i])
                         {
                             hotSlots[i].currentTool = list[j];
                             breakOut = true;
@@ -645,6 +692,13 @@ namespace PlusLevelStudio.Editor
                 }
                 //hotSlots[i].currentTool = currentMode.availableTools.Values.Select(x => x.First(z => z.id == currentMode.defaultTools[i])).First();
             }
+        }
+
+        // called when the editor mode is assigned or re-assigned
+        public void EditorModeAssigned()
+        {
+            LoadToolbar(currentMode.defaultTools);
+            UpdateMeta();
             if (!currentMode.caresAboutSpawn) return;
             spawnpointVisual = GameObject.Instantiate(spawnpointVisualPrefab);
             spawnpointVisual.UpdateTransform();
@@ -757,7 +811,7 @@ namespace PlusLevelStudio.Editor
         {
             canvas.scaleFactor = calculatedScaleFactor;
             UpdateMouseRay();
-            PlaySongIfNecessary();
+            //PlaySongIfNecessary();
             UpdateCamera();
             if (selector.currentState == SelectorState.Object)
             {
@@ -953,7 +1007,7 @@ namespace PlusLevelStudio.Editor
         }
 
         protected int mutedChannels = 0;
-        protected void SetChannelsMuted(bool inMenu)
+        public void SetChannelsMuted(bool inMenu)
         {
             if (inMenu)
             {
@@ -1065,8 +1119,21 @@ namespace PlusLevelStudio.Editor
             UpdateAllVisuals();
         }
 
+        protected virtual void UpdateMeta()
+        {
+            currentFile.meta.editorMode = currentMode.id;
+            currentFile.meta.cameraPosition = transform.position;
+            currentFile.meta.cameraRotation = transform.rotation;
+            for (int i = 0; i < hotSlots.Length; i++)
+            {
+                currentFile.meta.toolbarTools[i] = hotSlots[i].currentTool.id;
+            }
+        }
+
         protected override void AwakeFunction()
         {
+            currentFile = new EditorFileContainer();
+            currentFile.meta = new EditorFileMeta();
             levelData = new EditorLevelData(new IntVector2(50,50));
             gridManager = GameObject.Instantiate(gridManagerPrefab);
             gridManager.editor = this;

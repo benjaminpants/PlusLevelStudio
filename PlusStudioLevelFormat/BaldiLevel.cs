@@ -32,7 +32,8 @@ namespace PlusStudioLevelFormat
             }
         }
         public PlusDirection spawnDirection = PlusDirection.North;
-        public static readonly byte version = 0;
+        public static readonly byte version = 1;
+        public string levelTitle = "WIP";
 
         public BaldiLevel(ByteVector2 size)
         {
@@ -56,6 +57,11 @@ namespace PlusStudioLevelFormat
             byte version = reader.ReadByte();
             StringCompressor roomCompressor = StringCompressor.ReadStringDatabase(reader);
             StringCompressor objectsCompressor = StringCompressor.ReadStringDatabase(reader);
+            string title = "WIP";
+            if (version > 0)
+            {
+                title = reader.ReadString();
+            }
             UnityVector3 spawnPoint = reader.ReadUnityVector3();
             PlusDirection spawnDirection = (PlusDirection)reader.ReadByte();
             BaldiLevel level = new BaldiLevel(reader.ReadByteVector2());
@@ -263,6 +269,7 @@ namespace PlusStudioLevelFormat
             // write string databases
             roomCompressor.WriteStringDatabase(writer);
             objectsCompressor.WriteStringDatabase(writer);
+            writer.Write(levelTitle);
             // write spawn position or other metadata
             writer.Write(spawnPoint);
             writer.Write((byte)spawnDirection);
