@@ -34,6 +34,7 @@ namespace PlusStudioLevelLoader
         public Dictionary<string, LoaderStructureData> structureAliases = new Dictionary<string, LoaderStructureData>();
         public Dictionary<string, NPC> npcAliases = new Dictionary<string, NPC>();
         public Dictionary<string, PosterObject> posterAliases = new Dictionary<string, PosterObject>();
+        public Dictionary<string, RandomEvent> randomEventAliases = new Dictionary<string, RandomEvent>();
 
         public static Texture2D RoomTextureFromAlias(string alias)
         {
@@ -82,6 +83,7 @@ namespace PlusStudioLevelLoader
             roomTextureAliases.Add("DiamondPlateFloor", textures.First(x => x.name == "DiamongPlateFloor"));
             roomTextureAliases.Add("Corn", textures.First(x => x.name == "Corn"));
             roomTextureAliases.Add("BasicFloor", textures.First(x => x.name == "BasicFloor"));
+            roomTextureAliases.Add("Black", textures.First(x => x.name == "BlackTexture"));
             yield return "Fetching materials...";
             // TODO: this is placeholder
             assetMan.AddFromResourcesNoClones<Material>();
@@ -100,6 +102,7 @@ namespace PlusStudioLevelLoader
             roomSettings.Add("outside", new RoomSettings(RoomCategory.Special, RoomType.Room, new Color(0f, 1f, 1f), assetMan.Get<StandardDoorMats>("ClassDoorSet")));
             roomSettings.Add("shop", new RoomSettings(RoomCategory.Store, RoomType.Room, new Color(1f, 1f, 1f), assetMan.Get<StandardDoorMats>("ClassDoorSet")));
             roomSettings.Add("lightbulbtesting", new RoomSettings(RoomCategory.Special, RoomType.Room, new Color(1f, 1f, 1f), assetMan.Get<StandardDoorMats>("ClassDoorSet")));
+            roomSettings.Add("mystery", new RoomSettings(RoomCategory.Mystery, RoomType.Room, new Color(0f, 1f, 0f), assetMan.Get<StandardDoorMats>("MysteryDoorMats")));
             roomSettings["faculty"].container = roomFunctions.Find(x => x.name == "FacultyRoomFunction");
             roomSettings["office"].container = roomFunctions.Find(x => x.name == "OfficeRoomFunction");
             roomSettings["class"].container = roomFunctions.Find(x => x.name == "ClassRoomFunction");
@@ -126,6 +129,7 @@ namespace PlusStudioLevelLoader
             doorPrefabs.Add("autodoor", doors.First(x => x.name == "Door_Auto"));
             doorPrefabs.Add("swinging", doors.First(x => x.name == "Door_Swinging")); // swinging doors are smart and may be a regular door somethings
             doorPrefabs.Add("swinging_silent", doors.First(x => x.name == "SilentDoor_Swinging")); // swinging doors are smart and may be a regular door somethings
+            doorPrefabs.Add("mysterydoor", doors.First(x => x.name == "SQ_Door_Mystery"));
 
             WindowObject[] windows = Resources.FindObjectsOfTypeAll<WindowObject>().Where(x => x.GetInstanceID() >= 0).ToArray();
             windowObjects.Add("standard", windows.First(x => x.name == "WoodWindow"));
@@ -268,6 +272,17 @@ namespace PlusStudioLevelLoader
                 
                 posterAliases.Add(poster.name, poster);
             }
+
+            // random events
+            RandomEvent[] randomEvents = Resources.FindObjectsOfTypeAll<RandomEvent>().Where(x => x.GetInstanceID() >= 0).ToArray();
+
+            randomEventAliases.Add("fog", randomEvents.First(x => x.name == "Event_Fog"));
+            randomEventAliases.Add("testprocedure", randomEvents.First(x => x.name == "Event_TestProcedure"));
+            randomEventAliases.Add("flood", randomEvents.First(x => x.name == "Event_Flood"));
+            randomEventAliases.Add("party", randomEvents.First(x => x.name == "Event_Party"));
+            randomEventAliases.Add("brokenruler", randomEvents.First(x => x.name == "Event_BrokenRuler"));
+            randomEventAliases.Add("gravitychaos", randomEvents.First(x => x.name == "Event_GravityChaos"));
+            randomEventAliases.Add("mysteryroom", randomEvents.First(x => x.name == "Event_MysteryRoom"));
         }
     }
 }

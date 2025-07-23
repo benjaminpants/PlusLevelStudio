@@ -53,6 +53,8 @@ namespace PlusLevelStudio
         public Dictionary<string, GameObject> genericStructureDisplays = new Dictionary<string, GameObject>();
         public Dictionary<string, GameObject> npcDisplays = new Dictionary<string, GameObject>();
         public List<string> selectableTextures = new List<string>();
+        public List<string> selectableEvents = new List<string>();
+        public Dictionary<string, Sprite> eventSprites = new Dictionary<string, Sprite>();
         public Dictionary<string, EditorRoomVisualManager> roomVisuals = new Dictionary<string, EditorRoomVisualManager>();
         public GameObject pickupVisual;
         public GameObject posterVisual;
@@ -828,6 +830,15 @@ namespace PlusLevelStudio
             selectableTextures.Add("Ground2");
             selectableTextures.Add("DiamondPlateFloor");
             selectableTextures.Add("Corn");
+            selectableTextures.Add("Black");
+
+            selectableEvents.Add("fog");
+            selectableEvents.Add("flood");
+            selectableEvents.Add("brokenruler");
+            selectableEvents.Add("party");
+            selectableEvents.Add("mysteryroom");
+            selectableEvents.Add("testprocedure");
+            selectableEvents.Add("gravitychaos");
 
             yield return "Setting up GameManagers...";
 
@@ -966,6 +977,12 @@ namespace PlusLevelStudio
             UIBuilder.elementBuilders.Add("rawimage", new RawImageBuilder());
             UIBuilder.elementBuilders.Add("rawimagebutton", new RawImageButtonBuilder());
             SpritesFromPath(Path.Combine(AssetLoader.GetModPath(this), "UI", "Editor"), "");
+
+            for (int i = 0; i < selectableEvents.Count; i++)
+            {
+                if (eventSprites.ContainsKey(selectableEvents[i])) continue;
+                eventSprites.Add(selectableEvents[i], uiAssetMan.Get<Sprite>("RandomEvents/" + selectableEvents[i]));
+            }
         }
 
         void SpritesFromPath(string path, string prefix)

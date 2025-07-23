@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using PlusLevelStudio.Editor;
 using PlusStudioLevelFormat;
@@ -37,6 +38,12 @@ namespace PlusLevelStudio.Editor
 
         public Vector3 spawnPoint = new Vector3(5f,5f,5f);
         public Direction spawnDirection = Direction.North;
+
+        // random event stuff
+        public float initialRandomEventGap = 30f;
+        public float minRandomEventGap = 45f;
+        public float maxRandomEventGap = 180f;
+        public List<string> randomEvents = new List<string>();
 
         public Vector3 PracticalSpawnPoint
         {
@@ -74,6 +81,7 @@ namespace PlusLevelStudio.Editor
             defaultTextures.Add("outside", new TextureContainer("Grass", "Fence", "None"));
             defaultTextures.Add("shop", new TextureContainer("HallFloor", "JohnnyWall", "Ceiling"));
             defaultTextures.Add("lightbulbtesting", new TextureContainer("MaintenanceFloor", "RedBrickWall", "ElevatorCeiling"));
+            defaultTextures.Add("mystery", new TextureContainer("Black", "Black", "Black"));
         }
 
         public IntVector2[] GetCellsOwnedByRoom(EditorRoom room)
@@ -452,12 +460,31 @@ namespace PlusLevelStudio.Editor
             return null;
         }
 
+        public void FinalizeCompile(BaldiLevel toFinalize)
+        {
+            for (int x = 0; x < mapSize.x; x++)
+            {
+                for (int y = 0; y < mapSize.z; y++)
+                {
+                    if (toFinalize.cells[x, y].roomId == 0) continue;
+                    if (toFinalize.rooms[toFinalize.cells[x, y].roomId - 1].type == "mystery")
+                    {
+                        toFinalize.secretCells[x, y] = true;
+                    }
+                }
+            }
+        }
+
         public BaldiLevel Compile()
         {
             BaldiLevel compiled = new BaldiLevel(mapSize.ToByte());
             compiled.levelTitle = elevatorTitle;
             compiled.spawnPoint = spawnPoint.ToData();
             compiled.spawnDirection = (PlusDirection)spawnDirection;
+            compiled.randomEvents = new List<string>(randomEvents);
+            compiled.initialRandomEventGap = initialRandomEventGap;
+            compiled.minRandomEventGap = minRandomEventGap;
+            compiled.maxRandomEventGap = maxRandomEventGap;
             UpdateCells(false); // update our cells
             for (int x = 0; x < mapSize.x; x++)
             {
@@ -506,6 +533,14 @@ namespace PlusLevelStudio.Editor
                     case DoorIngameStatus.Smart:
                         shouldBeTile = !usedSmartPosition;
                         break;
+                }
+                // HACKS FOR MYSTERY DOORS
+                if (doors[i].type == "standard")
+                {
+                    if (RoomFromPos(doors[i].position, false).roomType == "mystery")
+                    {
+                        doors[i].type = "mysterydoor";
+                    }
                 }
                 if (shouldBeTile)
                 {
@@ -586,10 +621,11 @@ namespace PlusLevelStudio.Editor
                     position = posters[i].position.ToByte()
                 });
             }
+            FinalizeCompile(compiled);
             return compiled;
         }
 
-        public const byte version = 2;
+        public const byte version = 3;
 
         public bool WallFree(IntVector2 pos, Direction dir, bool ignoreSelf)
         {
@@ -643,7 +679,6 @@ namespace PlusLevelStudio.Editor
             stringComp.AddString("null");
             stringComp.FinalizeDatabase();
             stringComp.WriteStringDatabase(writer);
-            writer.Write(elevatorTitle);
             writer.Write((byte)mapSize.x);
             writer.Write((byte)mapSize.z);
             writer.Write(areas.Count);
@@ -754,6 +789,16 @@ namespace PlusLevelStudio.Editor
             }
             writer.Write(spawnPoint.ToData());
             writer.Write((byte)spawnDirection);
+            writer.Write(elevatorTitle);
+            writer.Write(initialRandomEventGap);
+            writer.Write(minRandomEventGap);
+            writer.Write(maxRandomEventGap);
+            writer.Write(randomEvents.Count);
+            // dont need to use the string compressor because these strings only appear once so it'd save no space (infact it'd take up space due to extra bytes needed for the indexes)
+            for (int i = 0; i < randomEvents.Count; i++)
+            {
+                writer.Write(randomEvents[i]);
+            }
         }
 
         public static EditorLevelData ReadFrom(BinaryReader reader)
@@ -762,7 +807,7 @@ namespace PlusLevelStudio.Editor
             if (version > EditorLevelData.version) throw new Exception("Attempted to read file with newer version number than the one supported! (Got: " + version + " expected: " + EditorLevelData.version + " or below)");
             StringCompressor stringComp = StringCompressor.ReadStringDatabase(reader);
             string title = "WIP";
-            if (version > 1)
+            if (version == 2) // this was only written here for one version
             {
                 title = reader.ReadString();
             }
@@ -917,6 +962,16 @@ namespace PlusLevelStudio.Editor
             }
             levelData.spawnPoint = reader.ReadUnityVector3().ToUnity();
             levelData.spawnDirection = (Direction)reader.ReadByte();
+            if (version < 3) return levelData;
+            levelData.elevatorTitle = reader.ReadString();
+            levelData.initialRandomEventGap = reader.ReadSingle();
+            levelData.minRandomEventGap = reader.ReadSingle();
+            levelData.maxRandomEventGap = reader.ReadSingle();
+            int randomEventCount = reader.ReadInt32();
+            for (int i = 0; i < randomEventCount; i++)
+            {
+                levelData.randomEvents.Add(reader.ReadString());
+            }
             return levelData;
         }
 

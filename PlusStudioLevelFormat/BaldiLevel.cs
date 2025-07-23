@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,7 @@ namespace PlusStudioLevelFormat
         public Cell[,] cells;
         public bool[,] entitySafeCells;
         public bool[,] eventSafeCells;
+        public bool[,] secretCells;
         public List<RoomInfo> rooms = new List<RoomInfo>();
         public List<LightInfo> lights = new List<LightInfo>();
         public List<TileObjectInfo> tileObjects = new List<TileObjectInfo>();
@@ -32,15 +34,43 @@ namespace PlusStudioLevelFormat
             }
         }
         public PlusDirection spawnDirection = PlusDirection.North;
-        public static readonly byte version = 1;
+        public static readonly byte version = 0; // i realized there is no reason to have changed this to 1 since people can't export levels yet
         public string levelTitle = "WIP";
 
+        // random event stuff
+        public float initialRandomEventGap = 30f;
+        public float minRandomEventGap = 45f;
+        public float maxRandomEventGap = 180f;
+        public List<string> randomEvents = new List<string>();
+
+        /// <summary>
+        /// Creates a new level that is properly initialized with the specified width and height
+        /// </summary>
+        /// <param name="size"></param>
         public BaldiLevel(ByteVector2 size)
+        {
+            Initialize(size);
+        }
+
+        /// <summary>
+        /// Creates an uninitialized level. Call .Initialize before attempting to access cells or other such data!
+        /// </summary>
+        public BaldiLevel()
+        {
+
+        }
+
+        /// <summary>
+        /// Initializes the cells for the specified BaldiLevel
+        /// </summary>
+        /// <param name="size"></param>
+        public void Initialize(ByteVector2 size)
         {
             levelSize = size;
             cells = new Cell[size.x, size.y];
             entitySafeCells = new bool[size.x, size.y];
             eventSafeCells = new bool[size.x, size.y];
+            secretCells = new bool[size.x, size.y];
             for (int x = 0; x < levelSize.x; x++)
             {
                 for (int y = 0; y < levelSize.y; y++)
@@ -48,6 +78,7 @@ namespace PlusStudioLevelFormat
                     cells[x, y] = new Cell(new ByteVector2(x, y));
                     entitySafeCells[x, y] = false;
                     eventSafeCells[x, y] = false;
+                    secretCells[x, y] = false;
                 }
             }
         }
@@ -57,16 +88,21 @@ namespace PlusStudioLevelFormat
             byte version = reader.ReadByte();
             StringCompressor roomCompressor = StringCompressor.ReadStringDatabase(reader);
             StringCompressor objectsCompressor = StringCompressor.ReadStringDatabase(reader);
-            string title = "WIP";
-            if (version > 0)
+            BaldiLevel level = new BaldiLevel();
+            // metadata
+            level.levelTitle = reader.ReadString();
+            level.initialRandomEventGap = reader.ReadSingle();
+            level.minRandomEventGap = reader.ReadSingle();
+            level.maxRandomEventGap = reader.ReadSingle();
+            int eventCount = reader.ReadInt32();
+            for (int i = 0; i < eventCount; i++)
             {
-                title = reader.ReadString();
+                level.randomEvents.Add(reader.ReadString());
             }
-            UnityVector3 spawnPoint = reader.ReadUnityVector3();
-            PlusDirection spawnDirection = (PlusDirection)reader.ReadByte();
-            BaldiLevel level = new BaldiLevel(reader.ReadByteVector2());
-            level.spawnPoint = spawnPoint;
-            level.spawnDirection = spawnDirection;
+            level.spawnPoint = reader.ReadUnityVector3();
+            level.spawnDirection = (PlusDirection)reader.ReadByte();
+            // actual data
+            level.Initialize(reader.ReadByteVector2());
             Nybble[] wallNybbles = reader.ReadNybbles();
             // todo: replace with proper method of reading back the nybbles
             int cellIndex = 0;
@@ -99,6 +135,14 @@ namespace PlusStudioLevelFormat
                 for (int y = 0; y < level.levelSize.y; y++)
                 {
                     level.eventSafeCells[x, y] = eventSafe[(x * level.levelSize.y) + y];
+                }
+            }
+            bool[] secretCells = reader.ReadBoolArray();
+            for (int x = 0; x < level.levelSize.x; x++)
+            {
+                for (int y = 0; y < level.levelSize.y; y++)
+                {
+                    level.secretCells[x, y] = secretCells[(x * level.levelSize.y) + y];
                 }
             }
             int roomCount = reader.ReadInt32();
@@ -269,8 +313,16 @@ namespace PlusStudioLevelFormat
             // write string databases
             roomCompressor.WriteStringDatabase(writer);
             objectsCompressor.WriteStringDatabase(writer);
-            writer.Write(levelTitle);
             // write spawn position or other metadata
+            writer.Write(levelTitle);
+            writer.Write(initialRandomEventGap);
+            writer.Write(minRandomEventGap);
+            writer.Write(maxRandomEventGap);
+            writer.Write(randomEvents.Count);
+            for (int i = 0; i < randomEvents.Count; i++)
+            {
+                writer.Write(randomEvents[i]);
+            }
             writer.Write(spawnPoint);
             writer.Write((byte)spawnDirection);
             // write level cell data split into nybble list for the walls and an array of room ids
@@ -310,6 +362,15 @@ namespace PlusStudioLevelFormat
                 }
             }
             writer.Write(bools.ToArray()); // write eventSafeCells
+            bools.Clear();
+            for (int x = 0; x < levelSize.x; x++)
+            {
+                for (int y = 0; y < levelSize.y; y++)
+                {
+                    bools.Add(secretCells[x, y]);
+                }
+            }
+            writer.Write(bools.ToArray()); // write secretCells
             // write rooms
             writer.Write(rooms.Count);
             for (int i = 0; i < rooms.Count; i++)

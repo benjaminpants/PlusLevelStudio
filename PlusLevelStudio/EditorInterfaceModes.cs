@@ -180,6 +180,7 @@ namespace PlusLevelStudio
                     new RoomTool("office"),
                     new RoomTool("closet"),
                     new RoomTool("reflex"),
+                    new OnlyOneRoomTool("mystery"),
                     new RoomTool("cafeteria"),
                     new RoomTool("outside"),
                     new RoomTool("library"),

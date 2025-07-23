@@ -37,6 +37,9 @@ namespace PlusStudioLevelLoader
                 scene.extraAsset.npcsToSpawn.Add(LevelLoaderPlugin.Instance.npcAliases[level.npcs[i].npc]);
                 scene.extraAsset.npcSpawnPoints.Add(level.npcs[i].position.ToInt());
             }
+            scene.extraAsset.minEventGap = level.minRandomEventGap;
+            scene.extraAsset.maxEventGap = level.maxRandomEventGap;
+            scene.extraAsset.initialEventGap= level.initialRandomEventGap;
             scene.levelTitle = level.levelTitle;
             return scene;
         }
@@ -104,6 +107,10 @@ namespace PlusStudioLevelLoader
                     if (level.eventSafeCells[foundCells[j].pos.x, foundCells[j].pos.z])
                     {
                         data.eventSafeCells.Add(foundCells[j].pos);
+                    }
+                    if (level.secretCells[foundCells[j].pos.x, foundCells[j].pos.z])
+                    {
+                        data.secretCells.Add(foundCells[j].pos);
                     }
                 }
                 asset.rooms.Add(data);
@@ -175,6 +182,10 @@ namespace PlusStudioLevelLoader
                     direction = (Direction)level.posters[i].direction,
                     poster = LevelLoaderPlugin.Instance.posterAliases[level.posters[i].poster]
                 });
+            }
+            for (int i = 0; i < level.randomEvents.Count; i++)
+            {
+                asset.events.Add(LevelLoaderPlugin.Instance.randomEventAliases[level.randomEvents[i]]);
             }
             return asset;
         }

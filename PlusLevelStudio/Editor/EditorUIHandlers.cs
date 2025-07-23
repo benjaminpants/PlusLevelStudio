@@ -48,6 +48,8 @@ namespace PlusLevelStudio.Editor
     {
         bool somethingChanged = false;
         TextMeshProUGUI elevatorText;
+        StandardMenuButton[] randomEventButtons;
+        int randomEventViewOffset = 0;
         public override bool GetStateBoolean(string key)
         {
             return false;
@@ -56,20 +58,96 @@ namespace PlusLevelStudio.Editor
         public override void OnElementsCreated()
         {
             elevatorText = transform.Find("ElevatorTitle").GetComponent<TextMeshProUGUI>();
+            randomEventButtons = new StandardMenuButton[]
+            {
+                transform.Find("Event0").GetComponent<StandardMenuButton>(),
+                transform.Find("Event1").GetComponent<StandardMenuButton>(),
+                transform.Find("Event2").GetComponent<StandardMenuButton>(),
+                transform.Find("Event3").GetComponent<StandardMenuButton>(),
+                transform.Find("Event4").GetComponent<StandardMenuButton>(),
+                transform.Find("Event5").GetComponent<StandardMenuButton>(),
+                transform.Find("Event6").GetComponent<StandardMenuButton>()
+            };
+            for (int i = 0; i < randomEventButtons.Length; i++)
+            {
+                int index = i; // why must i do this
+                randomEventButtons[i].eventOnHigh = true;
+                randomEventButtons[i].OnHighlight.AddListener(() =>
+                {
+                    EventHighlight(index);
+                });
+                randomEventButtons[i].OffHighlight.AddListener(() =>
+                {
+                    EditorController.Instance.tooltipController.CloseTooltip();
+                });
+            }
         }
 
         public void Refresh()
         {
             elevatorText.text = EditorController.Instance.levelData.elevatorTitle;
+            RefreshEventView();
+        }
+
+        public void RefreshEventView()
+        {
+            for (int i = 0; i < randomEventButtons.Length; i++)
+            {
+                if ((i + randomEventViewOffset) >= LevelStudioPlugin.Instance.selectableEvents.Count)
+                {
+                    randomEventButtons[i].image.color = Color.clear;
+                    continue;
+                }
+                randomEventButtons[i].image.sprite = LevelStudioPlugin.Instance.eventSprites[LevelStudioPlugin.Instance.selectableEvents[i + randomEventViewOffset]];
+                if (EditorController.Instance.levelData.randomEvents.Contains(LevelStudioPlugin.Instance.selectableEvents[i + randomEventViewOffset]))
+                {
+                    randomEventButtons[i].image.color = Color.white;
+                }
+                else
+                {
+                    randomEventButtons[i].image.color = Color.black;
+                }
+            }
+        }
+
+        public void EventHighlight(int index)
+        {
+            if ((index + randomEventViewOffset) >= LevelStudioPlugin.Instance.selectableEvents.Count) return;
+            EditorController.Instance.tooltipController.UpdateTooltip("Ed_RandomEvent_" + LevelStudioPlugin.Instance.selectableEvents[index + randomEventViewOffset]);
         }
 
         public void Open()
         {
             EditorController.Instance.HoldUndo();
+            Refresh();
+        }
+
+        public void ToggleEvent(string evnt)
+        {
+            if (EditorController.Instance.levelData.randomEvents.Contains(evnt))
+            {
+                EditorController.Instance.levelData.randomEvents.Remove(evnt);
+            }
+            else
+            {
+                EditorController.Instance.levelData.randomEvents.Add(evnt);
+            }
+            somethingChanged = true;
+            RefreshEventView();
         }
 
         public override void SendInteractionMessage(string message, object data = null)
         {
+            if (message.StartsWith("event"))
+            {
+                int index = int.Parse(message.Replace("event",""));
+                int selectableEventsIndex = index + randomEventViewOffset;
+                if (selectableEventsIndex >= LevelStudioPlugin.Instance.selectableEvents.Count)
+                {
+                    return;
+                }
+                ToggleEvent(LevelStudioPlugin.Instance.selectableEvents[index + randomEventViewOffset]);
+            }
             switch (message)
             {
                 case "elevatorTitleChanged":
@@ -87,6 +165,14 @@ namespace PlusLevelStudio.Editor
                     }
                     EditorController.Instance.SetChannelsMuted(false);
                     gameObject.SetActive(false);
+                    break;
+                case "nextEvent":
+                    randomEventViewOffset = Mathf.Clamp(randomEventViewOffset + 1, 0, LevelStudioPlugin.Instance.selectableEvents.Count - randomEventButtons.Length);
+                    RefreshEventView();
+                    break;
+                case "prevEvent":
+                    randomEventViewOffset = Mathf.Clamp(randomEventViewOffset - 1, 0, LevelStudioPlugin.Instance.selectableEvents.Count - randomEventButtons.Length);
+                    RefreshEventView();
                     break;
             }
         }

@@ -478,8 +478,8 @@ namespace PlusLevelStudio.Editor
             {
                 EditorController.Instance.GetVisual(levelData.objects[i]).GetComponent<EditorBasicObject>().SetMode(false); // revert to regular hitboxes
             }
-            level.entitySafeCells = CompileSafeCells(levelData, 2f);
-            level.eventSafeCells = CompileSafeCells(levelData, 4f);
+            level.entitySafeCells = CompileSafeCells(levelData, 1f);
+            level.eventSafeCells = CompileSafeCells(levelData, 2f);
             // write to file for testing purposes
             /*
             File.Delete(Path.Combine(Application.streamingAssetsPath, "test.bpl"));
