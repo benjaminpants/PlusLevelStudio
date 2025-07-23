@@ -261,7 +261,7 @@ namespace PlusLevelStudio
         IEnumerator FindObjectsAndSetupEditor()
         {
             List<Direction> directions = Directions.All();
-            yield return 12;
+            yield return 13;
             yield return "Grabbing necessary resources...";
             assetMan.Add<Mesh>("Quad", Resources.FindObjectsOfTypeAll<Mesh>().First(x => x.GetInstanceID() >= 0 && x.name == "Quad"));
             Material[] materials = Resources.FindObjectsOfTypeAll<Material>().Where(x => x.GetInstanceID() >= 0).ToArray();
@@ -542,6 +542,12 @@ namespace PlusLevelStudio
             workerCgm.ReflectionSetVariable("destroyOnLoad", true);
             workerCgm.gameObject.SetActive(false);
             workerCgm.name = "WorkerCoreGameManager";
+
+            yield return "Setting up EditorPlayModeManager...";
+
+            GameObject playModeGameObject = new GameObject("EditorPlayModeManager");
+            playModeGameObject.ConvertToPrefab(true);
+            EditorPlayModeManager playModeManager = playModeGameObject.AddComponent<EditorPlayModeManager>();
 
             yield return "Creating editor ingame objects...";
             GameLock[] foundLocks = Resources.FindObjectsOfTypeAll<GameLock>().Where(x => x.GetInstanceID() >= 0).ToArray();
@@ -920,6 +926,7 @@ namespace PlusLevelStudio
             standardEditorController.tooltipController = toolTipController;
             standardEditorController.tooltipBase = editorTooltip;
             standardEditorController.baseGameManagerPrefab = emg;
+            standardEditorController.editorPlayModePre = playModeManager;
             // quick pause to create the gameloader prefab
             GameObject gameLoaderPreObject = new GameObject("EditorGameLoader");
             gameLoaderPreObject.ConvertToPrefab(true);

@@ -29,6 +29,7 @@ namespace PlusLevelStudio.Editor
         public HotSlotScript[] hotSlots = new HotSlotScript[9];
         public Dictionary<IEditorVisualizable, GameObject> objectVisuals = new Dictionary<IEditorVisualizable, GameObject>();
 
+        public EditorPlayModeManager editorPlayModePre;
         public EditorTool currentTool => _currentTool;
         public BaseGameManager baseGameManagerPrefab;
         protected EditorTool _currentTool;
@@ -493,6 +494,7 @@ namespace PlusLevelStudio.Editor
             sceneObj.manager = baseGameManagerPrefab;
             GameLoader loader = GameObject.Instantiate<GameLoader>(gameLoaderPrefab);
             ElevatorScreen screen = GameObject.Instantiate<ElevatorScreen>(elevatorScreenPrefab);
+            GameObject.Instantiate<EditorPlayModeManager>(editorPlayModePre);
             AccessTools.Field(typeof(Singleton<CoreGameManager>), "m_Instance").SetValue(null, null); // so coregamemanager gets created properly
             loader.AssignElevatorScreen(screen);
             loader.Initialize(0);

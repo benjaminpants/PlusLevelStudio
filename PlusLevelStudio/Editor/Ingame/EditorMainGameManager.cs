@@ -35,8 +35,6 @@ namespace PlusLevelStudio.Editor.Ingame
         public override void LoadNextLevel()
         {
             Singleton<CoreGameManager>.Instance.Quit();
-            Singleton<MusicManager>.Instance.StopMidi();
-            LevelStudioPlugin.Instance.StartCoroutine(LevelStudioPlugin.Instance.LoadEditorScene("full", EditorController.lastPlayedLevel == null ? null : Path.Combine(LevelStudioPlugin.levelFilePath, EditorController.lastPlayedLevel + ".ebpl")));
         }
     }
 }
