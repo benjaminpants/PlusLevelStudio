@@ -15,6 +15,7 @@ namespace PlusStudioLevelLoader
 {
     [BepInPlugin("mtm101.rulerp.baldiplus.levelstudioloader", "Plus Level Loader", "0.0.0.0")]
     [BepInDependency("mtm101.rulerp.bbplus.baldidevapi")]
+    [BepInDependency("net.Fasguy.BepInHelper")]
     public class LevelLoaderPlugin : BaseUnityPlugin
     {
         public static LevelLoaderPlugin Instance;
@@ -283,6 +284,7 @@ namespace PlusStudioLevelLoader
             randomEventAliases.Add("brokenruler", randomEvents.First(x => x.name == "Event_BrokenRuler"));
             randomEventAliases.Add("gravitychaos", randomEvents.First(x => x.name == "Event_GravityChaos"));
             randomEventAliases.Add("mysteryroom", randomEvents.First(x => x.name == "Event_MysteryRoom"));
+            randomEventAliases.Add("timeout", randomEvents.First(x => x.name == "Event_TimeOut_Base"));
         }
     }
 }

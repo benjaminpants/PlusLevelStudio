@@ -1,11 +1,13 @@
 ﻿using MTM101BaldAPI.UI;
 using Newtonsoft.Json.Linq;
+using PlusLevelStudio.Editor;
 using Rewired;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace PlusLevelStudio.UI
@@ -33,6 +35,13 @@ namespace PlusLevelStudio.UI
             {
                 box.allowedCharacters = data["allowedCharacters"].Value<string>();
             }
+            if (data.ContainsKey("tooltip"))
+            {
+                string key = data["tooltip"].Value<string>();
+                box.eventOnHigh = true;
+                box.OnHighlight.AddListener(() => EditorController.Instance.tooltipController.UpdateTooltip(key));
+                box.OffHighlight.AddListener(() => EditorController.Instance.tooltipController.CloseTooltip());
+            }
             return b;
         }
     }
@@ -49,6 +58,9 @@ namespace PlusLevelStudio.UI
         public string typeDoneMessage;
         public UIExchangeHandler handler;
         float timeWithBackDown = 0f;
+        public UnityEvent OnHighlight = new UnityEvent();
+        public UnityEvent OffHighlight = new UnityEvent();
+        public bool eventOnHigh = false;
         public override void Press()
         {
             //base.Press();
@@ -60,6 +72,10 @@ namespace PlusLevelStudio.UI
         {
             text.fontStyle = FontStyles.Underline;
             highlighted = true;
+            if (!wasHighlighted && eventOnHigh)
+            {
+                OnHighlight.Invoke();
+            }
             wasHighlighted = true;
         }
 
@@ -69,6 +85,10 @@ namespace PlusLevelStudio.UI
             {
                 text.fontStyle = FontStyles.Normal;
                 wasHighlighted = false;
+                if (eventOnHigh)
+                {
+                    OffHighlight.Invoke();
+                }
             }
             highlighted = false;
             if (!typing) return;

@@ -813,7 +813,7 @@ namespace PlusLevelStudio.Editor
         {
             canvas.scaleFactor = calculatedScaleFactor;
             UpdateMouseRay();
-            //PlaySongIfNecessary();
+            PlaySongIfNecessary();
             UpdateCamera();
             if (selector.currentState == SelectorState.Object)
             {

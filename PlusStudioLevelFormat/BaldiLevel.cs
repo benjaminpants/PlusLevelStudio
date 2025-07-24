@@ -36,6 +36,7 @@ namespace PlusStudioLevelFormat
         public PlusDirection spawnDirection = PlusDirection.North;
         public static readonly byte version = 0; // i realized there is no reason to have changed this to 1 since people can't export levels yet
         public string levelTitle = "WIP";
+        public float timeLimit = 0f;
 
         // random event stuff
         public float initialRandomEventGap = 30f;
@@ -91,6 +92,7 @@ namespace PlusStudioLevelFormat
             BaldiLevel level = new BaldiLevel();
             // metadata
             level.levelTitle = reader.ReadString();
+            level.timeLimit = reader.ReadSingle();
             level.initialRandomEventGap = reader.ReadSingle();
             level.minRandomEventGap = reader.ReadSingle();
             level.maxRandomEventGap = reader.ReadSingle();
@@ -315,6 +317,7 @@ namespace PlusStudioLevelFormat
             objectsCompressor.WriteStringDatabase(writer);
             // write spawn position or other metadata
             writer.Write(levelTitle);
+            writer.Write(timeLimit);
             writer.Write(initialRandomEventGap);
             writer.Write(minRandomEventGap);
             writer.Write(maxRandomEventGap);

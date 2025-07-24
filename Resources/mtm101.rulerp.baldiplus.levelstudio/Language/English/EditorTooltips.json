@@ -3,13 +3,16 @@
 {"key":"Ed_Tip_PlayButton","value":"Play your level!"},
 {"key":"Ed_Tip_SaveButton","value":"Save your level!"},
 {"key":"Ed_Tip_LoadButton","value":"Load a level!"},
-{"key":"Ed_Tip_ExportButton","value":"Export your level to share with others!"},
+{"key":"Ed_Tip_ExportButton","value":"Export your level to share with others!\n(Not done, currently non-functional. Just continue sharing the ebpl for now.)"},
 {"key":"Ed_Tip_GlobalSettings","value":"Global Settings"},
 {"key":"Ed_Tip_Undo","value":"Undo"},
 {"key":"Ed_Tip_Worldspace","value":"World space translations"},
 {"key":"Ed_Tip_Localspace","value":"Local space translations"},
 {"key":"Ed_Tip_MoveSetting","value":"Move Handles Visible"},
 {"key":"Ed_Tip_RotateSetting","value":"Rotation Handles Visible"},
-{"key":"Ed_Tip_ChangeTexture","value":"Change Texture"}
+{"key":"Ed_Tip_ChangeTexture","value":"Change Texture"},
+{"key":"Ed_Tip_InitialEventTime","value":"The minimum amount of time in seconds before any event can start.\nThis is added with a random number between min and max event time\nto determine the starting time of the first event."},
+{"key":"Ed_Tip_MinEventTime","value":"The minimum gap between events in seconds."},
+{"key":"Ed_Tip_MaxEventTime","value":"The maximum gap between events in seconds."}
 
 ]}

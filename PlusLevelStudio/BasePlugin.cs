@@ -229,7 +229,6 @@ namespace PlusLevelStudio
 
             RoomEditorController rce = GameObject.Instantiate<EditorController>(assetMan.Get<EditorController>("MainEditorController"), MTM101BaldiDevAPI.prefabTransform).gameObject.SwapComponent<EditorController, RoomEditorController>();
 
-            rce.ReflectionSetVariable("destroyOnLoad", true); // the fuck
             rce.name = "RoomEditorController";
 
             EditorMode roomsMode = new EditorMode()
@@ -983,6 +982,7 @@ namespace PlusLevelStudio
             UIBuilder.elementBuilders.Add("textbutton", new TextButtonBuilder());
             UIBuilder.elementBuilders.Add("rawimage", new RawImageBuilder());
             UIBuilder.elementBuilders.Add("rawimagebutton", new RawImageButtonBuilder());
+            UIBuilder.elementBuilders.Add("segment", new DigitalNumberBuilder());
             SpritesFromPath(Path.Combine(AssetLoader.GetModPath(this), "UI", "Editor"), "");
 
             for (int i = 0; i < selectableEvents.Count; i++)

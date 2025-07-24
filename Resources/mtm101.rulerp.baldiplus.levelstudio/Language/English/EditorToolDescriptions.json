@@ -232,11 +232,12 @@
 {"key":"Ed_Tool_structure_shapelock_heart_Desc","value":"Makes the room require a Heart Key to open!"},
 {"key":"Ed_Tool_structure_shapelock_weird_Title","value":"Weird Shapelock"},
 {"key":"Ed_Tool_structure_shapelock_weird_Desc","value":"Makes the room require a Weird Key to open..?"},
+
 {"key":"Ed_RandomEvent_fog","value":"Fog\nThe school is covered in a thick fog.\nNPCs have a reduced vision distance."},
 {"key":"Ed_RandomEvent_flood","value":"Flood\nThe school is flooded and whirlpools cover the ground.\nThe whirlpools suck up any nearby entity, teleporting them randomly."},
 {"key":"Ed_RandomEvent_brokenruler","value":"Broken Ruler\nBaldi's ruler snaps, making him silent and unable to end the game."},
 {"key":"Ed_RandomEvent_party","value":"Party\nA party is declared at the Principal's Office!\nA random high value item will be waiting inside."},
-{"key":"Ed_RandomEvent_mysteryroom","value":"Mystery Room\nThe mystery room appears!\nIt has a high value item inside."},
+{"key":"Ed_RandomEvent_mysteryroom","value":"Mystery Room\nThe mystery room appears!\nPlace whatever you want inside!"},
 {"key":"Ed_RandomEvent_testprocedure","value":"Currently non-functional, do not use."},
 {"key":"Ed_RandomEvent_gravitychaos","value":"Gravity Chaos\nShapes appear all around the school, flipping gravity!\nNPCs on different gravities can't interact."}
 

@@ -34,6 +34,7 @@ namespace PlusLevelStudio.Editor
         public List<PosterPlacement> posters = new List<PosterPlacement>();
         public List<WallLocation> walls = new List<WallLocation>();
         public string elevatorTitle = "WIP";
+        public float timeLimit = 0f;
         public EditorRoom hall => rooms[0];
 
         public Vector3 spawnPoint = new Vector3(5f,5f,5f);
@@ -479,6 +480,7 @@ namespace PlusLevelStudio.Editor
         {
             BaldiLevel compiled = new BaldiLevel(mapSize.ToByte());
             compiled.levelTitle = elevatorTitle;
+            compiled.timeLimit = timeLimit;
             compiled.spawnPoint = spawnPoint.ToData();
             compiled.spawnDirection = (PlusDirection)spawnDirection;
             compiled.randomEvents = new List<string>(randomEvents);
@@ -625,7 +627,7 @@ namespace PlusLevelStudio.Editor
             return compiled;
         }
 
-        public const byte version = 3;
+        public const byte version = 4;
 
         public bool WallFree(IntVector2 pos, Direction dir, bool ignoreSelf)
         {
@@ -790,6 +792,7 @@ namespace PlusLevelStudio.Editor
             writer.Write(spawnPoint.ToData());
             writer.Write((byte)spawnDirection);
             writer.Write(elevatorTitle);
+            writer.Write(timeLimit);
             writer.Write(initialRandomEventGap);
             writer.Write(minRandomEventGap);
             writer.Write(maxRandomEventGap);
@@ -964,6 +967,10 @@ namespace PlusLevelStudio.Editor
             levelData.spawnDirection = (Direction)reader.ReadByte();
             if (version < 3) return levelData;
             levelData.elevatorTitle = reader.ReadString();
+            if (version >= 4)
+            {
+                levelData.timeLimit = reader.ReadSingle();
+            }
             levelData.initialRandomEventGap = reader.ReadSingle();
             levelData.minRandomEventGap = reader.ReadSingle();
             levelData.maxRandomEventGap = reader.ReadSingle();

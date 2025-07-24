@@ -10,12 +10,12 @@ namespace PlusStudioLevelLoader
     public static class LevelImporter
     {
 
-        public static SceneObject CreateEmptySceneObject()
+        public static SceneObject CreateEmptySceneObject<ExtraAssetType>() where ExtraAssetType : ExtraLevelDataAsset
         {
             SceneObject scene = ScriptableObject.CreateInstance<SceneObject>();
             scene.levelNo = -1;
             scene.levelTitle = "WIP";
-            scene.extraAsset = ScriptableObject.CreateInstance<ExtraLevelDataAsset>();
+            scene.extraAsset = ScriptableObject.CreateInstance<ExtraAssetType>();
             scene.extraAsset.name = "WIPExtraAsset";
             scene.extraAsset.minLightColor = Color.white;
             scene.extraAsset.npcSpawnPoints = new List<IntVector2>();
@@ -27,8 +27,9 @@ namespace PlusStudioLevelLoader
 
         public static SceneObject CreateSceneObject(BaldiLevel level)
         {
-            SceneObject scene = CreateEmptySceneObject();
-            scene.levelAsset = LoadLevelAsset(level);
+            SceneObject scene = CreateEmptySceneObject<ExtendedExtraLevelDataAsset>();
+            scene.levelAsset = LoadLevelAsset<LevelAsset>(level);
+            ExtendedExtraLevelDataAsset extendedAsset = (ExtendedExtraLevelDataAsset)scene.extraAsset;
             scene.extraAsset.lightMode = LightMode.Cumulative;
             scene.extraAsset.minLightColor = Color.black;
             scene.extraAsset.name = "LoadedExtraAsset_" + level.levelSize.x + "_" + level.levelSize.y + "_" + level.rooms.Count;
@@ -40,13 +41,15 @@ namespace PlusStudioLevelLoader
             scene.extraAsset.minEventGap = level.minRandomEventGap;
             scene.extraAsset.maxEventGap = level.maxRandomEventGap;
             scene.extraAsset.initialEventGap= level.initialRandomEventGap;
+            extendedAsset.timeOutEvent = LevelLoaderPlugin.Instance.randomEventAliases["timeout"];
+            extendedAsset.timeOutTime = level.timeLimit;
             scene.levelTitle = level.levelTitle;
             return scene;
         }
 
-        public static LevelAsset LoadLevelAsset(BaldiLevel level)
+        public static T LoadLevelAsset<T>(BaldiLevel level) where T : LevelAsset
         {
-            LevelAsset asset = ScriptableObject.CreateInstance<LevelAsset>();
+            T asset = ScriptableObject.CreateInstance<T>();
             asset.name = "LoadedLevelAsset_" + level.levelSize.x + "_" + level.levelSize.y + "_" + level.rooms.Count;
             asset.levelSize = level.levelSize.ToInt();
             asset.tile = new CellData[level.levelSize.x * level.levelSize.y];

@@ -48,7 +48,11 @@ namespace PlusLevelStudio.Editor
     {
         bool somethingChanged = false;
         TextMeshProUGUI elevatorText;
+        TextMeshProUGUI initEventText;
+        TextMeshProUGUI minEventText;
+        TextMeshProUGUI maxEventText;
         StandardMenuButton[] randomEventButtons;
+        DigitalNumberDisplay[] displays;
         int randomEventViewOffset = 0;
         public override bool GetStateBoolean(string key)
         {
@@ -68,6 +72,17 @@ namespace PlusLevelStudio.Editor
                 transform.Find("Event5").GetComponent<StandardMenuButton>(),
                 transform.Find("Event6").GetComponent<StandardMenuButton>()
             };
+            initEventText = transform.Find("InitialEventTime").GetComponent<TextMeshProUGUI>();
+            minEventText = transform.Find("MinEventTime").GetComponent<TextMeshProUGUI>();
+            maxEventText = transform.Find("MaxEventTime").GetComponent<TextMeshProUGUI>();
+            displays = new DigitalNumberDisplay[]
+            {
+                transform.Find("LevelTimeSeg0").GetComponent<DigitalNumberDisplay>(),
+                transform.Find("LevelTimeSeg1").GetComponent<DigitalNumberDisplay>(),
+                transform.Find("LevelTimeSeg2").GetComponent<DigitalNumberDisplay>(),
+                transform.Find("LevelTimeSeg3").GetComponent<DigitalNumberDisplay>(),
+            };
+
             for (int i = 0; i < randomEventButtons.Length; i++)
             {
                 int index = i; // why must i do this
@@ -86,6 +101,15 @@ namespace PlusLevelStudio.Editor
         public void Refresh()
         {
             elevatorText.text = EditorController.Instance.levelData.elevatorTitle;
+            initEventText.text = EditorController.Instance.levelData.initialRandomEventGap.ToString();
+            minEventText.text = EditorController.Instance.levelData.minRandomEventGap.ToString();
+            maxEventText.text = EditorController.Instance.levelData.maxRandomEventGap.ToString();
+            int time = Mathf.RoundToInt(EditorController.Instance.levelData.timeLimit);
+            string displayTime = string.Format("{0}{1}", Mathf.Floor((float)(time / 60)).ToString("00"), (time % 60).ToString("00"));
+            for (int i = 0; i < displays.Length; i++)
+            {
+                displays[i].currentValue = (int)char.GetNumericValue(displayTime, i);
+            }
             RefreshEventView();
         }
 
@@ -138,6 +162,13 @@ namespace PlusLevelStudio.Editor
 
         public override void SendInteractionMessage(string message, object data = null)
         {
+            if (message.StartsWith("levelTime:"))
+            {
+                float byAmount = float.Parse(message.Replace("levelTime:",""));
+                EditorController.Instance.levelData.timeLimit = Mathf.Clamp((EditorController.Instance.levelData.timeLimit + byAmount), 0f, 5999f); // 356459 is 99:59 in seconds
+                somethingChanged = true;
+                Refresh();
+            }
             if (message.StartsWith("event"))
             {
                 int index = int.Parse(message.Replace("event",""));
@@ -173,6 +204,30 @@ namespace PlusLevelStudio.Editor
                 case "prevEvent":
                     randomEventViewOffset = Mathf.Clamp(randomEventViewOffset - 1, 0, LevelStudioPlugin.Instance.selectableEvents.Count - randomEventButtons.Length);
                     RefreshEventView();
+                    break;
+                case "initialEventTimeChanged":
+                    if (float.TryParse((string)data, out float initResult))
+                    {
+                        somethingChanged = true;
+                        EditorController.Instance.levelData.initialRandomEventGap = Mathf.Abs(initResult);
+                    }
+                    Refresh();
+                    break;
+                case "minEventTimeChanged":
+                    if (float.TryParse((string)data, out float minResult))
+                    {
+                        somethingChanged = true;
+                        EditorController.Instance.levelData.minRandomEventGap = Mathf.Abs(minResult);
+                    }
+                    Refresh();
+                    break;
+                case "maxEventTimeChanged":
+                    if (float.TryParse((string)data, out float maxResult))
+                    {
+                        somethingChanged = true;
+                        EditorController.Instance.levelData.maxRandomEventGap = Mathf.Abs(maxResult);
+                    }
+                    Refresh();
                     break;
             }
         }
