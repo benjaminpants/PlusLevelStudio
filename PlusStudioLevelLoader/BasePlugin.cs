@@ -15,7 +15,6 @@ namespace PlusStudioLevelLoader
 {
     [BepInPlugin("mtm101.rulerp.baldiplus.levelstudioloader", "Plus Level Loader", "0.0.0.0")]
     [BepInDependency("mtm101.rulerp.bbplus.baldidevapi")]
-    [BepInDependency("net.Fasguy.BepInHelper")]
     public class LevelLoaderPlugin : BaseUnityPlugin
     {
         public static LevelLoaderPlugin Instance;

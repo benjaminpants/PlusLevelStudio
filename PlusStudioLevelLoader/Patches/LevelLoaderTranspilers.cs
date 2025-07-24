@@ -30,7 +30,7 @@ namespace PlusStudioLevelLoader.Patches
             if (!(data.extraData is ExtendedExtraLevelData)) return;
             Debug.Log("Level loader setting up limit... (Loader Extension)");
             if (((ExtendedExtraLevelData)data.extraData).timeOutEvent == null) return;
-            if (((ExtendedExtraLevelData)data.extraData).timeOutTime < 0f) return;
+            if (((ExtendedExtraLevelData)data.extraData).timeOutTime <= 0f) return;
             RandomEvent timeoutEvent = GameObject.Instantiate<RandomEvent>(((ExtendedExtraLevelData)data.extraData).timeOutEvent, loader.Ec.transform);
             timeoutEvent.Initialize(loader.Ec, loader.controlledRNG);
             timeoutEvent.PremadeSetup();
