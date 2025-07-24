@@ -6,7 +6,7 @@ using System.Text;
 namespace PlusLevelStudio.Patches
 {
     [HarmonyPatch(typeof(CoreGameManager))]
-    [HarmonyPatch("Quit")]
+    [HarmonyPatch("ReturnToMenu")]
     class CGMQuitPatch
     {
         static void Postfix()
