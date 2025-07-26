@@ -137,12 +137,12 @@ namespace PlusLevelStudio.UI
             }
         }
 
-        public static T BuildUIFromFile<T>(Canvas canvas, string name, string path) where T : UIExchangeHandler
+        public static T BuildUIFromFile<T>(RectTransform parent, string name, string path) where T : UIExchangeHandler
         {
             GameObject obj = new GameObject(name);
-            obj.transform.SetParent(canvas.transform, false);
+            obj.transform.SetParent(parent.transform, false);
             RectTransform rect = obj.AddComponent<RectTransform>();
-            rect.sizeDelta = canvas.GetComponent<RectTransform>().sizeDelta;
+            rect.sizeDelta = parent.sizeDelta;
             JObject parsedFile = JObject.Parse(File.ReadAllText(path));
 
             T handler = obj.AddComponent<T>();

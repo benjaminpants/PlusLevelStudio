@@ -601,7 +601,7 @@ namespace PlusLevelStudio.Editor
 
         public T CreateUI<T>(string name) where T : UIExchangeHandler
         {
-            T obj = UIBuilder.BuildUIFromFile<T>(canvas, name, Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", name + ".json"));
+            T obj = UIBuilder.BuildUIFromFile<T>(canvas.GetComponent<RectTransform>(), name, Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", name + ".json"));
             /*obj.transform.SetAsFirstSibling();
             for (int i = 0; i < uiObjects.Length; i++)
             {
@@ -666,13 +666,13 @@ namespace PlusLevelStudio.Editor
             init.Inititate();
             tooltipBase.anchoredPosition = CursorController.Instance.GetComponent<RectTransform>().anchoredPosition;
             UIBuilder.LoadGlobalDefinesFromFile(Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "GlobalDefines.json"));
-            uiObjects[2] = UIBuilder.BuildUIFromFile<EditorUIGlobalSettingsHandler>(canvas, "GlobalSettings", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "GlobalSettings.json")).gameObject;
+            uiObjects[2] = UIBuilder.BuildUIFromFile<EditorUIGlobalSettingsHandler>(canvas.GetComponent<RectTransform>(), "GlobalSettings", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "GlobalSettings.json")).gameObject;
             uiObjects[2].transform.SetAsFirstSibling();
             uiObjects[2].SetActive(false);
-            uiObjects[1] = UIBuilder.BuildUIFromFile<EditorUIToolboxHandler>(canvas, "Toolbox", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "Toolbox.json")).gameObject;
+            uiObjects[1] = UIBuilder.BuildUIFromFile<EditorUIToolboxHandler>(canvas.GetComponent<RectTransform>(), "Toolbox", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "Toolbox.json")).gameObject;
             uiObjects[1].transform.SetAsFirstSibling();
             uiObjects[1].SetActive(false);
-            uiObjects[0] = UIBuilder.BuildUIFromFile<EditorUIMainHandler>(canvas, "Main", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "Main.json")).gameObject;
+            uiObjects[0] = UIBuilder.BuildUIFromFile<EditorUIMainHandler>(canvas.GetComponent<RectTransform>(), "Main", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "Main.json")).gameObject;
             uiObjects[0].transform.SetAsFirstSibling();
         }
 
