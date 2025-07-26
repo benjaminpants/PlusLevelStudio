@@ -847,6 +847,7 @@ namespace PlusLevelStudio
             selectableTextures.Add("LabCeiling");
             selectableTextures.Add("Ground2");
             selectableTextures.Add("DiamondPlateFloor");
+            selectableTextures.Add("Vent");
             selectableTextures.Add("Corn");
             selectableTextures.Add("Black");
 

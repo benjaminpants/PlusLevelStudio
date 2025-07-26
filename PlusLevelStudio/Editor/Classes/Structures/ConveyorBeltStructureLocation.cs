@@ -33,7 +33,7 @@ namespace PlusLevelStudio.Editor
                 deletable.AddRenderer(clone, "none");
                 beltRenderers.Add(clone);
             }
-            collider.size = new Vector3(10f,0.1f, length * 10f);
+            collider.size = new Vector3(10f,0.01f, length * 10f);
             collider.center = Vector3.forward * (length - 1) * 5f;
         }
     }

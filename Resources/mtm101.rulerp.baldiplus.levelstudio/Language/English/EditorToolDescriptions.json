@@ -232,6 +232,10 @@
 {"key":"Ed_Tool_structure_shapelock_heart_Desc","value":"Makes the room require a Heart Key to open!"},
 {"key":"Ed_Tool_structure_shapelock_weird_Title","value":"Weird Shapelock"},
 {"key":"Ed_Tool_structure_shapelock_weird_Desc","value":"Makes the room require a Weird Key to open..?"},
+{"key":"Ed_Tool_structure_conveyorbelt_Title","value":"Conveyor Belt"},
+{"key":"Ed_Tool_structure_conveyorbelt_Desc","value":"Pushes stuff on it forward! Can be toggled with a button."},
+{"key":"Ed_Tool_structure_conveyorbelt_buttonless_Title","value":"Buttonless Conveyor Belt"},
+{"key":"Ed_Tool_structure_conveyorbelt_buttonless_Desc","value":"Pushes stuff on it forward, this time without the button!"},
 
 {"key":"Ed_RandomEvent_fog","value":"Fog\nThe school is covered in a thick fog.\nNPCs have a reduced vision distance."},
 {"key":"Ed_RandomEvent_flood","value":"Flood\nThe school is flooded and whirlpools cover the ground.\nThe whirlpools suck up any nearby entity, teleporting them randomly."},
