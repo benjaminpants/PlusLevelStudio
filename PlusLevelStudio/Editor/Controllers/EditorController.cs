@@ -438,7 +438,7 @@ namespace PlusLevelStudio.Editor
         public bool[,] CompileSafeCells(EditorLevelData data, float capsuleRadius)
         {
             bool[,] returnValue = new bool[data.mapSize.x, data.mapSize.z];
-            Collider[] foundColliders = new Collider[64];
+            Collider[] foundColliders;
             for (int x = 0; x < data.mapSize.x; x++)
             {
                 for (int y = 0; y < data.mapSize.z; y++)
@@ -449,7 +449,7 @@ namespace PlusLevelStudio.Editor
                         continue; // this is an empty cell, do not bother
                     }
                     Vector3 cellWorldPos = new IntVector2(x, y).ToWorld();
-                    Physics.OverlapCapsuleNonAlloc(cellWorldPos - (Vector3.down * 5f), cellWorldPos - (Vector3.up * 5f), capsuleRadius, foundColliders);
+                    foundColliders = Physics.OverlapCapsule(cellWorldPos - (Vector3.down * 4f), cellWorldPos - (Vector3.up * 4f), capsuleRadius);
                     returnValue[x, y] = true;
                     //Debug.Log("processing: " + x + "," + y);
                     for (int i = 0; i < foundColliders.Length; i++)

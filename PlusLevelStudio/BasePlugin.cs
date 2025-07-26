@@ -795,6 +795,7 @@ namespace PlusLevelStudio
             beltVisualManager.beltRenderPre = Resources.FindObjectsOfTypeAll<MeshRenderer>().First(x => x.name == "ConveyorBelt" && x.GetInstanceID() >= 0 && x.transform.parent == null);
             //beltVisualManager.slider = beltVisualObject.AddComponent<TextureSlider>();
             beltVisualManager.collider = beltVisualObject.AddComponent<BoxCollider>();
+            beltVisualManager.collider.isTrigger = true;
             beltVisualManager.gameObject.layer = editorInteractableLayer;
             beltVisualManager.deletable = beltVisualObject.AddComponent<EditorDeletableObject>();
             genericStructureDisplays.Add("conveyorbelt", beltVisualObject);
