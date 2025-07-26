@@ -543,6 +543,12 @@ namespace PlusLevelStudio.Editor
                     {
                         doors[i].type = "mysterydoor";
                     }
+                    else if (RoomFromPos(doors[i].position + doors[i].direction.ToIntVector2(), false).roomType == "mystery")
+                    {
+                        smartPosition = doors[i].position + doors[i].direction.ToIntVector2();
+                        smartDirection = doors[i].direction.GetOpposite();
+                        doors[i].type = "mysterydoor";
+                    }
                 }
                 if (shouldBeTile)
                 {
