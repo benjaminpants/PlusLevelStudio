@@ -78,19 +78,21 @@ namespace PlusLevelStudio.Editor.Tools
 
         public void PlaceButton(Direction dir)
         {
-            ConveyorBeltStructureLocation belt = (ConveyorBeltStructureLocation)EditorController.Instance.AddOrGetStructureToData("conveyorbelt", true);
-            ConnectableButtonLocation button = belt.CreateButton();
+            ConveyorBeltStructureLocation belt = (ConveyorBeltStructureLocation)EditorController.Instance.AddOrGetStructureToData("conveyorbelt", false);
+            SimpleButtonLocation button = belt.CreateButton();
             button.position = buttonPos.Value;
             button.direction = dir;
             if (!button.ValidatePosition(EditorController.Instance.levelData, false))
             {
+                EditorController.Instance.RemoveVisual(belt);
+                EditorController.Instance.levelData.structures.Remove(belt);
                 EditorController.Instance.selector.SelectRotation(buttonPos.Value, PlaceButton);
                 return;
             }
-            belt.belts.Add(currentBelt);
-            button.index = belt.belts.IndexOf(currentBelt);
-            EditorController.Instance.AddVisual(button);
             belt.buttons.Add(button);
+            currentBelt.buttonIndex = belt.buttons.IndexOf(button);
+            belt.belts.Add(currentBelt);
+            EditorController.Instance.AddVisual(button);
             EditorController.Instance.AddHeldUndo();
             EditorController.Instance.SwitchToTool(null);
         }
@@ -107,7 +109,7 @@ namespace PlusLevelStudio.Editor.Tools
             {
                 EditorController.Instance.HoldUndo();
                 startingPos = EditorController.Instance.mouseGridPosition;
-                ConveyorBeltStructureLocation belt = (ConveyorBeltStructureLocation)EditorController.Instance.AddOrGetStructureToData("conveyorbelt", true);
+                ConveyorBeltStructureLocation belt = (ConveyorBeltStructureLocation)EditorController.Instance.AddOrGetStructureToData("conveyorbelt", false);
                 currentBelt = belt.CreateBelt();
                 currentBelt.direction = Direction.North;
                 currentBelt.distance = 1;
@@ -146,22 +148,18 @@ namespace PlusLevelStudio.Editor.Tools
         {
             if (placingButton)
             {
-                Debug.Log("PLACING BUTTON");
                 if (!buttonPos.HasValue)
                 {
-                    Debug.Log("select tile pos no value");
                     EditorController.Instance.selector.SelectTile(EditorController.Instance.mouseGridPosition);
                 }
                 return;
             }
             if (startingPos.HasValue)
             {
-                Debug.Log("starting pos has value");
                 EditorController.Instance.selector.SelectTile(startingPos.Value);
             }
             else
             {
-                Debug.Log("starting pos has no value");
                 EditorController.Instance.selector.SelectTile(EditorController.Instance.mouseGridPosition);
             }
             if (holdingBelt)

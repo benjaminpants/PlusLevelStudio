@@ -8,11 +8,6 @@ using UnityEngine;
 
 namespace PlusLevelStudio.Editor
 {
-    public class ConnectableButtonLocation : SimpleButtonLocation
-    {
-        public int index;
-    }
-
     public class EditorBeltVisualManager : MonoBehaviour
     {
         public List<MeshRenderer> beltRenderers = new List<MeshRenderer>();
@@ -51,6 +46,7 @@ namespace PlusLevelStudio.Editor
         public byte distance;
         public Direction direction;
         public ConveyorBeltStructureLocation owner;
+        public int buttonIndex = -1;
 
         public void CleanupVisual(GameObject visualObject)
         {
@@ -100,7 +96,7 @@ namespace PlusLevelStudio.Editor
     public class ConveyorBeltStructureLocation : StructureLocation
     {
         public List<ConveyorBeltLocation> belts = new List<ConveyorBeltLocation>();
-        public List<ConnectableButtonLocation> buttons = new List<ConnectableButtonLocation>();
+        public List<SimpleButtonLocation> buttons = new List<SimpleButtonLocation>();
         public override void AddStringsToCompressor(StringCompressor compressor)
         {
             
@@ -111,12 +107,68 @@ namespace PlusLevelStudio.Editor
             
         }
 
-        // how the fuck does this annoying shit work
-        // NOTE: so this is completely wrong. why did i set it up like this. its multiple BELTS per BUTTON. not BUTTONS per BELT.
-        // the buttons are coded like they are for multiple BUTTONS per BELT when it really needed to be the belts with the button index.
+        // the code is all set up for multiple belts connecting to 1 but due to a bug it goes unused
         public override StructureInfo Compile(EditorLevelData data, BaldiLevel level)
         {
             StructureInfo info = new StructureInfo(type);
+            if (belts.Count == 0)
+            {
+                Debug.LogWarning("Compiling Conveyor belts with no belts???");
+                return info;
+            }
+            Dictionary<int, List<ConveyorBeltLocation>> kvps = new Dictionary<int, List<ConveyorBeltLocation>>();
+            for (int i = 0; i < belts.Count; i++)
+            {
+                if (!kvps.ContainsKey(belts[i].buttonIndex))
+                {
+                    kvps.Add(belts[i].buttonIndex, new List<ConveyorBeltLocation>());
+                }
+                kvps[belts[i].buttonIndex].Add(belts[i]);
+            }
+            foreach (var kvp in kvps)
+            {
+                if (kvp.Key == -1) continue; //we want to handle this one seperately
+                for (int i = 0; i < kvp.Value.Count; i++)
+                {
+                    ConveyorBeltLocation belt = kvp.Value[i];
+                    info.data.Add(new StructureDataInfo()
+                    {
+                        position = belt.startPosition.ToByte(),
+                        direction = (PlusDirection)belt.direction,
+                        data = 0
+                    });
+                    info.data.Add(new StructureDataInfo()
+                    {
+                        position = (belt.startPosition + (belt.direction.ToIntVector2() * (belt.distance - 1))).ToByte(),
+                        data = 0
+                    });
+                }
+                info.data.Add(new StructureDataInfo()
+                {
+                    data = 1,
+                    position = buttons[kvp.Key].position.ToByte(),
+                    direction = (PlusDirection)buttons[kvp.Key].direction,
+                });
+            }
+            if (kvps.ContainsKey(-1))
+            {
+                for (int i = 0; i < kvps[-1].Count; i++)
+                {
+                    ConveyorBeltLocation belt = kvps[-1][i];
+                    info.data.Add(new StructureDataInfo()
+                    {
+                        position = belt.startPosition.ToByte(),
+                        direction = (PlusDirection)belt.direction,
+                        data = 0
+                    });
+                    info.data.Add(new StructureDataInfo()
+                    {
+                        position = (belt.startPosition + (belt.direction.ToIntVector2() * (belt.distance - 1))).ToByte(),
+                        data = 0
+                    });
+                }
+            }
+            /*
             for (int i = 0; i < belts.Count; i++)
             {
                 // mystman12 why not just use data to pass in length and then use -1 for buttons
@@ -141,7 +193,7 @@ namespace PlusLevelStudio.Editor
                         direction = (PlusDirection)connectedButtons[j].direction,
                     });
                 }
-            }
+            }*/
             return info;
         }
 
@@ -190,21 +242,33 @@ namespace PlusLevelStudio.Editor
         {
             int index = belts.IndexOf(belt);
             if (index == -1) throw new Exception("Attempted to delete belt not in belt list!");
-            Dictionary<ConnectableButtonLocation, ConveyorBeltLocation> toBeltMappings = new Dictionary<ConnectableButtonLocation, ConveyorBeltLocation>();
-            for (int i = 0; i < buttons.Count; i++)
+            Dictionary<ConveyorBeltLocation, SimpleButtonLocation> toBeltMappings = new Dictionary<ConveyorBeltLocation, SimpleButtonLocation>();
+            for (int i = 0; i < belts.Count; i++)
             {
-                toBeltMappings.Add(buttons[i], belts[buttons[i].index]);
+                if (belts[i].buttonIndex == -1) continue;
+                toBeltMappings.Add(belts[i], buttons[belts[i].buttonIndex]);
             }
             for (int i = buttons.Count - 1; i >= 0; i--)
             {
-                if (buttons[i].index == index)
+                bool buttonOrphaned = true;
+                foreach (ConveyorBeltLocation item in belts)
+                {
+                    if (item == belt) continue;
+                    if (item.buttonIndex == i)
+                    {
+                        buttonOrphaned = false;
+                        break;
+                    }
+                }
+                if (buttonOrphaned)
                 {
                     OnButtonDelete(data, buttons[i]);
                 }
             }
-            for (int i = 0; i < buttons.Count; i++)
+            for (int i = 0; i < belts.Count; i++)
             {
-                buttons[i].index = belts.IndexOf(toBeltMappings[buttons[i]]);
+                if (!toBeltMappings.ContainsKey(belts[i])) continue;
+                belts[i].buttonIndex = buttons.IndexOf(toBeltMappings[belts[i]]);
             }
             EditorController.Instance.RemoveVisual(belt);
             belts.Remove(belt);
@@ -221,6 +285,13 @@ namespace PlusLevelStudio.Editor
 
         public override bool ValidatePosition(EditorLevelData data)
         {
+            for (int i = belts.Count - 1; i >= 0; i--)
+            {
+                if (!belts[i].ValidatePosition(data))
+                {
+                    DeleteBelt(data, belts[i], false);
+                }
+            }
             for (int i = buttons.Count - 1; i >= 0; i--)
             {
                 if (!buttons[i].ValidatePosition(data, true))
@@ -229,20 +300,13 @@ namespace PlusLevelStudio.Editor
                     buttons.RemoveAt(i);
                 }
             }
-            for (int i = belts.Count - 1; i >= 0; i--)
-            {
-                if (!belts[i].ValidatePosition(data))
-                {
-                    DeleteBelt(data, belts[i], false);
-                }
-            }
             if (belts.Count == 0) return false;
             return true;
         }
 
-        public ConnectableButtonLocation CreateButton()
+        public SimpleButtonLocation CreateButton()
         {
-            ConnectableButtonLocation button = new ConnectableButtonLocation();
+            SimpleButtonLocation button = new SimpleButtonLocation();
             button.prefab = "button";
             button.deleteAction = OnButtonDelete;
             return button;
@@ -250,7 +314,16 @@ namespace PlusLevelStudio.Editor
 
         public bool OnButtonDelete(EditorLevelData data, SimpleLocation local)
         {
-            buttons.Remove((ConnectableButtonLocation)local);
+            int myIndex = buttons.IndexOf((SimpleButtonLocation)local);
+            if (myIndex == -1) throw new Exception("Attempted to delete button we don't own!");
+            for (int i = 0; i < belts.Count; i++)
+            {
+                if (belts[i].buttonIndex == myIndex)
+                {
+                    belts[i].buttonIndex = -1;
+                }
+            }
+            buttons.Remove((SimpleButtonLocation)local);
             EditorController.Instance.RemoveVisual(local);
             ValidatePosition(data);
             return true;
@@ -266,15 +339,16 @@ namespace PlusLevelStudio.Editor
                 beltLocation.startPosition = reader.ReadByteVector2().ToInt();
                 beltLocation.distance = reader.ReadByte();
                 beltLocation.direction = (Direction)reader.ReadByte();
+                beltLocation.buttonIndex = reader.ReadInt32();
                 belts.Add(beltLocation);
             }
             int buttonCount = reader.ReadInt32();
             for (int i = 0; i < buttonCount; i++)
             {
-                ConnectableButtonLocation button = CreateButton();
+                SimpleButtonLocation button = CreateButton();
                 button.position = reader.ReadByteVector2().ToInt();
                 button.direction = (Direction)reader.ReadByte();
-                button.index = reader.ReadInt32();
+                buttons.Add(button);
             }
         }
 
@@ -287,13 +361,13 @@ namespace PlusLevelStudio.Editor
                 writer.Write(belts[i].startPosition.ToByte());
                 writer.Write(belts[i].distance);
                 writer.Write((byte)belts[i].direction);
+                writer.Write(belts[i].buttonIndex);
             }
             writer.Write(buttons.Count);
             for (int i = 0; i < buttons.Count; i++)
             {
                 writer.Write(buttons[i].position.ToByte());
                 writer.Write((byte)buttons[i].direction);
-                writer.Write(buttons[i].index);
             }
         }
     }

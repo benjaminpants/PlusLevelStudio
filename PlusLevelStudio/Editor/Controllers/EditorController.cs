@@ -332,7 +332,7 @@ namespace PlusLevelStudio.Editor
             }
         }
 
-        public StructureLocation GetStructureToData(string type)
+        public StructureLocation GetStructureData(string type)
         {
             StructureLocation foundStructure = levelData.structures.FirstOrDefault(x => x.type == type);
             return foundStructure;
