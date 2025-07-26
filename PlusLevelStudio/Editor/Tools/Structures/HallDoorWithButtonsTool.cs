@@ -15,7 +15,7 @@ namespace PlusLevelStudio.Editor.Tools
         public SimpleLocation first;
         protected IntVector2? buttonPos;
 
-        public HallDoorWithButtonsTool(string type) : this(type, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/structure_" + type))
+        internal HallDoorWithButtonsTool(string type) : this(type, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/structure_" + type))
         {
 
         }

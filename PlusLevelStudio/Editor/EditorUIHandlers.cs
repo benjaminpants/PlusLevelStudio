@@ -427,15 +427,27 @@ namespace PlusLevelStudio.Editor
             EditorController.Instance.PlayLevel();
         }
 
+        public void CloseEditor()
+        {
+            Destroy(Singleton<EditorController>.Instance.camera.gameObject);
+            Singleton<InputManager>.Instance.ActivateActionSet("Interface");
+            Singleton<GlobalCam>.Instance.ChangeType(CameraRenderType.Base);
+            SceneManager.LoadScene("MainMenu");
+        }
+
         public override void SendInteractionMessage(string message, object data)
         {
             switch (message)
             {
                 case "exit":
-                    Destroy(Singleton<EditorController>.Instance.camera.gameObject);
-                    Singleton<InputManager>.Instance.ActivateActionSet("Interface");
-                    Singleton<GlobalCam>.Instance.ChangeType(CameraRenderType.Base);
-                    SceneManager.LoadScene("MainMenu");
+                    if (EditorController.Instance.hasUnsavedChanges)
+                    {
+                        EditorController.Instance.CreateUIPopup(LocalizationManager.Instance.GetLocalizedText("Ed_Menu_UnsavedChangesExit"), CloseEditor, () => { });
+                    }
+                    else
+                    {
+                        CloseEditor();
+                    }
                     break;
                 case "play":
                     if (EditorController.Instance.hasUnsavedChanges)

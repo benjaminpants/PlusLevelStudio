@@ -118,7 +118,9 @@ namespace PlusLevelStudio
             AddToolsToCategory(modeToModify, "structures", new EditorTool[]
             {
                 new HallDoorStructureTool("facultyonlydoor"),
-                new HallDoorWithButtonsTool("lockdowndoor")
+                new HallDoorWithButtonsTool("lockdowndoor"),
+                new ConveyorBeltTool("conveyorbelt", true),
+                new ConveyorBeltTool("conveyorbelt", false)
             }, true);
             if (!includeNonVanillaComplaintTools) return;
             AddToolsToCategory(modeToModify, "structures", new EditorTool[]

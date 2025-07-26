@@ -55,6 +55,16 @@ namespace PlusStudioLevelFormat
     {
         public string type;
         public List<StructureDataInfo> data = new List<StructureDataInfo>();
+
+        public StructureInfo()
+        {
+
+        }
+
+        public StructureInfo(string type)
+        {
+            this.type = type;
+        }
     }
 
     public class StructureDataInfo

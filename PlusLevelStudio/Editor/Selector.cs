@@ -268,6 +268,12 @@ namespace PlusLevelStudio.Editor
                 case SelectorState.None:
                     break;
                 case SelectorState.Direction:
+                    transform.position = selectedTile.ToWorld() + (Vector3.up * 0.01f); // annoying hack seriously what the fuck is going on
+                    for (int i = 0; i < tileArrows.Length; i++)
+                    {
+                        PositionArrow((Direction)i, 0f);
+                    }
+                    break;
                 case SelectorState.Tile:
                     transform.position = selectedTile.ToWorld() + (Vector3.up * 0.01f);
                     break;

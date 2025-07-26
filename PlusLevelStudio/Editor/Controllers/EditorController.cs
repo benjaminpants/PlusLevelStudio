@@ -327,8 +327,15 @@ namespace PlusLevelStudio.Editor
             CancelHeldUndo();
             if (wipeUndoHistory)
             {
+                hasUnsavedChanges = false;
                 undoStreams.Clear(); // memorystreams dont need .dispose
             }
+        }
+
+        public StructureLocation GetStructureToData(string type)
+        {
+            StructureLocation foundStructure = levelData.structures.FirstOrDefault(x => x.type == type);
+            return foundStructure;
         }
 
         public StructureLocation AddOrGetStructureToData(string type, bool onlyOne)

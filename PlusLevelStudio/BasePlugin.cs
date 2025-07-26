@@ -787,6 +787,19 @@ namespace PlusLevelStudio
 
             structureTypes.Add("shapelock", typeof(ShapeLockStructureLocation));
 
+            // conveyor belts
+
+            GameObject beltVisualObject = new GameObject("EditorBeltVisualManager");
+            beltVisualObject.ConvertToPrefab(true);
+            EditorBeltVisualManager beltVisualManager = beltVisualObject.AddComponent<EditorBeltVisualManager>();
+            beltVisualManager.beltRenderPre = Resources.FindObjectsOfTypeAll<MeshRenderer>().First(x => x.name == "ConveyorBelt" && x.GetInstanceID() >= 0 && x.transform.parent == null);
+            //beltVisualManager.slider = beltVisualObject.AddComponent<TextureSlider>();
+            beltVisualManager.collider = beltVisualObject.AddComponent<BoxCollider>();
+            beltVisualManager.gameObject.layer = editorInteractableLayer;
+            beltVisualManager.deletable = beltVisualObject.AddComponent<EditorDeletableObject>();
+            genericStructureDisplays.Add("conveyorbelt", beltVisualObject);
+            structureTypes.Add("conveyorbelt", typeof(ConveyorBeltStructureLocation));
+
             // npcs
 
             EditorInterface.AddNPCVisual("baldi", LevelLoaderPlugin.Instance.npcAliases["baldi"]);

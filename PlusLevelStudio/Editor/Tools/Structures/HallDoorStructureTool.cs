@@ -10,7 +10,7 @@ namespace PlusLevelStudio.Editor.Tools
     {
         public override string id => "structure_" + type;
 
-        public HallDoorStructureTool(string type) : base(type, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/structure_" + type))
+        internal HallDoorStructureTool(string type) : base(type, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/structure_" + type))
         {
         }
 
