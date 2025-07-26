@@ -539,7 +539,7 @@ namespace PlusLevelStudio.Editor
                 // HACKS FOR MYSTERY DOORS
                 if (doors[i].type == "standard")
                 {
-                    if (RoomFromPos(doors[i].position, false).roomType == "mystery")
+                    if (RoomFromPos(smartPosition, false).roomType == "mystery")
                     {
                         doors[i].type = "mysterydoor";
                     }
