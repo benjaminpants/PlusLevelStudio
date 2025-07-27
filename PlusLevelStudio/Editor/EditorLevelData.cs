@@ -486,6 +486,7 @@ namespace PlusLevelStudio.Editor
             BaldiLevel compiled = new BaldiLevel(mapSize.ToByte());
             compiled.levelTitle = elevatorTitle;
             compiled.timeLimit = timeLimit;
+            compiled.skybox = skybox;
             compiled.spawnPoint = spawnPoint.ToData();
             compiled.spawnDirection = (PlusDirection)spawnDirection;
             compiled.randomEvents = new List<string>(randomEvents);
