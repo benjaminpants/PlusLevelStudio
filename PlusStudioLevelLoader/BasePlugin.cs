@@ -35,6 +35,7 @@ namespace PlusStudioLevelLoader
         public Dictionary<string, NPC> npcAliases = new Dictionary<string, NPC>();
         public Dictionary<string, PosterObject> posterAliases = new Dictionary<string, PosterObject>();
         public Dictionary<string, RandomEvent> randomEventAliases = new Dictionary<string, RandomEvent>();
+        public Dictionary<string, Cubemap> skyboxAliases = new Dictionary<string, Cubemap>();
 
         public static Texture2D RoomTextureFromAlias(string alias)
         {
@@ -286,6 +287,13 @@ namespace PlusStudioLevelLoader
             randomEventAliases.Add("gravitychaos", randomEvents.First(x => x.name == "Event_GravityChaos"));
             randomEventAliases.Add("mysteryroom", randomEvents.First(x => x.name == "Event_MysteryRoom"));
             randomEventAliases.Add("timeout", randomEvents.First(x => x.name == "Event_TimeOut_Base"));
+
+            // skyboxes
+            Cubemap[] skyboxes = Resources.FindObjectsOfTypeAll<Cubemap>().Where(x => x.GetInstanceID() >= 0).ToArray();
+            skyboxAliases.Add("default", skyboxes.First(x => x.name == "Cubemap_Default"));
+            skyboxAliases.Add("daystandard", skyboxes.First(x => x.name == "Cubemap_DayStandard"));
+            skyboxAliases.Add("twilight", skyboxes.First(x => x.name == "Cubemap_Twilight"));
+            skyboxAliases.Add("void", skyboxes.First(x => x.name == "Cubemap_Void"));
         }
     }
 }

@@ -43,6 +43,7 @@ namespace PlusStudioLevelLoader
             scene.extraAsset.initialEventGap= level.initialRandomEventGap;
             extendedAsset.timeOutEvent = LevelLoaderPlugin.Instance.randomEventAliases["timeout"];
             extendedAsset.timeOutTime = level.timeLimit;
+            scene.skybox = LevelLoaderPlugin.Instance.skyboxAliases[level.skybox];
             scene.levelTitle = level.levelTitle;
             return scene;
         }

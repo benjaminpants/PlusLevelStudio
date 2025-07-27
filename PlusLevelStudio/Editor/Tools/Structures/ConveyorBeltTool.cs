@@ -16,6 +16,7 @@ namespace PlusLevelStudio.Editor.Tools
         bool holdingBelt = false;
         bool placesButton = false;
         bool placingButton = false;
+        ConveyorBeltStructureLocation currentStructure;
 
         internal ConveyorBeltTool(string type, bool placesButton) : this(type, placesButton, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/structure_" + type))
         {
@@ -45,6 +46,11 @@ namespace PlusLevelStudio.Editor.Tools
             currentBelt = null;
             placingButton = false;
             buttonPos = null;
+            if (currentStructure != null)
+            {
+                EditorController.Instance.levelData.ValidatePlacements(true); // hack kind of, should probably only force a revalidation on the one we are targetting
+            }
+            currentStructure = null;
             EditorController.Instance.CancelHeldUndo();
 
         }
@@ -70,6 +76,11 @@ namespace PlusLevelStudio.Editor.Tools
                 EditorController.Instance.RemoveVisual(currentBelt);
                 currentBelt = null;
                 startingPos = null;
+                if (currentStructure != null)
+                {
+                    EditorController.Instance.levelData.ValidatePlacements(true); // hack kind of, should probably only force a revalidation on the one we are targetting
+                }
+                currentStructure = null;
                 EditorController.Instance.CancelHeldUndo();
                 return false;
             }
@@ -78,20 +89,19 @@ namespace PlusLevelStudio.Editor.Tools
 
         public void PlaceButton(Direction dir)
         {
-            ConveyorBeltStructureLocation belt = (ConveyorBeltStructureLocation)EditorController.Instance.AddOrGetStructureToData("conveyorbelt", false);
-            SimpleButtonLocation button = belt.CreateButton();
+            SimpleButtonLocation button = currentStructure.CreateButton();
             button.position = buttonPos.Value;
             button.direction = dir;
             if (!button.ValidatePosition(EditorController.Instance.levelData, false))
             {
-                EditorController.Instance.RemoveVisual(belt);
-                EditorController.Instance.levelData.structures.Remove(belt);
+                EditorController.Instance.RemoveVisual(currentStructure);
+                EditorController.Instance.levelData.structures.Remove(currentStructure);
                 EditorController.Instance.selector.SelectRotation(buttonPos.Value, PlaceButton);
                 return;
             }
-            belt.buttons.Add(button);
-            currentBelt.buttonIndex = belt.buttons.IndexOf(button);
-            belt.belts.Add(currentBelt);
+            currentStructure.buttons.Add(button);
+            currentBelt.buttonIndex = currentStructure.buttons.IndexOf(button);
+            currentStructure.belts.Add(currentBelt);
             EditorController.Instance.AddVisual(button);
             EditorController.Instance.AddHeldUndo();
             EditorController.Instance.SwitchToTool(null);
@@ -109,8 +119,8 @@ namespace PlusLevelStudio.Editor.Tools
             {
                 EditorController.Instance.HoldUndo();
                 startingPos = EditorController.Instance.mouseGridPosition;
-                ConveyorBeltStructureLocation belt = (ConveyorBeltStructureLocation)EditorController.Instance.AddOrGetStructureToData("conveyorbelt", false);
-                currentBelt = belt.CreateBelt();
+                currentStructure = (ConveyorBeltStructureLocation)EditorController.Instance.AddOrGetStructureToData("conveyorbelt", false);
+                currentBelt = currentStructure.CreateBelt();
                 currentBelt.direction = Direction.North;
                 currentBelt.distance = 1;
                 currentBelt.startPosition = startingPos.Value;
@@ -133,8 +143,7 @@ namespace PlusLevelStudio.Editor.Tools
                 holdingBelt = false;
                 if (!placesButton)
                 {
-                    ConveyorBeltStructureLocation belt = (ConveyorBeltStructureLocation)EditorController.Instance.AddOrGetStructureToData("conveyorbelt", true);
-                    belt.belts.Add(currentBelt);
+                    currentStructure.belts.Add(currentBelt);
                     EditorController.Instance.AddHeldUndo();
                     return true;
                 }

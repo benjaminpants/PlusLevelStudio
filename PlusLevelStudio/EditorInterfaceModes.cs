@@ -113,6 +113,20 @@ namespace PlusLevelStudio
             }, true);
         }
 
+        public static void AddVanillaEvents(EditorMode modeToModify, bool includeNonVanillaComplaint)
+        {
+            modeToModify.availableRandomEvents.AddRange(new string[]
+            {
+                "fog",
+                "flood",
+                "brokenruler",
+                "party",
+                "mysteryroom",
+                "testprocedure",
+                "gravitychaos"
+            });
+        }
+
         public static void AddVanillaStructures(EditorMode modeToModify, bool includeNonVanillaComplaintTools)
         {
             AddToolsToCategory(modeToModify, "structures", new EditorTool[]

@@ -137,7 +137,7 @@ namespace PlusLevelStudio.UI
             }
         }
 
-        public static T BuildUIFromFile<T>(RectTransform parent, string name, string path) where T : UIExchangeHandler
+        public static UIExchangeHandler BuildUIFromFile(Type type, RectTransform parent, string name, string path)
         {
             GameObject obj = new GameObject(name);
             obj.transform.SetParent(parent.transform, false);
@@ -145,7 +145,7 @@ namespace PlusLevelStudio.UI
             rect.sizeDelta = parent.sizeDelta;
             JObject parsedFile = JObject.Parse(File.ReadAllText(path));
 
-            T handler = obj.AddComponent<T>();
+            UIExchangeHandler handler = (UIExchangeHandler)obj.AddComponent(type);
 
 
             // handle defines
@@ -195,6 +195,11 @@ namespace PlusLevelStudio.UI
 
 
             return handler;
+        }
+
+        public static T BuildUIFromFile<T>(RectTransform parent, string name, string path) where T : UIExchangeHandler
+        {
+            return (T)BuildUIFromFile(typeof(T), parent, name, path);
         }
     }
 }

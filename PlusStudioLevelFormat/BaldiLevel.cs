@@ -37,6 +37,7 @@ namespace PlusStudioLevelFormat
         public static readonly byte version = 0; // i realized there is no reason to have changed this to 1 since people can't export levels yet
         public string levelTitle = "WIP";
         public float timeLimit = 0f;
+        public string skybox = "default";
 
         // random event stuff
         public float initialRandomEventGap = 30f;
@@ -93,6 +94,8 @@ namespace PlusStudioLevelFormat
             // metadata
             level.levelTitle = reader.ReadString();
             level.timeLimit = reader.ReadSingle();
+
+            level.skybox = reader.ReadString();
             level.initialRandomEventGap = reader.ReadSingle();
             level.minRandomEventGap = reader.ReadSingle();
             level.maxRandomEventGap = reader.ReadSingle();
@@ -318,6 +321,7 @@ namespace PlusStudioLevelFormat
             // write spawn position or other metadata
             writer.Write(levelTitle);
             writer.Write(timeLimit);
+            writer.Write(skybox);
             writer.Write(initialRandomEventGap);
             writer.Write(minRandomEventGap);
             writer.Write(maxRandomEventGap);

@@ -20,6 +20,7 @@ using PlusStudioLevelLoader;
 using PlusStudioLevelFormat;
 using MTM101BaldAPI.ObjectCreation;
 using PlusLevelStudio.Editor.Ingame;
+using PlusLevelStudio.Editor.GlobalSettingsMenus;
 
 namespace PlusLevelStudio
 {
@@ -53,8 +54,9 @@ namespace PlusLevelStudio
         public Dictionary<string, GameObject> genericStructureDisplays = new Dictionary<string, GameObject>();
         public Dictionary<string, GameObject> npcDisplays = new Dictionary<string, GameObject>();
         public List<string> selectableTextures = new List<string>();
-        public List<string> selectableEvents = new List<string>();
+        public List<string> selectableSkyboxes = new List<string>();
         public Dictionary<string, Sprite> eventSprites = new Dictionary<string, Sprite>();
+        public Dictionary<string, Sprite> skyboxSprites = new Dictionary<string, Sprite>();
         public Dictionary<string, EditorRoomVisualManager> roomVisuals = new Dictionary<string, EditorRoomVisualManager>();
         public GameObject pickupVisual;
         public GameObject posterVisual;
@@ -159,6 +161,8 @@ namespace PlusLevelStudio
             yield return "Setting up editor modes...";
             // setup modes
 
+            string editorModePath = Path.Combine(AssetLoader.GetModPath(this), "Data", "UI", "GlobalPages");
+
             // full mode
             EditorMode fullMode = new EditorMode()
             {
@@ -177,7 +181,24 @@ namespace PlusLevelStudio
                     "tools"
                 },
                 defaultTools = new string[] { "room_hall", "room_class", "room_faculty", "room_office", "light_fluorescent", "door_swinging", "door_standard", "merge", "delete" },
-                prefab = assetMan.Get<EditorController>("MainEditorController")
+                prefab = assetMan.Get<EditorController>("MainEditorController"),
+                pages = new List<EditorGlobalPage>()
+                {
+                    new EditorGlobalPage()
+                    {
+                        filePath = Path.Combine(editorModePath, "LevelSettings.json"),
+                        managerType = typeof(LevelSettingsExchangeHandler),
+                        pageName = "LevelSettings",
+                        pageKey = "Ed_GlobalPage_LevelSettings"
+                    },
+                    new EditorGlobalPage()
+                    {
+                        filePath = Path.Combine(editorModePath, "VisualAndLights.json"),
+                        managerType = typeof(VisualsAndLightsUIExchangeHandler),
+                        pageName = "VisualAndLightSettings",
+                        pageKey = "Ed_GlobalPage_VisualSettings"
+                    }
+                }
             };
 
             EditorInterfaceModes.AddVanillaRooms(fullMode);
@@ -190,6 +211,7 @@ namespace PlusLevelStudio
             EditorInterfaceModes.AddVanillaLights(fullMode);
             EditorInterfaceModes.AddVanillaPosters(fullMode);
             EditorInterfaceModes.AddVanillaToolTools(fullMode);
+            EditorInterfaceModes.AddVanillaEvents(fullMode, true);
 
             modes.Add("full", fullMode);
 
@@ -224,6 +246,7 @@ namespace PlusLevelStudio
             EditorInterfaceModes.AddVanillaLights(complaintMode);
             EditorInterfaceModes.AddVanillaPosters(complaintMode);
             EditorInterfaceModes.AddVanillaToolTools(complaintMode);
+            EditorInterfaceModes.AddVanillaEvents(complaintMode, false);
 
             modes.Add("compliant", complaintMode);
 
@@ -852,14 +875,6 @@ namespace PlusLevelStudio
             selectableTextures.Add("Corn");
             selectableTextures.Add("Black");
 
-            selectableEvents.Add("fog");
-            selectableEvents.Add("flood");
-            selectableEvents.Add("brokenruler");
-            selectableEvents.Add("party");
-            selectableEvents.Add("mysteryroom");
-            selectableEvents.Add("testprocedure");
-            selectableEvents.Add("gravitychaos");
-
             yield return "Setting up GameManagers...";
 
             SoundObject balAllBooks = ObjectCreators.CreateSoundObject(AssetLoader.AudioClipFromMod(this, "Sounds", "Ingame", "BAL_AllNotebooks_Generic.wav"), "Vfx_BAL_Tutorial_AllNotebooks_0", SoundType.Voice, Color.green);
@@ -1000,11 +1015,31 @@ namespace PlusLevelStudio
             UIBuilder.elementBuilders.Add("segment", new DigitalNumberBuilder());
             SpritesFromPath(Path.Combine(AssetLoader.GetModPath(this), "UI", "Editor"), "");
 
-            for (int i = 0; i < selectableEvents.Count; i++)
+            List<string> eventSpritesToPrepare = new List<string>
             {
-                if (eventSprites.ContainsKey(selectableEvents[i])) continue;
-                eventSprites.Add(selectableEvents[i], uiAssetMan.Get<Sprite>("RandomEvents/" + selectableEvents[i]));
+                "fog",
+                "flood",
+                "brokenruler",
+                "party",
+                "mysteryroom",
+                "testprocedure",
+                "gravitychaos"
+            };
+
+            for (int i = 0; i < eventSpritesToPrepare.Count; i++)
+            {
+                eventSprites.Add(eventSpritesToPrepare[i], uiAssetMan.Get<Sprite>("RandomEvents/" + eventSpritesToPrepare[i]));
             }
+
+            skyboxSprites.Add("default", uiAssetMan.Get<Sprite>("Skyboxes/default"));
+            skyboxSprites.Add("daystandard", uiAssetMan.Get<Sprite>("Skyboxes/daystandard"));
+            skyboxSprites.Add("twilight", uiAssetMan.Get<Sprite>("Skyboxes/twilight"));
+            skyboxSprites.Add("void", uiAssetMan.Get<Sprite>("Skyboxes/void"));
+
+            selectableSkyboxes.Add("daystandard");
+            selectableSkyboxes.Add("twilight");
+            selectableSkyboxes.Add("void");
+            selectableSkyboxes.Add("default");
         }
 
         void SpritesFromPath(string path, string prefix)

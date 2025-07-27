@@ -34,6 +34,7 @@ namespace PlusLevelStudio.Editor
         public List<PosterPlacement> posters = new List<PosterPlacement>();
         public List<WallLocation> walls = new List<WallLocation>();
         public string elevatorTitle = "WIP";
+        public string skybox = "daystandard";
         public float timeLimit = 0f;
         public EditorRoom hall => rooms[0];
 
@@ -633,7 +634,7 @@ namespace PlusLevelStudio.Editor
             return compiled;
         }
 
-        public const byte version = 4;
+        public const byte version = 5;
 
         public bool WallFree(IntVector2 pos, Direction dir, bool ignoreSelf)
         {
@@ -808,6 +809,7 @@ namespace PlusLevelStudio.Editor
             {
                 writer.Write(randomEvents[i]);
             }
+            writer.Write(skybox);
         }
 
         public static EditorLevelData ReadFrom(BinaryReader reader)
@@ -985,6 +987,8 @@ namespace PlusLevelStudio.Editor
             {
                 levelData.randomEvents.Add(reader.ReadString());
             }
+            if (version <= 4) return levelData;
+            levelData.skybox = reader.ReadString();
             return levelData;
         }
 

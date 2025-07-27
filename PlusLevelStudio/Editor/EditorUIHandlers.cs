@@ -46,14 +46,12 @@ namespace PlusLevelStudio.Editor
 
     public class EditorUIGlobalSettingsHandler : UIExchangeHandler
     {
-        bool somethingChanged = false;
-        TextMeshProUGUI elevatorText;
-        TextMeshProUGUI initEventText;
-        TextMeshProUGUI minEventText;
-        TextMeshProUGUI maxEventText;
-        StandardMenuButton[] randomEventButtons;
-        DigitalNumberDisplay[] displays;
-        int randomEventViewOffset = 0;
+        public bool somethingChanged = false;
+        public GlobalSettingsUIExchangeHandler[] pages;
+        public string[] pageKeys;
+        public TextMeshProUGUI titleText;
+        int currentPage = 0;
+
         public override bool GetStateBoolean(string key)
         {
             return false;
@@ -61,129 +59,34 @@ namespace PlusLevelStudio.Editor
 
         public override void OnElementsCreated()
         {
-            elevatorText = transform.Find("ElevatorTitle").GetComponent<TextMeshProUGUI>();
-            randomEventButtons = new StandardMenuButton[]
-            {
-                transform.Find("Event0").GetComponent<StandardMenuButton>(),
-                transform.Find("Event1").GetComponent<StandardMenuButton>(),
-                transform.Find("Event2").GetComponent<StandardMenuButton>(),
-                transform.Find("Event3").GetComponent<StandardMenuButton>(),
-                transform.Find("Event4").GetComponent<StandardMenuButton>(),
-                transform.Find("Event5").GetComponent<StandardMenuButton>(),
-                transform.Find("Event6").GetComponent<StandardMenuButton>()
-            };
-            initEventText = transform.Find("InitialEventTime").GetComponent<TextMeshProUGUI>();
-            minEventText = transform.Find("MinEventTime").GetComponent<TextMeshProUGUI>();
-            maxEventText = transform.Find("MaxEventTime").GetComponent<TextMeshProUGUI>();
-            displays = new DigitalNumberDisplay[]
-            {
-                transform.Find("LevelTimeSeg0").GetComponent<DigitalNumberDisplay>(),
-                transform.Find("LevelTimeSeg1").GetComponent<DigitalNumberDisplay>(),
-                transform.Find("LevelTimeSeg2").GetComponent<DigitalNumberDisplay>(),
-                transform.Find("LevelTimeSeg3").GetComponent<DigitalNumberDisplay>(),
-            };
-
-            for (int i = 0; i < randomEventButtons.Length; i++)
-            {
-                int index = i; // why must i do this
-                randomEventButtons[i].eventOnHigh = true;
-                randomEventButtons[i].OnHighlight.AddListener(() =>
-                {
-                    EventHighlight(index);
-                });
-                randomEventButtons[i].OffHighlight.AddListener(() =>
-                {
-                    EditorController.Instance.tooltipController.CloseTooltip();
-                });
-            }
+            titleText = transform.Find("Title").GetComponent<TextMeshProUGUI>();
         }
 
-        public void Refresh()
+        public void SwitchToPage(int page)
         {
-            elevatorText.text = EditorController.Instance.levelData.elevatorTitle;
-            initEventText.text = EditorController.Instance.levelData.initialRandomEventGap.ToString();
-            minEventText.text = EditorController.Instance.levelData.minRandomEventGap.ToString();
-            maxEventText.text = EditorController.Instance.levelData.maxRandomEventGap.ToString();
-            int time = Mathf.RoundToInt(EditorController.Instance.levelData.timeLimit);
-            string displayTime = string.Format("{0}{1}", Mathf.Floor((float)(time / 60)).ToString("00"), (time % 60).ToString("00"));
-            for (int i = 0; i < displays.Length; i++)
-            {
-                displays[i].currentValue = (int)char.GetNumericValue(displayTime, i);
-            }
-            RefreshEventView();
-        }
-
-        public void RefreshEventView()
-        {
-            for (int i = 0; i < randomEventButtons.Length; i++)
-            {
-                if ((i + randomEventViewOffset) >= LevelStudioPlugin.Instance.selectableEvents.Count)
-                {
-                    randomEventButtons[i].image.color = Color.clear;
-                    continue;
-                }
-                randomEventButtons[i].image.sprite = LevelStudioPlugin.Instance.eventSprites[LevelStudioPlugin.Instance.selectableEvents[i + randomEventViewOffset]];
-                if (EditorController.Instance.levelData.randomEvents.Contains(LevelStudioPlugin.Instance.selectableEvents[i + randomEventViewOffset]))
-                {
-                    randomEventButtons[i].image.color = Color.white;
-                }
-                else
-                {
-                    randomEventButtons[i].image.color = Color.black;
-                }
-            }
-        }
-
-        public void EventHighlight(int index)
-        {
-            if ((index + randomEventViewOffset) >= LevelStudioPlugin.Instance.selectableEvents.Count) return;
-            EditorController.Instance.tooltipController.UpdateTooltip("Ed_RandomEvent_" + LevelStudioPlugin.Instance.selectableEvents[index + randomEventViewOffset]);
+            pages[currentPage].gameObject.SetActive(false);
+            currentPage = page;
+            pages[page].gameObject.SetActive(true);
+            titleText.text = LocalizationManager.Instance.GetLocalizedText(pageKeys[page]);
+            pages[page].Refresh();
         }
 
         public void Open()
         {
             EditorController.Instance.HoldUndo();
-            Refresh();
-        }
-
-        public void ToggleEvent(string evnt)
-        {
-            if (EditorController.Instance.levelData.randomEvents.Contains(evnt))
-            {
-                EditorController.Instance.levelData.randomEvents.Remove(evnt);
-            }
-            else
-            {
-                EditorController.Instance.levelData.randomEvents.Add(evnt);
-            }
-            somethingChanged = true;
-            RefreshEventView();
+            pages[currentPage].Refresh();
+            titleText.text = LocalizationManager.Instance.GetLocalizedText(pageKeys[currentPage]);
         }
 
         public override void SendInteractionMessage(string message, object data = null)
         {
-            if (message.StartsWith("levelTime:"))
-            {
-                float byAmount = float.Parse(message.Replace("levelTime:",""));
-                EditorController.Instance.levelData.timeLimit = Mathf.Clamp((EditorController.Instance.levelData.timeLimit + byAmount), 0f, 5999f); // 356459 is 99:59 in seconds
-                somethingChanged = true;
-                Refresh();
-            }
-            if (message.StartsWith("event"))
-            {
-                int index = int.Parse(message.Replace("event",""));
-                int selectableEventsIndex = index + randomEventViewOffset;
-                if (selectableEventsIndex >= LevelStudioPlugin.Instance.selectableEvents.Count)
-                {
-                    return;
-                }
-                ToggleEvent(LevelStudioPlugin.Instance.selectableEvents[index + randomEventViewOffset]);
-            }
             switch (message)
             {
-                case "elevatorTitleChanged":
-                    somethingChanged = true;
-                    EditorController.Instance.levelData.elevatorTitle = elevatorText.text;
+                case "prevPage":
+                    SwitchToPage(Mathf.Max(currentPage - 1,0));
+                    break;
+                case "nextPage":
+                    SwitchToPage(Mathf.Min(currentPage + 1, pages.Length - 1));
                     break;
                 case "exit":
                     if (somethingChanged)
@@ -196,38 +99,6 @@ namespace PlusLevelStudio.Editor
                     }
                     EditorController.Instance.SetChannelsMuted(false);
                     gameObject.SetActive(false);
-                    break;
-                case "nextEvent":
-                    randomEventViewOffset = Mathf.Clamp(randomEventViewOffset + 1, 0, LevelStudioPlugin.Instance.selectableEvents.Count - randomEventButtons.Length);
-                    RefreshEventView();
-                    break;
-                case "prevEvent":
-                    randomEventViewOffset = Mathf.Clamp(randomEventViewOffset - 1, 0, LevelStudioPlugin.Instance.selectableEvents.Count - randomEventButtons.Length);
-                    RefreshEventView();
-                    break;
-                case "initialEventTimeChanged":
-                    if (float.TryParse((string)data, out float initResult))
-                    {
-                        somethingChanged = true;
-                        EditorController.Instance.levelData.initialRandomEventGap = Mathf.Abs(initResult);
-                    }
-                    Refresh();
-                    break;
-                case "minEventTimeChanged":
-                    if (float.TryParse((string)data, out float minResult))
-                    {
-                        somethingChanged = true;
-                        EditorController.Instance.levelData.minRandomEventGap = Mathf.Abs(minResult);
-                    }
-                    Refresh();
-                    break;
-                case "maxEventTimeChanged":
-                    if (float.TryParse((string)data, out float maxResult))
-                    {
-                        somethingChanged = true;
-                        EditorController.Instance.levelData.maxRandomEventGap = Mathf.Abs(maxResult);
-                    }
-                    Refresh();
                     break;
             }
         }
@@ -539,5 +410,11 @@ namespace PlusLevelStudio.Editor
                     break;
             }
         }
+    }
+
+    public abstract class GlobalSettingsUIExchangeHandler : UIExchangeHandler
+    {
+        public abstract void Refresh();
+        public EditorUIGlobalSettingsHandler handler;
     }
 }

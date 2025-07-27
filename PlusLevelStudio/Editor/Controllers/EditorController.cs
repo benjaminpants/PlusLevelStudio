@@ -324,6 +324,7 @@ namespace PlusLevelStudio.Editor
             SetupVisualsForAllRooms(); // need to do this first before lighting
             RefreshLights();
             UpdateSpawnVisual();
+            UpdateSkybox();
             CancelHeldUndo();
             if (wipeUndoHistory)
             {
@@ -666,7 +667,22 @@ namespace PlusLevelStudio.Editor
             init.Inititate();
             tooltipBase.anchoredPosition = CursorController.Instance.GetComponent<RectTransform>().anchoredPosition;
             UIBuilder.LoadGlobalDefinesFromFile(Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "GlobalDefines.json"));
-            uiObjects[2] = UIBuilder.BuildUIFromFile<EditorUIGlobalSettingsHandler>(canvas.GetComponent<RectTransform>(), "GlobalSettings", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "GlobalSettings.json")).gameObject;
+            EditorUIGlobalSettingsHandler settings = UIBuilder.BuildUIFromFile<EditorUIGlobalSettingsHandler>(canvas.GetComponent<RectTransform>(), "GlobalSettings", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "GlobalSettings.json"));
+            settings.pages = new GlobalSettingsUIExchangeHandler[currentMode.pages.Count];
+            settings.pageKeys = new string[currentMode.pages.Count];
+            for (int i = 0; i < currentMode.pages.Count; i++)
+            {
+                EditorGlobalPage page = currentMode.pages[i];
+                GlobalSettingsUIExchangeHandler handler = (GlobalSettingsUIExchangeHandler)UIBuilder.BuildUIFromFile(page.managerType, settings.GetComponent<RectTransform>(), page.pageName, page.filePath);
+                handler.handler = settings;
+                settings.pages[i] = handler;
+                settings.pageKeys[i] = page.pageKey;
+                if (i != 0)
+                {
+                    handler.gameObject.SetActive(false);
+                }
+            }
+            uiObjects[2] = settings.gameObject;
             uiObjects[2].transform.SetAsFirstSibling();
             uiObjects[2].SetActive(false);
             uiObjects[1] = UIBuilder.BuildUIFromFile<EditorUIToolboxHandler>(canvas.GetComponent<RectTransform>(), "Toolbox", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "Toolbox.json")).gameObject;
@@ -674,6 +690,11 @@ namespace PlusLevelStudio.Editor
             uiObjects[1].SetActive(false);
             uiObjects[0] = UIBuilder.BuildUIFromFile<EditorUIMainHandler>(canvas.GetComponent<RectTransform>(), "Main", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "Main.json")).gameObject;
             uiObjects[0].transform.SetAsFirstSibling();
+        }
+
+        public void UpdateSkybox()
+        {
+            Shader.SetGlobalTexture("_Skybox", LevelLoaderPlugin.Instance.skyboxAliases[levelData.skybox]);
         }
 
         public void LoadToolbar(string[] tools)
@@ -706,6 +727,7 @@ namespace PlusLevelStudio.Editor
         // called when the editor mode is assigned or re-assigned
         public void EditorModeAssigned()
         {
+            UpdateUI();
             LoadToolbar(currentMode.defaultTools);
             UpdateMeta();
             if (!currentMode.caresAboutSpawn) return;
@@ -1149,7 +1171,6 @@ namespace PlusLevelStudio.Editor
             camera = GameObject.Instantiate(cameraPrefab);
             camera.UpdateTargets(transform,0);
             canvas.transform.SetParent(null);
-            UpdateUI();
             selector = GameObject.Instantiate(selectorPrefab);
             workerEc = GameObject.Instantiate(ecPrefab);
             workerEc.gameObject.SetActive(false);
