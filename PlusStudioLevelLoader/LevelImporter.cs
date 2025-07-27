@@ -40,9 +40,11 @@ namespace PlusStudioLevelLoader
             }
             scene.extraAsset.minEventGap = level.minRandomEventGap;
             scene.extraAsset.maxEventGap = level.maxRandomEventGap;
-            scene.extraAsset.initialEventGap= level.initialRandomEventGap;
+            scene.extraAsset.initialEventGap = level.initialRandomEventGap;
             extendedAsset.timeOutEvent = LevelLoaderPlugin.Instance.randomEventAliases["timeout"];
             extendedAsset.timeOutTime = level.timeLimit;
+            extendedAsset.lightMode = (LightMode)level.lightMode;
+            extendedAsset.minLightColor = level.minLightColor.ToStandard();
             scene.skybox = LevelLoaderPlugin.Instance.skyboxAliases[level.skybox];
             scene.levelTitle = level.levelTitle;
             return scene;

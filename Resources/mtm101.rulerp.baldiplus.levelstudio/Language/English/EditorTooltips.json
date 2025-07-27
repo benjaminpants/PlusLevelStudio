@@ -13,6 +13,7 @@
 {"key":"Ed_Tip_ChangeTexture","value":"Change Texture"},
 {"key":"Ed_Tip_InitialEventTime","value":"The minimum amount of time in seconds before any event can start.\nThis is added with a random number between min and max event time\nto determine the starting time of the first event."},
 {"key":"Ed_Tip_MinEventTime","value":"The minimum gap between events in seconds."},
-{"key":"Ed_Tip_MaxEventTime","value":"The maximum gap between events in seconds."}
+{"key":"Ed_Tip_MaxEventTime","value":"The maximum gap between events in seconds."},
+{"key":"Ed_Tip_MinLevelTooHigh","value":"The minimum light level is too high and there will be no hideable dark areas!\nClick to fix!"}
 
 ]}

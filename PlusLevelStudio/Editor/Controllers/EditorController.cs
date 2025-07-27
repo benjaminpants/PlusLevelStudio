@@ -376,7 +376,8 @@ namespace PlusLevelStudio.Editor
         public void RefreshLights()
         {
             workerEc.UpdateQueuedLightChanges(); // there shouldn't be any of these but just incase there somehow are, take care of them now
-
+            workerEc.standardDarkLevel = levelData.minLightColor;
+            workerEc.lightMode = levelData.lightMode;
             // clear all lights
             LightController[,] lightMap = (LightController[,])_lightMap.GetValue(workerEc);
             for (int i = workerEc.lights.Count - 1; i >= 0; i--)

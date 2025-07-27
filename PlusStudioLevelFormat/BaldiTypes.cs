@@ -148,4 +148,11 @@ namespace PlusStudioLevelFormat
         West,
         Null
     }
+
+    public enum PlusLightMode
+    {
+        Additive,
+        Greatest,
+        Cumulative
+    }
 }

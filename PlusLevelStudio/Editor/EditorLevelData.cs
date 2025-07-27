@@ -34,7 +34,11 @@ namespace PlusLevelStudio.Editor
         public List<PosterPlacement> posters = new List<PosterPlacement>();
         public List<WallLocation> walls = new List<WallLocation>();
         public string elevatorTitle = "WIP";
+
         public string skybox = "daystandard";
+        public Color minLightColor = new Color(0f, 0f, 0f);
+        public LightMode lightMode = LightMode.Cumulative;
+
         public float timeLimit = 0f;
         public EditorRoom hall => rooms[0];
 
@@ -485,6 +489,8 @@ namespace PlusLevelStudio.Editor
             compiled.spawnPoint = spawnPoint.ToData();
             compiled.spawnDirection = (PlusDirection)spawnDirection;
             compiled.randomEvents = new List<string>(randomEvents);
+            compiled.minLightColor = minLightColor.ToData();
+            compiled.lightMode = (PlusLightMode)lightMode;
             compiled.initialRandomEventGap = initialRandomEventGap;
             compiled.minRandomEventGap = minRandomEventGap;
             compiled.maxRandomEventGap = maxRandomEventGap;
@@ -634,7 +640,7 @@ namespace PlusLevelStudio.Editor
             return compiled;
         }
 
-        public const byte version = 5;
+        public const byte version = 6;
 
         public bool WallFree(IntVector2 pos, Direction dir, bool ignoreSelf)
         {
@@ -810,6 +816,8 @@ namespace PlusLevelStudio.Editor
                 writer.Write(randomEvents[i]);
             }
             writer.Write(skybox);
+            writer.Write(minLightColor.ToData());
+            writer.Write((byte)lightMode);
         }
 
         public static EditorLevelData ReadFrom(BinaryReader reader)
@@ -989,6 +997,9 @@ namespace PlusLevelStudio.Editor
             }
             if (version <= 4) return levelData;
             levelData.skybox = reader.ReadString();
+            if (version <= 5) return levelData;
+            levelData.minLightColor = reader.ReadUnityColor().ToStandard();
+            levelData.lightMode = (LightMode)reader.ReadByte();
             return levelData;
         }
 

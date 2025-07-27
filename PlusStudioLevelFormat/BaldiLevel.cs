@@ -37,7 +37,10 @@ namespace PlusStudioLevelFormat
         public static readonly byte version = 0; // i realized there is no reason to have changed this to 1 since people can't export levels yet
         public string levelTitle = "WIP";
         public float timeLimit = 0f;
+
         public string skybox = "default";
+        public UnityColor minLightColor = new UnityColor(0f,0f,0f);
+        public PlusLightMode lightMode = PlusLightMode.Cumulative;
 
         // random event stuff
         public float initialRandomEventGap = 30f;
@@ -96,6 +99,9 @@ namespace PlusStudioLevelFormat
             level.timeLimit = reader.ReadSingle();
 
             level.skybox = reader.ReadString();
+            level.minLightColor = reader.ReadUnityColor();
+            level.lightMode = (PlusLightMode)reader.ReadByte();
+
             level.initialRandomEventGap = reader.ReadSingle();
             level.minRandomEventGap = reader.ReadSingle();
             level.maxRandomEventGap = reader.ReadSingle();
@@ -321,7 +327,11 @@ namespace PlusStudioLevelFormat
             // write spawn position or other metadata
             writer.Write(levelTitle);
             writer.Write(timeLimit);
+
             writer.Write(skybox);
+            writer.Write(minLightColor);
+            writer.Write((byte)lightMode);
+
             writer.Write(initialRandomEventGap);
             writer.Write(minRandomEventGap);
             writer.Write(maxRandomEventGap);
