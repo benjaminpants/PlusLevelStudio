@@ -197,6 +197,13 @@ namespace PlusLevelStudio
                         managerType = typeof(VisualsAndLightsUIExchangeHandler),
                         pageName = "VisualAndLightSettings",
                         pageKey = "Ed_GlobalPage_VisualSettings"
+                    },
+                    new EditorGlobalPage()
+                    {
+                        filePath = Path.Combine(editorModePath, "ModeSettings.json"),
+                        managerType = typeof(ModeSettingsUIExchangeHandler),
+                        pageName = "ModeSettings",
+                        pageKey = "Ed_GlobalPage_ModeSettings"
                     }
                 }
             };
@@ -605,7 +612,8 @@ namespace PlusLevelStudio
             boxC.gameObject.layer = editorInteractableLayer;
             EditorDeletableObject lightEdo = boxC.gameObject.AddComponent<EditorDeletableObject>();
             boxC.gameObject.AddComponent<SettingsComponent>();
-            lightEdo.AddRenderer(lightSpriteRenderer, "white");
+            boxC.gameObject.AddComponent<EditorRendererContainer>().AddRenderer(lightSpriteRenderer, "white");
+            lightEdo.renderContainer = boxC.gameObject.GetComponent<EditorRendererContainer>();
 
             // create door visuals
             EditorInterface.AddDoor<StandardDoorDisplay>("standard", DoorIngameStatus.AlwaysDoor, assetMan.Get<Material>("doorMask"), null);
@@ -624,7 +632,8 @@ namespace PlusLevelStudio
 
             // pickup visual
             pickupVisual = EditorInterface.CloneToPrefabStripMonoBehaviors(Resources.FindObjectsOfTypeAll<Pickup>().First(x => x.transform.parent == null && x.GetInstanceID() >= 0 && x.name == "Pickup").gameObject);
-            pickupVisual.AddComponent<EditorDeletableObject>().AddRenderer(pickupVisual.transform.Find("ItemSprite").GetComponent<SpriteRenderer>(), "none");
+            pickupVisual.AddComponent<EditorRendererContainer>().AddRenderer(pickupVisual.transform.Find("ItemSprite").GetComponent<SpriteRenderer>(), "none");
+            pickupVisual.AddComponent<EditorDeletableObject>().renderContainer = pickupVisual.GetComponent<EditorRendererContainer>();
             pickupVisual.name = "PickupVisual";
             pickupVisual.AddComponent<MovableObjectInteraction>().allowedAxis = MoveAxis.Horizontal;
             pickupVisual.layer = editorInteractableLayer;
@@ -638,7 +647,8 @@ namespace PlusLevelStudio
             posterCollider.size = new Vector3(10f,10f,0.02f);
             posterCollider.center = posterQuad.transform.localPosition;
             posterVisualBase.layer = editorInteractableLayer;
-            posterCollider.gameObject.AddComponent<EditorDeletableObject>().AddRenderer(posterQuad.GetComponent<MeshRenderer>(), "none");
+            posterCollider.gameObject.AddComponent<EditorRendererContainer>().AddRenderer(posterQuad.GetComponent<MeshRenderer>(), "none");
+            posterCollider.gameObject.AddComponent<EditorDeletableObject>().renderContainer = posterCollider.gameObject.GetComponent<EditorRendererContainer>();
             posterVisual = posterVisualBase;
 
             // wall add visual
@@ -652,12 +662,14 @@ namespace PlusLevelStudio
             wallCollider.size = new Vector3(10f, 10f, 0.015f);
             wallCollider.center = wallQuad.transform.localPosition;
             wallVisualBase.layer = editorInteractableLayer;
-            wallCollider.gameObject.AddComponent<EditorDeletableObject>().AddRendererRange(wallCollider.GetComponentsInChildren<MeshRenderer>(), "white");
+            wallCollider.gameObject.AddComponent<EditorRendererContainer>().AddRendererRange(wallCollider.GetComponentsInChildren<MeshRenderer>(), "white");
+            wallCollider.gameObject.AddComponent<EditorDeletableObject>().renderContainer = wallCollider.gameObject.GetComponent<EditorRendererContainer>();
             wallVisual = wallVisualBase;
 
             GameObject wallRemoveBase = GameObject.Instantiate(wallVisualBase, MTM101BaldiDevAPI.prefabTransform);
             wallRemoveBase.name = "WallRemoveVisual";
-            wallRemoveBase.GetComponent<EditorDeletableObject>().myRenderers.ForEach(x => x.material = wallRemoveMat);
+            wallRemoveBase.GetComponent<EditorDeletableObject>();
+            wallRemoveBase.GetComponent<EditorRendererContainer>().myRenderers.ForEach(x => x.material = wallRemoveMat);
             wallRemoveVisual = wallRemoveBase;
 
 
@@ -752,7 +764,8 @@ namespace PlusLevelStudio
             MovableObjectInteraction mathMachineMovableObjectInteract = mathMachineCollider.gameObject.AddComponent<MovableObjectInteraction>();
             mathMachineMovableObjectInteract.allowedRotations = RotateAxis.Flat;
             mathMachineMovableObjectInteract.allowedAxis = MoveAxis.All;
-            mathMachineCollider.gameObject.AddComponent<EditorDeletableObject>().AddRendererRange(mathMachineVisual.GetComponentsInChildren<Renderer>(), "none");
+            mathMachineCollider.gameObject.AddComponent<EditorRendererContainer>().AddRendererRange(mathMachineVisual.GetComponentsInChildren<Renderer>(), "none");
+            mathMachineCollider.gameObject.AddComponent<EditorDeletableObject>().renderContainer = mathMachineCollider.gameObject.GetComponent<EditorRendererContainer>();
             mathMachineVisual.gameObject.layer = LevelStudioPlugin.editorInteractableLayer;
             mathMachineCollider.gameObject.layer = LevelStudioPlugin.editorInteractableLayer;
 
@@ -763,7 +776,8 @@ namespace PlusLevelStudio
             MovableObjectInteraction mathMachineCornermovableObjectInteract = mathMachineCornerCollider.gameObject.AddComponent<MovableObjectInteraction>();
             mathMachineCornermovableObjectInteract.allowedRotations = RotateAxis.Flat;
             mathMachineCornermovableObjectInteract.allowedAxis = MoveAxis.All;
-            mathMachineCornerCollider.gameObject.AddComponent<EditorDeletableObject>().AddRendererRange(mathMachineCornerVisual.GetComponentsInChildren<Renderer>(), "none");
+            mathMachineCornerCollider.gameObject.AddComponent<EditorRendererContainer>().AddRendererRange(mathMachineCornerVisual.GetComponentsInChildren<Renderer>(), "none");
+            mathMachineCornerCollider.gameObject.AddComponent<EditorDeletableObject>().renderContainer = mathMachineCornerCollider.gameObject.GetComponent<EditorRendererContainer>();
             mathMachineCornerVisual.gameObject.layer = LevelStudioPlugin.editorInteractableLayer;
             mathMachineCornerCollider.gameObject.layer = LevelStudioPlugin.editorInteractableLayer;
 
@@ -820,7 +834,8 @@ namespace PlusLevelStudio
             beltVisualManager.collider = beltVisualObject.AddComponent<BoxCollider>();
             beltVisualManager.collider.isTrigger = true;
             beltVisualManager.gameObject.layer = editorInteractableLayer;
-            beltVisualManager.deletable = beltVisualObject.AddComponent<EditorDeletableObject>();
+            beltVisualManager.renderContainer = beltVisualObject.AddComponent<EditorRendererContainer>();
+            beltVisualObject.AddComponent<EditorDeletableObject>().renderContainer = beltVisualManager.renderContainer;
             genericStructureDisplays.Add("conveyorbelt", beltVisualObject);
             structureTypes.Add("conveyorbelt", typeof(ConveyorBeltStructureLocation));
 
@@ -832,7 +847,7 @@ namespace PlusLevelStudio
             EditorInterface.AddNPCVisual("playtime", LevelLoaderPlugin.Instance.npcAliases["playtime"]);
             GameObject chalklesVisual = EditorInterface.AddNPCVisual("chalkface", LevelLoaderPlugin.Instance.npcAliases["chalkface"]);
             chalklesVisual.transform.Find("SpriteBase").Find("Sprite").gameObject.SetActive(true);
-            chalklesVisual.GetComponent<EditorDeletableObject>().AddRenderer(chalklesVisual.GetComponentInChildren<Renderer>(), "none");
+            chalklesVisual.GetComponent<EditorRendererContainer>().AddRenderer(chalklesVisual.GetComponentInChildren<Renderer>(), "none");
             EditorInterface.AddNPCVisual("bully", LevelLoaderPlugin.Instance.npcAliases["bully"]);
             EditorInterface.AddNPCVisual("beans", LevelLoaderPlugin.Instance.npcAliases["beans"]);
             EditorInterface.AddNPCVisual("prize", LevelLoaderPlugin.Instance.npcAliases["prize"]);

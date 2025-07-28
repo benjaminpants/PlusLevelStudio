@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
-namespace PlusLevelStudio.Editor.Ingame
+namespace PlusLevelStudio.Ingame
 {
     public class Structure_LockedRoom : StructureBuilder
     {

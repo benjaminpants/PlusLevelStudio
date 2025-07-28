@@ -29,9 +29,11 @@ namespace PlusLevelStudio
             GameObject sideBQuad = LevelStudioPlugin.CreateQuad("SideB", mask, Vector3.zero, new Vector3(0f, 180f, 0f));
             sideAQuad.transform.SetParent(standardDoorDisplayObject.transform);
             sideBQuad.transform.SetParent(standardDoorDisplayObject.transform);
+            EditorRendererContainer container = standardDoorDisplayObject.gameObject.AddComponent<EditorRendererContainer>();
             EditorDeletableObject doorDisplayDeletable = standardDoorDisplayObject.AddComponent<EditorDeletableObject>();
-            doorDisplayDeletable.AddRenderer(sideAQuad.GetComponent<MeshRenderer>(), "none");
-            doorDisplayDeletable.AddRenderer(sideBQuad.GetComponent<MeshRenderer>(), "none");
+            doorDisplayDeletable.renderContainer = container;
+            container.AddRenderer(sideAQuad.GetComponent<MeshRenderer>(), "none");
+            container.AddRenderer(sideBQuad.GetComponent<MeshRenderer>(), "none");
             if (sideMaterials != null)
             {
                 MaterialModifier.ChangeOverlay(sideAQuad.GetComponent<MeshRenderer>(), sideMaterials[0]);
@@ -133,7 +135,9 @@ namespace PlusLevelStudio
             MovableObjectInteraction movableObjectInteract = clone.AddComponent<MovableObjectInteraction>();
             movableObjectInteract.allowedRotations = RotateAxis.Flat;
             movableObjectInteract.allowedAxis = MoveAxis.All;
-            clone.AddComponent<EditorDeletableObject>().AddRendererRange(clone.GetComponentsInChildren<Renderer>(), "none");
+            EditorRendererContainer container = clone.gameObject.AddComponent<EditorRendererContainer>();
+            container.AddRendererRange(clone.GetComponentsInChildren<Renderer>(), "none");
+            clone.AddComponent<EditorDeletableObject>().renderContainer = container;
             clone.gameObject.layer = LevelStudioPlugin.editorInteractableLayer;
             
             LevelStudioPlugin.Instance.activityDisplays.Add(key, clone);
@@ -159,7 +163,9 @@ namespace PlusLevelStudio
             collider.center = Vector3.down * 5f;
             collider.size = new Vector3(10f, 0.1f, 10f);
             collider.isTrigger = true;
-            clone.gameObject.AddComponent<EditorDeletableObject>().AddRendererRange(clone.GetComponentsInChildren<Renderer>(), "none");
+            EditorRendererContainer container = clone.gameObject.AddComponent<EditorRendererContainer>();
+            container.AddRendererRange(clone.GetComponentsInChildren<Renderer>(), "none");
+            clone.gameObject.AddComponent<EditorDeletableObject>().renderContainer = container;
             LevelStudioPlugin.Instance.npcDisplays.Add(key, clone);
             return clone;
         }
@@ -168,7 +174,9 @@ namespace PlusLevelStudio
         {
             GameObject clone = CloneToPrefabStripMonoBehaviors(obj);
             clone.name = clone.name.Replace("_Stripped", "_GenericVisual");
-            clone.gameObject.AddComponent<EditorDeletableObject>().AddRendererRange(clone.GetComponentsInChildren<Renderer>(), "none");
+            EditorRendererContainer container = clone.gameObject.AddComponent<EditorRendererContainer>();
+            container.AddRendererRange(clone.GetComponentsInChildren<Renderer>(), "none");
+            clone.gameObject.AddComponent<EditorDeletableObject>().renderContainer = container;
             clone.layer = LevelStudioPlugin.editorInteractableLayer;
             LevelStudioPlugin.Instance.genericStructureDisplays.Add(key, clone);
             return clone;
@@ -179,7 +187,9 @@ namespace PlusLevelStudio
             GameObject clone = CloneToPrefabStripMonoBehaviors(obj, new Type[] { typeof(BillboardUpdater), typeof(AnimatedSpriteRotator) });
             clone.name = clone.name.Replace("_Stripped", "_Visual");
             EditorBasicObject basic = clone.AddComponent<EditorBasicObject>();
-            clone.AddComponent<EditorDeletableObject>().AddRendererRange(clone.GetComponentsInChildren<Renderer>(), "none");
+            EditorRendererContainer container = clone.AddComponent<EditorRendererContainer>();
+            container.AddRendererRange(clone.GetComponentsInChildren<Renderer>(), "none");
+            clone.AddComponent<EditorDeletableObject>().renderContainer = container;
             basic.ingameLayer = clone.layer;
             basic.ingameColliders.AddRange(clone.GetComponentsInChildren<Collider>());
             basic.ingameColliders.ForEach(x => x.enabled = false);

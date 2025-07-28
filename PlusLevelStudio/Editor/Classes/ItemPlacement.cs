@@ -53,7 +53,7 @@ namespace PlusLevelStudio.Editor
         public void Selected()
         {
             EditorController.Instance.HoldUndo();
-            EditorController.Instance.GetVisual(this).GetComponent<EditorDeletableObject>().Highlight("yellow");
+            EditorController.Instance.GetVisual(this).GetComponent<EditorRendererContainer>().Highlight("yellow");
         }
 
         public void Unselected()
@@ -62,7 +62,7 @@ namespace PlusLevelStudio.Editor
             {
                 EditorController.Instance.AddHeldUndo();
             }
-            EditorController.Instance.GetVisual(this).GetComponent<EditorDeletableObject>().Highlight("none");
+            EditorController.Instance.GetVisual(this).GetComponent<EditorRendererContainer>().Highlight("none");
             moved = false;
         }
 

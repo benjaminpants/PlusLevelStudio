@@ -87,12 +87,12 @@ namespace PlusLevelStudio.Editor
 
         public void Selected()
         {
-            EditorController.Instance.GetVisual(this).GetComponentInChildren<EditorDeletableObject>().Highlight("yellow");
+            EditorController.Instance.GetVisual(this).GetComponentInChildren<EditorRendererContainer>().Highlight("yellow");
         }
 
         public void Unselected()
         {
-            EditorController.Instance.GetVisual(this).GetComponentInChildren<EditorDeletableObject>().Highlight("none");
+            EditorController.Instance.GetVisual(this).GetComponentInChildren<EditorRendererContainer>().Highlight("none");
             // re-attempt setup so we can see if our room is null now
             Setup(EditorController.Instance.levelData);
             if (myRoom == null)

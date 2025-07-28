@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace PlusLevelStudio.Editor.Ingame
+namespace PlusLevelStudio.Ingame
 {
     public class EditorMainGameManager : MainGameManager
     {

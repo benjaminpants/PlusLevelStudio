@@ -11,7 +11,7 @@ namespace PlusLevelStudio.Editor
     public class EditorBeltVisualManager : MonoBehaviour
     {
         public List<MeshRenderer> beltRenderers = new List<MeshRenderer>();
-        public EditorDeletableObject deletable;
+        public EditorRendererContainer renderContainer;
         public MeshRenderer beltRenderPre;
         public BoxCollider collider;
         public TextureSlider slider;
@@ -25,12 +25,12 @@ namespace PlusLevelStudio.Editor
             }
             this.length = length;
             beltRenderers.Clear();
-            deletable.myRenderers.Clear();
+            renderContainer.myRenderers.Clear();
             for (int i = 0; i < length; i++)
             {
                 MeshRenderer clone = GameObject.Instantiate<MeshRenderer>(beltRenderPre, transform);
                 clone.transform.localPosition = Vector3.forward * i * 10f;
-                deletable.AddRenderer(clone, "none");
+                renderContainer.AddRenderer(clone, "none");
                 beltRenderers.Add(clone);
             }
             collider.size = new Vector3(10f,0.01f, length * 10f);
@@ -335,7 +335,7 @@ namespace PlusLevelStudio.Editor
             int beltCount = reader.ReadInt32();
             for (int i = 0; i < beltCount; i++)
             {
-                ConveyorBeltLocation beltLocation = new ConveyorBeltLocation();
+                ConveyorBeltLocation beltLocation = CreateBelt();
                 beltLocation.startPosition = reader.ReadByteVector2().ToInt();
                 beltLocation.distance = reader.ReadByte();
                 beltLocation.direction = (Direction)reader.ReadByte();
