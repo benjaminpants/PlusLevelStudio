@@ -499,18 +499,11 @@ namespace PlusLevelStudio.Editor
             BinaryReader reader = new BinaryReader(File.OpenRead(Path.Combine(Application.streamingAssetsPath, "test.bpl")));
             level = BaldiLevel.Read(reader);
             reader.Close();*/
-            SceneObject sceneObj = LevelImporter.CreateSceneObject(level);
-            sceneObj.manager = baseGameManagerPrefab;
-            GameLoader loader = GameObject.Instantiate<GameLoader>(gameLoaderPrefab);
-            ElevatorScreen screen = GameObject.Instantiate<ElevatorScreen>(elevatorScreenPrefab);
-            GameObject.Instantiate<EditorPlayModeManager>(editorPlayModePre);
             AccessTools.Field(typeof(Singleton<CoreGameManager>), "m_Instance").SetValue(null, null); // so coregamemanager gets created properly
-            loader.AssignElevatorScreen(screen);
-            loader.Initialize(0);
-            loader.SetMode(0);
-            loader.LoadLevel(sceneObj);
-            screen.Initialize();
-            loader.SetSave(false);
+            PlayableEditorLevel playableLevel = new PlayableEditorLevel();
+            playableLevel.data = level;
+            playableLevel.meta = levelData.meta;
+            EditorPlayModeManager.LoadLevel(gameLoaderPrefab, elevatorScreenPrefab, editorPlayModePre, playableLevel);
             DestroySelf();
         }
 
@@ -731,6 +724,15 @@ namespace PlusLevelStudio.Editor
             UpdateUI();
             LoadToolbar(currentMode.defaultTools);
             UpdateMeta();
+            if (levelData.meta == null)
+            {
+                levelData.meta = new PlayableLevelMeta()
+                {
+                    name = "My Awesome Level!",
+                    modeSettings = LevelStudioPlugin.Instance.gameModeAliases[currentMode.availableGameModes[0]].CreateSettings(),
+                    gameMode = currentMode.availableGameModes[0],
+                };
+            }
             if (!currentMode.caresAboutSpawn) return;
             spawnpointVisual = GameObject.Instantiate(spawnpointVisualPrefab);
             spawnpointVisual.UpdateTransform();

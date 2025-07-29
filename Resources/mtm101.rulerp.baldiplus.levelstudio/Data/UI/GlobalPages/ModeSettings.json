@@ -3,6 +3,43 @@
 
 	},
 	"elements":[
-		
+		{
+			"name":"PageLeft",
+			"type":"imageButton",
+			"graphic":"MenuArrowLeft",
+			"hoverGraphic":"MenuArrowLeftHigh",
+			"anchoredPosition":[-80, 40],
+			"size":[32,32],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"onPressed":"prevPage"
+		},
+		{
+			"name":"PageRight",
+			"type":"imageButton",
+			"graphic":"MenuArrowRight",
+			"hoverGraphic":"MenuArrowRightHigh",
+			"anchoredPosition":[80, 40],
+			"size":[32,32],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"onPressed":"nextPage"
+		},
+		{
+			"name":"Title",
+			"type":"text",
+			"anchoredPosition":[0, 32],
+			"size":[200, 50],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"font":"ComicSans24",
+			"color":[0,0,0],
+			"text":"Standard",
+			"alignment":"Top",
+			"localized":false
+		},
 	]
 }

@@ -19,8 +19,8 @@ using TMPro;
 using PlusStudioLevelLoader;
 using PlusStudioLevelFormat;
 using MTM101BaldAPI.ObjectCreation;
-using PlusLevelStudio.Editor.Ingame;
 using PlusLevelStudio.Editor.GlobalSettingsMenus;
+using PlusLevelStudio.Ingame;
 
 namespace PlusLevelStudio
 {
@@ -58,6 +58,7 @@ namespace PlusLevelStudio
         public Dictionary<string, Sprite> eventSprites = new Dictionary<string, Sprite>();
         public Dictionary<string, Sprite> skyboxSprites = new Dictionary<string, Sprite>();
         public Dictionary<string, EditorRoomVisualManager> roomVisuals = new Dictionary<string, EditorRoomVisualManager>();
+        public Dictionary<string, EditorGameMode> gameModeAliases = new Dictionary<string, EditorGameMode>();
         public GameObject pickupVisual;
         public GameObject posterVisual;
         public GameObject wallVisual;
@@ -157,7 +158,36 @@ namespace PlusLevelStudio
 
         IEnumerator SetupModes()
         {
-            yield return 1;
+            yield return 2;
+            yield return "Setting up editor gamemode definitions and managers...";
+            gameModeAliases.Add("standard", new EditorGameMode()
+            {
+                prefab=assetMan.Get<BaseGameManager>("EditorMainGameManager"),
+                nameKey="Ed_GameMode_Standard",
+                descKey="Ed_GameMode_Standard_Desc"
+            });
+
+            EditorGrappleChallengeManager editorGrappleChallenge = GameObject.Instantiate<GrappleChallengeManager>(Resources.FindObjectsOfTypeAll<GrappleChallengeManager>().First(x => x.GetInstanceID() >= 0), MTM101BaldiDevAPI.prefabTransform).gameObject.SwapComponent<GrappleChallengeManager, EditorGrappleChallengeManager>();
+            editorGrappleChallenge.name = "EditorGrappleChallengeManager";
+
+            EditorStealthyChallengeManager editorStealthyChallenge = GameObject.Instantiate<StealthyChallengeManager>(Resources.FindObjectsOfTypeAll<StealthyChallengeManager>().First(x => x.GetInstanceID() >= 0), MTM101BaldiDevAPI.prefabTransform).gameObject.SwapComponent<StealthyChallengeManager, EditorStealthyChallengeManager>();
+            editorStealthyChallenge.name = "EditorStealthyChallengeManager";
+
+            gameModeAliases.Add("grapple", new EditorGameMode()
+            {
+                prefab = editorGrappleChallenge,
+                nameKey = "Ed_GameMode_Grapple",
+                descKey = "Ed_GameMode_Grapple_Desc"
+            });
+
+            gameModeAliases.Add("stealthy", new EditorGameMode()
+            {
+                prefab = editorStealthyChallenge,
+                nameKey = "Ed_GameMode_Stealthy",
+                descKey = "Ed_GameMode_Stealthy_Desc"
+            });
+
+
             yield return "Setting up editor modes...";
             // setup modes
 
@@ -205,6 +235,12 @@ namespace PlusLevelStudio
                         pageName = "ModeSettings",
                         pageKey = "Ed_GlobalPage_ModeSettings"
                     }
+                },
+                availableGameModes = new List<string>()
+                {
+                    "standard",
+                    "grapple",
+                    "stealthy"
                 }
             };
 
@@ -918,6 +954,8 @@ namespace PlusLevelStudio
                 .SetObjectName("EditorMainGameManager")
                 .SetLevelNumber(99)
                 .Build();
+
+            assetMan.Add<BaseGameManager>("EditorMainGameManager", emg);
 
             yield return "Setting up Editor Controller...";
             GameObject editorControllerObject = new GameObject("StandardEditorController");

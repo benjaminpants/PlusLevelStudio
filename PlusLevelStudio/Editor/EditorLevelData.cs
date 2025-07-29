@@ -9,6 +9,7 @@ using PlusStudioLevelFormat;
 using PlusStudioLevelLoader;
 using UnityEngine;
 using UnityEngine.UIElements;
+using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 
 namespace PlusLevelStudio.Editor
 {
@@ -50,6 +51,8 @@ namespace PlusLevelStudio.Editor
         public float minRandomEventGap = 45f;
         public float maxRandomEventGap = 180f;
         public List<string> randomEvents = new List<string>();
+
+        public PlayableLevelMeta meta;
 
         public Vector3 PracticalSpawnPoint
         {
@@ -641,7 +644,7 @@ namespace PlusLevelStudio.Editor
             return compiled;
         }
 
-        public const byte version = 6;
+        public const byte version = 7;
 
         public bool WallFree(IntVector2 pos, Direction dir, bool ignoreSelf)
         {
@@ -819,6 +822,7 @@ namespace PlusLevelStudio.Editor
             writer.Write(skybox);
             writer.Write(minLightColor.ToData());
             writer.Write((byte)lightMode);
+            meta.Write(writer);
         }
 
         public static EditorLevelData ReadFrom(BinaryReader reader)
@@ -954,6 +958,15 @@ namespace PlusLevelStudio.Editor
                     direction=(Direction)reader.ReadByte()
                 });
             }
+            if (version < 7)
+            {
+                levelData.meta = new PlayableLevelMeta()
+                {
+                    name = levelData.elevatorTitle,
+                    modeSettings = LevelStudioPlugin.Instance.gameModeAliases["standard"].CreateSettings(),
+                    gameMode = "standard", // all versions of EditorLevelData before this point only officially support the "full" mode, so we can assume standard here
+                };
+            }
             if (version == 0)
             {
                 levelData.spawnPoint = reader.ReadUnityVector3().ToUnity();
@@ -1001,6 +1014,8 @@ namespace PlusLevelStudio.Editor
             if (version <= 5) return levelData;
             levelData.minLightColor = reader.ReadUnityColor().ToStandard();
             levelData.lightMode = (LightMode)reader.ReadByte();
+            if (version <= 6) return levelData;
+            levelData.meta = PlayableLevelMeta.Read(reader);
             return levelData;
         }
 

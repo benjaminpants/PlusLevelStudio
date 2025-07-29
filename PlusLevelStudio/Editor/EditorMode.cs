@@ -38,6 +38,7 @@ namespace PlusLevelStudio.Editor
         public bool supportsNPCProperties = true;
         public bool caresAboutSpawn = true;
         public List<string> availableRandomEvents = new List<string>();
+        public List<string> availableGameModes = new List<string>();
         public List<EditorGlobalPage> pages = new List<EditorGlobalPage>();
     }
 }
