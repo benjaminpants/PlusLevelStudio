@@ -17,6 +17,15 @@
 
 {"key":"Ed_LightMode_Cumulative","value":"Cumulative"},
 {"key":"Ed_LightMode_Greatest","value":"Greatest"},
-{"key":"Ed_LightMode_Additive","value":"Additive"}
+{"key":"Ed_LightMode_Additive","value":"Additive"},
+
+{"key":"Ed_GameMode_Standard","value":"Hide & Seek"},
+{"key":"Ed_GameMode_Standard_Desc","value":"The standard mode! Collect all notebooks to win!"},
+{"key":"Ed_GameMode_Grapple","value":"Grapple Challenge"},
+{"key":"Ed_GameMode_Grapple_Desc","value":"Your legs are broken, but you have an infinite use grappling hook!\nNote that Baldi will get twice as angry in this mode!"},
+{"key":"Ed_GameMode_Stealthy","value":"Stealthy Challenge"},
+{"key":"Ed_GameMode_Stealthy_Desc","value":"Principal of The Things are after you and will send you to detention if they see you!\nBe sure to not give the detention room a door, and place Baldi inside!"},
+{"key":"Ed_GameMode_Speedy","value":"Speedy Challenge"},
+{"key":"Ed_GameMode_Speedy_Desc","value":"You and Baldi are super fast in this mode!\nNote that Baldi will spawn where you place him, so don't place him too close!"}
 
 ]}

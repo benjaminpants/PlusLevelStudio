@@ -25,7 +25,7 @@ namespace PlusLevelStudio.Editor.GlobalSettingsMenus
         {
             currentPage = page;
             EditorGameMode mode = LevelStudioPlugin.Instance.gameModeAliases[EditorController.Instance.currentMode.availableGameModes[currentPage]];
-            titleText.text = mode.nameKey;
+            titleText.text = LocalizationManager.Instance.GetLocalizedText(mode.nameKey);
             // PLACEHOLDER
             EditorController.Instance.levelData.meta.gameMode = EditorController.Instance.currentMode.availableGameModes[currentPage];
             handler.somethingChanged = true;

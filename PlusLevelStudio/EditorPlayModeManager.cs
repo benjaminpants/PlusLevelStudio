@@ -19,7 +19,7 @@ namespace PlusLevelStudio
         public void GoToEditor()
         {
             Singleton<MusicManager>.Instance.StopMidi();
-            LevelStudioPlugin.Instance.StartCoroutine(LevelStudioPlugin.Instance.LoadEditorScene("full", EditorController.lastPlayedLevel == null ? null : Path.Combine(LevelStudioPlugin.levelFilePath, EditorController.lastPlayedLevel + ".ebpl")));
+            LevelStudioPlugin.Instance.StartCoroutine(LevelStudioPlugin.Instance.LoadEditorScene("full", EditorController.lastPlayedLevel == null ? null : Path.Combine(LevelStudioPlugin.levelFilePath, EditorController.lastPlayedLevel + ".ebpl"), EditorController.lastPlayedLevel));
             Destroy(gameObject);
         }
 

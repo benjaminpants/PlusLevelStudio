@@ -122,7 +122,7 @@ namespace PlusLevelStudio
             return structure;
         }
 
-        public IEnumerator LoadEditorScene(string modeToLoad, string pathToLoad = null)
+        public IEnumerator LoadEditorScene(string modeToLoad, string pathToLoad = null, string loadedLevel = null)
         {
             AsyncOperation waitForSceneLoad = SceneManager.LoadSceneAsync("Game");
             while (!waitForSceneLoad.isDone)
@@ -147,6 +147,11 @@ namespace PlusLevelStudio
             if (pathToLoad != null)
             {
                 editorController.LoadEditorLevelFromFile(pathToLoad);
+            }
+            if (loadedLevel != null)
+            {
+                EditorController.lastPlayedLevel = loadedLevel;
+                editorController.currentFileName = loadedLevel;
             }
 
         }
@@ -173,6 +178,9 @@ namespace PlusLevelStudio
             EditorStealthyChallengeManager editorStealthyChallenge = GameObject.Instantiate<StealthyChallengeManager>(Resources.FindObjectsOfTypeAll<StealthyChallengeManager>().First(x => x.GetInstanceID() >= 0), MTM101BaldiDevAPI.prefabTransform).gameObject.SwapComponent<StealthyChallengeManager, EditorStealthyChallengeManager>();
             editorStealthyChallenge.name = "EditorStealthyChallengeManager";
 
+            EditorSpeedyChallengeManager editorSpeedyChallenge = GameObject.Instantiate<SpeedyChallengeManager>(Resources.FindObjectsOfTypeAll<SpeedyChallengeManager>().First(x => x.GetInstanceID() >= 0), MTM101BaldiDevAPI.prefabTransform).gameObject.SwapComponent<SpeedyChallengeManager, EditorSpeedyChallengeManager>();
+            editorSpeedyChallenge.name = "EditorSpeedyChallengeManager";
+
             gameModeAliases.Add("grapple", new EditorGameMode()
             {
                 prefab = editorGrappleChallenge,
@@ -185,6 +193,13 @@ namespace PlusLevelStudio
                 prefab = editorStealthyChallenge,
                 nameKey = "Ed_GameMode_Stealthy",
                 descKey = "Ed_GameMode_Stealthy_Desc"
+            });
+
+            gameModeAliases.Add("speedy", new EditorGameMode()
+            {
+                prefab = editorSpeedyChallenge,
+                nameKey = "Ed_GameMode_Speedy",
+                descKey = "Ed_GameMode_Speedy_Desc"
             });
 
 
@@ -240,7 +255,8 @@ namespace PlusLevelStudio
                 {
                     "standard",
                     "grapple",
-                    "stealthy"
+                    "stealthy",
+                    "speedy"
                 }
             };
 
