@@ -9,6 +9,7 @@ namespace PlusLevelStudio.Editor.GlobalSettingsMenus
     public class ModeSettingsUIExchangeHandler : GlobalSettingsUIExchangeHandler
     {
         public TextMeshProUGUI titleText;
+        public Transform noConfigSettings;
         int currentPage = 0;
 
         public override bool GetStateBoolean(string key)
@@ -19,16 +20,17 @@ namespace PlusLevelStudio.Editor.GlobalSettingsMenus
         public override void OnElementsCreated()
         {
             titleText = transform.Find("Title").GetComponent<TextMeshProUGUI>();
+            noConfigSettings = transform.Find("NoConfigurableSettings");
         }
 
         public void SwitchToPage(int page)
         {
             currentPage = page;
-            EditorGameMode mode = LevelStudioPlugin.Instance.gameModeAliases[EditorController.Instance.currentMode.availableGameModes[currentPage]];
+            string modeId = EditorController.Instance.currentMode.availableGameModes[currentPage];
+            EditorGameMode mode = LevelStudioPlugin.Instance.gameModeAliases[modeId];
             titleText.text = LocalizationManager.Instance.GetLocalizedText(mode.nameKey);
-            // PLACEHOLDER
-            EditorController.Instance.levelData.meta.gameMode = EditorController.Instance.currentMode.availableGameModes[currentPage];
-            handler.somethingChanged = true;
+            titleText.fontStyle = (modeId == EditorController.Instance.levelData.meta.gameMode) ? FontStyles.Bold : FontStyles.Normal;
+            noConfigSettings.gameObject.SetActive(true);
         }
 
         public override void Refresh()
@@ -41,6 +43,11 @@ namespace PlusLevelStudio.Editor.GlobalSettingsMenus
         {
             switch (message)
             {
+                case "applyMode":
+                    EditorController.Instance.levelData.meta.gameMode = EditorController.Instance.currentMode.availableGameModes[currentPage];
+                    handler.somethingChanged = true;
+                    SwitchToPage(currentPage);
+                    break;
                 case "prevPage":
                     SwitchToPage(Mathf.Max(currentPage - 1, 0));
                     break;

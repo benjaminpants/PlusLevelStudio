@@ -10,6 +10,7 @@
 {"key":"Ed_Menu_ApplyLightGroupToSameType","value":"Apply light group to all lights of same type"},
 {"key":"Ed_Menu_UnsavedChanges","value":"You have unsaved changes! Do you wish to save before playing?"},
 {"key":"Ed_Menu_UnsavedChangesExit","value":"You have unsaved changes! Are you sure you want to leave the editor?"},
+{"key":"Ed_Menu_NoConfigSettings","value":"No Configurable Settings"},
 
 {"key":"Ed_GlobalPage_LevelSettings","value":"Level\nSettings"},
 {"key":"Ed_GlobalPage_VisualSettings","value":"Visual &\nLights"},
