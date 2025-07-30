@@ -12,6 +12,7 @@ namespace PlusLevelStudio
     public class EditorPlayModeManager : Singleton<EditorPlayModeManager>
     {
         public EditorCustomContent customContent;
+        public List<SceneObject> sceneObjectsToCleanUp = new List<SceneObject>();
         public void OnExit()
         {
             GoToEditor();
@@ -24,6 +25,12 @@ namespace PlusLevelStudio
             if (customContent != null)
             {
                 customContent.CleanupContent();
+            }
+            for (int i = 0; i < sceneObjectsToCleanUp.Count; i++)
+            {
+                GameObject.Destroy(sceneObjectsToCleanUp[i].extraAsset);
+                GameObject.Destroy(sceneObjectsToCleanUp[i].levelAsset);
+                GameObject.Destroy(sceneObjectsToCleanUp[i]);
             }
             Destroy(gameObject);
         }
@@ -45,6 +52,7 @@ namespace PlusLevelStudio
                 sceneObj.manager = modifiedManager;
                 pmm.customContent.gameManagerPre = modifiedManager;
             }
+            pmm.sceneObjectsToCleanUp.Add(sceneObj);
             loader.AssignElevatorScreen(screen);
             loader.Initialize(0);
             loader.SetMode(0);
