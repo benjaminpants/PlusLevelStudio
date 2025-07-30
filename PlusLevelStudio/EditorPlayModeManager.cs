@@ -11,6 +11,7 @@ namespace PlusLevelStudio
 {
     public class EditorPlayModeManager : Singleton<EditorPlayModeManager>
     {
+        public EditorCustomContent customContent;
         public void OnExit()
         {
             GoToEditor();
@@ -20,6 +21,10 @@ namespace PlusLevelStudio
         {
             Singleton<MusicManager>.Instance.StopMidi();
             LevelStudioPlugin.Instance.StartCoroutine(LevelStudioPlugin.Instance.LoadEditorScene("full", EditorController.lastPlayedLevel == null ? null : Path.Combine(LevelStudioPlugin.levelFilePath, EditorController.lastPlayedLevel + ".ebpl"), EditorController.lastPlayedLevel));
+            if (customContent != null)
+            {
+                customContent.CleanupContent();
+            }
             Destroy(gameObject);
         }
 
@@ -30,7 +35,16 @@ namespace PlusLevelStudio
             sceneObj.manager = LevelStudioPlugin.Instance.gameModeAliases[level.meta.gameMode].prefab;
             GameLoader loader = GameObject.Instantiate<GameLoader>(gameLoaderPrefab);
             ElevatorScreen screen = GameObject.Instantiate<ElevatorScreen>(elevatorScreenPrefab);
-            GameObject.Instantiate<EditorPlayModeManager>(editorPlayModePre);
+            EditorPlayModeManager pmm = GameObject.Instantiate<EditorPlayModeManager>(editorPlayModePre);
+            pmm.customContent = new EditorCustomContent(); // TODO: get this from PlayableEditorLevel somehow
+            if (level.meta.modeSettings != null)
+            {
+                BaseGameManager modifiedManager = GameObject.Instantiate<BaseGameManager>(LevelStudioPlugin.Instance.gameModeAliases[level.meta.gameMode].prefab, MTM101BaldAPI.MTM101BaldiDevAPI.prefabTransform);
+                modifiedManager.name = modifiedManager.name.Replace("(Clone)", "_Customized");
+                level.meta.modeSettings.ApplySettingsToManager(modifiedManager);
+                sceneObj.manager = modifiedManager;
+                pmm.customContent.gameManagerPre = modifiedManager;
+            }
             loader.AssignElevatorScreen(screen);
             loader.Initialize(0);
             loader.SetMode(0);

@@ -17,6 +17,7 @@ namespace PlusLevelStudio.Ingame
 
     public class EditorStealthyChallengeManager : StealthyChallengeManager
     {
+        public bool giveChalkErasers = true;
         static FieldInfo _allKnowing = AccessTools.Field(typeof(Principal), "allKnowing");
         public override void LoadNextLevel()
         {
@@ -33,6 +34,16 @@ namespace PlusLevelStudio.Ingame
                     _allKnowing.SetValue(npc, true);
                 }
             }
+        }
+
+        static FieldInfo _chalkEraser = AccessTools.Field(typeof(StealthyChallengeManager), "chalkEraser");
+        public override void Initialize()
+        {
+            if (!giveChalkErasers)
+            {
+                _chalkEraser.SetValue(this, ItemMetaStorage.Instance.FindByEnum(Items.None).value);
+            }
+            base.Initialize();
         }
     }
 

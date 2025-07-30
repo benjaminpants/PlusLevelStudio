@@ -1,4 +1,5 @@
 ﻿using PlusLevelStudio.Editor.GlobalSettingsMenus;
+using PlusLevelStudio.Ingame;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,6 +22,11 @@ namespace PlusLevelStudio.Editor.ModeSettings
         {
             writer.Write(version);
             writer.Write(giveChalkErasers);
+        }
+
+        public override void ApplySettingsToManager(BaseGameManager manager)
+        {
+            ((EditorStealthyChallengeManager)manager).giveChalkErasers = giveChalkErasers;
         }
     }
 

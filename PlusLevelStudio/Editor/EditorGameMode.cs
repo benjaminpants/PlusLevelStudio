@@ -50,6 +50,8 @@ namespace PlusLevelStudio.Editor
             return settings;
         }
 
+        public abstract void ApplySettingsToManager(BaseGameManager manager);
+
         public EditorGameModeSettings()
         {
 
