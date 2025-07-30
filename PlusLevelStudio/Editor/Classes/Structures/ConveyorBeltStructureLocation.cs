@@ -296,8 +296,7 @@ namespace PlusLevelStudio.Editor
             {
                 if (!buttons[i].ValidatePosition(data, true))
                 {
-                    EditorController.Instance.RemoveVisual(buttons[i]);
-                    buttons.RemoveAt(i);
+                    DeleteButton(data, buttons[i], false);
                 }
             }
             if (belts.Count == 0) return false;
@@ -314,6 +313,11 @@ namespace PlusLevelStudio.Editor
 
         public bool OnButtonDelete(EditorLevelData data, SimpleLocation local)
         {
+            return DeleteButton(data, local, true);
+        }
+
+        public bool DeleteButton(EditorLevelData data, SimpleLocation local, bool validatePosition)
+        {
             int myIndex = buttons.IndexOf((SimpleButtonLocation)local);
             if (myIndex == -1) throw new Exception("Attempted to delete button we don't own!");
             for (int i = 0; i < belts.Count; i++)
@@ -325,6 +329,7 @@ namespace PlusLevelStudio.Editor
             }
             buttons.Remove((SimpleButtonLocation)local);
             EditorController.Instance.RemoveVisual(local);
+            if (!validatePosition) return true;
             ValidatePosition(data);
             return true;
         }
