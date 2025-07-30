@@ -1,0 +1,31 @@
+{
+	"defines":{
+
+	},
+	"elements":[
+		{
+			"name":"ItemsOption",
+			"type":"text",
+			"anchoredPosition":[-79, -50],
+			"size":[250, 50],
+			"pivot":"#centerLeft",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"font":"ComicSans24",
+			"color":[0,0,0],
+			"text":"Give Chalk Erasers",
+			"alignment":"Left",
+			"localized":true
+		},
+		{
+			"name":"Checkbox",
+			"type":"checkbox",
+			"anchoredPosition":[-95, -50],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"onToggled":"toggleItems",
+			"value":true
+		},
+	]
+}

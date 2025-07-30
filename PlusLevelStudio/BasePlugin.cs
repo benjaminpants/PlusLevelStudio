@@ -21,6 +21,7 @@ using PlusStudioLevelFormat;
 using MTM101BaldAPI.ObjectCreation;
 using PlusLevelStudio.Editor.GlobalSettingsMenus;
 using PlusLevelStudio.Ingame;
+using PlusLevelStudio.Editor.ModeSettings;
 
 namespace PlusLevelStudio
 {
@@ -165,6 +166,9 @@ namespace PlusLevelStudio
         {
             yield return 2;
             yield return "Setting up editor gamemode definitions and managers...";
+
+            string settingsPagePath = Path.Combine(AssetLoader.GetModPath(this), "Data", "UI", "ModeSettings");
+
             gameModeAliases.Add("standard", new EditorGameMode()
             {
                 prefab=assetMan.Get<BaseGameManager>("EditorMainGameManager"),
@@ -188,11 +192,14 @@ namespace PlusLevelStudio
                 descKey = "Ed_GameMode_Grapple_Desc"
             });
 
-            gameModeAliases.Add("stealthy", new EditorGameMode()
+            gameModeAliases.Add("stealthy", new StealthyGameMode()
             {
                 prefab = editorStealthyChallenge,
                 nameKey = "Ed_GameMode_Stealthy",
-                descKey = "Ed_GameMode_Stealthy_Desc"
+                descKey = "Ed_GameMode_Stealthy_Desc",
+                hasSettingsPage = true,
+                settingsPagePath = Path.Combine(settingsPagePath, "StealthySettings.json"),
+                settingsPageType = typeof(StealthyChallengeSettingsPageUIExchangeHandler),
             });
 
             gameModeAliases.Add("speedy", new EditorGameMode()
@@ -1056,6 +1063,8 @@ namespace PlusLevelStudio
             uiAssetMan.Add<Sprite>("MenuArrowRight", allVanillaSprites.Where(x => x.name == "MenuArrowSheet_3").First());
             uiAssetMan.Add<Sprite>("MenuArrowRightHigh", allVanillaSprites.First(x => x.name == "MenuArrowSheet_1"));
             uiAssetMan.Add<Sprite>("OptionsClipboard", allVanillaSprites.First(x => x.name == "OptionsClipboard"));
+            uiAssetMan.Add<Sprite>("Check", allVanillaSprites.First(x => x.name == "YCTP_IndicatorsSheet_0"));
+            uiAssetMan.Add<Sprite>("CheckBox", allVanillaSprites.First(x => x.name == "CheckBox"));
 
             uiAssetMan.Add<Sprite>("Segment0", allVanillaSprites.First(x => x.name == "Segment_Sheet_0"));
             uiAssetMan.Add<Sprite>("Segment1", allVanillaSprites.First(x => x.name == "Segment_Sheet_1"));
@@ -1082,6 +1091,7 @@ namespace PlusLevelStudio
             UIBuilder.elementBuilders.Add("rawimage", new RawImageBuilder());
             UIBuilder.elementBuilders.Add("rawimagebutton", new RawImageButtonBuilder());
             UIBuilder.elementBuilders.Add("segment", new DigitalNumberBuilder());
+            UIBuilder.elementBuilders.Add("checkbox", new CheckboxBuilder());
             SpritesFromPath(Path.Combine(AssetLoader.GetModPath(this), "UI", "Editor"), "");
 
             List<string> eventSpritesToPrepare = new List<string>
