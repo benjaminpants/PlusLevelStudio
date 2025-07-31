@@ -13,7 +13,7 @@
 			"anchorMax":"#center",
 			"font":"ComicSans24",
 			"color":[0,0,0],
-			"text":"Give Chalk Erasers",
+			"text":"Ed_Menu_GiveChalkErasers",
 			"alignment":"Left",
 			"localized":true
 		},
