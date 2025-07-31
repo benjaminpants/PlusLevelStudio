@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using MTM101BaldAPI.Registers;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,6 +12,8 @@ namespace PlusLevelStudio.Ingame
     public class EditorMainGameManager : MainGameManager
     {
         protected bool didNoBaldiHack = false;
+        public bool baldiGoesToHappyBaldi = true;
+        protected Mode originalMode;
         public override void Initialize()
         {
             base.Initialize();
@@ -30,6 +33,18 @@ namespace PlusLevelStudio.Ingame
             {
                 ec.npcSpawnTile[ec.npcSpawnTile.Length - 1] = ec.RandomCell(false, false, true); // hack!
             }
+            if (!baldiGoesToHappyBaldi)
+            {
+                originalMode = Singleton<CoreGameManager>.Instance.currentMode;
+                Singleton<CoreGameManager>.Instance.currentMode = (Mode)(-1); // mess with the mode temporarily to prevent the teleport, because for some reason mystman12 checks if the mode is SPECIFICALLY main
+                StartCoroutine(FixMode());
+            }
+        }
+
+        IEnumerator FixMode()
+        {
+            yield return null;
+            Singleton<CoreGameManager>.Instance.currentMode = originalMode;
         }
 
         public override void LoadNextLevel()

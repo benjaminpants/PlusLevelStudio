@@ -169,10 +169,13 @@ namespace PlusLevelStudio
 
             string settingsPagePath = Path.Combine(AssetLoader.GetModPath(this), "Data", "UI", "ModeSettings");
 
-            gameModeAliases.Add("standard", new EditorGameMode()
+            gameModeAliases.Add("standard", new MainGameMode()
             {
                 prefab=assetMan.Get<BaseGameManager>("EditorMainGameManager"),
-                nameKey="Ed_GameMode_Standard",
+                hasSettingsPage = true,
+                settingsPagePath = Path.Combine(settingsPagePath, "MainSettings.json"),
+                settingsPageType = typeof(MainModeSettingsPageUIExchangeHandler),
+                nameKey ="Ed_GameMode_Standard",
                 descKey="Ed_GameMode_Standard_Desc"
             });
 
