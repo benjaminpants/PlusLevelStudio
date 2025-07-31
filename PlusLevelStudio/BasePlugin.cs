@@ -162,6 +162,8 @@ namespace PlusLevelStudio
             StartCoroutine(LoadEditorScene(mode));
         }
 
+        public static bool editorModesDefined = false;
+
         IEnumerator SetupModes()
         {
             yield return 2;
@@ -237,6 +239,7 @@ namespace PlusLevelStudio
                 },
                 defaultTools = new string[] { "room_hall", "room_class", "room_faculty", "room_office", "light_fluorescent", "door_swinging", "door_standard", "merge", "delete" },
                 prefab = assetMan.Get<EditorController>("MainEditorController"),
+                vanillaComplaint = false,
                 pages = new List<EditorGlobalPage>()
                 {
                     new EditorGlobalPage()
@@ -301,7 +304,7 @@ namespace PlusLevelStudio
                     "tools"
                 },
                 defaultTools = new string[] { "room_hall", "room_class", "room_faculty", "room_office", "light_fluorescent", "door_swinging", "door_standard", "merge", "delete" },
-                supportsNPCProperties = false,
+                vanillaComplaint = true,
                 prefab = assetMan.Get<EditorController>("MainEditorController")
             };
 
@@ -335,7 +338,7 @@ namespace PlusLevelStudio
                     "tools"
                 },
                 defaultTools = new string[] { "room_hall", "room_class", "room_faculty", "room_office", "room_closet", "room_reflex", "room_cafeteria", "merge", "delete" },
-                supportsNPCProperties = false,
+                vanillaComplaint = true,
                 caresAboutSpawn = false,
                 prefab = rce
             };
@@ -347,6 +350,16 @@ namespace PlusLevelStudio
             EditorInterfaceModes.AddVanillaToolTools(roomsMode);
 
             modes.Add("rooms", roomsMode);
+
+            for (int i = 0; i < EditorInterfaceModes.toCallAfterEditorMode.Count; i++)
+            {
+                foreach (EditorMode mode in modes.Values)
+                {
+                    EditorInterfaceModes.toCallAfterEditorMode[i](mode, mode.vanillaComplaint);
+                }
+            }
+
+            editorModesDefined = true;
         }
 
         IEnumerator FindObjectsAndSetupEditor()

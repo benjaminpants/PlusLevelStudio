@@ -35,7 +35,7 @@ namespace PlusLevelStudio.Editor
         public EditorController prefab;
         public string[] defaultTools = new string[0];
         public string[] categoryOrder = new string[0];
-        public bool supportsNPCProperties = true;
+        public bool vanillaComplaint = false;
         public bool caresAboutSpawn = true;
         public List<string> availableRandomEvents = new List<string>();
         public List<string> availableGameModes = new List<string>();

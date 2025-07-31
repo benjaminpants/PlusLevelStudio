@@ -16,6 +16,20 @@ namespace PlusLevelStudio
     public static class EditorInterfaceModes
     {
 
+        internal static List<Action<EditorMode, bool>> toCallAfterEditorMode = new List<Action<EditorMode, bool>>();
+
+        public static void AddModeCallback(Action<EditorMode, bool> callback)
+        {
+            if (LevelStudioPlugin.editorModesDefined)
+            {
+                foreach (EditorMode mode in LevelStudioPlugin.Instance.modes.Values)
+                {
+                    callback(mode, mode.vanillaComplaint);
+                }
+            }
+            toCallAfterEditorMode.Add(callback);
+        }
+
         public static void AddVanillaToolTools(EditorMode modeToModify)
         {
             if (modeToModify.caresAboutSpawn)
