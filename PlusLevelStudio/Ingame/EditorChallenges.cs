@@ -13,6 +13,12 @@ namespace PlusLevelStudio.Ingame
         {
             Singleton<CoreGameManager>.Instance.Quit();
         }
+
+        protected override void ExitedSpawn()
+        {
+            base.ExitedSpawn();
+            ec.StartEventTimers();
+        }
     }
 
     public class EditorStealthyChallengeManager : StealthyChallengeManager
@@ -34,6 +40,7 @@ namespace PlusLevelStudio.Ingame
                     _allKnowing.SetValue(npc, true);
                 }
             }
+            ec.StartEventTimers();
         }
 
         static FieldInfo _chalkEraser = AccessTools.Field(typeof(StealthyChallengeManager), "chalkEraser");
@@ -60,6 +67,7 @@ namespace PlusLevelStudio.Ingame
                 }
             }
             base.ExitedSpawn();
+            ec.StartEventTimers();
         }
         public override void LoadNextLevel()
         {
