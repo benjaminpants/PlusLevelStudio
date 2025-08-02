@@ -236,6 +236,8 @@
 {"key":"Ed_Tool_structure_conveyorbelt_Desc","value":"Pushes stuff on it forward! Can be toggled with a button."},
 {"key":"Ed_Tool_structure_conveyorbelt_buttonless_Title","value":"Buttonless Conveyor Belt"},
 {"key":"Ed_Tool_structure_conveyorbelt_buttonless_Desc","value":"Pushes stuff on it forward, this time without the button!"},
+{"key":"Ed_Tool_structure_vent_Title","value":"Vent"},
+{"key":"Ed_Tool_structure_vent_Desc","value":"Go from point A to point B super fast!\nTip: Click the end position to finish the vent!"},
 
 {"key":"Ed_RandomEvent_fog","value":"Fog\nThe school is covered in a thick fog.\nNPCs have a reduced vision distance."},
 {"key":"Ed_RandomEvent_flood","value":"Flood\nThe school is flooded and whirlpools cover the ground.\nThe whirlpools suck up any nearby entity, teleporting them randomly."},

@@ -914,6 +914,21 @@ namespace PlusLevelStudio
             genericStructureDisplays.Add("conveyorbelt", beltVisualObject);
             structureTypes.Add("conveyorbelt", typeof(ConveyorBeltStructureLocation));
 
+            // vent
+            GameObject ventVisualObject = EditorInterface.CloneToPrefabStripMonoBehaviors(Resources.FindObjectsOfTypeAll<VentController>().First(x => x.GetInstanceID() >= 0).gameObject);
+            VentVisualManager ventVisualManager = ventVisualObject.AddComponent<VentVisualManager>();
+            ventVisualObject.layer = editorInteractableLayer;
+            ventVisualManager.ventPieceBendPrefab = Resources.FindObjectsOfTypeAll<MeshRenderer>().First(x => x.GetInstanceID() >= 0 && x.name == "Vent_Bend").transform;
+            ventVisualManager.ventPieceStraightPrefab = Resources.FindObjectsOfTypeAll<MeshRenderer>().First(x => x.GetInstanceID() >= 0 && x.name == "Vent_Straight").transform;
+            ventVisualManager.ventPieceVerticalBendPrefab = Resources.FindObjectsOfTypeAll<MeshRenderer>().First(x => x.GetInstanceID() >= 0 && x.name == "Vent_VerticalBend").transform;
+            ventVisualManager.exitGrateTransform = ventVisualObject.transform.Find("Vent_Grate_Exit");
+            ventVisualManager.entryGrate = ventVisualObject.transform.Find("Vent_Grate");
+            ventVisualManager.container = ventVisualObject.AddComponent<EditorRendererContainer>();
+            ventVisualManager.container.AddRendererRange(ventVisualObject.GetComponentsInChildren<Renderer>(), "none");
+            ventVisualObject.AddComponent<EditorDeletableObject>().renderContainer = ventVisualManager.container;
+            genericStructureDisplays.Add("vent", ventVisualObject);
+            structureTypes.Add("vent", typeof(VentStructureLocation));
+
             // npcs
 
             EditorInterface.AddNPCVisual("baldi", LevelLoaderPlugin.Instance.npcAliases["baldi"]);

@@ -437,6 +437,11 @@ namespace PlusLevelStudio.Editor
             Destroy(gameObject);
         }
 
+        public void UpdateGridHeight()
+        {
+            currentFloorPlane = new Plane(Vector3.up, -gridManager.Height);
+        }
+
         public bool[,] CompileSafeCells(EditorLevelData data, float capsuleRadius)
         {
             bool[,] returnValue = new bool[data.mapSize.x, data.mapSize.z];
@@ -1087,9 +1092,12 @@ namespace PlusLevelStudio.Editor
 
 
         static FieldInfo _initialized = AccessTools.Field(typeof(Cell), "initalized"); // seriously mystman? "initalized"?
-        public void RefreshCells(bool refreshLights = true)
+        public void RefreshCells(bool refreshLights = true, bool updateDataCells = true)
         {
-            levelData.UpdateCells(true);
+            if (updateDataCells)
+            {
+                levelData.UpdateCells(true);
+            }
             for (int x = 0; x < workerEc.cells.GetLength(0); x++)
             {
                 for (int y = 0; y < workerEc.cells.GetLength(1); y++)

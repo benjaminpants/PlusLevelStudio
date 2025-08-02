@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Text;
 using UnityEngine;
 
@@ -41,10 +42,24 @@ namespace PlusLevelStudio.Editor
         protected Direction currentArrow = Direction.Null;
         protected IntVector2 currentStartPosition = new IntVector2();
         protected float offset = -0.01f;
+        protected float _height = 0f;
+        public float Height
+        { 
+            get
+            {
+                return _height;
+            }
+            set
+            {
+                _height = value;
+                editor.UpdateGridHeight();
+                RepositionGrid();
+            }
+        }
 
         public GameObject[] arrowObjects = new GameObject[4];
 
-        public Vector3 center => transform.position + new Vector3(editor.levelData.mapSize.x * 5f, 0f, editor.levelData.mapSize.z * 5f);
+        public Vector3 center => transform.position + new Vector3(editor.levelData.mapSize.x * 5f, _height, editor.levelData.mapSize.z * 5f);
 
 
         public bool TileArrowClicked(Direction d)
@@ -77,6 +92,20 @@ namespace PlusLevelStudio.Editor
             arrowObjects[(int)d].transform.position = center + (movement * 5f * (editor.levelData.mapSize.GetValueForDirection(d) + 2f)) + (movement * additionalDistanceFromEdge) + (Vector3.up * 0.01f);
         }
 
+        protected void RepositionGrid()
+        {
+            int count = 0;
+            for (int x = 0; x < editor.levelData.mapSize.x; x++)
+            {
+                for (int y = 0; y < editor.levelData.mapSize.z; y++)
+                {
+                    gridObjects[count].transform.position = new IntVector2(x, y).ToWorld() + (Vector3.up * (offset + _height));
+
+                    count++;
+                }
+            }
+        }
+
         public void RegenerateGrid()
         {
             // todo: make it so it doesn't delete the entire grid everytime it needs to be regenerated
@@ -91,7 +120,7 @@ namespace PlusLevelStudio.Editor
                 for (int y = 0; y < editor.levelData.mapSize.z; y++)
                 {
                     gridObjects[count] = GameObject.Instantiate(gridCellTemplate);
-                    gridObjects[count].transform.position = new IntVector2(x, y).ToWorld() + (Vector3.up * offset);
+                    gridObjects[count].transform.position = new IntVector2(x, y).ToWorld() + (Vector3.up * (offset + _height));
                     gridObjects[count].transform.SetParent(transform, true);
 
                     count++;

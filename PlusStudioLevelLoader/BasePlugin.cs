@@ -236,6 +236,7 @@ namespace PlusStudioLevelLoader
             structureAliases.Add("facultyonlydoor", new LoaderStructureData(builders.First(x => x.name == "FacultyOnlyDoorConstructor")));
             structureAliases.Add("lockdowndoor", new LoaderStructureData(builders.First(x => x.name == "LockdownDoorConstructor"), new Dictionary<string, GameObject>() { { "lockdowndoor_shut", Resources.FindObjectsOfTypeAll<LockdownDoor>().First(x => x.GetInstanceID() >= 0 && x.name == "LockdownDoor_Shut").gameObject } }));
             structureAliases.Add("conveyorbelt", new LoaderStructureData(builders.First(x => x.name == "ConveyorBeltConstructor")));
+            structureAliases.Add("vent", new LoaderStructureData(builders.First(x => x.name == "Structure_Vent")));
 
             // npcs
             npcAliases.Add("baldi", MTM101BaldiDevAPI.npcMetadata.Get(Character.Baldi).value);

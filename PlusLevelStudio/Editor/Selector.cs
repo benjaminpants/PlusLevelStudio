@@ -67,7 +67,8 @@ namespace PlusLevelStudio.Editor
         public GameObject[] tileArrows = new GameObject[4];
         public SettingsWorldButton gearButton;
         public MoveHandles moveHandles;
-        const float upwardsAmount = 0.02f;
+        const float baseUpwardsOffset = 0.02f;
+        float upwardsOffset => baseUpwardsOffset + EditorController.Instance.gridManager.Height;
 
         public IntVector2 selectedTile { get; private set; } = new IntVector2(0, 0);
 
@@ -248,7 +249,7 @@ namespace PlusLevelStudio.Editor
             Vector3 movement = d.ToVector3();
             Vector3 center = (new Vector3(selectedArea.center.x, 0f, selectedArea.center.y) * 10f);
 
-            tileArrows[(int)d].transform.position = center + (movement * 5f * (selectedArea.size.ToMystVector().GetValueForDirection(d) + 1)) + (movement * additionalDistanceFromEdge) + (Vector3.up * upwardsAmount);
+            tileArrows[(int)d].transform.position = center + (movement * 5f * (selectedArea.size.ToMystVector().GetValueForDirection(d) + 1)) + (movement * additionalDistanceFromEdge) + (Vector3.up * upwardsOffset);
         }
 
         public void TileArrowReleased()
@@ -269,14 +270,14 @@ namespace PlusLevelStudio.Editor
                 case SelectorState.None:
                     break;
                 case SelectorState.Direction:
-                    transform.position = selectedTile.ToWorld() + (Vector3.up * upwardsAmount); // annoying hack seriously what the fuck is going on
+                    transform.position = selectedTile.ToWorld() + (Vector3.up * upwardsOffset); // annoying hack seriously what the fuck is going on
                     for (int i = 0; i < tileArrows.Length; i++)
                     {
                         PositionArrow((Direction)i, 0f);
                     }
                     break;
                 case SelectorState.Tile:
-                    transform.position = selectedTile.ToWorld() + (Vector3.up * upwardsAmount);
+                    transform.position = selectedTile.ToWorld() + (Vector3.up * upwardsOffset);
                     break;
                 case SelectorState.Object:
                     Transform tf = selectedMovable.GetTransform();
