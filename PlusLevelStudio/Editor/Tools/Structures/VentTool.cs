@@ -68,6 +68,7 @@ namespace PlusLevelStudio.Editor.Tools
 
         protected void OnDirectionSelected(Direction dir)
         {
+            if (EditorController.Instance.levelData.GetCellSafe(pos.Value + dir.ToIntVector2()) == null) return;
             EditorController.Instance.selector.DisableSelection(); // to prevent a brief flicker when we change the grid height
             currentVent = new VentLocation();
             currentVent.positions.Add(pos.Value + dir.ToIntVector2());
