@@ -74,7 +74,17 @@ namespace PlusLevelStudio.Editor
             }
         }
 
-        private Dictionary<string, TextureContainer> defaultTextures = new Dictionary<string, TextureContainer>();
+        public Dictionary<string, TextureContainer> defaultTextures = new Dictionary<string, TextureContainer>();
+        private static List<Action<Dictionary<string, TextureContainer>>> defaultTextureActions = new List<Action<Dictionary<string, TextureContainer>>>();
+
+        /// <summary>
+        /// Adds the specified action to be called whenever default textures need to be defined or redefined.
+        /// </summary>
+        /// <param name="action"></param>
+        public static void AddDefaultTextureAction(Action<Dictionary<string, TextureContainer>> action)
+        {
+            defaultTextureActions.Add(action);
+        }
 
         // TODO: CHANGE THIS!
         public void DefineDefaultTextures()
@@ -91,6 +101,10 @@ namespace PlusLevelStudio.Editor
             defaultTextures.Add("shop", new TextureContainer("HallFloor", "JohnnyWall", "Ceiling"));
             defaultTextures.Add("lightbulbtesting", new TextureContainer("MaintenanceFloor", "RedBrickWall", "ElevatorCeiling"));
             defaultTextures.Add("mystery", new TextureContainer("Black", "Black", "Black"));
+            for (int i = 0; i < defaultTextureActions.Count; i++)
+            {
+                defaultTextureActions[i].Invoke(defaultTextures);
+            }
         }
 
         public IntVector2[] GetCellsOwnedByRoom(EditorRoom room)

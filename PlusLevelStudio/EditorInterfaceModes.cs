@@ -310,6 +310,47 @@ namespace PlusLevelStudio
             }, true);
         }
 
+        /// <summary>
+        /// Insert tools after the specified tool in the category.
+        /// </summary>
+        /// <param name="modeToModify"></param>
+        /// <param name="category"></param>
+        /// <param name="idToInsertAt"></param>
+        /// <param name="tools"></param>
+        /// <returns></returns>
+        public static bool InsertToolsInCategory(EditorMode modeToModify, string category, string idToInsertAt, IEnumerable<EditorTool> tools)
+        {
+            if (!modeToModify.availableTools.ContainsKey(category)) return false;
+            int index = modeToModify.availableTools[category].FindIndex(0, x => x.id == idToInsertAt);
+            if (index == -1)
+            {
+                return AddToolsToCategory(modeToModify, category, tools, false);
+            }
+            modeToModify.availableTools[category].InsertRange(index + 1, tools);
+            return true;
+        }
+
+        /// <summary>
+        /// Insert a tool after the specified tool in the category.
+        /// </summary>
+        /// <param name="modeToModify"></param>
+        /// <param name="category"></param>
+        /// <param name="idToInsertAt"></param>
+        /// <param name="tool"></param>
+        /// <returns></returns>
+        public static bool InsertToolInCategory(EditorMode modeToModify, string category, string idToInsertAt, EditorTool tool)
+        {
+            return InsertToolsInCategory(modeToModify, category, idToInsertAt, new EditorTool[1] { tool });
+        }
+
+        /// <summary>
+        /// Add the tools into the specified category of the EditorMode if it exists.
+        /// </summary>
+        /// <param name="modeToModify"></param>
+        /// <param name="category"></param>
+        /// <param name="tools"></param>
+        /// <param name="addCategoryIfDoesntExist"></param>
+        /// <returns></returns>
         public static bool AddToolsToCategory(EditorMode modeToModify, string category, IEnumerable<EditorTool> tools, bool addCategoryIfDoesntExist = false)
         {
             if (!modeToModify.availableTools.ContainsKey(category))
@@ -325,6 +366,14 @@ namespace PlusLevelStudio
             return true;
         }
 
+        /// <summary>
+        /// Add a tool into the specified category of the EditorMode if it exists
+        /// </summary>
+        /// <param name="modeToModify"></param>
+        /// <param name="category"></param>
+        /// <param name="tool"></param>
+        /// <param name="addCategoryIfDoesntExist"></param>
+        /// <returns></returns>
         public static bool AddToolToCategory(EditorMode modeToModify, string category, EditorTool tool, bool addCategoryIfDoesntExist = false)
         {
             return AddToolsToCategory(modeToModify, category, new EditorTool[1] { tool }, addCategoryIfDoesntExist);

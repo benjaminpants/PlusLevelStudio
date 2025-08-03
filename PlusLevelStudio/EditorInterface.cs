@@ -82,6 +82,34 @@ namespace PlusLevelStudio
         }
 
         /// <summary>
+        /// Creates the DoorDisplay of the specified type and adds it to the editor's keys.
+        /// Uses the specified WindowObject for visuals.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <param name="mask"></param>
+        /// <param name="sideMaterials"></param>
+        /// <returns></returns>
+        public static T AddWindow<T>(string key, WindowObject windObject) where T : DoorDisplay
+        {
+            return AddWindow<T>(key, windObject.mask, windObject.overlay);
+        }
+
+        /// <summary>
+        /// Creates the DoorDisplay of the DoorDisplay type and adds it to the editor's keys.
+        /// Uses the specified WindowObject for visuals.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <param name="mask"></param>
+        /// <param name="sideMaterials"></param>
+        /// <returns></returns>
+        public static DoorDisplay AddWindow(string key, WindowObject windObject)
+        {
+            return AddWindow<DoorDisplay>(key, windObject.mask, windObject.overlay);
+        }
+
+        /// <summary>
         /// Generates the visual for the specified elevator prefab.
         /// </summary>
         /// <param name="key"></param>

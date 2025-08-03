@@ -8,13 +8,27 @@ namespace PlusLevelStudio.Editor.Tools
 {
     public class HallDoorStructureTool : DoorTool
     {
+        public string doorType;
         public override string id => "structure_" + type;
 
-        internal HallDoorStructureTool(string type) : base(type, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/structure_" + type))
+        public override string titleKey => "Ed_Tool_structure_" + doorType + "_Title";
+        public override string descKey => "Ed_Tool_structure_" + doorType + "_Desc";
+
+        internal HallDoorStructureTool(string type) : this(type, type, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/structure_" + type))
         {
         }
 
-        public HallDoorStructureTool(string type, Sprite sprite) : base(type, sprite)
+        internal HallDoorStructureTool(string type, string doorType) : base(type, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/structure_" + doorType))
+        {
+            this.doorType = doorType;
+        }
+
+        public HallDoorStructureTool(string type, string doorType, Sprite sprite) : base(type, sprite)
+        {
+            this.doorType = doorType;
+        }
+
+        public HallDoorStructureTool(string type, Sprite sprite) : this(type, type, sprite)
         {
         }
 
@@ -28,6 +42,7 @@ namespace PlusLevelStudio.Editor.Tools
             SimpleLocation local = structure.CreateNewChild();
             local.position = pos.Value;
             local.direction = dir;
+            local.prefab = doorType;
             structure.myChildren.Add(local);
             EditorController.Instance.UpdateVisual(structure);
             EditorController.Instance.SwitchToTool(null);

@@ -12,7 +12,7 @@ namespace PlusLevelStudio.Editor.Tools
 
         public override string titleKey => PlusStudioLevelLoader.LevelLoaderPlugin.Instance.itemObjects[item].nameKey;
 
-        internal ItemTool(string item) : this(item, PlusStudioLevelLoader.LevelLoaderPlugin.Instance.itemObjects[item].itemSpriteSmall)
+        public ItemTool(string item) : this(item, PlusStudioLevelLoader.LevelLoaderPlugin.Instance.itemObjects[item].itemSpriteSmall)
         {
             this.item = item;
         }
