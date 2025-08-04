@@ -39,7 +39,7 @@ namespace PlusStudioLevelLoader.Patches
 
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
-            Debug.Log("transpiler running!");
+            Debug.Log("Level Loader Transpile Begin!");
             MethodInfo logMethod = AccessTools.Method(typeof(UnityEngine.Debug), "Log", new Type[] { typeof(object) });
             int offset = -1;
             CodeInstruction[] instructionsArray = instructions.ToArray();

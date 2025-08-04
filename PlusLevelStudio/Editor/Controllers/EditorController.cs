@@ -599,9 +599,9 @@ namespace PlusLevelStudio.Editor
             CompileAndPlay();
         }
 
-        public T CreateUI<T>(string name) where T : UIExchangeHandler
+        public T CreateUI<T>(string name, string path) where T : UIExchangeHandler
         {
-            T obj = UIBuilder.BuildUIFromFile<T>(canvas.GetComponent<RectTransform>(), name, Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", name + ".json"));
+            T obj = UIBuilder.BuildUIFromFile<T>(canvas.GetComponent<RectTransform>(), name, path);
             /*obj.transform.SetAsFirstSibling();
             for (int i = 0; i < uiObjects.Length; i++)
             {
@@ -611,6 +611,11 @@ namespace PlusLevelStudio.Editor
             tooltipBase.transform.SetAsLastSibling();
             uiOverlays.Add(obj.gameObject);
             return obj;
+        }
+
+        internal T CreateUI<T>(string name) where T : UIExchangeHandler
+        {
+            return CreateUI<T>(name, Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", name + ".json"));
         }
 
         public void CreateUIPopup(string text, Action onYes, Action onNo)
