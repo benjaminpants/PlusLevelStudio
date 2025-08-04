@@ -159,7 +159,8 @@ namespace PlusLevelStudio
                 new ShapeLockTool("shapelock_square"),
                 new ShapeLockTool("shapelock_star"),
                 new ShapeLockTool("shapelock_heart"),
-                new ShapeLockTool("shapelock_weird")
+                new ShapeLockTool("shapelock_weird"),
+                new PowerLeverAlarmTool()
             }, true);
         }
 

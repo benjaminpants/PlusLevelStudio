@@ -42,15 +42,6 @@ namespace PlusLevelStudio.Editor
             DeleteIfInvalid();
         }
 
-        public void DeleteIfInvalid()
-        {
-            if (!ValidatePosition(EditorController.Instance.levelData))
-            {
-                EditorController.Instance.levelData.structures.Remove(this);
-                EditorController.Instance.RemoveVisual(this);
-            }
-        }
-
         public override void CleanupVisual(GameObject visualObject)
         {
             for (int i = 0; i < lockedRooms.Count; i++)

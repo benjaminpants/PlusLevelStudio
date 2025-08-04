@@ -667,6 +667,10 @@ namespace PlusLevelStudio
                 { "shapelock_weird", foundLocks.First(x => x.name == "GameLock_5").gameObject },
             }));
 
+            Structure_PowerLeverEditor editorPowerLeverBuilder = GameObject.Instantiate<Structure_PowerLever>(Resources.FindObjectsOfTypeAll<Structure_PowerLever>().First(x => x.name == "PowerLeverConstructor" && x.GetInstanceID() >= 0), MTM101BaldiDevAPI.prefabTransform).gameObject.SwapComponent<Structure_PowerLever, Structure_PowerLeverEditor>();
+            editorPowerLeverBuilder.name = "EditorPowerLeverConstructor";
+            LevelLoaderPlugin.Instance.structureAliases.Add("powerlever", new LoaderStructureData(editorPowerLeverBuilder));
+
             yield return "Creating editor prefab visuals...";
 
             // create light display
@@ -928,6 +932,15 @@ namespace PlusLevelStudio
             ventVisualObject.AddComponent<EditorDeletableObject>().renderContainer = ventVisualManager.container;
             genericStructureDisplays.Add("vent", ventVisualObject);
             structureTypes.Add("vent", typeof(VentStructureLocation));
+
+            // power levers
+            GameObject alarmLightVisualObject = EditorInterface.AddStructureGenericVisual("powerlever_alarm", Resources.FindObjectsOfTypeAll<GameObject>().First(x => x.GetInstanceID() >= 0 && x.name == "AlarmLight"));
+            alarmLightVisualObject.layer = editorInteractableLayer;
+            SphereCollider alarmVisualCollider = alarmLightVisualObject.AddComponent<SphereCollider>();
+            alarmVisualCollider.radius = 1f;
+            alarmVisualCollider.center = Vector3.up * 9f;
+            alarmLightVisualObject.AddComponent<EditorDeletableObject>().renderContainer = alarmLightVisualObject.GetComponent<EditorRendererContainer>();
+            structureTypes.Add("powerlever", typeof(PowerLeverStructureLocation));
 
             // npcs
 

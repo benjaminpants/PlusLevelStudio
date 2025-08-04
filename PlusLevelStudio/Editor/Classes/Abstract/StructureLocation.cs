@@ -91,5 +91,14 @@ namespace PlusLevelStudio.Editor
         {
             return false;
         }
+
+        public virtual void DeleteIfInvalid()
+        {
+            if (!ValidatePosition(EditorController.Instance.levelData))
+            {
+                EditorController.Instance.levelData.structures.Remove(this);
+                EditorController.Instance.RemoveVisual(this);
+            }
+        }
     }
 }
