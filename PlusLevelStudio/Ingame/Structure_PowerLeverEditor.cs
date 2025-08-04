@@ -49,7 +49,7 @@ namespace PlusLevelStudio.Ingame
                         throw new NotImplementedException("Unknown type encountered when generating power levers (possible de-sync?): " + baseData.data);
                 }
             }
-            // If we haven't generated any breakers, we have to disable all of these ourselves, otherwise they'd all be one.
+            // If we haven't generated any breakers, we have to disable all of these ourselves, otherwise they'd all be on.
             if (!generatedBreaker)
             {
                 for (int i = 0; i < generatedEmergencyLights.Count; i++)
