@@ -352,6 +352,9 @@ namespace PlusLevelStudio.Editor
                         PlayLevel();
                     });
                     break;
+                case "export":
+                    EditorController.Instance.Export();
+                    break;
                 case "undo":
                     EditorController.Instance.PopUndo();
                     break;

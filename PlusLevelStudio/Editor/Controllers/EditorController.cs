@@ -485,7 +485,21 @@ namespace PlusLevelStudio.Editor
             }
         }
 
-        public void CompileAndPlay()
+        public virtual void Export()
+        {
+            BaldiLevel level = Compile();
+            PlayableEditorLevel playableLevel = new PlayableEditorLevel();
+            playableLevel.data = level;
+            playableLevel.meta = levelData.meta;
+            Directory.CreateDirectory(LevelStudioPlugin.levelExportPath);
+
+            BinaryWriter writer = new BinaryWriter(new FileStream(Path.Combine(LevelStudioPlugin.levelExportPath, currentFileName + ".pbpl"), FileMode.Create, FileAccess.Write));
+            playableLevel.Write(writer);
+            writer.Close();
+            Application.OpenURL("file://" + LevelStudioPlugin.levelExportPath);
+        }
+
+        public BaldiLevel Compile()
         {
             selector.DisableSelection();
             BaldiLevel level = levelData.Compile();
@@ -495,15 +509,12 @@ namespace PlusLevelStudio.Editor
             }
             level.entitySafeCells = CompileSafeCells(levelData, 1f);
             level.eventSafeCells = CompileSafeCells(levelData, 2f);
-            // write to file for testing purposes
-            /*
-            File.Delete(Path.Combine(Application.streamingAssetsPath, "test.bpl"));
-            BinaryWriter writer = new BinaryWriter(File.OpenWrite(Path.Combine(Application.streamingAssetsPath, "test.bpl")));
-            level.Write(writer);
-            writer.Close();
-            BinaryReader reader = new BinaryReader(File.OpenRead(Path.Combine(Application.streamingAssetsPath, "test.bpl")));
-            level = BaldiLevel.Read(reader);
-            reader.Close();*/
+            return level;
+        }
+
+        public void CompileAndPlay()
+        {
+            BaldiLevel level = Compile();
             AccessTools.Field(typeof(Singleton<CoreGameManager>), "m_Instance").SetValue(null, null); // so coregamemanager gets created properly
             PlayableEditorLevel playableLevel = new PlayableEditorLevel();
             playableLevel.data = level;

@@ -67,7 +67,9 @@ namespace PlusLevelStudio
 
         public Dictionary<string, EditorMode> modes = new Dictionary<string, EditorMode>();
 
+        public static string playableLevelPath => Path.Combine(levelFilePath, "Playables");
         public static string levelFilePath => Path.Combine(Application.persistentDataPath, "Custom Levels");
+        public static string levelExportPath => Path.Combine(levelFilePath, "Exports");
 
         private Dictionary<Texture2D, Sprite> smallIconsFromTextures = new Dictionary<Texture2D, Sprite>();
 
