@@ -54,17 +54,26 @@ namespace PlusLevelStudio.Editor
         {
             base.UpdateVisual(visualObject);
 
-            Vector3[] allPositions = EditorController.Instance.levelData.GetCellsOwnedByRoom(room).Select(x => x.ToWorld()).ToArray();
-            Vector3 centralPosition = allPositions[0];
-            for (int i = 1; i < allPositions.Length; i++)
+            if (room != null)
             {
-                centralPosition = (centralPosition + allPositions[i]);
-            }
-            centralPosition /= allPositions.Length;
+                visualObject.transform.Find("LineRenderer").gameObject.SetActive(true);
+                Vector3[] allPositions = EditorController.Instance.levelData.GetCellsOwnedByRoom(room).Select(x => x.ToWorld()).ToArray();
+                Vector3 centralPosition = allPositions[0];
+                for (int i = 1; i < allPositions.Length; i++)
+                {
+                    centralPosition = (centralPosition + allPositions[i]);
+                }
+                centralPosition /= allPositions.Length;
 
-            LineRenderer lineRenderer = visualObject.transform.Find("LineRenderer").GetComponent<LineRenderer>();
-            lineRenderer.SetPositions(new Vector3[] { visualObject.transform.Find("Wall").position + Vector3.up * 7f, centralPosition + Vector3.up * 12});
-            lineRenderer.material.SetMainTexture(cableTex[color]);
+                LineRenderer lineRenderer = visualObject.transform.Find("LineRenderer").GetComponent<LineRenderer>();
+                lineRenderer.SetPositions(new Vector3[] { visualObject.transform.Find("Wall").position + Vector3.up * 7f, centralPosition + Vector3.up * 12 });
+                lineRenderer.material.SetMainTexture(cableTex[color]);
+
+            }
+            else
+            {
+                visualObject.transform.Find("LineRenderer").gameObject.SetActive(false);
+            }
 
             StructureLocation structure = EditorController.Instance.GetStructureData("powerlever");
             if (structure == null)
