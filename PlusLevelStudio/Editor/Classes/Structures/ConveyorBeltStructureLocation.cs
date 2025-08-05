@@ -285,13 +285,6 @@ namespace PlusLevelStudio.Editor
 
         public override bool ValidatePosition(EditorLevelData data)
         {
-            for (int i = belts.Count - 1; i >= 0; i--)
-            {
-                if (!belts[i].ValidatePosition(data))
-                {
-                    DeleteBelt(data, belts[i], false);
-                }
-            }
             for (int i = buttons.Count - 1; i >= 0; i--)
             {
                 if (!buttons[i].ValidatePosition(data, true))
@@ -299,8 +292,14 @@ namespace PlusLevelStudio.Editor
                     DeleteButton(data, buttons[i], false);
                 }
             }
-            if (belts.Count == 0) return false;
-            return true;
+            for (int i = belts.Count - 1; i >= 0; i--)
+            {
+                if (!belts[i].ValidatePosition(data))
+                {
+                    DeleteBelt(data, belts[i], false);
+                }
+            }
+            return (belts.Count != 0);
         }
 
         public SimpleButtonLocation CreateButton()
