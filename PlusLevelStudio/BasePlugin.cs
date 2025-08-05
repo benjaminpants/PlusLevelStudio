@@ -382,6 +382,14 @@ namespace PlusLevelStudio
 
             assetMan.Add<Material>("OneWayRight", materials.First(x => x.name == "SwingDoorRightWay_Closed"));
             assetMan.Add<Material>("OneWayWrong", materials.First(x => x.name == "SwingDoorTextureOneWay_Closed"));
+
+            string[] cableNames = Enum.GetNames(typeof(CableColor));
+            for (int i = 0; i < cableNames.Length; i++)
+            {
+                PowerLeverLocation.cableTex.Add((CableColor)Enum.Parse(typeof(CableColor), cableNames[i]), AssetLoader.TextureFromMod(this, "Editor", "CableTextures", cableNames[i] + ".png"));
+            }
+
+
             yield return "Finding GameCamera...";
             assetMan.Add<GameCamera>("gameCam", Resources.FindObjectsOfTypeAll<GameCamera>().First());
             yield return "Setting up materials...";
@@ -943,17 +951,27 @@ namespace PlusLevelStudio
 
             GameObject powerLeverVisual = EditorInterface.AddStructureGenericVisual("powerlever_lever", lever.gameObject);
             powerLeverVisual.name = "PowerLever_Visual";
-            powerLeverVisual.AddComponent<EditorDeletableObject>().renderContainer = powerLeverVisual.GetComponent<EditorRendererContainer>();
             powerLeverVisual.AddComponent<SettingsComponent>().offset = Vector3.up * 15f;
             GameObject powerLeverGaugeVisual = EditorInterface.CloneToPrefabStripMonoBehaviors(Resources.FindObjectsOfTypeAll<PowerLeverGauge>().First(x => x.name == "PowerLeverGauge" && x.GetInstanceID() >= 0).gameObject);
             powerLeverGaugeVisual.transform.Find("Box").gameObject.SetActive(true);
             powerLeverGaugeVisual.transform.Find("Indicator").gameObject.SetActive(true);
             powerLeverGaugeVisual.transform.SetParent(powerLeverVisual.transform);
             powerLeverGaugeVisual.name = "PowerLeverGauge";
+            powerLeverVisual.GetComponent<EditorRendererContainer>().AddRendererRange(powerLeverGaugeVisual.GetComponentsInChildren<Renderer>(), "none");
+            GameObject powerLeverLineRenderObject = new GameObject("LineRenderer");
+            powerLeverLineRenderObject.transform.SetParent(powerLeverVisual.transform);
+            LineRenderer powerLeverLineRenderer = powerLeverLineRenderObject.gameObject.AddComponent<LineRenderer>();
+            powerLeverLineRenderer.useWorldSpace = true;
+            powerLeverLineRenderer.material = new Material(Resources.FindObjectsOfTypeAll<Shader>().First(x => x.name == "Shader Graphs/Standard"));
+            powerLeverLineRenderer.material.name = "Power Lever Line Renderer";
+            powerLeverLineRenderer.widthMultiplier = 0.5f;
+
 
             GameObject breakerVisual = EditorInterface.AddStructureGenericVisual("powerlever_breaker", Resources.FindObjectsOfTypeAll<BreakerController>().First(x => x.name == "PowerBreaker" && x.GetInstanceID() >= 0).gameObject);
-            breakerVisual.AddComponent<EditorDeletableObject>().renderContainer = breakerVisual.GetComponent<EditorRendererContainer>();
             breakerVisual.AddComponent<SettingsComponent>().offset = Vector3.up * 15f;
+            breakerVisual.GetComponent<EditorRendererContainer>().myRenderers.Clear();
+            breakerVisual.GetComponent<EditorRendererContainer>().defaultHighlights.Clear();
+            breakerVisual.GetComponent<EditorRendererContainer>().AddRendererRange(breakerVisual.GetComponentsInChildren<Renderer>(), "none");
 
             structureTypes.Add("powerlever", typeof(PowerLeverStructureLocation));
 

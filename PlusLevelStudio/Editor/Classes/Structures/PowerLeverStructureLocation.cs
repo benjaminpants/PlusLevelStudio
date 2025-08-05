@@ -1,7 +1,10 @@
-﻿using PlusStudioLevelFormat;
+﻿using MTM101BaldAPI;
+using PlusLevelStudio.Editor.SettingsUI;
+using PlusStudioLevelFormat;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using UnityEngine;
 
@@ -17,12 +20,14 @@ namespace PlusLevelStudio.Editor
         }
         public void SettingsClicked()
         {
-            throw new NotImplementedException();
+            EditorController.Instance.HoldUndo();
+            EditorController.Instance.CreateUI<PowerLeverSettingsExchangeHandler>("PowerLeverBreakerConfig").Refresh();
         }
     }
 
     public class PowerLeverLocation : SimpleButtonLocation, IEditorSettingsable
     {
+        public static Dictionary<CableColor, Texture2D> cableTex = new Dictionary<CableColor, Texture2D>();
         public CableColor color;
         public EditorRoom room;
 
@@ -41,12 +46,26 @@ namespace PlusLevelStudio.Editor
 
         public void SettingsClicked()
         {
-            throw new NotImplementedException();
+            EditorController.Instance.HoldUndo();
+            EditorController.Instance.CreateUI<PowerLeverSettingsExchangeHandler>("PowerLeverConfig").Refresh();
         }
 
         public override void UpdateVisual(GameObject visualObject)
         {
             base.UpdateVisual(visualObject);
+
+            Vector3[] allPositions = EditorController.Instance.levelData.GetCellsOwnedByRoom(room).Select(x => x.ToWorld()).ToArray();
+            Vector3 centralPosition = allPositions[0];
+            for (int i = 1; i < allPositions.Length; i++)
+            {
+                centralPosition = (centralPosition + allPositions[i]);
+            }
+            centralPosition /= allPositions.Length;
+
+            LineRenderer lineRenderer = visualObject.transform.Find("LineRenderer").GetComponent<LineRenderer>();
+            lineRenderer.SetPositions(new Vector3[] { visualObject.transform.Find("Wall").position + Vector3.up * 7f, centralPosition + Vector3.up * 12});
+            lineRenderer.material.SetMainTexture(cableTex[color]);
+
             StructureLocation structure = EditorController.Instance.GetStructureData("powerlever");
             if (structure == null)
             {
@@ -65,6 +84,11 @@ namespace PlusLevelStudio.Editor
         public List<BreakerLocation> breakers = new List<BreakerLocation>();
         public int maxLevers = 3;
         public int poweredRoomChance = 10;
+
+        public override bool ShouldUpdateVisual(PotentialStructureUpdateReason reason)
+        {
+            return reason == PotentialStructureUpdateReason.CellChange;
+        }
 
         public override bool OccupiesWall(IntVector2 pos, Direction dir)
         {
@@ -110,6 +134,10 @@ namespace PlusLevelStudio.Editor
         {
             EditorController.Instance.RemoveVisual(local);
             breakers.Remove((BreakerLocation)local);
+            for (int i = 0; i < powerLevers.Count; i++)
+            {
+                EditorController.Instance.UpdateVisual(powerLevers[i]);
+            }
             if (validatePosition)
             {
                 DeleteIfInvalid();
@@ -301,6 +329,14 @@ namespace PlusLevelStudio.Editor
             for (int i = 0; i < alarmLights.Count; i++)
             {
                 EditorController.Instance.UpdateVisual(alarmLights[i]);
+            }
+            for (int i = 0; i < powerLevers.Count; i++)
+            {
+                EditorController.Instance.UpdateVisual(powerLevers[i]);
+            }
+            for (int i = 0; i < breakers.Count; i++)
+            {
+                EditorController.Instance.UpdateVisual(breakers[i]);
             }
         }
 

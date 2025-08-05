@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using MTM101BaldAPI.Reflection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,8 +23,23 @@ namespace PlusStudioLevelLoader.Patches
 
         static Dictionary<string, string> actions = new Dictionary<string, string>()
         {
-            { "Level loader setting up events.", "AddTimeOut" }
+            { "Level loader setting up events.", "AddTimeOut" },
+            { "Level loader letting EnvironmentObjects know level generation has complete.", "InformStructureBuildersDone" }
         };
+
+        public static void InformStructureBuildersDone(LevelLoader loader, LevelData data)
+        {
+            Debug.Log("Level loader letting StructureBuilders know loading has finished... (Loader Extension)");
+            StructureBuilder[] builders = GameObject.FindObjectsOfType<StructureBuilder>();
+            for (int i = 0; i < builders.Length; i++)
+            {
+                List<string> methodNames = AccessTools.GetMethodNames(builders[i].GetType());
+                if (methodNames.Contains("OnLoadingFinished"))
+                {
+                    builders[i].ReflectionInvoke("OnLoadingFinished", new object[] { loader });
+                }
+            }
+        }
 
         public static void AddTimeOut(LevelLoader loader, LevelData data)
         {

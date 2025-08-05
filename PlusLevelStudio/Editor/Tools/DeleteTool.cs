@@ -67,6 +67,8 @@ namespace PlusLevelStudio.Editor.Tools
                 EditorController.Instance.AddUndo();
                 EditorController.Instance.levelData.areas.Remove(lastFoundArea); // TODO: switch this out for the appropiate area removal logic
                 EditorController.Instance.levelData.RemoveUnusedRoom(lastFoundArea.roomId);
+                // ACK HACK
+                EditorController.Instance.levelData.UpdateCells(true);
                 EditorController.Instance.RefreshCells();
                 return true;
             }

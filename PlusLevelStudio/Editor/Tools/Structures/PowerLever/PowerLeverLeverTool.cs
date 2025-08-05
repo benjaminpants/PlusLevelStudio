@@ -9,6 +9,8 @@ namespace PlusLevelStudio.Editor.Tools
     {
         public override string id => "structure_powerlever_lever_" + color.ToString();
 
+        public override string descKey => "Ed_Tool_structure_powerlever_lever_Desc";
+
         EditorRoom currentRoom;
         PowerLeverLocation currentLever;
         PowerLeverStructureLocation currentStructure;

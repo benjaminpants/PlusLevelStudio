@@ -32,6 +32,7 @@ namespace PlusLevelStudio.Ingame
         static MethodInfo _BuildModel = AccessTools.Method(typeof(Structure_PowerLever), "BuildModel");
 
         float chanceForPoweredRoom = 0f;
+        bool generatedBreaker = false;
 
         public void GenerateBreaker(Cell cell, Direction direction)
         {
@@ -86,7 +87,6 @@ namespace PlusLevelStudio.Ingame
         public override void Load(List<StructureData> data)
         {
             BreakerController.ResetStaticVariables();
-            bool generatedBreaker = false;
 
             List<Cell> generatedEmergencyLights = (List<Cell>)_generatedEmergencyLights.GetValue(this);
             Color emergencyLightColor = (Color)_emergencyLightColor.GetValue(this);
@@ -105,7 +105,6 @@ namespace PlusLevelStudio.Ingame
             while (queue.Count > 0)
             {
                 StructureData baseData = queue.Dequeue();
-                Debug.Log(baseData.data);
                 switch (baseData.data)
                 {
                     case 0: // emergency light
@@ -142,19 +141,21 @@ namespace PlusLevelStudio.Ingame
                     generatedEmergencyLights[i].SetPower(true);
                 }
             }
-            RandomizePoweredRooms();
         }
 
         public void RandomizePoweredRooms()
         {
             int maxPowerLevel = (int)_maxPowerLevel.GetValue(this);
             List<RoomController> poweredRooms = new List<RoomController>((List<RoomController>)_poweredRooms.GetValue(this));
+            if (!generatedBreaker)
+            {
+                maxPowerLevel = poweredRooms.Count;
+            }
             poweredRooms.Shuffle();
             int activelyPowered = 0;
-            Debug.Log(chanceForPoweredRoom);
             foreach (RoomController room in poweredRooms)
             {
-                if ((UnityEngine.Random.value <= chanceForPoweredRoom) && (activelyPowered >= (maxPowerLevel - 1)))
+                if ((UnityEngine.Random.value <= chanceForPoweredRoom) && (!(activelyPowered >= (maxPowerLevel - 1))))
                 {
                     activelyPowered++;
                     room.SetPower(true);
@@ -164,6 +165,11 @@ namespace PlusLevelStudio.Ingame
                     room.SetPower(false);
                 }
             }
+        }
+
+        public void OnLoadingFinished(LevelLoader ll)
+        {
+            RandomizePoweredRooms();
         }
 
         public override void OnGenerationFinished(LevelBuilder lb)

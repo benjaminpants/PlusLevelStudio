@@ -11,6 +11,11 @@ namespace PlusLevelStudio.Editor.Tools
 
         public override string id => "structure_powerlever_breaker";
 
+        public PowerLeverBreakerTool()
+        {
+            sprite = LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/" + id);
+        }
+
         public override void Begin()
         {
 
