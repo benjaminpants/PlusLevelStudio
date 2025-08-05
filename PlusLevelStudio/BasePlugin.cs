@@ -307,7 +307,11 @@ namespace PlusLevelStudio
                 },
                 defaultTools = new string[] { "room_hall", "room_class", "room_faculty", "room_office", "light_fluorescent", "door_swinging", "door_standard", "merge", "delete" },
                 vanillaComplaint = true,
-                prefab = assetMan.Get<EditorController>("MainEditorController")
+                prefab = assetMan.Get<EditorController>("MainEditorController"),
+                availableGameModes = new List<string>()
+                {
+                    "standard",
+                }
             };
 
             EditorInterfaceModes.AddVanillaRooms(complaintMode);

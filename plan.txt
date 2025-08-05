@@ -1,6 +1,6 @@
 PLANS:
 
-Figure out full 3D rotations
-Create a base class for most of the editor objects so we dont have to keep re-implementing the same interfaces and adding extra dummy components (Move ValidatePosition here)
+Implement blocked cell calculation so portal posters can't be placed in weird spots
+Implement play mode
 Consider tutorial? (Save for public release?)
 Create more EditorTool bases (STOP RE-USING DOOR TOOL!)

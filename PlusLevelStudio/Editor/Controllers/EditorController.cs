@@ -473,6 +473,64 @@ namespace PlusLevelStudio.Editor
             return returnValue;
         }
 
+        public bool[,] CompileBlockedCells(EditorLevelData data, float capsuleRadius, float approachWallCheck)
+        {
+            bool[,] returnValue = new bool[data.mapSize.x, data.mapSize.z];
+            Collider[] foundColliders;
+            for (int x = 0; x < data.mapSize.x; x++)
+            {
+                for (int y = 0; y < data.mapSize.z; y++)
+                {
+                    if (data.cells[x, y].roomId == 0)
+                    {
+                        returnValue[x, y] = false;
+                        continue; // this is an empty cell, do not bother
+                    }
+                    returnValue[x, y] = false;
+                    int collisions = 0;
+                    List<Direction> allDirections = Directions.ClosedDirectionsFromBin(data.cells[x, y].type); // so we dont wrongly block walls with props on the other side.
+                    Debug.Log(x + "," + y);
+                    while (allDirections.Count > 0)
+                    {
+                        Direction chosenDirection = allDirections[0];
+                        allDirections.RemoveAt(0);
+                        Vector3 cellWorldPos = new IntVector2(x, y).ToWorld() + (chosenDirection.ToVector3() * approachWallCheck);
+                        foundColliders = Physics.OverlapCapsule(cellWorldPos - (Vector3.down * 4f), cellWorldPos - (Vector3.up * 4f), capsuleRadius);
+                        for (int i = 0; i < foundColliders.Length; i++)
+                        {
+                            if (foundColliders[i] == null) continue;
+                            if (foundColliders[i].isTrigger) continue;
+                            Debug.Log(foundColliders[i].name);
+                            collisions++;
+                            //returnValue[x, y] = false;
+                        }
+
+                        // check extra directions so we dont miss corners
+                        Direction[] directionsToCheck = new Direction[] { chosenDirection.RotatedRelativeToNorth(Direction.East), chosenDirection.RotatedRelativeToNorth(Direction.West) };
+                        for (int j = 0; j < directionsToCheck.Length; j++)
+                        {
+                            Vector3 secondCheckWorldPos = new IntVector2(x, y).ToWorld() + (chosenDirection.ToVector3() * approachWallCheck) + (directionsToCheck[j].ToVector3() * approachWallCheck);
+                            foundColliders = Physics.OverlapCapsule(secondCheckWorldPos - (Vector3.down * 4f), secondCheckWorldPos - (Vector3.up * 4f), capsuleRadius);
+                            for (int i = 0; i < foundColliders.Length; i++)
+                            {
+                                if (foundColliders[i] == null) continue;
+                                if (foundColliders[i].isTrigger) continue;
+                                Debug.Log(foundColliders[i].name);
+                                collisions++;
+                                //returnValue[x, y] = false;
+                            }
+                        }
+                    }
+                    if (collisions > 0)
+                    {
+                        Debug.Log(collisions);
+                        returnValue[x, y] = true;
+                    }
+                }
+            }
+            return returnValue;
+        }
+
         public void UpdateStructuresWithReason(PotentialStructureUpdateReason reason)
         {
             foreach (StructureLocation structure in levelData.structures)
@@ -509,6 +567,11 @@ namespace PlusLevelStudio.Editor
             }
             level.entitySafeCells = CompileSafeCells(levelData, 1f);
             level.eventSafeCells = CompileSafeCells(levelData, 2f);
+            //CompileBlockedCells(levelData, 1.5f, 3.4f);
+            for (int i = 0; i < levelData.objects.Count; i++)
+            {
+                EditorController.Instance.GetVisual(levelData.objects[i]).GetComponent<EditorBasicObject>().SetMode(true); // revert to editor hitboxes
+            }
             return level;
         }
 
