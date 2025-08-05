@@ -92,7 +92,7 @@ namespace PlusLevelStudio.Editor
 
         public override bool OccupiesWall(IntVector2 pos, Direction dir)
         {
-            for (int i = 0; i < breakers.Count; i++)
+            for (int i = 0; i < powerLevers.Count; i++)
             {
                 if (powerLevers[i].position == pos && powerLevers[i].direction == dir) return true;
             }
