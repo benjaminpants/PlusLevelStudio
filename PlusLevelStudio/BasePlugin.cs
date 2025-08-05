@@ -940,6 +940,21 @@ namespace PlusLevelStudio
             alarmVisualCollider.radius = 1f;
             alarmVisualCollider.center = Vector3.up * 9f;
             alarmLightVisualObject.AddComponent<EditorDeletableObject>().renderContainer = alarmLightVisualObject.GetComponent<EditorRendererContainer>();
+
+            GameObject powerLeverVisual = EditorInterface.AddStructureGenericVisual("powerlever_lever", lever.gameObject);
+            powerLeverVisual.name = "PowerLever_Visual";
+            powerLeverVisual.AddComponent<EditorDeletableObject>().renderContainer = powerLeverVisual.GetComponent<EditorRendererContainer>();
+            powerLeverVisual.AddComponent<SettingsComponent>().offset = Vector3.up * 15f;
+            GameObject powerLeverGaugeVisual = EditorInterface.CloneToPrefabStripMonoBehaviors(Resources.FindObjectsOfTypeAll<PowerLeverGauge>().First(x => x.name == "PowerLeverGauge" && x.GetInstanceID() >= 0).gameObject);
+            powerLeverGaugeVisual.transform.Find("Box").gameObject.SetActive(true);
+            powerLeverGaugeVisual.transform.Find("Indicator").gameObject.SetActive(true);
+            powerLeverGaugeVisual.transform.SetParent(powerLeverVisual.transform);
+            powerLeverGaugeVisual.name = "PowerLeverGauge";
+
+            GameObject breakerVisual = EditorInterface.AddStructureGenericVisual("powerlever_breaker", Resources.FindObjectsOfTypeAll<BreakerController>().First(x => x.name == "PowerBreaker" && x.GetInstanceID() >= 0).gameObject);
+            breakerVisual.AddComponent<EditorDeletableObject>().renderContainer = breakerVisual.GetComponent<EditorRendererContainer>();
+            breakerVisual.AddComponent<SettingsComponent>().offset = Vector3.up * 15f;
+
             structureTypes.Add("powerlever", typeof(PowerLeverStructureLocation));
 
             // npcs

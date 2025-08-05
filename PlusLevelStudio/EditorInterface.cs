@@ -13,8 +13,17 @@ namespace PlusLevelStudio
 {
     public enum DoorIngameStatus
     {
+        /// <summary>
+        /// When the level is compiled, this door will always be a door assigned to the respective room.
+        /// </summary>
         AlwaysDoor,
+        /// <summary>
+        /// When the level is compiled, this door will always be a tile object.
+        /// </summary>
         AlwaysObject,
+        /// <summary>
+        /// When the level is compiled, if this door is connected to a non-hall room, it'll be a door assigned to that room, otherwise it'll be a tile object.
+        /// </summary>
         Smart
     }
 

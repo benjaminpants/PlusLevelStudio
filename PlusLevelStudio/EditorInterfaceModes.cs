@@ -160,7 +160,17 @@ namespace PlusLevelStudio
                 new ShapeLockTool("shapelock_star"),
                 new ShapeLockTool("shapelock_heart"),
                 new ShapeLockTool("shapelock_weird"),
-                new PowerLeverAlarmTool()
+                new PowerLeverAlarmTool(),
+                new PowerLeverLeverTool(CableColor.red),
+                new PowerLeverLeverTool(CableColor.yellow),
+                new PowerLeverLeverTool(CableColor.green),
+                new PowerLeverLeverTool(CableColor.cyan),
+                new PowerLeverLeverTool(CableColor.blue),
+                new PowerLeverLeverTool(CableColor.magenta),
+                new PowerLeverLeverTool(CableColor.white),
+                new PowerLeverLeverTool(CableColor.gray),
+                new PowerLeverLeverTool(CableColor.black),
+                new PowerLeverBreakerTool(),
             }, true);
         }
 
