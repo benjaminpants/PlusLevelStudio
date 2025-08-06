@@ -1,0 +1,65 @@
+{
+	"defines":{
+	},
+	"elements":[
+		{
+			"name":"LevelTitle",
+			"type":"textbox",
+			"anchoredPosition":[30, 40],
+			"size":[250, 50],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"font":"ComicSans12",
+			"color":[0,0,0],
+			"text":"My Awesome Level!",
+			"alignment":"Left",
+			"upper":false,
+			"characterLimit":32,
+			"onFinish":"titleChanged"
+		},
+		{
+			"name":"LevelTitleText",
+			"type":"text",
+			"anchoredPosition":[-130, 40],
+			"size":[80, 50],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"font":"ComicSans24",
+			"color":[0,0,0],
+			"text":"Name:",
+			"alignment":"Left",
+		},
+		
+		{
+			"name":"AuthorName",
+			"type":"textbox",
+			"anchoredPosition":[40, -10],
+			"size":[250, 50],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"font":"ComicSans12",
+			"color":[0,0,0],
+			"text":"Unknown",
+			"alignment":"Left",
+			"upper":false,
+			"characterLimit":32,
+			"onFinish":"authorChanged"
+		},
+		{
+			"name":"AuthorNameText",
+			"type":"text",
+			"anchoredPosition":[-120, -10],
+			"size":[100, 50],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"font":"ComicSans24",
+			"color":[0,0,0],
+			"text":"Author:",
+			"alignment":"Left",
+		},
+	]
+}

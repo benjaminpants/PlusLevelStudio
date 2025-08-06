@@ -13,8 +13,10 @@ namespace PlusLevelStudio
     {
         public EditorCustomContent customContent;
         public List<SceneObject> sceneObjectsToCleanUp = new List<SceneObject>();
+        public bool returnToEditor = true;
         public void OnExit()
         {
+            if (!returnToEditor) return;
             GoToEditor();
         }
 
@@ -35,14 +37,14 @@ namespace PlusLevelStudio
             Destroy(gameObject);
         }
 
-        // this is hacky and gross
-        public static void LoadLevel(GameLoader gameLoaderPrefab, ElevatorScreen elevatorScreenPrefab, EditorPlayModeManager editorPlayModePre, PlayableEditorLevel level)
+        public static void LoadLevel(PlayableEditorLevel level, int lives, bool returnToEditor)
         {
             SceneObject sceneObj = LevelImporter.CreateSceneObject(level.data);
             sceneObj.manager = LevelStudioPlugin.Instance.gameModeAliases[level.meta.gameMode].prefab;
-            GameLoader loader = GameObject.Instantiate<GameLoader>(gameLoaderPrefab);
-            ElevatorScreen screen = GameObject.Instantiate<ElevatorScreen>(elevatorScreenPrefab);
-            EditorPlayModeManager pmm = GameObject.Instantiate<EditorPlayModeManager>(editorPlayModePre);
+            GameLoader loader = GameObject.Instantiate<GameLoader>(LevelStudioPlugin.Instance.assetMan.Get<GameLoader>("gameLoaderPrefab"));
+            ElevatorScreen screen = GameObject.Instantiate<ElevatorScreen>(LevelStudioPlugin.Instance.assetMan.Get<ElevatorScreen>("elevatorScreenPrefab"));
+            EditorPlayModeManager pmm = GameObject.Instantiate<EditorPlayModeManager>(LevelStudioPlugin.Instance.assetMan.Get<EditorPlayModeManager>("playModeManager"));
+            pmm.returnToEditor = returnToEditor;
             pmm.customContent = new EditorCustomContent(); // TODO: get this from PlayableEditorLevel somehow
             if (level.meta.modeSettings != null)
             {
@@ -54,7 +56,7 @@ namespace PlusLevelStudio
             }
             pmm.sceneObjectsToCleanUp.Add(sceneObj);
             loader.AssignElevatorScreen(screen);
-            loader.Initialize(0);
+            loader.Initialize(lives);
             loader.SetMode(0);
             loader.LoadLevel(sceneObj);
             screen.Initialize();

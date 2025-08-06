@@ -29,7 +29,6 @@ namespace PlusLevelStudio.Editor
         public HotSlotScript[] hotSlots = new HotSlotScript[9];
         public Dictionary<IEditorVisualizable, GameObject> objectVisuals = new Dictionary<IEditorVisualizable, GameObject>();
 
-        public EditorPlayModeManager editorPlayModePre;
         public EditorTool currentTool => _currentTool;
         public BaseGameManager baseGameManagerPrefab;
         protected EditorTool _currentTool;
@@ -60,8 +59,6 @@ namespace PlusLevelStudio.Editor
 
         public CoreGameManager workerCgm;
         public CoreGameManager cgmPrefab;
-        public GameLoader gameLoaderPrefab;
-        public ElevatorScreen elevatorScreenPrefab;
 
         public Selector selector;
         public Selector selectorPrefab;
@@ -572,7 +569,7 @@ namespace PlusLevelStudio.Editor
             PlayableEditorLevel playableLevel = new PlayableEditorLevel();
             playableLevel.data = level;
             playableLevel.meta = levelData.meta;
-            EditorPlayModeManager.LoadLevel(gameLoaderPrefab, elevatorScreenPrefab, editorPlayModePre, playableLevel);
+            EditorPlayModeManager.LoadLevel(playableLevel, 0, true);
             DestroySelf();
         }
 

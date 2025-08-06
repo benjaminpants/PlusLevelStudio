@@ -246,6 +246,13 @@ namespace PlusLevelStudio
                 {
                     new EditorGlobalPage()
                     {
+                        filePath = Path.Combine(editorModePath, "MetaSettings.json"),
+                        managerType = typeof(MetaSettingsExchangeHandler),
+                        pageName = "MetaSettings",
+                        pageKey = "Ed_GlobalPage_MetaSettings"
+                    },
+                    new EditorGlobalPage()
+                    {
                         filePath = Path.Combine(editorModePath, "LevelSettings.json"),
                         managerType = typeof(LevelSettingsExchangeHandler),
                         pageName = "LevelSettings",
@@ -1114,14 +1121,14 @@ namespace PlusLevelStudio
             standardEditorController.tooltipController = toolTipController;
             standardEditorController.tooltipBase = editorTooltip;
             standardEditorController.baseGameManagerPrefab = emg;
-            standardEditorController.editorPlayModePre = playModeManager;
             // quick pause to create the gameloader prefab
             GameObject gameLoaderPreObject = new GameObject("EditorGameLoader");
             gameLoaderPreObject.ConvertToPrefab(true);
             GameLoader gameLoaderPre = gameLoaderPreObject.AddComponent<GameLoader>();
             gameLoaderPre.cgmPre = Resources.FindObjectsOfTypeAll<CoreGameManager>().First(x => x.name == "CoreGameManager" && x.GetInstanceID() >= 0);
-            standardEditorController.gameLoaderPrefab = gameLoaderPre;
-            standardEditorController.elevatorScreenPrefab = Resources.FindObjectsOfTypeAll<ElevatorScreen>().First(x => x.GetInstanceID() >= 0 && x.transform.parent == null);
+            assetMan.Add<GameLoader>("gameLoaderPrefab", gameLoaderPre);
+            assetMan.Add<ElevatorScreen>("elevatorScreenPrefab", Resources.FindObjectsOfTypeAll<ElevatorScreen>().First(x => x.GetInstanceID() >= 0 && x.transform.parent == null));
+            assetMan.Add<EditorPlayModeManager>("playModeManager", playModeManager);
             standardEditorController.gameObject.AddComponent<BillboardManager>();
 
             standardEditorController.spawnpointVisualPrefab = sm;
@@ -1245,6 +1252,12 @@ namespace PlusLevelStudio
             assetMan.Add<Sprite>("EditorButtonGlow", AssetLoader.SpriteFromTexture2D(AssetLoader.TextureFromMod(this, "UI", "TitleScreen", "EditorButtonGlow.png"), 1f));
             assetMan.Add<Sprite>("EditorButtonFail", AssetLoader.SpriteFromTexture2D(AssetLoader.TextureFromMod(this, "UI", "TitleScreen", "EditorButtonFail.png"), 1f));
             assetMan.Add<Sprite>("ChalkBackground", AssetLoader.SpriteFromMod(this, Vector2.one / 2f, 1f, "UI", "TitleScreen", "ChalkWMath480_256c.png"));
+            assetMan.Add<Sprite>("MPlayButton", AssetLoader.SpriteFromMod(this, Vector2.one / 2f, 1f, "UI", "TitleScreen", "MPlayButton.png"));
+            assetMan.Add<Sprite>("MPlayButtonHover", AssetLoader.SpriteFromMod(this, Vector2.one / 2f, 1f, "UI", "TitleScreen", "MPlayButtonHover.png"));
+            assetMan.Add<Sprite>("MDiscardButton", AssetLoader.SpriteFromMod(this, Vector2.one / 2f, 1f, "UI", "TitleScreen", "MDiscardButton.png"));
+            assetMan.Add<Sprite>("MDiscardButtonHover", AssetLoader.SpriteFromMod(this, Vector2.one / 2f, 1f, "UI", "TitleScreen", "MDiscardButtonHover.png"));
+            assetMan.Add<Sprite>("PlayLevelBorder", AssetLoader.SpriteFromMod(this, Vector2.one / 2f, 1f, "UI", "TitleScreen", "PlayLevelBorder.png"));
+            assetMan.Add<Texture2D>("IconMissing", AssetLoader.TextureFromMod(this, "UI", "TitleScreen", "IconMissing.png"));
             Sprite[] baseSprites = Resources.FindObjectsOfTypeAll<Sprite>().Where(x => x.GetInstanceID() >= 0).ToArray();
 
             assetMan.Add<Sprite>("BackArrow", baseSprites.First(x => x.name == "BackArrow_0"));

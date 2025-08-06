@@ -33,16 +33,18 @@ namespace PlusLevelStudio
 
     public class PlayableLevelMeta
     {
-        public string name;
-        public string gameMode;
+        public string name = "My Awesome Level!";
+        public string author = "Unknown";
+        public string gameMode = "standard";
         public EditorGameModeSettings modeSettings;
 
-        public const byte version = 0; // so we can read files from earlier versions, we fudge the version number here
+        public const byte version = 1; // so we can read files from earlier versions, we fudge the version number here
 
         public void Write(BinaryWriter writer)
         {
             writer.Write(version);
             writer.Write(name);
+            writer.Write(author);
             writer.Write(gameMode);
             writer.Write(modeSettings != null);
             if (modeSettings == null) return;
@@ -54,6 +56,10 @@ namespace PlusLevelStudio
             PlayableLevelMeta meta = new PlayableLevelMeta();
             byte version = reader.ReadByte();
             meta.name = reader.ReadString();
+            if (version >= 1)
+            {
+                meta.author = reader.ReadString();
+            }
             meta.gameMode = reader.ReadString();
             if (!reader.ReadBoolean())
             {

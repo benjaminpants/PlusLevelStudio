@@ -10,7 +10,7 @@ using UnityEngine.UI;
 
 namespace PlusLevelStudio.Menus
 {
-    public class EditorModeSelectionMenu : MonoBehaviour
+    public partial class EditorModeSelectionMenu : MonoBehaviour
     {
         public GameObject mainMenu;
 
@@ -20,6 +20,7 @@ namespace PlusLevelStudio.Menus
 
         public GameObject editorTypeParent;
         public GameObject restrictedTypeParent;
+        public EditorPlayScreenManager playScreenManager;
 
         internal static EditorModeSelectionMenu Build()
         {
@@ -76,11 +77,15 @@ namespace PlusLevelStudio.Menus
             playButton.OnPress.AddListener(() =>
             {
                 emms.playParent.SetActive(true);
+                emms.playScreenManager.UpdateFromFolder();
+                emms.playScreenManager.ChangePage(0);
+                emms.playScreenManager.SetFileWatcherStatus(true);
                 emms.playOrEditParent.SetActive(false);
             });
 
             AddBackButton(emms.playOrEditParent.transform, () =>
             {
+                emms.playScreenManager.SetFileWatcherStatus(false);
                 emms.gameObject.SetActive(false);
                 emms.mainMenu.SetActive(true);
             });
@@ -93,9 +98,7 @@ namespace PlusLevelStudio.Menus
             emms.playParent.transform.SetParent(canvas.transform, false);
             emms.playParent.transform.localPosition = Vector3.zero;
 
-            TextMeshProUGUI WIPText = UIHelpers.CreateText<TextMeshProUGUI>(BaldiFonts.ComicSans36, "WIP", emms.playParent.transform, Vector3.zero);
-            WIPText.rectTransform.sizeDelta = new Vector2(100f, 64f);
-            WIPText.alignment = TextAlignmentOptions.Center;
+            CreatePlayModeMenu(emms);
 
             AddBackButton(emms.playParent.transform, () =>
             {
