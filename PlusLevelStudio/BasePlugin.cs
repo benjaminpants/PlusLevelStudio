@@ -364,21 +364,33 @@ namespace PlusLevelStudio
                 availableTools = new Dictionary<string, List<EditorTool>>(),
                 categoryOrder = new string[] {
                     "rooms",
-                    "doors",
                     "objects",
-                    "lights",
+                    "posters",
                     "tools"
                 },
                 defaultTools = new string[] { "room_hall", "room_class", "room_faculty", "room_office", "room_closet", "room_reflex", "room_cafeteria", "merge", "delete" },
                 vanillaComplaint = true,
                 caresAboutSpawn = false,
-                prefab = rce
+                prefab = rce,
+                pages = new List<EditorGlobalPage>()
+                {
+                    new EditorGlobalPage()
+                    {
+                        filePath = Path.Combine(editorModePath, "None.json"),
+                        managerType = typeof(DummyGlobalSettingsHandler),
+                        pageName = "None",
+                        pageKey = "Ed_GlobalPage_None"
+                    },
+                },
+                availableGameModes = new List<string>()
+                {
+                    "standard",
+                }
             };
 
             EditorInterfaceModes.AddVanillaRooms(roomsMode);
-            EditorInterfaceModes.AddVanillaDoors(roomsMode);
             EditorInterfaceModes.AddVanillaObjects(roomsMode);
-            EditorInterfaceModes.AddVanillaLights(roomsMode);
+            EditorInterfaceModes.AddVanillaPosters(roomsMode);
             EditorInterfaceModes.AddVanillaToolTools(roomsMode);
 
             modes.Add("rooms", roomsMode);

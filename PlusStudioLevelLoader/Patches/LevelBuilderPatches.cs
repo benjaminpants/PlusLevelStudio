@@ -19,6 +19,7 @@ namespace PlusStudioLevelLoader.Patches
             ExtendedRoomAsset extendedAsset = (ExtendedRoomAsset)asset;
             for (int i = 0; i < extendedAsset.coverages.Count; i++)
             {
+                // TODO: rotate coverage
                 ___ec.CellFromPosition(extendedAsset.coverageCells[i].Adjusted(roomPivot, direction) + position).HardCover(extendedAsset.coverages[i]);
             }
         }

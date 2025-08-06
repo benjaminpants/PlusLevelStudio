@@ -4,11 +4,103 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace PlusStudioLevelLoader
 {
     public static class LevelImporter
     {
+
+        internal static T CreateRoomAsset<T>(BaldiRoomAsset info) where T : RoomAsset
+        {
+            T asset = ScriptableObject.CreateInstance<T>();
+            asset.name = info.name;
+            ((UnityEngine.Object)asset).name = info.name;
+            asset.florTex = LevelLoaderPlugin.RoomTextureFromAlias(info.textureContainer.floor);
+            asset.wallTex = LevelLoaderPlugin.RoomTextureFromAlias(info.textureContainer.wall);
+            asset.ceilTex = LevelLoaderPlugin.RoomTextureFromAlias(info.textureContainer.ceiling);
+            asset.activity = new ActivityData();
+            asset.hasActivity = info.activity != null;
+            if (asset.hasActivity)
+            {
+                asset.activity.position = info.activity.position.ToUnity();
+                asset.activity.prefab = LevelLoaderPlugin.Instance.activityAliases[info.activity.type];
+                asset.activity.direction = (Direction)info.activity.direction;
+            }
+            for (int i = 0; i < info.cells.Count; i++)
+            {
+                RoomCellInfo cell = info.cells[i];
+                asset.cells.Add(new CellData()
+                {
+                    pos=cell.position.ToInt(),
+                    type=(int)cell.walls
+                });
+            }
+            for (int i = 0; i < info.items.Count; i++)
+            {
+                asset.items.Add(new ItemData()
+                {
+                    item = LevelLoaderPlugin.Instance.itemObjects[info.items[i].item],
+                    position = info.items[i].position.ToUnity()
+                });
+            }
+            for (int i = 0; i < info.itemSpawns.Count; i++)
+            {
+                asset.itemSpawnPoints.Add(new ItemSpawnPoint()
+                {
+                    position = info.itemSpawns[i].position.ToUnity(),
+                    weight = info.itemSpawns[i].weight
+                });
+            }
+            for (int i = 0; i < info.entitySafeCells.Count; i++)
+            {
+                asset.entitySafeCells.Add(info.entitySafeCells[i].ToInt());
+            }
+            for (int i = 0; i < info.eventSafeCells.Count; i++)
+            {
+                asset.entitySafeCells.Add(info.eventSafeCells[i].ToInt());
+            }
+            for (int i = 0; i < info.posters.Count; i++)
+            {
+                asset.posterDatas.Add(new PosterData()
+                {
+                    position = info.posters[i].position.ToInt(),
+                    direction = (Direction)info.posters[i].direction,
+                    poster = LevelLoaderPlugin.Instance.posterAliases[info.posters[i].poster]
+                });
+            }
+            asset.maxItemValue = info.maxItemValue;
+            asset.windowChance = info.windowChance;
+            asset.windowObject = LevelLoaderPlugin.Instance.windowObjects[info.windowType];
+            asset.posterChance = info.posterChance;
+            return asset;
+        }
+
+        public static ExtendedRoomAsset CreateRoomAsset(BaldiRoomAsset info)
+        {
+            ExtendedRoomAsset extendedAsset = CreateRoomAsset<ExtendedRoomAsset>(info);
+            for (int i = 0; i < info.cells.Count; i++)
+            {
+                if (info.cells[i].coverage != PlusCellCoverage.None)
+                {
+                    extendedAsset.AddCellCoverage(info.cells[i].position.ToInt(), (CellCoverage)info.cells[i].coverage);
+                }
+            }
+            return extendedAsset;
+        }
+
+        public static RoomAsset CreateVanillaRoomAsset(BaldiRoomAsset info)
+        {
+            RoomAsset asset = CreateRoomAsset<RoomAsset>(info);
+            for (int i = 0; i < info.cells.Count; i++)
+            {
+                if (info.cells[i].coverage != PlusCellCoverage.None)
+                {
+                    asset.blockedWallCells.Add(info.cells[i].position.ToInt());
+                }
+            }
+            return asset;
+        }
 
         public static SceneObject CreateEmptySceneObject()
         {

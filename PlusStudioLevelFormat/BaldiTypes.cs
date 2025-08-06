@@ -132,6 +132,12 @@ namespace PlusStudioLevelFormat
         public UnityVector2 position;
     }
 
+    public class ItemSpawnInfo
+    {
+        public UnityVector2 position;
+        public int weight;
+    }
+
     public class BasicObjectInfo
     {
         public string prefab;

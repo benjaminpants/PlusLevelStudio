@@ -835,7 +835,7 @@ namespace PlusLevelStudio.Editor
         }
 
         // called when the editor mode is assigned or re-assigned
-        public void EditorModeAssigned()
+        public virtual void EditorModeAssigned()
         {
             UpdateUI();
             LoadToolbar(currentMode.defaultTools);
