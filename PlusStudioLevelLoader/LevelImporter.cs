@@ -10,12 +10,12 @@ namespace PlusStudioLevelLoader
     public static class LevelImporter
     {
 
-        public static SceneObject CreateEmptySceneObject<ExtraAssetType>() where ExtraAssetType : ExtraLevelDataAsset
+        public static SceneObject CreateEmptySceneObject()
         {
             SceneObject scene = ScriptableObject.CreateInstance<SceneObject>();
             scene.levelNo = -1;
             scene.levelTitle = "WIP";
-            scene.extraAsset = ScriptableObject.CreateInstance<ExtraAssetType>();
+            scene.extraAsset = ScriptableObject.CreateInstance<ExtendedExtraLevelDataAsset>();
             scene.extraAsset.name = "WIPExtraAsset";
             scene.extraAsset.minLightColor = Color.white;
             scene.extraAsset.npcSpawnPoints = new List<IntVector2>();
@@ -27,8 +27,8 @@ namespace PlusStudioLevelLoader
 
         public static SceneObject CreateSceneObject(BaldiLevel level)
         {
-            SceneObject scene = CreateEmptySceneObject<ExtendedExtraLevelDataAsset>();
-            scene.levelAsset = LoadLevelAsset<LevelAsset>(level);
+            SceneObject scene = CreateEmptySceneObject();
+            scene.levelAsset = LoadLevelAsset(level);
             ExtendedExtraLevelDataAsset extendedAsset = (ExtendedExtraLevelDataAsset)scene.extraAsset;
             scene.extraAsset.lightMode = LightMode.Cumulative;
             scene.extraAsset.minLightColor = Color.black;
@@ -50,9 +50,9 @@ namespace PlusStudioLevelLoader
             return scene;
         }
 
-        public static T LoadLevelAsset<T>(BaldiLevel level) where T : LevelAsset
+        public static LevelAsset LoadLevelAsset(BaldiLevel level)
         {
-            T asset = ScriptableObject.CreateInstance<T>();
+            LevelAsset asset = ScriptableObject.CreateInstance<LevelAsset>();
             asset.name = "LoadedLevelAsset_" + level.levelSize.x + "_" + level.levelSize.y + "_" + level.rooms.Count;
             asset.levelSize = level.levelSize.ToInt();
             asset.tile = new CellData[level.levelSize.x * level.levelSize.y];
@@ -68,10 +68,11 @@ namespace PlusStudioLevelLoader
                     };
                 }
             }
+            // TODO: move this to a seperate method, we'll have to implement ConvertFromData for ExtendedLevelAsset
             for (int i = 0; i < level.rooms.Count; i++)
             {
                 RoomSettings settings = LevelLoaderPlugin.Instance.roomSettings[level.rooms[i].type];
-                RoomData data = new RoomData()
+                ExtendedRoomData data = new ExtendedRoomData()
                 {
                     name = level.rooms[i].type + "_" + i,
                     florTex = LevelLoaderPlugin.RoomTextureFromAlias(level.rooms[i].textureContainer.floor),
@@ -117,6 +118,10 @@ namespace PlusStudioLevelLoader
                     if (level.secretCells[foundCells[j].pos.x, foundCells[j].pos.z])
                     {
                         data.secretCells.Add(foundCells[j].pos);
+                    }
+                    if (level.coverage[foundCells[j].pos.x, foundCells[j].pos.z] != PlusCellCoverage.None)
+                    {
+                        data.AddCellCoverage(foundCells[j].pos, (CellCoverage)level.coverage[foundCells[j].pos.x, foundCells[j].pos.z]);
                     }
                 }
                 asset.rooms.Add(data);

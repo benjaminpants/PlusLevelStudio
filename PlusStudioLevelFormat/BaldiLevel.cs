@@ -14,6 +14,7 @@ namespace PlusStudioLevelFormat
         public bool[,] entitySafeCells;
         public bool[,] eventSafeCells;
         public bool[,] secretCells;
+        public PlusCellCoverage[,] coverage;
         public List<RoomInfo> rooms = new List<RoomInfo>();
         public List<LightInfo> lights = new List<LightInfo>();
         public List<TileObjectInfo> tileObjects = new List<TileObjectInfo>();
@@ -76,6 +77,7 @@ namespace PlusStudioLevelFormat
             entitySafeCells = new bool[size.x, size.y];
             eventSafeCells = new bool[size.x, size.y];
             secretCells = new bool[size.x, size.y];
+            coverage = new PlusCellCoverage[size.x, size.y];
             for (int x = 0; x < levelSize.x; x++)
             {
                 for (int y = 0; y < levelSize.y; y++)
@@ -84,6 +86,7 @@ namespace PlusStudioLevelFormat
                     entitySafeCells[x, y] = false;
                     eventSafeCells[x, y] = false;
                     secretCells[x, y] = false;
+                    coverage[x, y] = PlusCellCoverage.None;
                 }
             }
         }
@@ -154,6 +157,13 @@ namespace PlusStudioLevelFormat
                 for (int y = 0; y < level.levelSize.y; y++)
                 {
                     level.secretCells[x, y] = secretCells[(x * level.levelSize.y) + y];
+                }
+            }
+            for (int x = 0; x < level.levelSize.x; x++)
+            {
+                for (int y = 0; y < level.levelSize.y; y++)
+                {
+                    level.coverage[x, y] = (PlusCellCoverage)reader.ReadByte();
                 }
             }
             int roomCount = reader.ReadInt32();
@@ -388,6 +398,14 @@ namespace PlusStudioLevelFormat
                 }
             }
             writer.Write(bools.ToArray()); // write secretCells
+            // write the coverage
+            for (int x = 0; x < levelSize.x; x++)
+            {
+                for (int y = 0; y < levelSize.y; y++)
+                {
+                    writer.Write((byte)coverage[x, y]);
+                }
+            }
             // write rooms
             writer.Write(rooms.Count);
             for (int i = 0; i < rooms.Count; i++)

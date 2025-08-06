@@ -24,8 +24,27 @@ namespace PlusStudioLevelLoader.Patches
         static Dictionary<string, string> actions = new Dictionary<string, string>()
         {
             { "Level loader setting up events.", "AddTimeOut" },
-            { "Level loader letting EnvironmentObjects know level generation has complete.", "InformStructureBuildersDone" }
+            { "Level loader letting EnvironmentObjects know level generation has complete.", "InformStructureBuildersDone" },
+            { "Level loader blocking tiles marked to be blocked.", "ApplyCellCoverages" }
         };
+
+        public static void ApplyCellCoverages(LevelLoader loader, LevelData data)
+        {
+            Debug.Log("Level loader applying cell coverages... (Loader Extension)");
+            loader.levelAsset.rooms.ForEach(x =>
+            {
+                if (!(x is ExtendedRoomData)) return;
+                ExtendedRoomData exData = (ExtendedRoomData)x;
+                for (int i = 0; i < exData.coverageCells.Count; i++)
+                {
+                    Cell cell = loader.Ec.CellFromPosition(exData.coverageCells[i]);
+                    if (cell != null)
+                    {
+                        cell.HardCover(exData.coverages[i]);
+                    }
+                }
+            });
+        }
 
         public static void InformStructureBuildersDone(LevelLoader loader, LevelData data)
         {

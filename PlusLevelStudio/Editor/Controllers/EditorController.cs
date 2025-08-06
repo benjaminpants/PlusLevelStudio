@@ -473,23 +473,21 @@ namespace PlusLevelStudio.Editor
             return returnValue;
         }
 
-        public bool[,] CompileBlockedCells(EditorLevelData data, float capsuleRadius, float approachWallCheck)
+        public PlusCellCoverage[,] CompileBlockedCells(EditorLevelData data, float capsuleRadius, float approachWallCheck)
         {
-            bool[,] returnValue = new bool[data.mapSize.x, data.mapSize.z];
+            PlusCellCoverage[,] returnValue = new PlusCellCoverage[data.mapSize.x, data.mapSize.z];
             Collider[] foundColliders;
             for (int x = 0; x < data.mapSize.x; x++)
             {
                 for (int y = 0; y < data.mapSize.z; y++)
                 {
+                    returnValue[x, y] = PlusCellCoverage.None;
                     if (data.cells[x, y].roomId == 0)
                     {
-                        returnValue[x, y] = false;
                         continue; // this is an empty cell, do not bother
                     }
-                    returnValue[x, y] = false;
-                    int collisions = 0;
+                    PlusCellCoverage coverage = PlusCellCoverage.None;
                     List<Direction> allDirections = Directions.ClosedDirectionsFromBin(data.cells[x, y].type); // so we dont wrongly block walls with props on the other side.
-                    Debug.Log(x + "," + y);
                     while (allDirections.Count > 0)
                     {
                         Direction chosenDirection = allDirections[0];
@@ -501,7 +499,7 @@ namespace PlusLevelStudio.Editor
                             if (foundColliders[i] == null) continue;
                             if (foundColliders[i].isTrigger) continue;
                             Debug.Log(foundColliders[i].name);
-                            collisions++;
+                            coverage |= (PlusCellCoverage)chosenDirection.ToCoverage();
                             //returnValue[x, y] = false;
                         }
 
@@ -516,16 +514,17 @@ namespace PlusLevelStudio.Editor
                                 if (foundColliders[i] == null) continue;
                                 if (foundColliders[i].isTrigger) continue;
                                 Debug.Log(foundColliders[i].name);
-                                collisions++;
+                                coverage |= (PlusCellCoverage)chosenDirection.ToCoverage();
                                 //returnValue[x, y] = false;
                             }
                         }
                     }
-                    if (collisions > 0)
+                    if (coverage != PlusCellCoverage.None)
                     {
-                        Debug.Log(collisions);
-                        returnValue[x, y] = true;
+                        Debug.Log(x + "," + y);
+                        Debug.Log(coverage.ToString());
                     }
+                    returnValue[x, y] = coverage;
                 }
             }
             return returnValue;
@@ -567,7 +566,7 @@ namespace PlusLevelStudio.Editor
             }
             level.entitySafeCells = CompileSafeCells(levelData, 1f);
             level.eventSafeCells = CompileSafeCells(levelData, 2f);
-            //CompileBlockedCells(levelData, 1.5f, 3.4f);
+            level.coverage = CompileBlockedCells(levelData, 1.5f, 3.4f);
             for (int i = 0; i < levelData.objects.Count; i++)
             {
                 EditorController.Instance.GetVisual(levelData.objects[i]).GetComponent<EditorBasicObject>().SetMode(true); // revert to editor hitboxes

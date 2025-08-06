@@ -8,7 +8,7 @@ namespace PlusStudioLevelLoader.Patches
 {
     [HarmonyPatch(typeof(ExtraLevelData))]
     [HarmonyPatch("ConvertFromAsset")]
-    class ConvertFromAssetPatch
+    class ExtraLevelDataConvertFromAssetPatch
     {
         static void Postfix(ExtraLevelDataAsset asset, ref ExtraLevelData __result)
         {
@@ -23,6 +23,26 @@ namespace PlusStudioLevelLoader.Patches
             __result = extendedData;
             extendedData.timeOutTime = extendedAsset.timeOutTime;
             extendedData.timeOutEvent = extendedAsset.timeOutEvent;
+        }
+    }
+
+    [HarmonyPatch(typeof(RoomData))]
+    [HarmonyPatch("ConvertFromAsset")]
+    class RoomAssetConvertFromAssetPatch
+    {
+        static void Postfix(RoomAsset asset, ref RoomData __result)
+        {
+            if (!(asset is ExtendedRoomAsset)) return;
+            ExtendedRoomAsset extendedAsset = (ExtendedRoomAsset)asset;
+            ExtendedRoomData extendedData = new ExtendedRoomData();
+            FieldInfo[] fields = typeof(RoomAsset).GetFields();
+            for (int i = 0; i < fields.Length; i++)
+            {
+                fields[i].SetValue(extendedData, fields[i].GetValue(__result));
+            }
+            __result = extendedData;
+            extendedData.coverages = new List<CellCoverage>(extendedAsset.coverages);
+            extendedData.coverageCells = new List<IntVector2>(extendedAsset.coverageCells);
         }
     }
 }
