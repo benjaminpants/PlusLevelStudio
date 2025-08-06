@@ -296,6 +296,9 @@ namespace PlusLevelStudio
 
             modes.Add("full", fullMode);
 
+            CompliantEditorController compliantEditorController = GameObject.Instantiate<EditorController>(assetMan.Get<EditorController>("MainEditorController"), MTM101BaldiDevAPI.prefabTransform).gameObject.SwapComponent<EditorController, CompliantEditorController>();
+            compliantEditorController.name = "CompliantEditorController";
+
             EditorMode complaintMode = new EditorMode()
             {
                 id = "compliant",
@@ -312,9 +315,26 @@ namespace PlusLevelStudio
                     "posters",
                     "tools"
                 },
+                pages = new List<EditorGlobalPage>()
+                {
+                    new EditorGlobalPage()
+                    {
+                        filePath = Path.Combine(editorModePath, "LevelSettings.json"),
+                        managerType = typeof(LevelSettingsExchangeHandler),
+                        pageName = "LevelSettings",
+                        pageKey = "Ed_GlobalPage_LevelSettings"
+                    },
+                    new EditorGlobalPage()
+                    {
+                        filePath = Path.Combine(editorModePath, "VisualAndLights.json"),
+                        managerType = typeof(VisualsAndLightsUIExchangeHandler),
+                        pageName = "VisualAndLightSettings",
+                        pageKey = "Ed_GlobalPage_VisualSettings"
+                    },
+                },
                 defaultTools = new string[] { "room_hall", "room_class", "room_faculty", "room_office", "light_fluorescent", "door_swinging", "door_standard", "merge", "delete" },
                 vanillaComplaint = true,
-                prefab = assetMan.Get<EditorController>("MainEditorController"),
+                prefab = compliantEditorController,
                 availableGameModes = new List<string>()
                 {
                     "standard",
@@ -336,7 +356,6 @@ namespace PlusLevelStudio
             modes.Add("compliant", complaintMode);
 
             RoomEditorController rce = GameObject.Instantiate<EditorController>(assetMan.Get<EditorController>("MainEditorController"), MTM101BaldiDevAPI.prefabTransform).gameObject.SwapComponent<EditorController, RoomEditorController>();
-
             rce.name = "RoomEditorController";
 
             EditorMode roomsMode = new EditorMode()

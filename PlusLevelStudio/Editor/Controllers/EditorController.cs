@@ -243,7 +243,15 @@ namespace PlusLevelStudio.Editor
         public void LoadEditorLevelFromFile(string path)
         {
             BinaryReader reader = new BinaryReader(new FileStream(path, FileMode.Open, FileAccess.Read));
-            LoadEditorLevelAndMeta(EditorFileContainer.ReadMindful(reader));
+            EditorFileContainer file = EditorFileContainer.ReadMindful(reader);
+            if (file.meta.editorMode == currentMode.id)
+            {
+                LoadEditorLevelAndMeta(file);
+            }
+            else
+            {
+                TriggerError("File of mismatched editor mode!");
+            }
             //EditorController.Instance.LoadEditorLevel(EditorLevelData.ReadFrom(reader), true);
             reader.Close();
         }
@@ -606,7 +614,7 @@ namespace PlusLevelStudio.Editor
             PlayableEditorLevel playableLevel = new PlayableEditorLevel();
             playableLevel.data = level;
             playableLevel.meta = levelData.meta;
-            EditorPlayModeManager.LoadLevel(playableLevel, 0, true);
+            EditorPlayModeManager.LoadLevel(playableLevel, 0, true, lastPlayedLevel, currentMode.id);
             DestroySelf();
         }
 

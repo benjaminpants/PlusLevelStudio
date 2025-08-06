@@ -14,6 +14,8 @@ namespace PlusLevelStudio
         public EditorCustomContent customContent;
         public List<SceneObject> sceneObjectsToCleanUp = new List<SceneObject>();
         public bool returnToEditor = true;
+        public string editorLevelToLoad;
+        public string editorModeToLoad;
         public void OnExit()
         {
             if (!returnToEditor) return;
@@ -23,7 +25,7 @@ namespace PlusLevelStudio
         public void GoToEditor()
         {
             Singleton<MusicManager>.Instance.StopMidi();
-            LevelStudioPlugin.Instance.StartCoroutine(LevelStudioPlugin.Instance.LoadEditorScene("full", EditorController.lastPlayedLevel == null ? null : Path.Combine(LevelStudioPlugin.levelFilePath, EditorController.lastPlayedLevel + ".ebpl"), EditorController.lastPlayedLevel));
+            LevelStudioPlugin.Instance.StartCoroutine(LevelStudioPlugin.Instance.LoadEditorScene(editorModeToLoad, editorLevelToLoad == null ? null : Path.Combine(LevelStudioPlugin.levelFilePath, editorLevelToLoad + ".ebpl"), editorLevelToLoad));
             if (customContent != null)
             {
                 customContent.CleanupContent();
@@ -37,7 +39,7 @@ namespace PlusLevelStudio
             Destroy(gameObject);
         }
 
-        public static void LoadLevel(PlayableEditorLevel level, int lives, bool returnToEditor)
+        public static void LoadLevel(PlayableEditorLevel level, int lives, bool returnToEditor, string levelToLoad = null, string modeToLoad = "full")
         {
             SceneObject sceneObj = LevelImporter.CreateSceneObject(level.data);
             sceneObj.manager = LevelStudioPlugin.Instance.gameModeAliases[level.meta.gameMode].prefab;
@@ -55,6 +57,8 @@ namespace PlusLevelStudio
                 pmm.customContent.gameManagerPre = modifiedManager;
             }
             pmm.sceneObjectsToCleanUp.Add(sceneObj);
+            pmm.editorLevelToLoad = levelToLoad;
+            pmm.editorModeToLoad = modeToLoad;
             loader.AssignElevatorScreen(screen);
             loader.Initialize(lives);
             loader.SetMode(0);
