@@ -1,22 +1,35 @@
-﻿using PlusLevelStudio.Editor;
+﻿using Newtonsoft.Json.Linq;
+using PlusLevelStudio.Editor;
 using PlusStudioLevelFormat;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using UnityEngine;
 
 namespace PlusLevelStudio
 {
     public class PlayableEditorLevel
     {
         public PlayableLevelMeta meta;
+        public Texture2D texture; // TODO: consider moving to PlayableLevelMeta to allow for custom icons.
         public BaldiLevel data;
 
-        public const byte version = 0;
+        public const byte version = 1;
 
         public void Write(BinaryWriter writer)
         {
             writer.Write(version);
+            if (texture == null)
+            {
+                writer.Write(0);
+            }
+            else
+            {
+                byte[] pngData = ImageConversion.EncodeToPNG(texture);
+                writer.Write(pngData.Length);
+                writer.Write(pngData);
+            }
             meta.Write(writer);
             data.Write(writer);
         }
@@ -25,6 +38,26 @@ namespace PlusLevelStudio
         {
             PlayableEditorLevel playable = new PlayableEditorLevel();
             byte version = reader.ReadByte();
+            if (version >= 1)
+            {
+                int fileSize = reader.ReadInt32();
+                if (fileSize > 0)
+                {
+                    byte[] textureData = reader.ReadBytes(fileSize);
+                    playable.texture = new Texture2D(2, 2, TextureFormat.RGBA4444, false);
+                    try
+                    {
+                        ImageConversion.LoadImage(playable.texture, textureData);
+                        playable.texture.filterMode = FilterMode.Point;
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogError("Invalid thumbnail data " + e.ToString());
+                        UnityEngine.Object.Destroy(playable.texture);
+                        playable.texture = null;
+                    }
+                }
+            }
             playable.meta = PlayableLevelMeta.Read(reader);
             playable.data = BaldiLevel.Read(reader);
             return playable;

@@ -218,7 +218,7 @@ namespace PlusLevelStudio.Menus
         {
             if (shouldRefresh)
             {
-                UnityEngine.Debug.Log("Refreshing...");
+                UnityEngine.Debug.Log("Refreshing..."); // if you remove this debug log everything breaks down and i dont know why.
                 UpdateFromFolder();
                 ChangePage(0);
                 shouldRefresh = false;
@@ -247,6 +247,13 @@ namespace PlusLevelStudio.Menus
 
         public void UpdateFromFolder()
         {
+            for (int i = 0; i < playableLevels.Count; i++)
+            {
+                if (playableLevels[i].texture != null)
+                {
+                    Destroy(playableLevels[i].texture);
+                }
+            }
             playableLevels.Clear();
             Directory.CreateDirectory(LevelStudioPlugin.playableLevelPath);
             string[] files = Directory.GetFiles(LevelStudioPlugin.playableLevelPath, "*.pbpl");
@@ -300,7 +307,7 @@ namespace PlusLevelStudio.Menus
             titleText.text = level.meta.name;
             authorText.text = "By " + level.meta.author;
             modeText.text = LocalizationManager.Instance.GetLocalizedText(LevelStudioPlugin.Instance.gameModeAliases[level.meta.gameMode].nameKey);
-            thumbnail.texture = LevelStudioPlugin.Instance.assetMan.Get<Texture2D>("IconMissing");
+            thumbnail.texture = (level.texture == null) ? LevelStudioPlugin.Instance.assetMan.Get<Texture2D>("IconMissing") : level.texture;
         }
     }
 }

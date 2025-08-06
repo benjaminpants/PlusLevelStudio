@@ -18,6 +18,7 @@ using PlusStudioLevelLoader;
 using System.Linq;
 using MidiPlayerTK;
 using PlusLevelStudio.Editor.SettingsUI;
+using static MidiPlayerTK.SFFile;
 
 namespace PlusLevelStudio.Editor
 {
@@ -530,17 +531,53 @@ namespace PlusLevelStudio.Editor
             }
         }
 
+        public Texture2D GenerateThumbnail()
+        {
+            selector.DisableSelection();
+            UnhighlightAllCells();
+            Vector3 oldPos = transform.position;
+            Quaternion oldRot = transform.rotation;
+            Camera renderCam = transform.gameObject.AddComponent<Camera>();
+            RenderTexture tempRenderTex = RenderTexture.GetTemporary(64, 64, 0, RenderTextureFormat.ARGB32);
+            renderCam.targetTexture = tempRenderTex; // use 4 bit color to add some dithering and if unity was SMART reduce file size.
+            renderCam.targetTexture.filterMode = FilterMode.Point;
+            renderCam.useOcclusionCulling = false;
+            renderCam.clearFlags = CameraClearFlags.Skybox;
+            renderCam.farClipPlane = 100f;
+            renderCam.cullingMask = LayerMask.GetMask("Default", "TransparentFX", "IgnoreRaycast", "Water", "PostProcessing", "CollidableEntities", "Ignore Raycast B", "Block Raycast", "Disabled", "Windows", "Maskable", "Mask", "Billboard");
+            transform.position = levelData.PracticalSpawnPoint;
+            transform.rotation = levelData.PracticalSpawnDirection.ToRotation();
+            RenderTexture.active = tempRenderTex;
+            renderCam.Render();
+            Texture2D thumb = new Texture2D(renderCam.targetTexture.width, renderCam.targetTexture.height, TextureFormat.ARGB4444, false);
+            thumb.name = "Thumbnail";
+            thumb.filterMode = FilterMode.Point;
+            thumb.ReadPixels(new Rect(0f,0f,64f,64f),0,0);
+            thumb.Apply();
+
+            RenderTexture.active = null;
+
+            transform.position = oldPos;
+            transform.rotation = oldRot;
+
+            DestroyImmediate(renderCam);
+            RenderTexture.ReleaseTemporary(tempRenderTex);
+            return thumb;
+        }
+
         public virtual void Export()
         {
             BaldiLevel level = Compile();
             PlayableEditorLevel playableLevel = new PlayableEditorLevel();
             playableLevel.data = level;
             playableLevel.meta = levelData.meta;
+            playableLevel.texture = GenerateThumbnail();
             Directory.CreateDirectory(LevelStudioPlugin.levelExportPath);
 
             BinaryWriter writer = new BinaryWriter(new FileStream(Path.Combine(LevelStudioPlugin.levelExportPath, currentFileName + ".pbpl"), FileMode.Create, FileAccess.Write));
             playableLevel.Write(writer);
             writer.Close();
+            Destroy(playableLevel.texture); // we've now written it to file, discard it to free up memory.
             Application.OpenURL("file://" + LevelStudioPlugin.levelExportPath);
         }
 
