@@ -498,7 +498,6 @@ namespace PlusLevelStudio.Editor
                         {
                             if (foundColliders[i] == null) continue;
                             if (foundColliders[i].isTrigger) continue;
-                            Debug.Log(foundColliders[i].name);
                             coverage |= (PlusCellCoverage)chosenDirection.ToCoverage();
                             //returnValue[x, y] = false;
                         }
@@ -513,16 +512,10 @@ namespace PlusLevelStudio.Editor
                             {
                                 if (foundColliders[i] == null) continue;
                                 if (foundColliders[i].isTrigger) continue;
-                                Debug.Log(foundColliders[i].name);
                                 coverage |= (PlusCellCoverage)chosenDirection.ToCoverage();
                                 //returnValue[x, y] = false;
                             }
                         }
-                    }
-                    if (coverage != PlusCellCoverage.None)
-                    {
-                        Debug.Log(x + "," + y);
-                        Debug.Log(coverage.ToString());
                     }
                     returnValue[x, y] = coverage;
                 }
