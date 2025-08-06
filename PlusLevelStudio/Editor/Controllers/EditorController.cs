@@ -499,7 +499,6 @@ namespace PlusLevelStudio.Editor
                             if (foundColliders[i] == null) continue;
                             if (foundColliders[i].isTrigger) continue;
                             coverage |= (PlusCellCoverage)chosenDirection.ToCoverage();
-                            //returnValue[x, y] = false;
                         }
 
                         // check extra directions so we dont miss corners
@@ -513,7 +512,6 @@ namespace PlusLevelStudio.Editor
                                 if (foundColliders[i] == null) continue;
                                 if (foundColliders[i].isTrigger) continue;
                                 coverage |= (PlusCellCoverage)chosenDirection.ToCoverage();
-                                //returnValue[x, y] = false;
                             }
                         }
                     }

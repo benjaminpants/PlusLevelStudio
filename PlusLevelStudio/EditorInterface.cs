@@ -51,7 +51,9 @@ namespace PlusLevelStudio
             T standardDoorDisplayBehavior = standardDoorDisplayObject.AddComponent<T>();
             standardDoorDisplayBehavior.sideA = sideAQuad.GetComponent<MeshRenderer>();
             standardDoorDisplayBehavior.sideB = sideBQuad.GetComponent<MeshRenderer>();
-            standardDoorDisplayObject.AddComponent<BoxCollider>().size = new Vector3(10f, 10f, 0.5f);
+            BoxCollider boxCol = standardDoorDisplayObject.AddComponent<BoxCollider>();
+            boxCol.size = new Vector3(10f, 10f, 0.5f);
+            boxCol.isTrigger = true; // to avoid getting detected by the collision system
             standardDoorDisplayObject.layer = LevelStudioPlugin.editorInteractableLayer;
             return standardDoorDisplayBehavior;
         }
