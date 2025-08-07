@@ -1,6 +1,6 @@
 PLANS:
 
-Implement blocked cell calculation so portal posters can't be placed in weird spots
-Implement play mode
+finalize exporting for rooms
+fix weird file name stuff when a level isn't loaded due to mismatched mode
 Consider tutorial? (Save for public release?)
 Create more EditorTool bases (STOP RE-USING DOOR TOOL!)

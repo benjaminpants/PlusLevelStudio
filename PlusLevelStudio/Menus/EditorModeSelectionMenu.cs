@@ -117,12 +117,9 @@ namespace PlusLevelStudio.Menus
                 emms.editorTypeParent.SetActive(false);
             });
 
-            // create the editor type selection
-            // todo
-
             CreateMenuButton(emms.editorTypeParent.transform, "FullButton", "Full", new Vector3(0f, 64f, 0f), () => { LevelStudioPlugin.Instance.GoToEditor("full"); });
             CreateMenuButton(emms.editorTypeParent.transform, "ComplaintButton", "Compliant", new Vector3(0f, 0f, 0f), () => { LevelStudioPlugin.Instance.GoToEditor("compliant"); });
-            CreateMenuButton(emms.editorTypeParent.transform, "RoomsButton", "Rooms", new Vector3(0f, -64f, 0f), () => { LevelStudioPlugin.Instance.GoToEditor("rooms"); });
+            //CreateMenuButton(emms.editorTypeParent.transform, "RoomsButton", "Rooms", new Vector3(0f, -64f, 0f), () => { LevelStudioPlugin.Instance.GoToEditor("rooms"); });
 
             UIHelpers.AddBordersToCanvas(canvas);
             return emms;
