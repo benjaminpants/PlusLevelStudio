@@ -847,6 +847,7 @@ namespace PlusLevelStudio.Editor
                     name = "My Awesome Level!",
                     modeSettings = LevelStudioPlugin.Instance.gameModeAliases[currentMode.availableGameModes[0]].CreateSettings(),
                     gameMode = currentMode.availableGameModes[0],
+                    author = Singleton<PlayerFileManager>.Instance.fileName
                 };
             }
             if (!currentMode.caresAboutSpawn) return;
