@@ -401,6 +401,7 @@ namespace PlusLevelStudio
                 new PointTechnicalStructureTool("potentialdoor"),
                 new PointTechnicalStructureTool("forceddoor"),
                 new PointTechnicalStructureTool("nosafe"),
+                new PointTechnicalStructureTool("lightspot"),
             }, true);
             EditorInterfaceModes.AddVanillaToolTools(roomsMode);
 
@@ -1221,11 +1222,13 @@ namespace PlusLevelStudio
             structureTypes.Add("technical_potentialdoor", typeof(PotentialDoorLocation));
             structureTypes.Add("technical_forceddoor", typeof(ForcedDoorLocation));
             structureTypes.Add("technical_nosafe", typeof(UnsafeCellLocation));
+            structureTypes.Add("technical_lightspot", typeof(RoomLightLocation));
 
             GameObject technicalLightVisual = GameObject.Instantiate(lightDisplayObject, MTM101BaldiDevAPI.prefabTransform);
             technicalLightVisual.name = "TechnicalLightVisual";
             DestroyImmediate(technicalLightVisual.GetComponentInChildren<SettingsComponent>());
             technicalLightVisual.GetComponentInChildren<SpriteRenderer>().sprite = AssetLoader.SpriteFromMod(this, Vector2.one / 2f, 32f, "Editor", "LightbulbRoom.png");
+            genericStructureDisplays.Add("technical_lightspot", technicalLightVisual);
 
             // okay we're done with this
             Destroy(genericPlaneVisual);
