@@ -39,6 +39,7 @@ namespace PlusStudioLevelFormat
         public List<ByteVector2> forcedDoorPositions = new List<ByteVector2>();
         public List<ByteVector2> entitySafeCells = new List<ByteVector2>();
         public List<ByteVector2> eventSafeCells = new List<ByteVector2>();
+        public List<ByteVector2> standardLightCells = new List<ByteVector2>();
         public List<PosterInfo> posters = new List<PosterInfo>();
         public int maxItemValue = 100;
         public float windowChance = 0f;
@@ -117,6 +118,11 @@ namespace PlusStudioLevelFormat
             for (int i = 0; i < forcedDoorPositions.Count; i++)
             {
                 writer.Write(forcedDoorPositions[i]);
+            }
+            writer.Write(standardLightCells.Count);
+            for (int i = 0; i < standardLightCells.Count; i++)
+            {
+                writer.Write(standardLightCells[i]);
             }
             writer.Write(entitySafeCells.Count);
             for (int i = 0; i < entitySafeCells.Count; i++)
@@ -212,6 +218,12 @@ namespace PlusStudioLevelFormat
             for (int i = 0; i < forcedDoorPositionCount; i++)
             {
                 info.forcedDoorPositions.Add(reader.ReadByteVector2());
+            }
+
+            int standardLightCellCount = reader.ReadInt32();
+            for (int i = 0; i < standardLightCellCount; i++)
+            {
+                info.standardLightCells.Add(reader.ReadByteVector2());
             }
 
             int entitySafeCellCount = reader.ReadInt32();

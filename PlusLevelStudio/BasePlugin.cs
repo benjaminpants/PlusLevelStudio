@@ -364,8 +364,10 @@ namespace PlusLevelStudio
                 availableTools = new Dictionary<string, List<EditorTool>>(),
                 categoryOrder = new string[] {
                     "rooms",
+                    "activities",
                     "objects",
                     "posters",
+                    "items",
                     "tools"
                 },
                 defaultTools = new string[] { "room_hall", "room_class", "room_faculty", "room_office", "room_closet", "room_reflex", "room_cafeteria", "merge", "delete" },
@@ -376,10 +378,10 @@ namespace PlusLevelStudio
                 {
                     new EditorGlobalPage()
                     {
-                        filePath = Path.Combine(editorModePath, "None.json"),
-                        managerType = typeof(DummyGlobalSettingsHandler),
-                        pageName = "None",
-                        pageKey = "Ed_GlobalPage_None"
+                        filePath = Path.Combine(editorModePath, "VisualAndLights.json"),
+                        managerType = typeof(VisualsAndLightsUIExchangeHandler),
+                        pageName = "VisualAndLightSettings",
+                        pageKey = "Ed_GlobalPage_LightPreview"
                     },
                 },
                 availableGameModes = new List<string>()
@@ -390,7 +392,16 @@ namespace PlusLevelStudio
 
             EditorInterfaceModes.AddVanillaRooms(roomsMode);
             EditorInterfaceModes.AddVanillaObjects(roomsMode);
+            EditorInterfaceModes.AddVanillaActivities(roomsMode);
+            EditorInterfaceModes.AddVanillaItems(roomsMode);
             EditorInterfaceModes.AddVanillaPosters(roomsMode);
+
+            EditorInterfaceModes.AddToolsToCategory(roomsMode, "tools", new EditorTool[]
+            {
+                new PointTechnicalStructureTool("potentialdoor"),
+                new PointTechnicalStructureTool("forceddoor"),
+                new PointTechnicalStructureTool("nosafe"),
+            }, true);
             EditorInterfaceModes.AddVanillaToolTools(roomsMode);
 
             modes.Add("rooms", roomsMode);
@@ -409,7 +420,7 @@ namespace PlusLevelStudio
         IEnumerator FindObjectsAndSetupEditor()
         {
             List<Direction> directions = Directions.All();
-            yield return 13;
+            yield return 14;
             yield return "Grabbing necessary resources...";
             assetMan.Add<Mesh>("Quad", Resources.FindObjectsOfTypeAll<Mesh>().First(x => x.GetInstanceID() >= 0 && x.name == "Quad"));
             Material[] materials = Resources.FindObjectsOfTypeAll<Material>().Where(x => x.GetInstanceID() >= 0).ToArray();
@@ -479,6 +490,21 @@ namespace PlusLevelStudio
             spawnpointMat.name = "SpawnpointMat";
             spawnpointMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "SpawnpointSprite.png"));
             spawnpointMat.SetTexture("_LightMap", lightmaps["white"]);
+
+            Material forcedDoorMat = new Material(assetMan.Get<Material>("tileAlpha"));
+            forcedDoorMat.name = "ForcedDoorMat";
+            forcedDoorMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "ForcedDoor.png"));
+            forcedDoorMat.SetTexture("_LightMap", lightmaps["white"]);
+
+            Material potentialDoorMat = new Material(assetMan.Get<Material>("tileAlpha"));
+            potentialDoorMat.name = "PotentialDoorMat";
+            potentialDoorMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "PotentialDoor.png"));
+            potentialDoorMat.SetTexture("_LightMap", lightmaps["white"]);
+
+            Material forcedUnsafeMat = new Material(assetMan.Get<Material>("tileAlpha"));
+            forcedUnsafeMat.name = "ForcedUnsafeMat";
+            forcedUnsafeMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "ForcedUnsafeCell.png"));
+            forcedUnsafeMat.SetTexture("_LightMap", lightmaps["white"]);
 
             yield return "Setting up GridManager...";
             GameObject gridManagerObject = new GameObject("GridManager");
@@ -1165,6 +1191,44 @@ namespace PlusLevelStudio
             standardEditorController.spawnpointVisualPrefab = sm;
 
             assetMan.Add<EditorController>("MainEditorController", standardEditorController);
+
+            yield return "Setting up misc editor stuff...";
+
+            GameObject genericPlaneVisual = new GameObject("genericPlaneVisual");
+            GameObject genericPlaneVisualVisual = CreateQuad("Visual", null, Vector3.zero, Vector3.zero);
+            genericPlaneVisualVisual.transform.forward = Vector3.down;
+            genericPlaneVisualVisual.transform.SetParent(genericPlaneVisual.transform, true);
+            genericPlaneVisual.AddComponent<BoxCollider>().size = new Vector3(10f, 0.025f, 10f);
+            genericPlaneVisual.layer = editorInteractableLayer;
+            EditorRendererContainer genericPlaneRenderContainer = genericPlaneVisual.AddComponent<EditorRendererContainer>();
+            genericPlaneRenderContainer.AddRenderer(genericPlaneVisualVisual.GetComponent<MeshRenderer>(), "white");
+            genericPlaneVisual.AddComponent<EditorDeletableObject>().renderContainer = genericPlaneRenderContainer;
+
+            GameObject potentialDoorVisual = GameObject.Instantiate(genericPlaneVisual, MTM101BaldiDevAPI.prefabTransform);
+            potentialDoorVisual.name = "PotentialDoorPrefab";
+            potentialDoorVisual.GetComponentInChildren<MeshRenderer>().material = potentialDoorMat;
+            genericStructureDisplays.Add("technical_potentialdoor", potentialDoorVisual);
+
+            GameObject forcedDoorVisual = GameObject.Instantiate(genericPlaneVisual, MTM101BaldiDevAPI.prefabTransform);
+            forcedDoorVisual.name = "ForcedDoorPrefab";
+            forcedDoorVisual.GetComponentInChildren<MeshRenderer>().material = forcedDoorMat;
+            genericStructureDisplays.Add("technical_forceddoor", forcedDoorVisual);
+
+            GameObject unsafeCellVisual = GameObject.Instantiate(genericPlaneVisual, MTM101BaldiDevAPI.prefabTransform);
+            unsafeCellVisual.name = "UnsafeCellPrefab";
+            unsafeCellVisual.GetComponentInChildren<MeshRenderer>().material = forcedUnsafeMat;
+            genericStructureDisplays.Add("technical_nosafe", unsafeCellVisual);
+            structureTypes.Add("technical_potentialdoor", typeof(PotentialDoorLocation));
+            structureTypes.Add("technical_forceddoor", typeof(ForcedDoorLocation));
+            structureTypes.Add("technical_nosafe", typeof(UnsafeCellLocation));
+
+            GameObject technicalLightVisual = GameObject.Instantiate(lightDisplayObject, MTM101BaldiDevAPI.prefabTransform);
+            technicalLightVisual.name = "TechnicalLightVisual";
+            DestroyImmediate(technicalLightVisual.GetComponentInChildren<SettingsComponent>());
+            technicalLightVisual.GetComponentInChildren<SpriteRenderer>().sprite = AssetLoader.SpriteFromMod(this, Vector2.one / 2f, 32f, "Editor", "LightbulbRoom.png");
+
+            // okay we're done with this
+            Destroy(genericPlaneVisual);
 
             yield return "Setting up UI assets...";
 

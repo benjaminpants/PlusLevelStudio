@@ -96,8 +96,7 @@ namespace PlusLevelStudio.Editor
         {
             if (!ValidatePosition(EditorController.Instance.levelData))
             {
-                EditorController.Instance.levelData.structures.Remove(this);
-                EditorController.Instance.RemoveVisual(this);
+                OnDelete(EditorController.Instance.levelData);
             }
         }
     }

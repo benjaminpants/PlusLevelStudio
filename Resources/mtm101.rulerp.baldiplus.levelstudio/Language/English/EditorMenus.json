@@ -18,7 +18,7 @@
 {"key":"Ed_GlobalPage_VisualSettings","value":"Visual &\nLights"},
 {"key":"Ed_GlobalPage_ModeSettings","value":"Mode\nSettings"},
 {"key":"Ed_GlobalPage_MetaSettings","value":"Meta\nSettings"},
-{"key":"Ed_GlobalPage_None","value":"N/A"},
+{"key":"Ed_GlobalPage_LightPreview","value":"Light\nPreview"},
 
 {"key":"Ed_LightMode_Cumulative","value":"Cumulative"},
 {"key":"Ed_LightMode_Greatest","value":"Greatest"},

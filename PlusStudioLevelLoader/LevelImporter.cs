@@ -60,6 +60,10 @@ namespace PlusStudioLevelLoader
             {
                 asset.entitySafeCells.Add(info.eventSafeCells[i].ToInt());
             }
+            for (int i = 0; i < info.standardLightCells.Count; i++)
+            {
+                asset.standardLightCells.Add(info.standardLightCells[i].ToInt());
+            }
             for (int i = 0; i < info.posters.Count; i++)
             {
                 asset.posterDatas.Add(new PosterData()
