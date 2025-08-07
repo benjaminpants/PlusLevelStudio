@@ -25,10 +25,10 @@ namespace PlusLevelStudio.Editor
         public List<LightPlacement> lights = new List<LightPlacement>();
         public List<EditorRoom> rooms = new List<EditorRoom>();
         public List<DoorLocation> doors = new List<DoorLocation>();
-        // TODO: TileBasedObject data
         public List<WindowLocation> windows = new List<WindowLocation>();
         public List<ExitLocation> exits = new List<ExitLocation>();
         public List<ItemPlacement> items = new List<ItemPlacement>();
+        public List<ItemSpawnPlacement> itemSpawns = new List<ItemSpawnPlacement>();
         public List<BasicObjectLocation> objects = new List<BasicObjectLocation>();
         public List<StructureLocation> structures = new List<StructureLocation>();
         public List<NPCPlacement> npcs = new List<NPCPlacement>();
@@ -356,6 +356,10 @@ namespace PlusLevelStudio.Editor
             {
                 items[i].position -= new Vector2(posDif.x * 10f, posDif.z * 10f);
             }
+            for (int i = 0; i < itemSpawns.Count; i++)
+            {
+                itemSpawns[i].position -= new Vector2(posDif.x * 10f, posDif.z * 10f);
+            }
             for (int i = 0; i < objects.Count; i++)
             {
                 objects[i].position -= new Vector3(posDif.x * 10f, 0f, posDif.z * 10f);
@@ -623,6 +627,15 @@ namespace PlusLevelStudio.Editor
                     position = items[i].position.ToData()
                 });
             }
+            for (int i = 0; i < itemSpawns.Count; i++)
+            {
+                ushort roomId = (ushort)Mathf.Max(GetCellSafe(Mathf.RoundToInt((itemSpawns[i].position.x - 5f) / 10f), Mathf.RoundToInt((itemSpawns[i].position.y - 5f) / 10f)).roomId, 1);
+                compiled.rooms[roomId - 1].itemSpawns.Add(new ItemSpawnInfo()
+                {
+                    weight = itemSpawns[i].weight,
+                    position = itemSpawns[i].position.ToData()
+                });
+            }
             for (int i = 0; i < objects.Count; i++)
             {
                 ushort roomId = (ushort)Mathf.Max(GetCellSafe(Mathf.RoundToInt((objects[i].position.x - 5f) / 10f), Mathf.RoundToInt((objects[i].position.z - 5f) / 10f)).roomId, 1);
@@ -658,7 +671,7 @@ namespace PlusLevelStudio.Editor
             return compiled;
         }
 
-        public const byte version = 7;
+        public const byte version = 8;
 
         public bool WallFree(IntVector2 pos, Direction dir, bool ignoreSelf)
         {
@@ -779,6 +792,12 @@ namespace PlusLevelStudio.Editor
             {
                 stringComp.WriteStoredString(writer, items[i].item);
                 writer.Write(items[i].position.ToData());
+            }
+            writer.Write(itemSpawns.Count);
+            for (int i = 0; i < itemSpawns.Count; i++)
+            {
+                writer.Write(itemSpawns[i].weight);
+                writer.Write(itemSpawns[i].position.ToData());
             }
             writer.Write(objects.Count);
             for (int i = 0; i < objects.Count; i++)
@@ -934,6 +953,18 @@ namespace PlusLevelStudio.Editor
                     item = stringComp.ReadStoredString(reader),
                     position = reader.ReadUnityVector2().ToUnity(),
                 });
+            }
+            if (version >= 8)
+            {
+                int itemSpawnCount = reader.ReadInt32();
+                for (int i = 0; i < itemSpawnCount; i++)
+                {
+                    levelData.itemSpawns.Add(new ItemSpawnPlacement()
+                    {
+                        weight = reader.ReadInt32(),
+                        position = reader.ReadUnityVector2().ToUnity(),
+                    });
+                }
             }
             int objectCount = reader.ReadInt32();
             for (int i = 0; i < objectCount; i++)

@@ -35,7 +35,7 @@ namespace PlusStudioLevelFormat
             }
         }
         public PlusDirection spawnDirection = PlusDirection.North;
-        public static readonly byte version = 0; // i realized there is no reason to have changed this to 1 since people can't export levels yet
+        public static readonly byte version = 1;
         public string levelTitle = "WIP";
         public float timeLimit = 0f;
 
@@ -178,6 +178,18 @@ namespace PlusStudioLevelFormat
                         item = objectsCompressor.ReadStoredString(reader),
                         position = reader.ReadUnityVector2()
                     });
+                }
+                if (version >= 1)
+                {
+                    int itemSpawnCount = reader.ReadInt32();
+                    for (int j = 0; j < itemSpawnCount; j++)
+                    {
+                        room.itemSpawns.Add(new ItemSpawnInfo()
+                        {
+                            weight = reader.ReadInt32(),
+                            position = reader.ReadUnityVector2()
+                        });
+                    }
                 }
                 int basicObjectCount = reader.ReadInt32();
                 for (int j = 0; j < basicObjectCount; j++)
@@ -421,6 +433,12 @@ namespace PlusStudioLevelFormat
                 {
                     objectsCompressor.WriteStoredString(writer, rooms[i].items[j].item);
                     writer.Write(rooms[i].items[j].position);
+                }
+                writer.Write(rooms[i].itemSpawns.Count);
+                for (int j = 0; j < rooms[i].itemSpawns.Count; j++)
+                {
+                    writer.Write(rooms[i].itemSpawns[j].weight);
+                    writer.Write(rooms[i].itemSpawns[j].position);
                 }
                 writer.Write(rooms[i].basicObjects.Count);
                 for (int j = 0; j < rooms[i].basicObjects.Count; j++)

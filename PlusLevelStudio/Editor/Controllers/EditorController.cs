@@ -244,6 +244,11 @@ namespace PlusLevelStudio.Editor
         {
             BinaryReader reader = new BinaryReader(new FileStream(path, FileMode.Open, FileAccess.Read));
             EditorFileContainer file = EditorFileContainer.ReadMindful(reader);
+            if (file.meta == null)
+            {
+                file.meta = new EditorFileMeta();
+                file.meta.editorMode = "full"; // if the file doesn't have EditorFileMeta it must be OLD.
+            }
             if (file.meta.editorMode == currentMode.id)
             {
                 LoadEditorLevelAndMeta(file);
@@ -298,6 +303,10 @@ namespace PlusLevelStudio.Editor
                 AddVisual(item);
             }
             foreach (ItemPlacement item in levelData.items)
+            {
+                AddVisual(item);
+            }
+            foreach (ItemSpawnPlacement item in levelData.itemSpawns)
             {
                 AddVisual(item);
             }

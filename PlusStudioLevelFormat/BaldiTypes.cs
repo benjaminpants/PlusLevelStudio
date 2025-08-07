@@ -36,6 +36,7 @@ namespace PlusStudioLevelFormat
         public string type;
         public TextureContainer textureContainer;
         public List<ItemInfo> items = new List<ItemInfo>();
+        public List<ItemSpawnInfo> itemSpawns = new List<ItemSpawnInfo>();
         public List<BasicObjectInfo> basicObjects = new List<BasicObjectInfo>();
         public ActivityInfo activity;
 
