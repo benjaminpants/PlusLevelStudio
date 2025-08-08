@@ -16,6 +16,12 @@ namespace PlusStudioLevelLoader
             T asset = ScriptableObject.CreateInstance<T>();
             asset.name = info.name;
             ((UnityEngine.Object)asset).name = info.name;
+            RoomSettings rc = LevelLoaderPlugin.Instance.roomSettings[info.type];
+            asset.category = rc.category;
+            asset.type = rc.type;
+            asset.doorMats = rc.doorMat;
+            asset.roomFunctionContainer = rc.container;
+            asset.color = rc.color;
             asset.florTex = LevelLoaderPlugin.RoomTextureFromAlias(info.textureContainer.floor);
             asset.wallTex = LevelLoaderPlugin.RoomTextureFromAlias(info.textureContainer.wall);
             asset.ceilTex = LevelLoaderPlugin.RoomTextureFromAlias(info.textureContainer.ceiling);
@@ -71,6 +77,25 @@ namespace PlusStudioLevelLoader
                     position = info.posters[i].position.ToInt(),
                     direction = (Direction)info.posters[i].direction,
                     poster = LevelLoaderPlugin.Instance.posterAliases[info.posters[i].poster]
+                });
+            }
+            for (int i = 0; i < info.lights.Count; i++)
+            {
+                asset.lights.Add(new LightSourceData()
+                {
+                    prefab = LevelLoaderPlugin.Instance.lightTransforms[info.lights[i].prefab],
+                    color = info.lights[i].color.ToStandard(),
+                    position = info.lights[i].position.ToInt(),
+                    strength = info.lights[i].strength
+                });
+            }
+            for (int i = 0; i < info.basicObjects.Count; i++)
+            {
+                asset.basicObjects.Add(new BasicObjectData()
+                {
+                    prefab = LevelLoaderPlugin.Instance.basicObjects[info.basicObjects[i].prefab].transform,
+                    position = info.basicObjects[i].position.ToUnity(),
+                    rotation = info.basicObjects[i].rotation.ToUnity(),
                 });
             }
             asset.maxItemValue = info.maxItemValue;

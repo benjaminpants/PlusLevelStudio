@@ -35,7 +35,7 @@ namespace PlusStudioLevelLoader.Patches
             if (!(asset is ExtendedRoomAsset)) return;
             ExtendedRoomAsset extendedAsset = (ExtendedRoomAsset)asset;
             ExtendedRoomData extendedData = new ExtendedRoomData();
-            FieldInfo[] fields = typeof(RoomAsset).GetFields();
+            FieldInfo[] fields = typeof(RoomData).GetFields();
             for (int i = 0; i < fields.Length; i++)
             {
                 fields[i].SetValue(extendedData, fields[i].GetValue(__result));

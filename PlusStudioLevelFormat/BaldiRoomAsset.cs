@@ -35,6 +35,7 @@ namespace PlusStudioLevelFormat
         public ActivityInfo activity;
         public List<RoomCellInfo> cells = new List<RoomCellInfo>();
         public List<ItemSpawnInfo> itemSpawns = new List<ItemSpawnInfo>();
+        public List<LightInfo> lights = new List<LightInfo>();
         public List<ByteVector2> potentialDoorPositions = new List<ByteVector2>();
         public List<ByteVector2> forcedDoorPositions = new List<ByteVector2>();
         public List<ByteVector2> entitySafeCells = new List<ByteVector2>();
@@ -107,6 +108,15 @@ namespace PlusStudioLevelFormat
             {
                 writer.Write(itemSpawns[i].position);
                 writer.Write(itemSpawns[i].weight);
+            }
+
+            writer.Write(lights.Count);
+            for (int i = 0; i < lights.Count; i++)
+            {
+                writer.Write(lights[i].prefab);
+                writer.Write(lights[i].position);
+                writer.Write(lights[i].strength);
+                writer.Write(lights[i].color);
             }
 
             writer.Write(potentialDoorPositions.Count);
@@ -205,6 +215,18 @@ namespace PlusStudioLevelFormat
                 {
                     position=reader.ReadUnityVector2(),
                     weight=reader.ReadInt32()
+                });
+            }
+
+            int lightCount = reader.ReadInt32();
+            for (int i = 0; i < lightCount; i++)
+            {
+                info.lights.Add(new LightInfo()
+                {
+                    prefab = reader.ReadString(),
+                    position = reader.ReadByteVector2(),
+                    strength = reader.ReadByte(),
+                    color = reader.ReadUnityColor()
                 });
             }
 

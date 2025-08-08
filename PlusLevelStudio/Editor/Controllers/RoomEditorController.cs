@@ -92,6 +92,19 @@ namespace PlusLevelStudio.Editor
                 {
                     roomAsset.itemSpawns.Add(room.itemSpawns[j]);
                 }
+                for (int j = 0; j < baseLevel.lights.Count; j++)
+                {
+                    if (originalOwnedCells.Contains(baseLevel.lights[j].position))
+                    {
+                        roomAsset.lights.Add(new LightInfo()
+                        {
+                            prefab = baseLevel.lights[j].prefab,
+                            color = baseLevel.lights[j].color,
+                            strength = baseLevel.lights[j].strength,
+                            position = (baseLevel.lights[j].position.ToInt() - offset).ToByte()
+                        });
+                    }
+                }
                 for (int j = 0; j < baseLevel.posters.Count; j++)
                 {
                     if (originalOwnedCells.Contains(baseLevel.posters[j].position))

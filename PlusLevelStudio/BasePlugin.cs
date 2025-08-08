@@ -364,6 +364,7 @@ namespace PlusLevelStudio
                 availableTools = new Dictionary<string, List<EditorTool>>(),
                 categoryOrder = new string[] {
                     "rooms",
+                    "lights",
                     "activities",
                     "objects",
                     "posters",
@@ -396,13 +397,14 @@ namespace PlusLevelStudio
             EditorInterfaceModes.AddToolToCategory(roomsMode, "items", new ItemSpawnTool(100), true);
             EditorInterfaceModes.AddVanillaItems(roomsMode);
             EditorInterfaceModes.AddVanillaPosters(roomsMode);
+            EditorInterfaceModes.AddToolToCategory(roomsMode, "lights", new PointTechnicalStructureTool("lightspot"), true);
+            EditorInterfaceModes.AddVanillaLights(roomsMode);
 
             EditorInterfaceModes.AddToolsToCategory(roomsMode, "tools", new EditorTool[]
             {
                 new PointTechnicalStructureTool("potentialdoor"),
                 new PointTechnicalStructureTool("forceddoor"),
                 new PointTechnicalStructureTool("nosafe"),
-                new PointTechnicalStructureTool("lightspot"),
             }, true);
             EditorInterfaceModes.AddVanillaToolTools(roomsMode);
 
