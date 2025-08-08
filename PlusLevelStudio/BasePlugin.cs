@@ -393,6 +393,7 @@ namespace PlusLevelStudio
             EditorInterfaceModes.AddVanillaRooms(roomsMode);
             EditorInterfaceModes.AddVanillaObjects(roomsMode);
             EditorInterfaceModes.AddVanillaActivities(roomsMode);
+            EditorInterfaceModes.AddToolToCategory(roomsMode, "items", new ItemSpawnTool(100), true);
             EditorInterfaceModes.AddVanillaItems(roomsMode);
             EditorInterfaceModes.AddVanillaPosters(roomsMode);
 

@@ -352,8 +352,15 @@ namespace PlusLevelStudio.Editor
                         PlayLevel();
                     });
                     break;
+                case "saveAndExport":
+                    EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.levelFilePath, "ebpl", (string typedName) =>
+                    {
+                        EditorController.Instance.SaveEditorLevelToFile(Path.Combine(LevelStudioPlugin.levelFilePath, typedName + ".ebpl"));
+                        EditorController.Instance.Export();
+                    });
+                    break;
                 case "export":
-                    EditorController.Instance.Export();
+                    EditorController.Instance.ExportWithChecks();
                     break;
                 case "undo":
                     EditorController.Instance.PopUndo();

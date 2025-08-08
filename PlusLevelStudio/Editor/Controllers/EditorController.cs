@@ -582,6 +582,27 @@ namespace PlusLevelStudio.Editor
             return thumb;
         }
 
+        public void ExportWithChecks()
+        {
+            if ((currentFileName == null) || currentFileName == string.Empty)
+            {
+                CreateUIPopup(LocalizationManager.Instance.GetLocalizedText("Ed_Menu_NeedSaveToExport"), () =>
+                {
+                    uiObjects[0].GetComponent<EditorUIMainHandler>().SendInteractionMessage("saveAndExport", null);
+                }, () => { });
+                return;
+            }
+            if (hasUnsavedChanges)
+            {
+                CreateUIPopup(LocalizationManager.Instance.GetLocalizedText("Ed_Menu_UnsavedChangesExport"), () =>
+                {
+                    uiObjects[0].GetComponent<EditorUIMainHandler>().SendInteractionMessage("saveAndExport", null);
+                }, () => { Export(); });
+                return;
+            }
+            Export();
+        }
+
         public virtual void Export()
         {
             BaldiLevel level = Compile();

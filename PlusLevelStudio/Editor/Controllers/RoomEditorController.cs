@@ -1,14 +1,16 @@
 ﻿using PlusStudioLevelFormat;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace PlusLevelStudio.Editor
 {
     public class RoomEditorController : EditorController
     {
-        static List<BaldiRoomAsset> testExport = new List<BaldiRoomAsset>();
         public override void Export()
         {
             List<BaldiRoomAsset> roomAssets = new List<BaldiRoomAsset>();
@@ -24,6 +26,7 @@ namespace PlusLevelStudio.Editor
                 if (room.type == "hall") continue; // place the holder
                 BaldiRoomAsset roomAsset = new BaldiRoomAsset();
                 roomAsset.name = room.type;
+                roomAsset.type = room.type;
                 roomAsset.textureContainer = new TextureContainer(room.textureContainer);
                 roomAsset.windowType = "standard";
                 List<RoomCellInfo> cells = new List<RoomCellInfo>();
@@ -85,6 +88,10 @@ namespace PlusLevelStudio.Editor
                 {
                     roomAsset.items.Add(room.items[j]);
                 }
+                for (int j = 0; j < room.itemSpawns.Count; j++)
+                {
+                    roomAsset.itemSpawns.Add(room.itemSpawns[j]);
+                }
                 for (int j = 0; j < baseLevel.posters.Count; j++)
                 {
                     if (originalOwnedCells.Contains(baseLevel.posters[j].position))
@@ -105,10 +112,29 @@ namespace PlusLevelStudio.Editor
                         technicalStuff[j].CompileIntoRoom(levelData, baseLevel, offset, roomAsset);
                     }
                 }
+                roomAsset.name += "_" + i + "_" + roomAsset.cells.Count + "_" + (roomAsset.activity == null ? "null" : roomAsset.activity.type);
                 roomAssets.Add(roomAsset);
             }
 
-            testExport = roomAssets;
+            if (roomAssets.Count == 0) return;
+            if (roomAssets.Count == 1)
+            {
+                Directory.CreateDirectory(LevelStudioPlugin.levelExportPath);
+                BinaryWriter writer = new BinaryWriter(new FileStream(Path.Combine(LevelStudioPlugin.levelExportPath, currentFileName + ".rbpl"), FileMode.Create, FileAccess.Write));
+                roomAssets[0].Write(writer);
+                writer.Close();
+                Application.OpenURL("file://" + LevelStudioPlugin.levelExportPath);
+                return;
+            }
+            string roomsPath = Path.Combine(LevelStudioPlugin.levelExportPath, currentFileName);
+            Directory.CreateDirectory(roomsPath);
+            for (int i = 0; i < roomAssets.Count; i++)
+            {
+                BinaryWriter writer = new BinaryWriter(new FileStream(Path.Combine(roomsPath, roomAssets[i].name + ".rbpl"), FileMode.Create, FileAccess.Write));
+                roomAssets[i].Write(writer);
+                writer.Close();
+            }
+            Application.OpenURL("file://" + roomsPath);
         }
 
         public override void PlayLevel()

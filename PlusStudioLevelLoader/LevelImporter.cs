@@ -164,7 +164,7 @@ namespace PlusStudioLevelLoader
                     };
                 }
             }
-            // TODO: move this to a seperate method, we'll have to implement ConvertFromData for ExtendedLevelAsset
+            // NOTE: the code below is copy and pasted for creating RoomAssets. Keep that in mind when modifying this.
             for (int i = 0; i < level.rooms.Count; i++)
             {
                 RoomSettings settings = LevelLoaderPlugin.Instance.roomSettings[level.rooms[i].type];
@@ -185,6 +185,11 @@ namespace PlusStudioLevelLoader
                     items = level.rooms[i].items.Select(x => new ItemData()
                     {
                         item = LevelLoaderPlugin.Instance.itemObjects[x.item],
+                        position = x.position.ToUnity()
+                    }).ToList(),
+                    itemSpawnPoints = level.rooms[i].itemSpawns.Select(x => new ItemSpawnPoint()
+                    {
+                        weight = x.weight,
                         position = x.position.ToUnity()
                     }).ToList(),
                     basicObjects = level.rooms[i].basicObjects.Select(x => new BasicObjectData()
