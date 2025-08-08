@@ -3,7 +3,7 @@
 {"key":"Ed_Tip_PlayButton","value":"Play your level!"},
 {"key":"Ed_Tip_SaveButton","value":"Save your level!"},
 {"key":"Ed_Tip_LoadButton","value":"Load a level!"},
-{"key":"Ed_Tip_ExportButton","value":"Export your level to share with others!\n(Not done, currently non-functional. Just continue sharing the ebpl for now.)"},
+{"key":"Ed_Tip_ExportButton","value":"Export your level to share with others!"},
 {"key":"Ed_Tip_GlobalSettings","value":"Global Settings"},
 {"key":"Ed_Tip_Undo","value":"Undo"},
 {"key":"Ed_Tip_Worldspace","value":"World space translations"},

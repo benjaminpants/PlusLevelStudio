@@ -371,7 +371,7 @@ namespace PlusLevelStudio
                     "items",
                     "tools"
                 },
-                defaultTools = new string[] { "room_hall", "room_class", "room_faculty", "room_office", "room_closet", "room_reflex", "room_cafeteria", "merge", "delete" },
+                defaultTools = new string[] { "room_class", "room_faculty", "room_office", "technical_potentialdoor", "technical_lightspot", "technical_nosafe", "itemspawn_100", "merge", "delete" },
                 vanillaComplaint = true,
                 caresAboutSpawn = false,
                 prefab = rce,
@@ -392,9 +392,15 @@ namespace PlusLevelStudio
             };
 
             EditorInterfaceModes.AddVanillaRooms(roomsMode);
+            roomsMode.availableTools["rooms"].RemoveAt(roomsMode.availableTools["rooms"].FindIndex(x => x.id == "room_hall")); // because halls aren't supported quite yet
             EditorInterfaceModes.AddVanillaObjects(roomsMode);
             EditorInterfaceModes.AddVanillaActivities(roomsMode);
-            EditorInterfaceModes.AddToolToCategory(roomsMode, "items", new ItemSpawnTool(100), true);
+            EditorInterfaceModes.AddToolsToCategory(roomsMode, "items", new EditorTool[]
+            {
+                new ItemSpawnTool(100),
+                new ItemSpawnTool(50),
+                new ItemSpawnTool(25)
+            }, true);
             EditorInterfaceModes.AddVanillaItems(roomsMode);
             EditorInterfaceModes.AddVanillaPosters(roomsMode);
             EditorInterfaceModes.AddToolToCategory(roomsMode, "lights", new PointTechnicalStructureTool("lightspot"), true);

@@ -260,6 +260,22 @@
 {"key":"Ed_RandomEvent_party","value":"Party\nA party is declared at the Principal's Office!\nA random high value item will be waiting inside."},
 {"key":"Ed_RandomEvent_mysteryroom","value":"Mystery Room\nThe mystery room appears!\nPlace whatever you want inside!"},
 {"key":"Ed_RandomEvent_testprocedure","value":"Currently non-functional, do not use."},
-{"key":"Ed_RandomEvent_gravitychaos","value":"Gravity Chaos\nShapes appear all around the school, flipping gravity!\nNPCs on different gravities can't interact."}
+{"key":"Ed_RandomEvent_gravitychaos","value":"Gravity Chaos\nShapes appear all around the school, flipping gravity!\nNPCs on different gravities can't interact."},
+
+{"key":"Ed_Tool_technical_lightspot_Title","value":"Light Spot"},
+{"key":"Ed_Tool_technical_lightspot_Desc","value":"<b>USE THIS ONE!</b> This light will automatically match the color and prefab of the level its used in. In editor shows as light group 1 always."},
+{"key":"Ed_Tool_technical_potentialdoor_Title","value":"Potential Door"},
+{"key":"Ed_Tool_technical_potentialdoor_Desc","value":"Marks a cell as able to potentially have doors on it."},
+{"key":"Ed_Tool_technical_forceddoor_Title","value":"Forced Door"},
+{"key":"Ed_Tool_technical_forceddoor_Desc","value":"Marks a cell as needing a door at that position. Not recommended."},
+{"key":"Ed_Tool_technical_nosafe_Title","value":"Unsafe Cell Marker"},
+{"key":"Ed_Tool_technical_nosafe_Desc","value":"Marks a cell as not safe for entities or events, regardless of what the compilation process calculated."},
+
+{"key":"Ed_Tool_itemspawn_100_Title","value":"Potential Item Spawn (100)"},
+{"key":"Ed_Tool_itemspawn_100_Desc","value":"A potential item spawn with the weight of 100."},
+{"key":"Ed_Tool_itemspawn_50_Title","value":"Potential Item Spawn (50)"},
+{"key":"Ed_Tool_itemspawn_50_Desc","value":"A potential item spawn with the weight of 50."},
+{"key":"Ed_Tool_itemspawn_25_Title","value":"Potential Item Spawn (25)"},
+{"key":"Ed_Tool_itemspawn_25_Desc","value":"A potential item spawn with the weight of 25."}
 
 ]}
