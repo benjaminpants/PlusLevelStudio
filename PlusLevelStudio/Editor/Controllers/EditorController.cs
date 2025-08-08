@@ -240,7 +240,7 @@ namespace PlusLevelStudio.Editor
             cameraRotation = file.meta.cameraRotation.eulerAngles;
         }
 
-        public void LoadEditorLevelFromFile(string path)
+        public bool LoadEditorLevelFromFile(string path)
         {
             BinaryReader reader = new BinaryReader(new FileStream(path, FileMode.Open, FileAccess.Read));
             EditorFileContainer file = EditorFileContainer.ReadMindful(reader);
@@ -256,9 +256,12 @@ namespace PlusLevelStudio.Editor
             else
             {
                 TriggerError("File of mismatched editor mode!");
+                reader.Close();
+                return false;
             }
             //EditorController.Instance.LoadEditorLevel(EditorLevelData.ReadFrom(reader), true);
             reader.Close();
+            return true;
         }
 
         public void SaveEditorLevelToFile(string path)
@@ -762,7 +765,7 @@ namespace PlusLevelStudio.Editor
             handler.OnNo = onNo;
         }
 
-        public void CreateUIFileBrowser(string path, string extension, Action<string> onSubmit)
+        public void CreateUIFileBrowser(string path, string extension, Func<string, bool> onSubmit)
         {
             EditorUIFileBrowser fileBrowser = EditorController.Instance.CreateUI<EditorUIFileBrowser>("FileBrowser");
             fileBrowser.Setup(path, extension, onSubmit);

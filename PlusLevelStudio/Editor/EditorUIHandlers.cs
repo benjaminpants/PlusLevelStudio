@@ -12,7 +12,7 @@ namespace PlusLevelStudio.Editor
 {
     public class EditorUIFileBrowser : EditorOverlayUIExchangeHandler
     {
-        Action<string> onSubmit;
+        Func<string, bool> onSubmit;
         TextMeshProUGUI textbox;
 
         public override void OnElementsCreated()
@@ -21,7 +21,7 @@ namespace PlusLevelStudio.Editor
             textbox = transform.Find("Textbox").GetComponent<TextMeshProUGUI>();
         }
 
-        public void Setup(string path, string extension, Action<string> action)
+        public void Setup(string path, string extension, Func<string, bool> action)
         {
             onSubmit = action;
             textbox.text = "MyFirstLevel";
@@ -35,8 +35,10 @@ namespace PlusLevelStudio.Editor
         {
             if (message == "submit")
             {
-                onSubmit(textbox.text);
-                EditorController.Instance.currentFileName = textbox.text;
+                if (onSubmit(textbox.text))
+                {
+                    EditorController.Instance.currentFileName = textbox.text;
+                }
                 base.SendInteractionMessage("exit", null);
                 return;
             }
@@ -336,13 +338,14 @@ namespace PlusLevelStudio.Editor
                 case "load":
                     EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.levelFilePath, "ebpl", (string typedName) =>
                     {
-                        EditorController.Instance.LoadEditorLevelFromFile(Path.Combine(LevelStudioPlugin.levelFilePath, typedName + ".ebpl"));
+                        return EditorController.Instance.LoadEditorLevelFromFile(Path.Combine(LevelStudioPlugin.levelFilePath, typedName + ".ebpl"));
                     });
                     break;
                 case "save":
                     EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.levelFilePath, "ebpl", (string typedName) =>
                     {
                         EditorController.Instance.SaveEditorLevelToFile(Path.Combine(LevelStudioPlugin.levelFilePath, typedName + ".ebpl"));
+                        return true;
                     });
                     break;
                 case "saveAndPlay":
@@ -350,6 +353,7 @@ namespace PlusLevelStudio.Editor
                     {
                         EditorController.Instance.SaveEditorLevelToFile(Path.Combine(LevelStudioPlugin.levelFilePath, typedName + ".ebpl"));
                         PlayLevel();
+                        return true;
                     });
                     break;
                 case "saveAndExport":
@@ -357,6 +361,7 @@ namespace PlusLevelStudio.Editor
                     {
                         EditorController.Instance.SaveEditorLevelToFile(Path.Combine(LevelStudioPlugin.levelFilePath, typedName + ".ebpl"));
                         EditorController.Instance.Export();
+                        return true;
                     });
                     break;
                 case "export":
