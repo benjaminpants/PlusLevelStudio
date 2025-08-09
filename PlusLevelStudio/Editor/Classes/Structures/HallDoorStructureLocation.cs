@@ -1,4 +1,5 @@
 ﻿using PlusStudioLevelFormat;
+using PlusStudioLevelLoader;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -51,7 +52,7 @@ namespace PlusLevelStudio.Editor
             {
                 finalStructure.data.Add(new StructureDataInfo()
                 {
-                    position = myChildren[i].position.ToByte(),
+                    position = myChildren[i].position.ToData(),
                     direction = (PlusDirection)myChildren[i].direction,
                     prefab = myChildren[i].prefab,
                 });
@@ -198,14 +199,14 @@ namespace PlusLevelStudio.Editor
             {
                 finalStructure.data.Add(new StructureDataInfo()
                 {
-                    position = myChildren[i].position.ToByte(),
+                    position = myChildren[i].position.ToData(),
                     direction = (PlusDirection)myChildren[i].direction,
                     prefab = myChildren[i].prefab,
                 });
                 // this is how we establish a button/lever
                 finalStructure.data.Add(new StructureDataInfo()
                 {
-                    position = buttons[i].position.ToByte(),
+                    position = buttons[i].position.ToData(),
                     direction = (PlusDirection)buttons[i].direction,
                     data = 1,
                 });

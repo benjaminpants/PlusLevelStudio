@@ -1,4 +1,5 @@
 ﻿using PlusStudioLevelFormat;
+using PlusStudioLevelLoader;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -133,20 +134,20 @@ namespace PlusLevelStudio.Editor
                     ConveyorBeltLocation belt = kvp.Value[i];
                     info.data.Add(new StructureDataInfo()
                     {
-                        position = belt.startPosition.ToByte(),
+                        position = belt.startPosition.ToData(),
                         direction = (PlusDirection)belt.direction,
                         data = 0
                     });
                     info.data.Add(new StructureDataInfo()
                     {
-                        position = (belt.startPosition + (belt.direction.ToIntVector2() * (belt.distance - 1))).ToByte(),
+                        position = (belt.startPosition + (belt.direction.ToIntVector2() * (belt.distance - 1))).ToData(),
                         data = 0
                     });
                 }
                 info.data.Add(new StructureDataInfo()
                 {
                     data = 1,
-                    position = buttons[kvp.Key].position.ToByte(),
+                    position = buttons[kvp.Key].position.ToData(),
                     direction = (PlusDirection)buttons[kvp.Key].direction,
                 });
             }
@@ -157,13 +158,13 @@ namespace PlusLevelStudio.Editor
                     ConveyorBeltLocation belt = kvps[-1][i];
                     info.data.Add(new StructureDataInfo()
                     {
-                        position = belt.startPosition.ToByte(),
+                        position = belt.startPosition.ToData(),
                         direction = (PlusDirection)belt.direction,
                         data = 0
                     });
                     info.data.Add(new StructureDataInfo()
                     {
-                        position = (belt.startPosition + (belt.direction.ToIntVector2() * (belt.distance - 1))).ToByte(),
+                        position = (belt.startPosition + (belt.direction.ToIntVector2() * (belt.distance - 1))).ToData(),
                         data = 0
                     });
                 }

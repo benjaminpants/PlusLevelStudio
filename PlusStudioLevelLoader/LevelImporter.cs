@@ -307,7 +307,7 @@ namespace PlusStudioLevelLoader
                 for (int j = 0; j < level.structures[i].data.Count; j++)
                 {
                     StructureDataInfo info = level.structures[i].data[j];
-                    structureData.data.Add(new StructureData(converter.prefabAliases.ContainsKey(info.prefab) ? converter.prefabAliases[info.prefab] : null, info.position.ToInt(), (Direction)info.direction, info.data));
+                    structureData.data.Add(new StructureData(converter.prefabAliases.ContainsKey(info.prefab) ? converter.prefabAliases[info.prefab] : null, info.position.ToStandard(), (Direction)info.direction, info.data));
                 }
                 asset.structures.Add(structureData);
             }

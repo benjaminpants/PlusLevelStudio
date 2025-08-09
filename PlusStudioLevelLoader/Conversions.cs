@@ -28,6 +28,16 @@ namespace PlusStudioLevelLoader
             return new ByteVector2(me.x, me.z);
         }
 
+        public static IntVector2 ToStandard(this MystIntVector2 me)
+        {
+            return new IntVector2(me.x, me.z);
+        }
+
+        public static MystIntVector2 ToData(this IntVector2 me)
+        {
+            return new MystIntVector2(me.x, me.z);
+        }
+
         public static Vector3 ToUnity(this UnityVector3 me)
         {
             return new Vector3(me.x, me.y, me.z);

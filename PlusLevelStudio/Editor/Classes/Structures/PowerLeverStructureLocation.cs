@@ -1,6 +1,7 @@
 ﻿using MTM101BaldAPI;
 using PlusLevelStudio.Editor.SettingsUI;
 using PlusStudioLevelFormat;
+using PlusStudioLevelLoader;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -228,7 +229,7 @@ namespace PlusLevelStudio.Editor
                 info.data.Add(new StructureDataInfo()
                 {
                     data = 0,
-                    position = alarmLights[i].position.ToByte()
+                    position = alarmLights[i].position.ToData()
                 });
             }
             for (int i = 0; i < powerLevers.Count; i++)
@@ -236,7 +237,7 @@ namespace PlusLevelStudio.Editor
                 info.data.Add(new StructureDataInfo()
                 {
                     data = 1,
-                    position = powerLevers[i].position.ToByte(),
+                    position = powerLevers[i].position.ToData(),
                     direction = (PlusDirection)powerLevers[i].direction
                 });
                 info.data.Add(new StructureDataInfo()
@@ -253,7 +254,7 @@ namespace PlusLevelStudio.Editor
                 info.data.Add(new StructureDataInfo()
                 {
                     data = 2,
-                    position = breakers[i].position.ToByte(),
+                    position = breakers[i].position.ToData(),
                     direction = (PlusDirection)breakers[i].direction
                 });
             }

@@ -1,4 +1,5 @@
 ﻿using PlusStudioLevelFormat;
+using PlusStudioLevelLoader;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -239,7 +240,7 @@ namespace PlusLevelStudio.Editor
                     info.data.Add(new StructureDataInfo()
                     {
                         direction = (PlusDirection)location.direction,
-                        position = location.positions[j].ToByte(),
+                        position = location.positions[j].ToData(),
                         data = ((j == (location.positions.Count - 1)) ? 1 : 0)
                     });
                 }

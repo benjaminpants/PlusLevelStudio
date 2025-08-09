@@ -38,6 +38,39 @@ namespace PlusStudioLevelFormat
         public static bool operator !=(ByteVector2 a, ByteVector2 b) => !(a == b);
     }
 
+    public struct MystIntVector2
+    {
+        private int _x;
+        private int _z;
+        public int x => _x;
+        public int z => _z;
+
+        public MystIntVector2(byte x, byte y)
+        {
+            _x = x;
+            _z = y;
+        }
+
+        public MystIntVector2(int x, int y)
+        {
+            _x = (byte)x;
+            _z = (byte)y;
+        }
+
+        public static MystIntVector2 one => new MystIntVector2(1, 1);
+
+        public static MystIntVector2 operator +(MystIntVector2 a, MystIntVector2 b) => new MystIntVector2(a.x + b.x, a.z + b.z);
+
+        public static MystIntVector2 operator -(MystIntVector2 a, MystIntVector2 b) => new MystIntVector2(a.x - b.x, a.z - b.z);
+
+        public static MystIntVector2 operator *(MystIntVector2 a, int b) => new MystIntVector2(a.x * b, a.z * b);
+
+        public static MystIntVector2 operator /(MystIntVector2 a, int b) => new MystIntVector2(a.x / b, a.z / b);
+
+        public static bool operator ==(MystIntVector2 a, MystIntVector2 b) => ((a.x == b.x) && (a.z == b.z));
+        public static bool operator !=(MystIntVector2 a, MystIntVector2 b) => !(a == b);
+    }
+
     // TODO: Write Nybble array writer and Nybble array reader for BinaryReader and BinaryWriter
     public static class NybbleExtensions
     {

@@ -35,7 +35,7 @@ namespace PlusStudioLevelFormat
             }
         }
         public PlusDirection spawnDirection = PlusDirection.North;
-        public static readonly byte version = 1;
+        public static readonly byte version = 2;
         public string levelTitle = "WIP";
         public float timeLimit = 0f;
 
@@ -275,13 +275,26 @@ namespace PlusStudioLevelFormat
                 int dataCount = reader.ReadInt32();
                 for (int j = 0; j < dataCount; j++)
                 {
-                    info.data.Add(new StructureDataInfo()
+                    if (version >= 2)
                     {
-                        prefab=objectsCompressor.ReadStoredString(reader),
-                        position=reader.ReadByteVector2(),
-                        direction=(PlusDirection)reader.ReadByte(),
-                        data=reader.ReadInt32()
-                    });
+                        info.data.Add(new StructureDataInfo()
+                        {
+                            prefab = objectsCompressor.ReadStoredString(reader),
+                            position = reader.ReadMystIntVector2(),
+                            direction = (PlusDirection)reader.ReadByte(),
+                            data = reader.ReadInt32()
+                        });
+                    }
+                    else
+                    {
+                        info.data.Add(new StructureDataInfo()
+                        {
+                            prefab = objectsCompressor.ReadStoredString(reader),
+                            position = new MystIntVector2(reader.ReadByte(), reader.ReadByte()),
+                            direction = (PlusDirection)reader.ReadByte(),
+                            data = reader.ReadInt32()
+                        });
+                    }
                 }
                 level.structures.Add(info);
             }
