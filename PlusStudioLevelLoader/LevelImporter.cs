@@ -64,7 +64,7 @@ namespace PlusStudioLevelLoader
             }
             for (int i = 0; i < info.eventSafeCells.Count; i++)
             {
-                asset.entitySafeCells.Add(info.eventSafeCells[i].ToInt());
+                asset.eventSafeCells.Add(info.eventSafeCells[i].ToInt());
             }
             for (int i = 0; i < info.standardLightCells.Count; i++)
             {
