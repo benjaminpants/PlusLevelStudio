@@ -13,6 +13,7 @@ namespace PlusLevelStudio
     {
         public PlayableLevelMeta meta;
         public Texture2D texture; // TODO: consider moving to PlayableLevelMeta to allow for custom icons.
+        public string filePath;
         public BaldiLevel data;
 
         public const byte version = 1;

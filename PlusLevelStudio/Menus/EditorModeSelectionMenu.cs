@@ -78,7 +78,6 @@ namespace PlusLevelStudio.Menus
             {
                 emms.playParent.SetActive(true);
                 emms.playScreenManager.UpdateFromFolder();
-                emms.playScreenManager.ChangePage(0);
                 emms.playScreenManager.SetFileWatcherStatus(true);
                 emms.playOrEditParent.SetActive(false);
             });

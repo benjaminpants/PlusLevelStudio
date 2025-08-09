@@ -14,6 +14,9 @@
 {"key":"Ed_Tip_InitialEventTime","value":"The minimum amount of time in seconds before any event can start.\nThis is added with a random number between min and max event time\nto determine the starting time of the first event."},
 {"key":"Ed_Tip_MinEventTime","value":"The minimum gap between events in seconds."},
 {"key":"Ed_Tip_MaxEventTime","value":"The maximum gap between events in seconds."},
-{"key":"Ed_Tip_MinLevelTooHigh","value":"The minimum light level is too high and there will be no hideable dark areas!\nClick to fix!"}
+{"key":"Ed_Tip_MinLevelTooHigh","value":"The minimum light level is too high and there will be no hideable dark areas!\nClick to fix!"},
+{"key":"Ed_Tip_Mode_Full","value":"This is the editor mode most want to use.\nCreate and share levels here!"},
+{"key":"Ed_Tip_Mode_Compliant","value":"A more restricted version of the editor designed for modders.\nExports a .bpl that can be loaded only using the loader."},
+{"key":"Ed_Tip_Mode_Rooms","value":"A version of the editor designed for creating rooms for use in the level generator.\nExports multiple .rbpl files for the level loader."}
 
 ]}

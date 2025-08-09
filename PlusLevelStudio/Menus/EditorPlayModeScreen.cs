@@ -1,6 +1,7 @@
 ﻿using MTM101BaldAPI;
 using MTM101BaldAPI.UI;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -10,6 +11,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Playables;
 using UnityEngine.UI;
+using static System.Net.WebRequestMethods;
 
 namespace PlusLevelStudio.Menus
 {
@@ -17,7 +19,7 @@ namespace PlusLevelStudio.Menus
     {
         internal static void CreatePlayModeMenu(EditorModeSelectionMenu menu)
         {
-            TextMeshProUGUI BIGText = UIHelpers.CreateText<TextMeshProUGUI>(BaldiFonts.ComicSans36, "No Levels Found :(", menu.playParent.transform, Vector3.zero);
+            TextMeshProUGUI BIGText = UIHelpers.CreateText<TextMeshProUGUI>(BaldiFonts.ComicSans36, "No Levels Found", menu.playParent.transform, Vector3.zero);
             BIGText.rectTransform.sizeDelta = new Vector2(200f, 64f);
             BIGText.alignment = TextAlignmentOptions.Center;
             menu.playScreenManager = menu.playParent.AddComponent<EditorPlayScreenManager>();
@@ -102,8 +104,8 @@ namespace PlusLevelStudio.Menus
             titleText.rectTransform.anchorMin = center;
             titleText.rectTransform.anchorMax = center;
             titleText.rectTransform.pivot = new Vector2(0.5f, 0.5f);
-            titleText.rectTransform.sizeDelta = new Vector2(136f,16f);
-            titleText.rectTransform.anchoredPosition = new Vector2(0f,24f);
+            titleText.rectTransform.sizeDelta = new Vector2(164f,16f);
+            titleText.rectTransform.anchoredPosition = new Vector2(14f,24f);
             titleText.alignment = TextAlignmentOptions.Left;
 
             TextMeshProUGUI authorText = UIHelpers.CreateText<TextMeshProUGUI>(BaldiFonts.ComicSans12, "By MissingTextureMan101", playBase.transform, Vector3.zero, false);
@@ -214,13 +216,62 @@ namespace PlusLevelStudio.Menus
             shouldRefresh = true;
         }
 
+        // these freeze the game...
+        // TODO: why?
+        /*
+        void FileCreated(object sender, FileSystemEventArgs e)
+        {
+            if (e.ChangeType != WatcherChangeTypes.Created) return;
+            AddFromFile(e.FullPath);
+            ChangePage(0);
+        }
+
+        void FileDeleted(object sender, FileSystemEventArgs e)
+        {
+            if (e.ChangeType != WatcherChangeTypes.Deleted) return;
+            int toDeleteIndex = playableLevels.FindIndex(x => x.filePath == e.FullPath);
+            if (toDeleteIndex == -1)
+            {
+                UnityEngine.Debug.LogWarning("Tried to handle deletion for file not in list: " + e.FullPath);
+                return;
+            }
+            playableLevels.RemoveAt(toDeleteIndex);
+            ChangePage(0);
+        }
+
+        void FileChanged(object sender, FileSystemEventArgs e)
+        {
+            if (e.ChangeType != WatcherChangeTypes.Changed) return;
+            int toDeleteIndex = playableLevels.FindIndex(x => x.filePath == e.FullPath);
+            if (toDeleteIndex == -1)
+            {
+                UnityEngine.Debug.LogWarning("Tried to handle change for file not in list: " + e.FullPath);
+                return;
+            }
+            playableLevels.RemoveAt(toDeleteIndex);
+            AddFromFile(e.FullPath, toDeleteIndex);
+            ChangePage(0);
+        }
+
+        void FileRenamed(object sender, RenamedEventArgs e)
+        {
+            if (e.ChangeType != WatcherChangeTypes.Renamed) return;
+            int toChangeIndex = playableLevels.FindIndex(x => x.filePath == e.OldFullPath);
+            if (toChangeIndex == -1)
+            {
+                UnityEngine.Debug.LogWarning("Tried to handle change for file not in list: " + e.FullPath);
+                return;
+            }
+            playableLevels[toChangeIndex].filePath = e.FullPath;
+            ChangePage(0);
+        }*/
+
         void Update()
         {
             if (shouldRefresh)
             {
                 UnityEngine.Debug.Log("Refreshing..."); // if you remove this debug log everything breaks down and i dont know why.
                 UpdateFromFolder();
-                ChangePage(0);
                 shouldRefresh = false;
             }
         }
@@ -245,8 +296,30 @@ namespace PlusLevelStudio.Menus
             watcher.EnableRaisingEvents = active;
         }
 
+        protected void AddFromFile(string path, int index = -1)
+        {
+            BinaryReader reader = new BinaryReader(System.IO.File.OpenRead(path));
+            PlayableEditorLevel level = PlayableEditorLevel.Read(reader);
+            level.filePath = path;
+            if (index == -1)
+            {
+                playableLevels.Add(level);
+            }
+            else
+            {
+                playableLevels.Insert(index, level);
+            }
+            reader.Close();
+        }
+
         public void UpdateFromFolder()
         {
+            bigText.gameObject.SetActive(true);
+            for (int i = 0; i < buttons.Length; i++)
+            {
+                buttons[i].gameObject.SetActive(false);
+            }
+            bigText.text = LocalizationManager.Instance.GetLocalizedText("Ed_Menu_LoadingLevels");
             for (int i = 0; i < playableLevels.Count; i++)
             {
                 if (playableLevels[i].texture != null)
@@ -257,17 +330,28 @@ namespace PlusLevelStudio.Menus
             playableLevels.Clear();
             Directory.CreateDirectory(LevelStudioPlugin.playableLevelPath);
             string[] files = Directory.GetFiles(LevelStudioPlugin.playableLevelPath, "*.pbpl");
+            StartCoroutine(LoadEnumerator(files));
+        }
+
+        IEnumerator LoadEnumerator(string[] files)
+        {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
+            long msSinceLastYield = 0;
             for (int i = 0; i < files.Length; i++)
             {
-                BinaryReader reader = new BinaryReader(File.OpenRead(files[i]));
-                playableLevels.Add(PlayableEditorLevel.Read(reader));
-                reader.Close();
+                AddFromFile(files[i]);
+                if ((stopwatch.ElapsedMilliseconds - msSinceLastYield) > 100)
+                {
+                    msSinceLastYield = stopwatch.ElapsedMilliseconds;
+                    yield return null;
+                }
             }
             stopwatch.Stop();
-            UnityEngine.Debug.Log("It took: " + stopwatch.Elapsed.Milliseconds + " ms to read " + files.Length + " files!");
+            //UnityEngine.Debug.Log("It took: " + stopwatch.Elapsed.Milliseconds + " ms to read " + files.Length + " files!");
             playableLevels.Sort((a, b) => (a.meta.name.CompareTo(b.meta.name)));
+            ChangePage(0);
+            yield break;
         }
 
         public void UpdateButtons()
@@ -283,6 +367,7 @@ namespace PlusLevelStudio.Menus
                 upButton.gameObject.SetActive(false);
                 downButton.gameObject.SetActive(false);
                 bigText.gameObject.SetActive(true);
+                bigText.text = LocalizationManager.Instance.GetLocalizedText("Ed_Menu_NoLevels");
                 return;
             }
             for (int i = startIndex; i < Mathf.Min(startIndex + buttons.Length,playableLevels.Count); i++)

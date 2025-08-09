@@ -283,8 +283,10 @@ namespace PlusLevelStudio.Editor
             translationSettings.Add(transform.Find("GridGauge").gameObject);
             translationSettings.Add(transform.Find("MoveGridSizeText").gameObject);
             translationSettings.Add(transform.Find("MoveGridSizeBox").gameObject);
+            translationSettings.Add(transform.Find("MoveGridSizeBox_Collision").gameObject);
             translationSettings.Add(transform.Find("AngleSnapText").gameObject);
             translationSettings.Add(transform.Find("AngleSnapBox").gameObject);
+            translationSettings.Add(transform.Find("AngleSnapBox_Collision").gameObject);
             translationSettings.Add(transform.Find("WorldSpaceButton").gameObject);
             translationSettings.Add(transform.Find("LocalSpaceButton").gameObject);
             translationSettings.Add(transform.Find("MoveVisibleButton").gameObject);
