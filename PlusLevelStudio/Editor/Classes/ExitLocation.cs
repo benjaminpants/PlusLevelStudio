@@ -58,6 +58,18 @@ namespace PlusLevelStudio.Editor
             return intVec.ToArray();
         }
 
+        public bool ValidatePosition(EditorLevelData data)
+        {
+            LoaderExitData exitData = LevelLoaderPlugin.Instance.exitDatas[type];
+            RoomAsset asset = exitData.room;
+            IntVector2 roomPivot = asset.potentialDoorPositions[0]; // weird
+            foreach (CellData cellData in asset.cells)
+            {
+                PlusStudioLevelFormat.Cell cell = data.GetCellSafe(cellData.pos.Adjusted(roomPivot, direction) + position);
+                if (cell == null) return false;
+            }
+            return data.GetCellSafe(position) != null;
+        }
 
         public void ModifyCells(EditorLevelData data, bool forEditor)
         {

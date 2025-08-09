@@ -418,7 +418,7 @@ namespace PlusLevelStudio.Editor
                 LightPlacement placement = levelData.lights[i];
                 LightGroup group = levelData.lightGroups[placement.lightGroup];
                 Cell cell = workerEc.CellFromPosition(placement.position);
-                // todo: figure out if this is really what i should be doing?
+                // todo: evaluate performance impact, but honestly due to the convience regenerating each time provides, and the performance impact only grows bad with absurd level sizes... (and it could be due to other reasons)
                 workerEc.GenerateLight(cell, group.color, group.strength);
                 workerEc.RegenerateLight(cell);
             }
@@ -698,7 +698,7 @@ namespace PlusLevelStudio.Editor
             float enteredAt;
             if (plane.Raycast(mouseRay, out enteredAt))
             {
-                return plane.ClosestPointOnPlane(mouseRay.origin + (mouseRay.direction * enteredAt)); // todo: evaluate. im doing this because due to imprecision its not perfect otherwise
+                return plane.ClosestPointOnPlane(mouseRay.origin + (mouseRay.direction * enteredAt)); // im doing this because due to imprecision its not perfect otherwise
             }
             if (doubleSided)
             {
@@ -922,7 +922,7 @@ namespace PlusLevelStudio.Editor
             {
                 _currentTool.Begin();
             }
-            if (tool == null && toolboxOnNullTool)
+            if (_currentTool == null && toolboxOnNullTool)
             {
                 toolboxOnNullTool = false;
                 uiObjects[1].SetActive(true);
@@ -971,7 +971,6 @@ namespace PlusLevelStudio.Editor
             IntVector2 targetSize = levelData.mapSize + sizeDif;
             if (targetSize.x > 255 || targetSize.z > 255) { TriggerError("LevelTooBig"); return; }
             if (targetSize.x < 1 || targetSize.z < 1) { TriggerError("LevelTooSmall"); return; }
-            // TODO: INSERT LOGIC FOR OBJECTS
 
             if (!levelData.ResizeLevel(posDif, sizeDif, this))
             {
@@ -1295,7 +1294,6 @@ namespace PlusLevelStudio.Editor
                 {
                     workerEc.cells[x, y].LoadTile();
                     workerEc.cells[x, y].Tile.transform.SetParent(gridManager.transform, true);
-                    //workerEc.cells[x, y].Tile.MeshRenderer.material = new Material(workerRc.defaultAlphaMat); // TODO: make a new TilePre and assign that to the workerEc.
                     if (levelData.cells[x,y].type == 16)
                     {
                         workerEc.cells[x, y].Tile.gameObject.SetActive(false);

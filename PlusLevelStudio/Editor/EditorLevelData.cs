@@ -176,6 +176,18 @@ namespace PlusLevelStudio.Editor
         public bool ValidatePlacements(bool updateVisuals)
         {
             bool changedSomething = false;
+            for (int i = exits.Count - 1; i >= 0; i--)
+            {
+                if (!exits[i].ValidatePosition(this))
+                {
+                    if (updateVisuals)
+                    {
+                        EditorController.Instance.RemoveVisual(exits[i]);
+                    }
+                    exits.RemoveAt(i);
+                    changedSomething = true;
+                }
+            }
             for (int i = lights.Count - 1; i >= 0; i--)
             {
                 if (!lights[i].ValidatePosition(this))
@@ -299,7 +311,6 @@ namespace PlusLevelStudio.Editor
             ValidatePlacements(forEditor);
         }
 
-        // TODO: figure out if we even NEED to manually recalculate all cells, or if we'd just be better off moving only areas
         public bool ResizeLevel(IntVector2 posDif, IntVector2 sizeDif, EditorController toAddUndo = null)
         {
             IntVector2 newMapSize = mapSize + sizeDif;
@@ -326,13 +337,22 @@ namespace PlusLevelStudio.Editor
                 areas[i].origin = (areas[i].origin - posDif);
             }
 
+            IntVector2 oldMapSize = mapSize;
+            PlusStudioLevelFormat.Cell[,] oldCells = cells;
             mapSize = newMapSize;
+            // we recreate the cells from the old iteration so validation checks pass
             cells = new PlusStudioLevelFormat.Cell[mapSize.x, mapSize.z];
             for (int x = 0; x < mapSize.x; x++)
             {
                 for (int y = 0; y < mapSize.z; y++)
                 {
                     cells[x, y] = new PlusStudioLevelFormat.Cell(new ByteVector2(x, y));
+                    if (((x + posDif.x) >= 0 && ((x + posDif.x) < oldMapSize.x)) && ((y + posDif.z) >= 0 && ((y + posDif.z) < oldMapSize.z)))
+                    {
+                        PlusStudioLevelFormat.Cell cellAt = oldCells[(x + posDif.x), (y + posDif.z)];
+                        cells[x, y].walls = cellAt.walls;
+                        cells[x, y].roomId = cellAt.roomId;
+                    }
                 }
             }
 
@@ -386,6 +406,7 @@ namespace PlusLevelStudio.Editor
                 walls[i].position -= posDif;
             }
             spawnPoint -= new Vector3(posDif.x * 10f, 0f, posDif.z * 10f);
+            ValidatePlacements(true);
             return true;
         }
 
@@ -509,6 +530,7 @@ namespace PlusLevelStudio.Editor
             compiled.timeLimit = timeLimit;
             compiled.skybox = skybox;
             compiled.spawnPoint = spawnPoint.ToData();
+            compiled.spawnPoint.y = 5f; // technically this not being 5 shouldn't be possible but apparently it was a reported bug so quickly add a fix just incase.
             compiled.spawnDirection = (PlusDirection)spawnDirection;
             compiled.randomEvents = new List<string>(randomEvents);
             compiled.minLightColor = minLightColor.ToData();

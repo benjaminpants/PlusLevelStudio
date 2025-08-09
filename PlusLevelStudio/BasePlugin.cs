@@ -986,7 +986,8 @@ namespace PlusLevelStudio
             foreach (KeyValuePair<string, GameObject> kvp in shapeLockData.prefabAliases)
             {
                 if (kvp.Value.GetInstanceID() < 0) continue;
-                EditorInterface.AddStructureGenericVisual(kvp.Key, kvp.Value);
+                GameObject lockObj = EditorInterface.AddStructureGenericVisual(kvp.Key, kvp.Value);
+                lockObj.GetComponentInChildren<Collider>().isTrigger = true;
             }
 
             structureTypes.Add("shapelock", typeof(ShapeLockStructureLocation));

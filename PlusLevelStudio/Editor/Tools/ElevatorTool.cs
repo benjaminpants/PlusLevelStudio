@@ -23,14 +23,13 @@ namespace PlusLevelStudio.Editor.Tools
 
         public void OnPlaced(Direction dir)
         {
-            EditorController.Instance.AddUndo();
             ExitLocation exitLocal = new ExitLocation();
             exitLocal.position = pos.Value;
             exitLocal.direction = dir;
             exitLocal.type = "elevator";
             exitLocal.isSpawn = isSpawn;
-            // TODO: validation
-
+            if (!exitLocal.ValidatePosition(EditorController.Instance.levelData)) return;
+            EditorController.Instance.AddUndo();
             EditorController.Instance.levelData.exits.Add(exitLocal);
             EditorController.Instance.AddVisual(exitLocal);
             EditorController.Instance.RefreshCells();
@@ -78,6 +77,11 @@ namespace PlusLevelStudio.Editor.Tools
 
         public override void Update()
         {
+            // ACK HACK!
+            if ((EditorController.Instance.levelData.exits.Find(x => x.isSpawn) != null) && isSpawn)
+            {
+                EditorController.Instance.SwitchToTool(null);
+            }
             if (pos == null)
             {
                 EditorController.Instance.selector.SelectTile(EditorController.Instance.mouseGridPosition);
