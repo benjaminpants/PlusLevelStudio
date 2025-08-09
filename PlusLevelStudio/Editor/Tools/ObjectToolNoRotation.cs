@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace PlusLevelStudio.Editor.Tools
 {
-    public class ObjectToolNoRotation : EditorTool
+    public class ObjectToolNoRotation : PointTool
     {
         public string type;
         public override string id => "object_" + type;
@@ -30,45 +30,16 @@ namespace PlusLevelStudio.Editor.Tools
         {
         }
 
-        public override void Begin()
+        protected override bool TryPlace(IntVector2 position)
         {
-
-        }
-
-        public override bool Cancelled()
-        {
+            EditorController.Instance.AddUndo();
+            BasicObjectLocation local = new BasicObjectLocation();
+            local.prefab = type;
+            local.position = EditorController.Instance.mouseGridPosition.ToWorld();
+            local.position += Vector3.up * verticalOffset;
+            EditorController.Instance.levelData.objects.Add(local);
+            EditorController.Instance.AddVisual(local);
             return true;
-        }
-
-        public override void Exit()
-        {
-
-        }
-
-        public override bool MousePressed()
-        {
-            if (EditorController.Instance.levelData.RoomIdFromPos(EditorController.Instance.mouseGridPosition, true) != 0)
-            {
-                EditorController.Instance.AddUndo();
-                BasicObjectLocation local = new BasicObjectLocation();
-                local.prefab = type;
-                local.position = EditorController.Instance.mouseGridPosition.ToWorld();
-                local.position += Vector3.up * verticalOffset;
-                EditorController.Instance.levelData.objects.Add(local);
-                EditorController.Instance.AddVisual(local);
-                return true;
-            }
-            return false;
-        }
-
-        public override bool MouseReleased()
-        {
-            return false;
-        }
-
-        public override void Update()
-        {
-            EditorController.Instance.selector.SelectTile(EditorController.Instance.mouseGridPosition);
         }
     }
 }

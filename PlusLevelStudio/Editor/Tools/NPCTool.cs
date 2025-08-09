@@ -7,7 +7,7 @@ using UnityEngine;
 namespace PlusLevelStudio.Editor.Tools
 {
 
-    public class NPCTool : EditorTool
+    public class NPCTool : PointTool
     {
         public string npc;
         public override string id => "npc_" + npc;
@@ -24,44 +24,15 @@ namespace PlusLevelStudio.Editor.Tools
             this.npc = npc;
         }
 
-        public override void Begin()
+        protected override bool TryPlace(IntVector2 position)
         {
-            
-        }
-
-        public override bool Cancelled()
-        {
+            EditorController.Instance.AddUndo();
+            NPCPlacement placement = new NPCPlacement();
+            placement.npc = npc;
+            placement.position = EditorController.Instance.mouseGridPosition;
+            EditorController.Instance.levelData.npcs.Add(placement);
+            EditorController.Instance.AddVisual(placement);
             return true;
-        }
-
-        public override void Exit()
-        {
-            
-        }
-
-        public override bool MousePressed()
-        {
-            if (EditorController.Instance.levelData.RoomIdFromPos(EditorController.Instance.mouseGridPosition, true) != 0)
-            {
-                EditorController.Instance.AddUndo();
-                NPCPlacement placement = new NPCPlacement();
-                placement.npc = npc;
-                placement.position = EditorController.Instance.mouseGridPosition;
-                EditorController.Instance.levelData.npcs.Add(placement);
-                EditorController.Instance.AddVisual(placement);
-                return true;
-            }
-            return false;
-        }
-
-        public override bool MouseReleased()
-        {
-            return false;
-        }
-
-        public override void Update()
-        {
-            EditorController.Instance.selector.SelectTile(EditorController.Instance.mouseGridPosition);
         }
     }
 }

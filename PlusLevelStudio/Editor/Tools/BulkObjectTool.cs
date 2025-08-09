@@ -32,8 +32,9 @@ namespace PlusLevelStudio.Editor.Tools
         }
     }
 
-    public class BulkObjectTool : DoorTool
+    public class BulkObjectTool : PlaceAndRotateTool
     {
+        public string type;
         public override string id => "bulkobject_" + type;
         public BulkObjectData[] data = new BulkObjectData[0];
 
@@ -42,17 +43,19 @@ namespace PlusLevelStudio.Editor.Tools
 
         }
 
-        public BulkObjectTool(string type, Sprite sprite, BulkObjectData[] data) : base(type, sprite)
+        public BulkObjectTool(string type, Sprite sprite, BulkObjectData[] data)
         {
+            this.type = type;
+            this.sprite = sprite;
             this.data = data;
         }
 
-        public override void OnPlaced(Direction dir)
+        protected override bool TryPlace(IntVector2 position, Direction dir)
         {
             EditorController.Instance.AddUndo();
             for (int i = 0; i < data.Length; i++)
             {
-                Vector3 newPosition = (dir.ToRotation() * data[i].position) + pos.Value.ToWorld();
+                Vector3 newPosition = (dir.ToRotation() * data[i].position) + position.ToWorld();
                 Quaternion rotation = Quaternion.Euler(data[i].rotation) * dir.ToRotation();
 
                 BasicObjectLocation bob = new BasicObjectLocation();
@@ -63,8 +66,7 @@ namespace PlusLevelStudio.Editor.Tools
                 EditorController.Instance.levelData.objects.Add(bob);
                 EditorController.Instance.AddVisual(bob);
             }
-
-            EditorController.Instance.SwitchToTool(null);
+            return true;
         }
     }
 
@@ -84,7 +86,7 @@ namespace PlusLevelStudio.Editor.Tools
             this.replacements = replacements;
         }
 
-        public override void OnPlaced(Direction dir)
+        protected override bool TryPlace(IntVector2 position, Direction dir)
         {
             data = new BulkObjectData[originalData.Length];
             for (int i = 0; i < data.Length; i++)
@@ -109,7 +111,7 @@ namespace PlusLevelStudio.Editor.Tools
                 }
                 potentialSubjects.Clear();
             }
-            base.OnPlaced(dir);
+            return base.TryPlace(position, dir);
         }
     }
 }

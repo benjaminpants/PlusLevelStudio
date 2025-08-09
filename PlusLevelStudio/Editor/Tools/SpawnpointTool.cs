@@ -5,65 +5,25 @@ using UnityEngine;
 
 namespace PlusLevelStudio.Editor.Tools
 {
-    public class SpawnpointTool : EditorTool
+    public class SpawnpointTool : PlaceAndRotateTool
     {
-        protected IntVector2? pos;
-
+        public override string id => "spawnpoint";
         public SpawnpointTool()
         {
             sprite = LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/spawnpoint_tool");
         }
 
-        public override string id => "spawnpoint";
-
-        public override void Begin()
-        {
-
-        }
-
-        public override bool Cancelled()
-        {
-            if (pos != null)
-            {
-                pos = null;
-                return false;
-            }
-            return true;
-        }
-
-        public override void Exit()
-        {
-            pos = null;
-        }
-
-        public void OnPlaced(Direction dir)
+        protected override bool TryPlace(IntVector2 position, Direction dir)
         {
             EditorController.Instance.AddUndo();
-            EditorController.Instance.levelData.spawnPoint = pos.Value.ToWorld();
+            EditorController.Instance.levelData.spawnPoint = pos.Value.ToWorld() + Vector3.up * 5f;
             EditorController.Instance.levelData.spawnDirection = dir;
             EditorController.Instance.UpdateSpawnVisual();
-            EditorController.Instance.SwitchToTool(null);
+            return true;
         }
-
-        public override bool MousePressed()
+        public override bool ValidLocation(IntVector2 position)
         {
-            if (pos != null) return false;
-            pos = EditorController.Instance.mouseGridPosition;
-            EditorController.Instance.selector.SelectRotation(pos.Value, OnPlaced);
-            return false;
-        }
-
-        public override bool MouseReleased()
-        {
-            return false;
-        }
-
-        public override void Update()
-        {
-            if (pos == null)
-            {
-                EditorController.Instance.selector.SelectTile(EditorController.Instance.mouseGridPosition);
-            }
+            return true;
         }
     }
 }

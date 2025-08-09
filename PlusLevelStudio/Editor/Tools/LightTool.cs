@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace PlusLevelStudio.Editor.Tools
 {
-    public class LightTool : EditorTool
+    public class LightTool : PointTool
     {
         public string lightType;
         public override string id => "light_" + lightType;
@@ -20,45 +20,16 @@ namespace PlusLevelStudio.Editor.Tools
             this.lightType = lightType;
         }
 
-        public override void Begin()
+        protected override bool TryPlace(IntVector2 position)
         {
-            
-        }
-
-        public override bool Cancelled()
-        {
+            EditorController.Instance.AddUndo();
+            LightPlacement lightPlace = new LightPlacement();
+            lightPlace.type = lightType;
+            lightPlace.position = EditorController.Instance.mouseGridPosition;
+            EditorController.Instance.AddVisual(lightPlace);
+            EditorController.Instance.levelData.lights.Add(lightPlace);
+            EditorController.Instance.RefreshLights();
             return true;
-        }
-
-        public override void Exit()
-        {
-            
-        }
-
-        public override bool MousePressed()
-        {
-            if (EditorController.Instance.levelData.RoomIdFromPos(EditorController.Instance.mouseGridPosition, true) != 0)
-            {
-                EditorController.Instance.AddUndo();
-                LightPlacement lightPlace = new LightPlacement();
-                lightPlace.type = lightType;
-                lightPlace.position = EditorController.Instance.mouseGridPosition;
-                EditorController.Instance.AddVisual(lightPlace);
-                EditorController.Instance.levelData.lights.Add(lightPlace);
-                EditorController.Instance.RefreshLights();
-                return true;
-            }
-            return false;
-        }
-
-        public override bool MouseReleased()
-        {
-            return false;
-        }
-
-        public override void Update()
-        {
-            EditorController.Instance.selector.SelectTile(EditorController.Instance.mouseGridPosition);
         }
     }
 }

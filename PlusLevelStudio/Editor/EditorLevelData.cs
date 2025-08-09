@@ -530,7 +530,6 @@ namespace PlusLevelStudio.Editor
             compiled.timeLimit = timeLimit;
             compiled.skybox = skybox;
             compiled.spawnPoint = spawnPoint.ToData();
-            compiled.spawnPoint.y = 5f; // technically this not being 5 shouldn't be possible but apparently it was a reported bug so quickly add a fix just incase.
             compiled.spawnDirection = (PlusDirection)spawnDirection;
             compiled.randomEvents = new List<string>(randomEvents);
             compiled.minLightColor = minLightColor.ToData();

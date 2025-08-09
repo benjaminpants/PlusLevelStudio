@@ -6,9 +6,10 @@ using UnityEngine.UIElements;
 
 namespace PlusLevelStudio.Editor.Tools
 {
-    public class HallDoorStructureTool : DoorTool
+    public class HallDoorStructureTool : PlaceAndRotateTool
     {
         public string doorType;
+        public string type;
         public override string id => "structure_" + type;
 
         public override string titleKey => "Ed_Tool_structure_" + doorType + "_Title";
@@ -18,13 +19,15 @@ namespace PlusLevelStudio.Editor.Tools
         {
         }
 
-        internal HallDoorStructureTool(string type, string doorType) : base(type, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/structure_" + doorType))
+        internal HallDoorStructureTool(string type, string doorType) : this(type, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/structure_" + doorType))
         {
             this.doorType = doorType;
         }
 
-        public HallDoorStructureTool(string type, string doorType, Sprite sprite) : base(type, sprite)
+        public HallDoorStructureTool(string type, string doorType, Sprite sprite)
         {
+            this.type = type;
+            this.sprite = sprite;
             this.doorType = doorType;
         }
 
@@ -32,21 +35,20 @@ namespace PlusLevelStudio.Editor.Tools
         {
         }
 
-        public override void OnPlaced(Direction dir)
+        protected override bool TryPlace(IntVector2 position, Direction dir)
         {
-            PlusStudioLevelFormat.Cell cell = EditorController.Instance.levelData.GetCellSafe(pos.Value);
-            if (cell == null) return; // cell doesn't exist
-            if (cell.type == 16) return; // the cell is empty
+            PlusStudioLevelFormat.Cell cell = EditorController.Instance.levelData.GetCellSafe(position);
+            if (cell == null) return false; // cell doesn't exist
+            if (cell.type == 16) return false; // the cell is empty
             EditorController.Instance.AddUndo();
             HallDoorStructureLocation structure = (HallDoorStructureLocation)EditorController.Instance.AddOrGetStructureToData(type, true);
             SimpleLocation local = structure.CreateNewChild();
-            local.position = pos.Value;
+            local.position = position;
             local.direction = dir;
             local.prefab = doorType;
             structure.myChildren.Add(local);
             EditorController.Instance.UpdateVisual(structure);
-            EditorController.Instance.SwitchToTool(null);
-            //EditorController.Instance.RefreshCells();
+            return true;
         }
     }
 }

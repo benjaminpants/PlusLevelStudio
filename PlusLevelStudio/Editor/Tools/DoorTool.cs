@@ -5,11 +5,10 @@ using UnityEngine;
 
 namespace PlusLevelStudio.Editor.Tools
 {
-    public class DoorTool : EditorTool
+    public class DoorTool : PlaceAndRotateTool
     {
         public string type;
         public override string id => "door_" + type;
-        protected IntVector2? pos;
 
         internal DoorTool(string type) : this(type, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/door_" + type))
         {
@@ -22,68 +21,20 @@ namespace PlusLevelStudio.Editor.Tools
             this.sprite = sprite;
         }
 
-        public override void Begin()
-        {
-            
-        }
-
-        public override bool Cancelled()
-        {
-            if (pos != null)
-            {
-                pos = null;
-                return false;
-            }
-            return true;
-        }
-
-        public override void Exit()
-        {
-            pos = null;
-        }
-
-        public virtual void OnPlaced(Direction dir)
+        protected override bool TryPlace(IntVector2 position, Direction dir)
         {
             DoorLocation doorPos = new DoorLocation();
-            doorPos.position = pos.Value;
+            doorPos.position = position;
             doorPos.type = type;
             doorPos.direction = dir;
-            if (!doorPos.ValidatePosition(EditorController.Instance.levelData))
-            {
-                EditorController.Instance.selector.SelectRotation(pos.Value, OnPlaced); // try again
-                return;
-            }
+            if (!doorPos.ValidatePosition(EditorController.Instance.levelData)) return false;
             EditorController.Instance.AddUndo();
             EditorController.Instance.levelData.doors.Add(doorPos);
             EditorController.Instance.AddVisual(doorPos);
             EditorController.Instance.RefreshCells();
             EditorController.Instance.RefreshLights();
             EditorController.Instance.SwitchToTool(null);
-        }
-
-        public override bool MousePressed()
-        {
-            if (pos != null) return false;
-            if (EditorController.Instance.levelData.RoomIdFromPos(EditorController.Instance.mouseGridPosition, true) != 0)
-            {
-                pos = EditorController.Instance.mouseGridPosition;
-                EditorController.Instance.selector.SelectRotation(pos.Value, OnPlaced);
-                return false;
-            }
-            return false;
-        }
-
-        public override bool MouseReleased()
-        {
-            return false;
-        }
-
-        public override void Update()
-        {
-            if (pos == null)
-            {
-                EditorController.Instance.selector.SelectTile(EditorController.Instance.mouseGridPosition);
-            }
+            return true;
         }
     }
 }

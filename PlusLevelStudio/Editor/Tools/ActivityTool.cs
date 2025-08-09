@@ -5,36 +5,38 @@ using UnityEngine;
 
 namespace PlusLevelStudio.Editor.Tools
 {
-    public class ActivityTool : DoorTool
+    public class ActivityTool : PlaceAndRotateTool
     {
+        public string type;
         protected float height = 0f;
         public override string id => "activity_" + type;
-        internal ActivityTool(string type, float heightOffset) : base(type, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/activity_" + type))
+        internal ActivityTool(string type, float heightOffset) : this(type, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/activity_" + type), heightOffset)
         {
-            height = heightOffset;
         }
-        public ActivityTool(string type, Sprite sprite, float heightOffset) : base(type, sprite)
+        public ActivityTool(string type, Sprite sprite, float heightOffset)
         {
+            this.type = type;
+            this.sprite = sprite;
             height = heightOffset;
         }
 
-        public override void OnPlaced(Direction dir)
+        protected override bool TryPlace(IntVector2 position, Direction dir)
         {
             EditorController.Instance.HoldUndo();
             ActivityLocation activity = new ActivityLocation();
-            activity.position = pos.Value.ToWorld();
+            activity.position = position.ToWorld();
             activity.position += Vector3.up * height;
             activity.direction = dir;
             activity.type = type;
             if (!activity.ValidatePosition(EditorController.Instance.levelData))
             {
                 EditorController.Instance.CancelHeldUndo();
-                return;
+                return false;
             }
             EditorController.Instance.AddHeldUndo();
             activity.Setup(EditorController.Instance.levelData);
             EditorController.Instance.AddVisual(activity);
-            EditorController.Instance.SwitchToTool(null);
+            return true;
         }
     }
 }
