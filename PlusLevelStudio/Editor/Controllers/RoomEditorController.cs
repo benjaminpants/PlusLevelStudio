@@ -86,10 +86,12 @@ namespace PlusLevelStudio.Editor
                 }
                 for (int j = 0; j < room.items.Count; j++)
                 {
+                    room.items[j].position = new UnityVector2(room.items[j].position.x - (offset.x * 10f), room.items[j].position.y - (offset.z * 10f));
                     roomAsset.items.Add(room.items[j]);
                 }
                 for (int j = 0; j < room.itemSpawns.Count; j++)
                 {
+                    room.itemSpawns[j].position = new UnityVector2(room.itemSpawns[j].position.x - (offset.x * 10f), room.itemSpawns[j].position.y - (offset.z * 10f));
                     roomAsset.itemSpawns.Add(room.itemSpawns[j]);
                 }
                 for (int j = 0; j < baseLevel.lights.Count; j++)
@@ -116,6 +118,10 @@ namespace PlusLevelStudio.Editor
                             position = (baseLevel.posters[j].position.ToInt() - offset).ToByte()
                         });
                     }
+                }
+                if (roomAsset.activity != null)
+                {
+                    roomAsset.activity.position = new UnityVector3(room.activity.position.x - (offset.x * 10f), room.activity.position.y, room.activity.position.z - (offset.z - 10f));
                 }
                 roomAsset.activity = room.activity;
                 for (int j = 0; j < technicalStuff.Count; j++)

@@ -70,6 +70,14 @@ namespace PlusStudioLevelLoader
             {
                 asset.standardLightCells.Add(info.standardLightCells[i].ToInt());
             }
+            for (int i = 0; i < info.potentialDoorPositions.Count; i++)
+            {
+                asset.potentialDoorPositions.Add(info.potentialDoorPositions[i].ToInt());
+            }
+            for (int i = 0; i < info.forcedDoorPositions.Count; i++)
+            {
+                asset.forcedDoorPositions.Add(info.forcedDoorPositions[i].ToInt());
+            }
             for (int i = 0; i < info.posters.Count; i++)
             {
                 asset.posterDatas.Add(new PosterData()
