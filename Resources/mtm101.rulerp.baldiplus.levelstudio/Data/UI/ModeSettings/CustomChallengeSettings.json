@@ -1,0 +1,22 @@
+{
+	"defines":{
+
+	},
+	"elements":[
+		{
+			"name":"CustomChallenge",
+			"type":"textbutton",
+			"anchoredPosition":[0, -100],
+			"size":[300, 50],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"font":"ComicSans24",
+			"color":[0,0,0],
+			"text":"Ed_Menu_LoadLuaScript",
+			"alignment":"Center",
+			"localized":true,
+			"onPressed":"loadScript"
+		}
+	]
+}

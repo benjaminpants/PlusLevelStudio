@@ -140,6 +140,7 @@ namespace PlusStudioLevelLoader
                 room = Resources.FindObjectsOfTypeAll<RoomAsset>().First(x => ((UnityEngine.Object)x).name == "Room_Elevator" && x.GetInstanceID() >= 0)
             });
 
+            itemObjects.Add("none", ItemMetaStorage.Instance.FindByEnum(Items.None).value);
             itemObjects.Add("quarter", ItemMetaStorage.Instance.FindByEnum(Items.Quarter).value);
             itemObjects.Add("keys", ItemMetaStorage.Instance.FindByEnum(Items.DetentionKey).value);
             itemObjects.Add("zesty", ItemMetaStorage.Instance.FindByEnum(Items.ZestyBar).value);

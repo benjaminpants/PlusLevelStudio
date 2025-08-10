@@ -35,7 +35,7 @@ namespace PlusLevelStudio.Editor
         {
             if (message == "submit")
             {
-                if (onSubmit(textbox.text))
+                if (onSubmit(textbox.text)) // TODO: MOVE THIS OUTTA HERE
                 {
                     EditorController.Instance.currentFileName = textbox.text;
                 }

@@ -19,6 +19,9 @@
     <Reference Include="BepInEx">
       <HintPath>..\Dependencies\BepInEx.dll</HintPath>
     </Reference>
+    <Reference Include="MoonSharp.Interpreter">
+      <HintPath>..\DependenciesExtra\MoonSharp.Interpreter.dll</HintPath>
+    </Reference>
     <Reference Include="MTM101BaldAPI">
       <HintPath>..\Dependencies\MTM101BaldAPI.dll</HintPath>
     </Reference>

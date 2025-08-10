@@ -22,6 +22,8 @@ using MTM101BaldAPI.ObjectCreation;
 using PlusLevelStudio.Editor.GlobalSettingsMenus;
 using PlusLevelStudio.Ingame;
 using PlusLevelStudio.Editor.ModeSettings;
+using MoonSharp.Interpreter;
+using PlusLevelStudio.Lua;
 
 namespace PlusLevelStudio
 {
@@ -70,6 +72,7 @@ namespace PlusLevelStudio
         public static string playableLevelPath => Path.Combine(levelFilePath, "Playables");
         public static string levelFilePath => Path.Combine(Application.persistentDataPath, "Custom Levels");
         public static string levelExportPath => Path.Combine(levelFilePath, "Exports");
+        public static string luaPath => Path.Combine(levelFilePath, "LuaScripts");
 
         private Dictionary<Texture2D, Sprite> smallIconsFromTextures = new Dictionary<Texture2D, Sprite>();
 
@@ -103,6 +106,7 @@ namespace PlusLevelStudio
             LoadingEvents.RegisterOnAssetsLoaded(Info, FindObjectsAndSetupEditor(), LoadingEventOrder.Pre);
             LoadingEvents.RegisterOnAssetsLoaded(Info, SetupModes(), LoadingEventOrder.Post);
             harmony.PatchAllConditionals();
+            UserData.RegisterAssembly();
         }
 
         void AddSolidColorLightmap(string name, Color color)
@@ -168,7 +172,7 @@ namespace PlusLevelStudio
 
         IEnumerator SetupModes()
         {
-            yield return 2;
+            yield return 3;
             yield return "Setting up editor gamemode definitions and managers...";
 
             string settingsPagePath = Path.Combine(AssetLoader.GetModPath(this), "Data", "UI", "ModeSettings");
@@ -214,6 +218,23 @@ namespace PlusLevelStudio
                 prefab = editorSpeedyChallenge,
                 nameKey = "Ed_GameMode_Speedy",
                 descKey = "Ed_GameMode_Speedy_Desc"
+            });
+
+            yield return "Setting up CustomChallengeManager...";
+            CustomChallengeManager luaManager = new BaseGameManagerBuilder<CustomChallengeManager>()
+                .SetLevelNumber(0)
+                .SetNPCSpawnMode(GameManagerNPCAutomaticSpawn.Never)
+                .SetObjectName("CustomChallengeManager")
+                .Build();
+
+            gameModeAliases.Add("custom", new CustomChallengeGameMode()
+            {
+                prefab = luaManager,
+                nameKey = "Ed_GameMode_Custom",
+                descKey = "Ed_GameMode_Custom_Desc",
+                hasSettingsPage = true,
+                settingsPagePath = Path.Combine(settingsPagePath, "CustomChallengeSettings.json"),
+                settingsPageType = typeof(CustomChallengeSettingsPageUIExchangeHandler),
             });
 
 
@@ -278,7 +299,8 @@ namespace PlusLevelStudio
                     "standard",
                     "grapple",
                     "stealthy",
-                    "speedy"
+                    "speedy",
+                    "custom"
                 }
             };
 
