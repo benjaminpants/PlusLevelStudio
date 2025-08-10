@@ -1,0 +1,7 @@
+IEditorVisualizable is an interface that represents an editor visual. An editor visual is usually an object of some kind. The class implementing this interface doesn't need to be (and never is) a MonoBehavior.
+
+Visuals can be added through EditorController.Instance.AddVisual, removed through EditorController.Instance.RemoveVisual, and gotten through EditorController.Instance.GetVisual
+
+Visuals can also be updated with EditorController.Instance.UpdateVisual.
+
+To update all visuals, you can call EditorController.Instance.UpdateAllVisuals. **Be careful when doing this, as this may be slow! The editor only calls this method when the grid is resized!**

@@ -1,0 +1,3 @@
+Welcome to the Wiki for Baldi's Basics Plus Level Studio!
+
+Here you can find documentation on the internals of the editor and loader, and instructions on how to implement both into your own mod!

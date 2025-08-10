@@ -1,0 +1,34 @@
+Adding structures to the editor is difficult, however, if your structure reads StructureData in the same way as Structure_HallDoor, you can use any of the below as your structures type:
+
+* HallDoorStructureLocation
+* HallDoorStructureLocationWithButtons
+* HallDoorStructureLocationWithLevers 
+
+_Note that for HallDoorStructureLocationWithLevers you must inherit it if you want to make the levers appear flipped down in certain circumstances._
+
+To actually tell the editor the type you wish to use for your structure, you must add it to the LevelStudioPlugin.Instance.tructureTypes dictionary
+
+# Adding a structure to the editor without an existing base type.
+
+**THIS ASSUMES THAT YOU HAVE ALREADY MADE YOUR STRUCTURE IN GAME, AND HAVE ALREADY DECIDED HOW ITS LOAD METHOD WORKS.**
+
+First, you need to create a class that inherits from StructureLocation and implement all the appropriate methods. For structures, it is common practice to only have one copy of the StructureLocation, and then store a list of "sub location"s. The editor has a few implemented sub locations, such as:
+* PointLocation
+* SimpleLocation
+* SimpleButtonLocation
+* SimpleLeverLocation
+
+For the above sub locations, the prefab still must be assigned. For buttons and levers, the correct prefabs are "button" and "lever" respectively.
+
+Second, you must set up the visuals. You can use `AddStructureGenericVisual(string key, GameObject obj)` for this, or add GameObjects to LevelStudioPlugin.Instance.genericStructureDisplays directly.
+
+Finally, to actually tell the editor the type you wish to use for your structure, you must add it to the LevelStudioPlugin.Instance.tructureTypes dictionary
+
+## Tips
+Avoid changing how your structure handles StructureData unless absolutely necessary, as changing it will break old (compiled) levels.
+
+For the ReadInto and Write methods, make the first thing you read some kind of version number, whether it be an int or a byte, and increment it each time you change it.
+
+StructureInfo is a 1:1 adaption of StructureData, just using different types. Be sure to use the extensions to convert from the regular data type to it's format equivalent. You can cast Direction to PlusDirection directly.
+
+Be sure to add your strings to the StringCompressor using AddStringsToCompressor!

@@ -1,0 +1,74 @@
+Adding content to the Level Editor has been made as easy as possible, but depending on what exactly you are adding, still may require work.
+
+A lot of helpful utility methods, some of which may end up doing all the work for you, are in the static classes EditorInterface and EditorInterfaceModes.
+
+If you decide to not use these methods, you can still add directly to the editor's dictionaries in LevelStudioPlugin.Instance. But note that a lot of editor objects need the EditorRendererContainer and EditorDeletableObject components, and usually are on the LevelStudioPlugin.editorInteractableLayer layer.
+
+Note that when adding stuff to the editor, the key **must** be the same as the one you used for the loader!
+
+# Adding Content
+
+## Rooms
+Rooms in the editor do not need much configuration outside of their default textures. You can add an action that gets called when the default textures are being defined through `EditorLevelData.AddDefaultTextureAction(Action<Dictionary<string, TextureContainer>> action)`.
+
+A TextureContainer contains the ids for floor, wall, and ceiling textures, and the dictionary passed through the action is the default textures dictionary.
+
+Optionally, you can use ``EditorInterface.AddRoomVisualManager<T>(string forType) where T : EditorRoomVisualManager`` to add a room visual manager. Note that at the moment these are limited in what they can do, and it is perfectly okay for your room to not display in editor exactly as it does in game. This is primarily for if your room type sp
+
+## Doors
+Adding doors to the editor is done through `AddDoor<T>(string key, DoorIngameStatus ingameState, Material mask, Material[] sideMaterials = null) where T : DoorDisplay` method in EditorInterface, where T is a DoorDisplay type. This method creates a basic double sided quad prefab with the appropriate offset and the specified materials.
+
+An important thing to mention is DoorIngameStatus. DoorIngameStatus is an enum that determines how the level editor decides to handle the door when compiling.
+
+If it's DoorIngameStatus.AlwaysDoor, it will always be compiled to a door, being assigned to the connected rooms .doors lists and automatically carving a hole in the wall when placed.
+
+If it's DoorIngameStatus.AlwaysObject, it will always be compiled to a tile based object, which does not get assigned to any rooms .doors lists.
+
+And finally, if it's DoorIngameStatus.Smart, it will be compiled to a door if it's connected to a non-hall room, otherwise it'll be a tile based object. Note that if you use this mode, you must add your door to both LevelLoaderPlugin.Instance.doorPrefabs and LevelLoaderPlugin.Instance.tileBasedObjectPrefabs
+
+## Windows
+Adding windows to the editor is done through the `AddWindow<T>(string key, Material mask, Material[] sideMaterials = null) where T : DoorDisplay` method in EditorInterface. This method creates a basic double sided quad prefab with the appropiate offset and specified materials.
+
+## Exits
+Adding exits to the editor is done through the `AddExit(string key, Elevator prefab)` method in EditorInterface. You can alternatively do it through `AddExit(string key, GameObject visual)` if you wish to set up the prefab yourself.
+
+## Basic Objects
+Adding basic objects to the editor has multiple methods of doing so which will be listed below. To learn more about each one, check its corresponding xml summary in Visual Studio.
+
+Note that depending on your object, you may wish to further tweak it to display correctly in the editor.
+
+* `AddObjectVisual(string key, GameObject obj, bool useRegularColliderAsEditorHitbox)`
+* `AddObjectVisualWithCustomBoxCollider(string key, GameObject obj, Vector3 size, Vector3 center)`
+* `AddObjectVisualWithCustomSphereCollider(string key, GameObject obj, float radius, Vector3 center)`
+* `AddObjectVisualWithCustomCapsuleCollider(string key, GameObject obj, float radius, float height, int direction, Vector3 center)`
+* `AddObjectVisualWithMeshCollider(string key, GameObject obj, bool convex)`
+
+## Items
+Items don't need any special setup. See the section in this page about tools.
+
+## NPCs
+Adding NPCs to the editor can be done through the `AddNPCVisual(string key, NPC npc)` method in EditorInterface. You usually don't need to do further adjustments. (At the moment.)
+
+## Activities
+Adding activities to the editor can be done through the `AddActivityVisual(string key, GameObject obj)` method in EditorInterface. You may need to manually add or adjust the hitboxes, as it's the returned GameObject that needs the appropriate collider.
+
+## Structures
+Refer to the dedicated structures page.
+
+# Adding tools
+Now that you have created all the appropriate prefabs and managers, it is time to add the appropriate tools to the editor so that these objects can be placed into levels.
+
+You first need to add an EditorMode callback. This can be done through `EditorInterfaceModes.AddModeCallback(Action<EditorMode, bool> callback)`.
+
+The EditorMode is the mode being modified, and the bool is whether the specified mode is "vanilla compliant."
+
+To elaborate, "vanilla compliant" does NOT mean vanilla BB+. Vanilla compliant means it will work without the level editor being installed. For instance, vents are vanilla compliant because they have official loading code built into the game. Locked Rooms are not vanilla compliant because the level editor had to add its own custom builder for them, and thus would not work without the loader.
+
+Mods almost never actually have non vanilla compliant tools/structures, as it is very likely that they implemented the structure loading method into their regular StructureBuilder class.
+
+In your mode callback, you can call any of the below functions, all of them return if the tool was successfully added, and it is advised to leave addCategoryIfDoesntExist to false. This is because almost all editor modes have 9 categories, and the UI only supports displaying 9 categories.
+
+* `AddToolToCategory(EditorMode modeToModify, string category, EditorTool tool, bool addCategoryIfDoesntExist = false)`
+* `AddToolsToCategory(EditorMode modeToModify, string category, IEnumerable<EditorTool> tools, bool addCategoryIfDoesntExist = false)`
+* `InsertToolInCategory(EditorMode modeToModify, string category, string idToInsertAt, EditorTool tool)`
+* `InsertToolsInCategory(EditorMode modeToModify, string category, string idToInsertAt, IEnumerable<EditorTool> tools)`

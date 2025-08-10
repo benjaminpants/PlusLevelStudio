@@ -1,0 +1,152 @@
+In the editor, you can select "Custom Challenge", which allows you to write lua scripts to make basic custom challenges.
+
+**Disclaimer: The Lua scripting system is designed for creating custom challenge maps, not for custom items/npcs/etc or making Hide and Seek maps. (So don't ask for Happy Baldi and stuff.)**
+
+Lua scripts have some optional functions, and some required ones. You MUST have the required functions in your script or you will get errors.
+
+Note that some of the required functions may not have globals defined yet, which means trying to call any self function or any function listed here will not work and throw an error.
+
+# Required Functions
+* Initialize()
+* SetupPlayerProperties()
+* ExitedSpawn()
+* Update(delta)
+
+## Initialize()
+Called when the level is initialized. This is the first method that is called where all globals have been defined.
+
+## SetupPlayerProperties()
+Called before initialized, globals are still undefined. The table returned is used to modify the player's movement variables. If you don't want to change a value from the default, don't include it in the table.
+
+Below is an example function that has all the values at their default.
+
+`
+function SetupPlayerProperties()
+	return {
+		walkSpeed=16,
+		runSpeed=24,
+		staminaDrop=10,
+		staminaMax=100,
+		staminaRise=20
+	}
+end
+`
+
+## ExitedSpawn()
+This is called when the player leaves the elevator. It is recommended you call `self:SpawnNPCs()` and `self:StartEventTimers()` here, but you do not have to.
+
+## Update(delta)
+This is called every update frame/tick. Delta is the delta time, which is the time that passed inbetween this update and the last one. You can use it to make timers.
+
+# Optional Functions
+* NotebookCollected()
+* AngerBaldi(value)
+
+## NotebookCollected()
+This is called whenever a notebook gets collected.
+
+## AngerBaldi(value)
+This is called whenever the game wants to make Baldi angry. The return value of this method can be used to change how angry Baldi gets. Below is an example function that makes Baldi get twice as angry.
+
+`
+function AngerBaldi(value)
+	return value * 2
+end
+`
+
+# Global Functions And Variables
+
+Global Variables:
+* player - The current Player.
+
+# Self Functions And Variables
+You may have seen the "self" variable being used. This refers to BB+'s game manager, which is what your script is managing. You cannot add custom variables to self. (You can define variables in the global scope/outside a method if you want custom variables)
+
+## SpawnNPCs()
+Spawns all the NPCs that were placed in the editor.
+
+## StartEventTimers()
+Starts the events and the level timer. This can only be called once.
+
+## GetBaldi()
+This gets the current Baldi. If there are multiple it returns the first one it finds, which is usually the first one spawned. This can return nil if Baldi hasn't been spawned yet.
+
+## StartEvent(eventId, time, doJingle)
+This starts the event with the specified event id, with the id being the id used in the level loader. The time is how long the event lasts, if it is 0 or below, the time will be randomly chosen in the same way as the regular random events. If doJingle is true, the usual event fanfare will occur with Baldi announcing it on the TV. Otherwise, the event will just happen instantly.
+
+## GetNPCTimeScale()
+Returns the current NPC timescale.
+
+## GetEnvironmentTimeScale()
+Returns the current Environment timescale.
+
+## GetPlayerTimeScale()
+Returns the current Player timescale.
+
+## notebookAngerVal
+This variable is the amount that Baldi will get angry by when you collect a notebook. If you collect a notebook before Baldi is spawned, this value will get changed.
+
+## npcTimeScaleMod
+This variable is the current npc timescale modifier. (not the current npc timescale) Changing this value will speed up or slow down the speed of npcs.
+
+## environmentTimeScaleMod
+This variable is the current environment timescale modifier. (not the current environment timescale) Changing this value will speed up or slow down the speed of the environment.
+
+## playerTimeScaleMod
+This variable is the current player timescale modifier. (not the current player timescale) Changing this value will speed up or slow down the speed of the player.
+
+# NPC Functions and Variables
+
+NPC Variables:
+* moveSpeedMultiplier
+
+## moveSpeedMultiplier
+This variable is a multiplier to the NPC's movement speed, higher values make the NPC faster while lower values make the NPC slower.
+
+# Baldi Functions And Variables
+Baldi shares all the functions and variables with NPCs. But he also has the additional functions:
+* AddAnger(amount)
+* SetAnger(amount)
+
+## AddAnger(amount)
+This increases Baldi's anger by the specified amount. This does not call AngerBaldi.
+
+## SetAnger(amount)
+This sets Baldi's anger to the specified amount. This does not call AngerBaldi.
+
+# Player Functions And Variables
+The player refers to well, the player. Items are referenced by id, which is the id of the item in the level loader.
+
+Functions:
+* SetItem(itemId, slot)
+* AddItem(itemId)
+* GetItem(slot)
+* RemoveItemSlot(slot)
+* SetSlotCount(count)
+* LockItemSlot(slot)
+* UnlockItemSlot(slot)
+* UseItem(itemId)
+
+## SetItem(itemId, slot)
+This forcefully sets the item in the specified slot(starting at 1) to be the item with the specified id.
+
+## AddItem(itemId)
+This gives the item with the specified id to the player.
+
+## GetItem(slot)
+This returns the id of the item at the specified slot, "unknown" if it isn't an item included in the loader.
+
+## RemoveItemSlot(slot)
+This removes the specified item slot from the inventory, reducing the total number of slots. This is the function used in the limited items challenge.
+
+## SetSlotCount(count)
+This sets the player's inventory to the specified amount of slots.
+
+## LockItemSlot(slot)
+Locks the specified slot, preventing characters like Bully from stealing it.
+
+## UnlockItemSlot(slot)
+Unlocks the specified slot, allowing characters like Bully from stealing it.
+
+## UseItem(itemId)
+Simulates the player using the specified item. The player does not need to have the item in the inventory or have any slots available for this to work.
