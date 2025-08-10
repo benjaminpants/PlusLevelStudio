@@ -30,6 +30,10 @@ namespace PlusLevelStudio
             toCallAfterEditorMode.Add(callback);
         }
 
+        /// <summary>
+        /// Adds the vanilla tools (the ones in the tools category) to the specified EditorMode
+        /// </summary>
+        /// <param name="modeToModify"></param>
         public static void AddVanillaToolTools(EditorMode modeToModify)
         {
             if (modeToModify.caresAboutSpawn)
@@ -56,6 +60,10 @@ namespace PlusLevelStudio
             });
         }
 
+        /// <summary>
+        /// Add the vanilla doors to the specified EditorMode
+        /// </summary>
+        /// <param name="modeToModify"></param>
         public static void AddVanillaDoors(EditorMode modeToModify)
         {
             AddToolsToCategory(modeToModify, "doors", new EditorTool[]
@@ -71,6 +79,10 @@ namespace PlusLevelStudio
             }, true);
         }
 
+        /// <summary>
+        /// Add the vanilla lights to the specified EditorMode.
+        /// </summary>
+        /// <param name="modeToModify"></param>
         public static void AddVanillaLights(EditorMode modeToModify)
         {
             AddToolsToCategory(modeToModify, "lights", new EditorTool[]
@@ -82,6 +94,10 @@ namespace PlusLevelStudio
             }, true);
         }
 
+        /// <summary>
+        /// Add the vanilla activities to the specified EditorMode.
+        /// </summary>
+        /// <param name="modeToModify"></param>
         public static void AddVanillaActivities(EditorMode modeToModify)
         {
             AddToolsToCategory(modeToModify, "activities", new EditorTool[]
@@ -92,6 +108,10 @@ namespace PlusLevelStudio
             }, true);
         }
 
+        /// <summary>
+        /// Add the vanilla posters to the specified EditorMode.
+        /// </summary>
+        /// <param name="modeToModify"></param>
         public static void AddVanillaPosters(EditorMode modeToModify)
         {
             List<PosterObject> allPosters = LevelLoaderPlugin.Instance.posterAliases.Values.Where(x => x.GetInstanceID() >= 0).ToList();
@@ -107,6 +127,10 @@ namespace PlusLevelStudio
             AddToolsToCategory(modeToModify, "posters", allPosters.Select(z => new PosterTool(LevelLoaderPlugin.Instance.posterAliases.First(x => x.Value == z).Key)), true);
         }
 
+        /// <summary>
+        /// Add the vanilla NPCs to the specified EditorMode.
+        /// </summary>
+        /// <param name="modeToModify"></param>
         public static void AddVanillaNPCs(EditorMode modeToModify)
         {
             AddToolsToCategory(modeToModify, "npcs", new EditorTool[]
@@ -127,6 +151,11 @@ namespace PlusLevelStudio
             }, true);
         }
 
+        /// <summary>
+        /// Add the vanilla random events to the specified EditorMode.
+        /// </summary>
+        /// <param name="modeToModify"></param>
+        /// <param name="includeNonVanillaComplaint"></param>
         public static void AddVanillaEvents(EditorMode modeToModify, bool includeNonVanillaComplaint)
         {
             modeToModify.availableRandomEvents.AddRange(new string[]
@@ -141,6 +170,11 @@ namespace PlusLevelStudio
             });
         }
 
+        /// <summary>
+        /// Add the vanilla structures to the specified editor mode.
+        /// </summary>
+        /// <param name="modeToModify"></param>
+        /// <param name="includeNonVanillaComplaintTools">If true, includes tools that require editor specific versions of the structures to work</param>
         public static void AddVanillaStructures(EditorMode modeToModify, bool includeNonVanillaComplaintTools)
         {
             AddToolsToCategory(modeToModify, "structures", new EditorTool[]
@@ -174,6 +208,10 @@ namespace PlusLevelStudio
             }, true);
         }
 
+        /// <summary>
+        /// Add the vanilla items to the specified editor mode.
+        /// </summary>
+        /// <param name="modeToModify"></param>
         public static void AddVanillaItems(EditorMode modeToModify)
         {
             AddToolsToCategory(modeToModify, "items", new EditorTool[]
@@ -212,6 +250,10 @@ namespace PlusLevelStudio
             }, true);
         }
 
+        /// <summary>
+        /// Adds the vanilla rooms to the specified editor mode.
+        /// </summary>
+        /// <param name="modeToModify"></param>
         public static void AddVanillaRooms(EditorMode modeToModify)
         {
             AddToolsToCategory(modeToModify, "rooms", new EditorTool[]
@@ -230,6 +272,10 @@ namespace PlusLevelStudio
             }, true);
         }
 
+        /// <summary>
+        /// Adds the vanilla objects to the specified editor mode.
+        /// </summary>
+        /// <param name="modeToModify"></param>
         public static void AddVanillaObjects(EditorMode modeToModify)
         {
             AddToolsToCategory(modeToModify, "objects", new EditorTool[]

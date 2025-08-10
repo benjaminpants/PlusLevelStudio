@@ -11,6 +11,9 @@ using UnityEngine;
 
 namespace PlusLevelStudio
 {
+    /// <summary>
+    /// The status of a door when compiled in game.
+    /// </summary>
     public enum DoorIngameStatus
     {
         /// <summary>
@@ -129,12 +132,11 @@ namespace PlusLevelStudio
         {
             GameObject visual = CloneToPrefabStripMonoBehaviors(prefab.gameObject);
             visual.name = "ElevatorVisual_" + key;
-            // TODO: add hitbox and delete component
             AddExit(key, visual);
         }
 
         /// <summary>
-        /// Adds the specified exit visual to the editors database. Make sure your visual has a collision box and an EditorDeleteComponent attached!
+        /// Adds the specified exit visual to the editors database.
         /// </summary>
         /// <param name="key"></param>
         /// <param name="visual"></param>
@@ -167,6 +169,12 @@ namespace PlusLevelStudio
             return obj;
         }
 
+        /// <summary>
+        /// Automatically sets up the visual and adds it to the dictionary for the specified Activity. You may need to further configure the generated object.
+        /// </summary>
+        /// <param name="key">The key to use in the dictionary.</param>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public static GameObject AddActivityVisual(string key, GameObject obj)
         {
             GameObject clone = CloneToPrefabStripMonoBehaviors(obj);
@@ -183,6 +191,12 @@ namespace PlusLevelStudio
             return clone;
         }
 
+        /// <summary>
+        /// Automatically generates the visual and adds it to the dictionary for the specified NPC based off of the prefab.
+        /// </summary>
+        /// <param name="key">The key to use in the dictionary.</param>
+        /// <param name="npc"></param>
+        /// <returns></returns>
         public static GameObject AddNPCVisual(string key, NPC npc)
         {
             GameObject clone = CloneToPrefabStripMonoBehaviors(npc.gameObject, new Type[] { typeof(BillboardUpdater) });
@@ -209,6 +223,12 @@ namespace PlusLevelStudio
             return clone;
         }
 
+        /// <summary>
+        /// Generates a visual for the specified structure, and adds it to the genericStructureDisplays dictionary.
+        /// </summary>
+        /// <param name="key">The key to use for the dictionary.</param>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public static GameObject AddStructureGenericVisual(string key, GameObject obj)
         {
             GameObject clone = CloneToPrefabStripMonoBehaviors(obj);
@@ -221,6 +241,16 @@ namespace PlusLevelStudio
             return clone;
         }
 
+        /// <summary>
+        /// Automatically generates a visual for the specified BasicObject and sets up its collision.
+        /// If you aren't using useRegularColliderAsEditorHitbox, be sure to assign EditorBasicObject's .editorCollider variable.
+        /// </summary>
+        /// <param name="key">The key to use in the dictionary.</param>
+        /// <param name="obj">The prefab to copy.</param>
+        /// <param name="useRegularColliderAsEditorHitbox">If true, a copy of the regular collider for the object will be created based off the first found collider.</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        /// <exception cref="NotImplementedException"></exception>
         public static EditorBasicObject AddObjectVisual(string key, GameObject obj, bool useRegularColliderAsEditorHitbox)
         {
             GameObject clone = CloneToPrefabStripMonoBehaviors(obj, new Type[] { typeof(BillboardUpdater), typeof(AnimatedSpriteRotator) });
@@ -283,6 +313,14 @@ namespace PlusLevelStudio
             return basic;
         }
 
+        /// <summary>
+        /// Adds the specified object visual with a custom box collider for use in editor.
+        /// </summary>
+        /// <param name="key">The key to use in the dictionary.</param>
+        /// <param name="obj">The prefab to copy.</param>
+        /// <param name="size"></param>
+        /// <param name="center"></param>
+        /// <returns></returns>
         public static EditorBasicObject AddObjectVisualWithCustomBoxCollider(string key, GameObject obj, Vector3 size, Vector3 center)
         {
             EditorBasicObject basic = AddObjectVisual(key, obj, false);
@@ -293,6 +331,14 @@ namespace PlusLevelStudio
             return basic;
         }
 
+        /// <summary>
+        /// Adds the specified object visual with a custom sphere collider for use in editor.
+        /// </summary>
+        /// <param name="key">The key to use in the dictionary.</param>
+        /// <param name="obj">The prefab to copy.</param>
+        /// <param name="radius"></param>
+        /// <param name="center"></param>
+        /// <returns></returns>
         public static EditorBasicObject AddObjectVisualWithCustomSphereCollider(string key, GameObject obj, float radius, Vector3 center)
         {
             EditorBasicObject basic = AddObjectVisual(key, obj, false);
@@ -303,6 +349,16 @@ namespace PlusLevelStudio
             return basic;
         }
 
+        /// <summary>
+        /// Adds the specified object visual with a custom capsule collider for use in editor.
+        /// </summary>
+        /// <param name="key">The key to use in the dictionary.</param>
+        /// <param name="obj">The prefab to copy.</param>
+        /// <param name="radius"></param>
+        /// <param name="height"></param>
+        /// <param name="direction"></param>
+        /// <param name="center"></param>
+        /// <returns></returns>
         public static EditorBasicObject AddObjectVisualWithCustomCapsuleCollider(string key, GameObject obj, float radius, float height, int direction, Vector3 center)
         {
             EditorBasicObject basic = AddObjectVisual(key, obj, false);
@@ -315,6 +371,13 @@ namespace PlusLevelStudio
             return basic;
         }
 
+        /// <summary>
+        /// Adds the specified object visual with a custom capsule collider for use in editor.
+        /// </summary>
+        /// <param name="key">The key to use in the dictionary.</param>
+        /// <param name="obj">The prefab to copy.</param>
+        /// <param name="convex"></param>
+        /// <returns></returns>
         public static EditorBasicObject AddObjectVisualWithMeshCollider(string key, GameObject obj, bool convex)
         {
             EditorBasicObject basic = AddObjectVisual(key, obj, false);
@@ -324,6 +387,13 @@ namespace PlusLevelStudio
             return basic;
         }
 
+        /// <summary>
+        /// Creates a RoomVisualManager of the specified class type for the specified room type.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="forType"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public static T AddRoomVisualManager<T>(string forType) where T : EditorRoomVisualManager
         {
             if (forType == "hall") throw new Exception("Can't create RoomVisualManager for hallways!");

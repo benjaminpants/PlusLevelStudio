@@ -28,6 +28,12 @@ namespace PlusLevelStudio.Editor.Tools
             pos = null;
         }
 
+        /// <summary>
+        /// Attempt to "place" at the specified position and direction.
+        /// </summary>
+        /// <param name="position"></param>
+        /// <param name="dir"></param>
+        /// <returns>Whether the placement was successful. If it was, the tool is returned.</returns>
         protected abstract bool TryPlace(IntVector2 position, Direction dir);
 
         protected void Place(Direction dir)
