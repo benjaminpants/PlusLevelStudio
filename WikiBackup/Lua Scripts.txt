@@ -11,6 +11,7 @@ Note that some of the required functions may not have globals defined yet, which
 * SetupPlayerProperties()
 * ExitedSpawn()
 * Update(delta)
+* AllNotebooks()
 
 ## Initialize()
 Called when the level is initialized. This is the first method that is called where all globals have been defined.
@@ -38,15 +39,21 @@ This is called when the player leaves the elevator. It is recommended you call `
 ## Update(delta)
 This is called every update frame/tick. Delta is the delta time, which is the time that passed inbetween this update and the last one. You can use it to make timers.
 
+## AllNotebooks()
+This is called when the player has collected all notebooks. For most challenges, you want to call `self:OpenExits(true)` here.
+
 # Optional Functions
 * NotebookCollected()
 * AngerBaldi(value)
+* AllNPCsSpawned()
+* OnItemUse(itemId, slot)
 
-## NotebookCollected()
+## NotebookCollected(notebookPosition)
 This is called whenever a notebook gets collected.
+notebookPosition is the notebook's position in world space.
 
 ## AngerBaldi(value)
-This is called whenever the game wants to make Baldi angry. The return value of this method can be used to change how angry Baldi gets. Below is an example function that makes Baldi get twice as angry.
+This is called whenever the game wants to make Baldi angry. The return value of this function can be used to change how angry Baldi gets. Below is an example function that makes Baldi get twice as angry.
 
 `
 function AngerBaldi(value)
@@ -54,13 +61,23 @@ function AngerBaldi(value)
 end
 `
 
+## AllNPCsSpawned()
+BB+ only spawns NPCs if the player isn't too close. This function is called when every single NPC has spawned in for the first time. This is not called if SpawnNPCs is called multiple times.
+
+## OnItemUse(itemId, slot)
+Called when the player attempts to use an item. The return value determines if the item can be used. Returning true allows the item to be used while returning false prevents it from being used.
+
 # Global Functions And Variables
 
 Global Variables:
 * player - The current Player.
 
+Global Functions:
+* Vector3(x,y,z) - Creates a new Vector3 with the specified x, y, and z coordinates.
+* IntVector2(x,z) - Creates a new IntVector2 with the specified x and z coordinates.
+
 # Self Functions And Variables
-You may have seen the "self" variable being used. This refers to BB+'s game manager, which is what your script is managing. You cannot add custom variables to self. (You can define variables in the global scope/outside a method if you want custom variables)
+You may have seen the "self" variable being used. This refers to BB+'s game manager, which is what your script is managing. You cannot add custom variables to self. (You can define variables in the global scope/outside a function if you want custom variables)
 
 ## SpawnNPCs()
 Spawns all the NPCs that were placed in the editor.
@@ -83,8 +100,35 @@ Returns the current Environment timescale.
 ## GetPlayerTimeScale()
 Returns the current Player timescale.
 
+## OpenExits(doEscape)
+This opens all the exits, making completing the level possible. If doEscape is true, the standard exit sequence will play out. If it is false, all exits can be entered like in the tutorial.
+
+## GetRandomEntitySafeCell()
+This returns a random cell that is safe for entites to be on.
+
+## CellFromPosition(position)
+Position can be either a Vector3 or an IntVector2. This gets the cell at the corresponding position.
+
+## MakeNoise(position, noiseValue)
+This makes noise that Baldi and others can hear at the specified position and noise value.
+
+## GetNPC(npcId)
+This gets the first NPC with the specified the ID. The ID being the ID for the NPC in the level loader.
+
+## SpawnNPC(npcId, position)
+This spawns and returns the NPC at the specified Vector3 position. The ID being the ID for the NPC in the level loader.
+
+## GetNPCs()
+This gets all NPCs on the map and returns them in a table.
+
 ## notebookAngerVal
 This variable is the amount that Baldi will get angry by when you collect a notebook. If you collect a notebook before Baldi is spawned, this value will get changed.
+
+## notebookCount
+This gets the currently collected amount of notebooks.
+
+## totalNotebooks
+This gets the total amount of notebooks on the map.
 
 ## npcTimeScaleMod
 This variable is the current npc timescale modifier. (not the current npc timescale) Changing this value will speed up or slow down the speed of npcs.
@@ -97,16 +141,31 @@ This variable is the current player timescale modifier. (not the current player 
 
 # NPC Functions and Variables
 
+NPC Functions:
+* AddArrow(r,g,b)
+
+## AddArrow(r,g,b)
+This adds an arrow onto the map that tracks this NPC with a color of the specified R G and B values. (0-255)
+
 NPC Variables:
 * moveSpeedMultiplier
+* position
+* id
 
 ## moveSpeedMultiplier
 This variable is a multiplier to the NPC's movement speed, higher values make the NPC faster while lower values make the NPC slower.
+
+## id
+This is the variable that stores the NPC's id.
+
+## position
+This is the NPCs current position. Changing this will teleport the NPC to the specified coordinates.
 
 # Baldi Functions And Variables
 Baldi shares all the functions and variables with NPCs. But he also has the additional functions:
 * AddAnger(amount)
 * SetAnger(amount)
+* Praise(time)
 
 ## AddAnger(amount)
 This increases Baldi's anger by the specified amount. This does not call AngerBaldi.
@@ -114,8 +173,29 @@ This increases Baldi's anger by the specified amount. This does not call AngerBa
 ## SetAnger(amount)
 This sets Baldi's anger to the specified amount. This does not call AngerBaldi.
 
+## Praise
+This makes Baldi congratulate/praise the player for the specified amount of time.
+
 # Player Functions And Variables
-The player refers to well, the player. Items are referenced by id, which is the id of the item in the level loader.
+The player refers to well, the player. Items are referenced by id, which is the id of the item in the level loader. Slot indexes start with 1 being the first slot, 2 being the second slot, etc.
+
+Variables:
+* position
+* slotCount
+* points
+* moveSpeedMultiplier
+
+## position
+The player's current position, setting this will teleport the player.
+
+## slotCount
+The player's current inventory size. Setting this calls SetSlotCount.
+
+## points
+The player's current amount of YTPs. Setting this will show the YTP incrementing/decrementing animation.
+
+## moveSpeedMultiplier
+This variable is a multiplier to the player's movement speed, higher values make the NPC faster while lower values make the player slower.
 
 Functions:
 * SetItem(itemId, slot)
@@ -126,9 +206,13 @@ Functions:
 * LockItemSlot(slot)
 * UnlockItemSlot(slot)
 * UseItem(itemId)
+* HasItem(itemId)
+* RemoveItemOfID(itemId)
+* RemoveItem(slot)
+* MakeGuilty(ruleBreak, time)
 
 ## SetItem(itemId, slot)
-This forcefully sets the item in the specified slot(starting at 1) to be the item with the specified id.
+This forcefully sets the item in the specified slot to be the item with the specified id.
 
 ## AddItem(itemId)
 This gives the item with the specified id to the player.
@@ -150,3 +234,44 @@ Unlocks the specified slot, allowing characters like Bully from stealing it.
 
 ## UseItem(itemId)
 Simulates the player using the specified item. The player does not need to have the item in the inventory or have any slots available for this to work.
+
+## HasItem(itemId)
+Returns true if the player has the item of the specified type.
+
+## RemoveItemOfID(itemId)
+Removes the first item found if it has the matching ID.
+
+## RemoveItem(slot)
+Removes the item at the specified slot.
+
+## MakeGuilty(ruleBreak, time)
+Makes the player guilty of violating the specified rule for the specified time. Refer to the cheatsheet for valid vanilla rule breaks.
+
+# Cell Functions and Variables
+Cells, or also commonly referred to as tiles, are something you are probably already familiar with.
+
+Variables:
+* position - The cells grid position as an IntVector2.
+* FloorWorldPosition - The Vector3 corresponding to the floor of the cell.
+* CenterWorldPosition - The Vector3 corresponding to the center of the cell.
+
+## Vector3 Functions and Variables
+A Vector3 is usually used to represent a position. They can be added and subtracted from other Vector3s.
+
+Variables:
+* x - The x position. Cannot be set.
+* y - The y position. Cannot be set.
+* z - The z position. Cannot be set.
+
+Functions:
+* DistanceFrom(other)
+
+## DistanceFrom(other)
+This returns the distance from the Vector3 to "other".
+
+## IntVector2 Functions and Variables
+An IntVector2 is used to represent a cell position. They can be added and subtracted from other IntVector2s.
+
+Variables:
+* x - The x position. Cannot be set.
+* z - The z position. Cannot be set.

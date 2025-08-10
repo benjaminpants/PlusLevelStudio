@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -9,7 +10,6 @@ using MoonSharp.Interpreter;
 using PlusLevelStudio.Editor;
 using PlusStudioLevelLoader;
 using UnityEngine;
-using static UnityEngine.LowLevel.PlayerLoopSystem;
 
 namespace PlusLevelStudio.Lua
 {
@@ -44,10 +44,22 @@ namespace PlusLevelStudio.Lua
         DynValue updateFunction;
         bool globalsDefined = false;
 
+        Vector3Proxy CreateVector(float x, float y, float z)
+        {
+            return new Vector3Proxy(x,y,z);
+        }
+
+        IntVector2Proxy CreateIntVector(int x, int z)
+        {
+            return new IntVector2Proxy(x,z);
+        }
+
         public void InitializeScriptGlobals()
         {
             myProxy = new EditorLuaGameProxy { myManager = this };
             script.Globals["self"] = myProxy;
+            script.Globals["Vector3"] = (Func<float, float, float, Vector3Proxy>)CreateVector;
+            script.Globals["IntVector2"] = (Func<int, int, IntVector2Proxy>)CreateIntVector;
             globalsDefined = true;
         }
 
@@ -118,9 +130,12 @@ namespace PlusLevelStudio.Lua
             yield break;
         }
 
+        bool waitedForInitialSpawn = false;
         public void BeginNPCSpawnWait()
         {
+            if (waitedForInitialSpawn) return;
             StartCoroutine(WaitForNPCsToFinishSpawning());
+            waitedForInitialSpawn = true;
         }
 
         public void OnNPCsDoneSpawning()
@@ -156,15 +171,73 @@ namespace PlusLevelStudio.Lua
             base.AngerBaldi(0);
         }
 
-        public override void CollectNotebooks(int count)
+        public bool OnUseItem(ItemManager manager, ItemObject attempted, int slot)
         {
-            base.CollectNotebooks(count);
+            if (!globalsDefined) return true;
+            string itemId = "unknown";
+            if (attempted == manager.nothing)
+            {
+                itemId = "nothing";
+            }
+            else
+            {
+                itemId = LuaHelpers.GetIDFromItemObject(attempted);
+            }
+            if (script.Globals.Get("OnItemUse").Type != DataType.Function) return true;
+            DynValue shouldUse = script.Call(script.Globals["OnItemUse"], itemId, slot + 1);
+            if (shouldUse.Type == DataType.Boolean)
+            {
+                return shouldUse.Boolean;
+            }
+            return true;
+        }
+
+        protected override void AllNotebooks()
+        {
+            if (!globalsDefined)
+            {
+                base.AllNotebooks();
+                return;
+            }
+            allNotebooksFound = true;
+            script.Call(script.Globals["AllNotebooks"]);
+        }
+
+        bool finalExitsTriggered = false;
+
+        public void ActivateExits(bool performEscape)
+        {
+            if (finalExitsTriggered) return;
+            finalExitsTriggered = true;
+            ec.SetElevators(true);
+            if (!performEscape)
+            {
+                foreach (Elevator elevator in ec.elevators)
+                {
+                    elevator.PrepareForExit();
+                    elevator.InsideCollider.Enable(true);
+                    StartCoroutine(EnterExit(elevator));
+                }
+                return;
+            }
+            elevatorsToClose = ec.elevators.Count - 1;
+            foreach (Elevator elevator in ec.elevators)
+            {
+                if (ec.elevators.Count > 1)
+                {
+                    elevator.PrepareToClose();
+                }
+
+                StartCoroutine(ReturnSpawnFinal(elevator));
+            }
+        }
+
+        public override void CollectNotebook(Notebook notebook)
+        {
+            base.CollectNotebook(notebook);
             if (!globalsDefined) return;
             if (script.Globals.Get("NotebookCollected").Type != DataType.Function) return;
-            for (int i = 0; i < count; i++)
-            {
-                script.Call(script.Globals["NotebookCollected"]);
-            }
+            script.Call(script.Globals["NotebookCollected"], new Vector3Proxy(notebook.transform.position));
         }
 
         void Update()
@@ -199,7 +272,23 @@ namespace PlusLevelStudio.Lua
                 myManager.SetNotebookAngerValue(value);
             }
         }
-        
+
+        public int notebookCount
+        {
+            get
+            {
+                return myManager.FoundNotebooks;
+            }
+        }
+
+        public int totalNotebooks
+        {
+            get
+            {
+                return myManager.NotebookTotal;
+            }
+        }
+
         public float GetNPCTimeScale()
         {
             return myManager.Ec.NpcTimeScale;
@@ -213,6 +302,18 @@ namespace PlusLevelStudio.Lua
         public float GetPlayerTimeScale()
         {
             return myManager.Ec.PlayerTimeScale;
+        }
+
+        public void OpenExits(bool doEscape)
+        {
+            myManager.ActivateExits(doEscape);
+        }
+
+        public CellProxy GetRandomEntitySafeCell()
+        {
+            Cell randomCell = myManager.Ec.RandomCell(false, false, true);
+            if (randomCell == null) return null;
+            return new CellProxy(randomCell);
         }
 
         public float npcTimeScaleMod
@@ -311,6 +412,11 @@ namespace PlusLevelStudio.Lua
             return proxy;
         }
 
+        public void MakeNoise(Vector3Proxy position, int noiseValue)
+        {
+            myManager.Ec.MakeNoise(position.ToVector(),noiseValue);
+        }
+
         public NPCProxy GetNPC(string npcId)
         {
             List<NPC> allNPCs = myManager.Ec.Npcs;
@@ -326,6 +432,28 @@ namespace PlusLevelStudio.Lua
                 }
             }
             return null;
+        }
+
+        public CellProxy CellFromPosition(Vector3Proxy proxy)
+        {
+            Cell cell = myManager.Ec.CellFromPosition(proxy.ToVector());
+            if (cell == null) return null;
+            return new CellProxy(cell);
+        }
+
+        public CellProxy CellFromPosition(IntVector2Proxy proxy)
+        {
+            Cell cell = myManager.Ec.CellFromPosition(proxy.ToVector());
+            if (cell == null) return null;
+            return new CellProxy(cell);
+        }
+
+        public NPCProxy SpawnNPC(string type, Vector3Proxy position)
+        {
+            if (!LevelLoaderPlugin.Instance.npcAliases.ContainsKey(type)) return null;
+            NPC npc = myManager.Ec.SpawnNPC(LevelLoaderPlugin.Instance.npcAliases[type], myManager.Ec.CellFromPosition(position.ToVector()).position);
+            npc.transform.localPosition = position.ToVector();
+            return GetProxyForNPC(npc);
         }
 
         public List<NPCProxy> GetNPCs()
