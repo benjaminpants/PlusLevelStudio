@@ -16,6 +16,7 @@ namespace PlusLevelStudio.Lua
     public class CustomChallengeGameModeSettings : EditorGameModeSettings
     {
         public string luaScript;
+        public string fileName;
         public override void ApplySettingsToManager(BaseGameManager manager)
         {
             ((CustomChallengeManager)manager).luaScript = luaScript;
@@ -24,13 +25,21 @@ namespace PlusLevelStudio.Lua
         public override void ReadInto(BinaryReader reader)
         {
             byte version = reader.ReadByte();
+            if (version == 0)
+            {
+                fileName = "";
+                luaScript = reader.ReadString();
+                return;
+            }
+            fileName = reader.ReadString();
             luaScript = reader.ReadString();
         }
 
-        const byte version = 0;
+        const byte version = 1;
         public override void Write(BinaryWriter writer)
         {
             writer.Write(version);
+            writer.Write(fileName);
             writer.Write(luaScript);
         }
     }
