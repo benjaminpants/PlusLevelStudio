@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Text;
+using HarmonyLib;
 using MoonSharp.Interpreter;
 using PlusLevelStudio.Editor;
+using PlusStudioLevelLoader;
 using UnityEngine;
 using static UnityEngine.LowLevel.PlayerLoopSystem;
 
@@ -36,6 +40,7 @@ namespace PlusLevelStudio.Lua
         public string luaScript;
         public Script script;
         public EditorLuaGameProxy myProxy;
+        public TimeScaleModifier timeScaleModifier;
         DynValue updateFunction;
         bool globalsDefined = false;
 
@@ -59,6 +64,8 @@ namespace PlusLevelStudio.Lua
         public override void Initialize()
         {
             base.Initialize();
+            timeScaleModifier = new TimeScaleModifier();
+            ec.AddTimeScale(timeScaleModifier);
             PlayerManager pm = Singleton<CoreGameManager>.Instance.GetPlayer(0);
             script = new Script(CoreModules.Preset_HardSandbox);
             script.Options.DebugPrint = Print;
@@ -99,6 +106,33 @@ namespace PlusLevelStudio.Lua
         {
             base.ExitedSpawn();
             script.Call(script.Globals["ExitedSpawn"]);
+        }
+
+        IEnumerator WaitForNPCsToFinishSpawning()
+        {
+            while (ec.npcsLeftToSpawn.Count > 0)
+            {
+                yield return null;
+            }
+            OnNPCsDoneSpawning();
+            yield break;
+        }
+
+        public void BeginNPCSpawnWait()
+        {
+            StartCoroutine(WaitForNPCsToFinishSpawning());
+        }
+
+        public void OnNPCsDoneSpawning()
+        {
+            if (!globalsDefined)
+            {
+                return;
+            }
+            if (script.Globals.Get("AllNPCsSpawned").Type == DataType.Function)
+            {
+                script.Call(script.Globals["AllNPCsSpawned"]);
+            }
         }
 
         public override void AngerBaldi(float val)
@@ -165,16 +199,144 @@ namespace PlusLevelStudio.Lua
                 myManager.SetNotebookAngerValue(value);
             }
         }
+        
+        public float GetNPCTimeScale()
+        {
+            return myManager.Ec.NpcTimeScale;
+        }
+
+        public float GetEnvironmentTimeScale()
+        {
+            return myManager.Ec.EnvironmentTimeScale;
+        }
+
+        public float GetPlayerTimeScale()
+        {
+            return myManager.Ec.PlayerTimeScale;
+        }
+
+        public float npcTimeScaleMod
+        {
+            get
+            {
+                return myManager.timeScaleModifier.npcTimeScale;
+            }
+            set
+            {
+                myManager.timeScaleModifier.npcTimeScale = value;
+            }
+        }
+
+        public float environmentTimeScaleMod
+        {
+            get
+            {
+                return myManager.timeScaleModifier.environmentTimeScale;
+            }
+            set
+            {
+                myManager.timeScaleModifier.environmentTimeScale = value;
+            }
+        }
+
+        public float playerTimeScaleMod
+        {
+            get
+            {
+                return myManager.timeScaleModifier.playerTimeScale;
+            }
+            set
+            {
+                myManager.timeScaleModifier.playerTimeScale = value;
+            }
+        }
 
         public void SpawnNPCs()
         {
             myManager.Ec.SpawnNPCs();
+            myManager.BeginNPCSpawnWait();
         }
 
         public void StartEventTimers()
         {
             if (myManager.Ec.EventsStarted) return;
             myManager.Ec.StartEventTimers();
+        }
+
+        private static FieldInfo _eventTime = AccessTools.Field(typeof(RandomEvent), "eventTime");
+        private static MethodInfo _EventTimer = AccessTools.Method(typeof(EnvironmentController), "EventTimer");
+        public void StartEvent(string eventId, float length, bool doJingle)
+        {
+            if (!LevelLoaderPlugin.Instance.randomEventAliases.ContainsKey(eventId)) return;
+            System.Random controlledRandom = new System.Random();
+            RandomEvent newEvent = GameObject.Instantiate<RandomEvent>(LevelLoaderPlugin.Instance.randomEventAliases[eventId], myManager.Ec.transform);
+            newEvent.Initialize(myManager.Ec, controlledRandom);
+            newEvent.PremadeSetup();
+            if (length <= 0f)
+            {
+                newEvent.SetEventTime(controlledRandom);
+            }
+            else
+            {
+                _eventTime.SetValue(newEvent, length);
+            }
+            if (doJingle)
+            {
+                IEnumerator numberator = (IEnumerator)_EventTimer.Invoke(myManager.Ec, new object[] { newEvent, 3f });
+                myManager.Ec.StartCoroutine(numberator);
+            }
+            else
+            {
+                newEvent.Begin();
+            }
+        }
+
+        private Dictionary<NPC, NPCProxy> proxies = new Dictionary<NPC, NPCProxy>();
+
+        private NPCProxy GetProxyForNPC(NPC npc)
+        {
+            if (proxies.ContainsKey(npc))
+            {
+                return proxies[npc];
+            }
+            NPCProxy proxy;
+            if (npc is Baldi)
+            {
+                proxy = new BaldiProxy((Baldi)npc);
+                proxies.Add(npc, proxy);
+                return proxy;
+            }
+            proxy = new NPCProxy(npc);
+            proxies.Add(npc, proxy);
+            return proxy;
+        }
+
+        public NPCProxy GetNPC(string npcId)
+        {
+            List<NPC> allNPCs = myManager.Ec.Npcs;
+            for (int i = 0; i < allNPCs.Count; i++)
+            {
+                if (LevelLoaderPlugin.Instance.npcAliases[npcId].name == allNPCs[i].name.Replace("(Clone)", ""))
+                {
+                    return GetProxyForNPC(allNPCs[i]);
+                }
+                if (LevelLoaderPlugin.Instance.npcAliases[npcId].Character == allNPCs[i].Character)
+                {
+                    return GetProxyForNPC(allNPCs[i]);
+                }
+            }
+            return null;
+        }
+
+        public List<NPCProxy> GetNPCs()
+        {
+            List<NPC> allNPCs = myManager.Ec.Npcs;
+            List<NPCProxy> returnProxies = new List<NPCProxy>();
+            for (int i = 0; i < allNPCs.Count; i++)
+            {
+                returnProxies.Add(GetProxyForNPC(allNPCs[i]));
+            }
+            return returnProxies;
         }
 
         public BaldiProxy GetBaldi()
@@ -188,6 +350,7 @@ namespace PlusLevelStudio.Lua
             }
             if (myManager.Ec.GetBaldi() == null) return null;
             baldi = new BaldiProxy(myManager.Ec.GetBaldi());
+            proxies.Add(baldi.npc, baldi);
             return baldi;
         }
     }

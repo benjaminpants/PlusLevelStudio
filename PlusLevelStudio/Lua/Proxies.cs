@@ -19,6 +19,11 @@ namespace PlusLevelStudio.Lua
             this.pm = pm;
         }
 
+        public void MakeGuilty(string rule, float time)
+        {
+            pm.RuleBreak(rule, time);
+        }
+
         public void SetItem(string itemId, int slot)
         {
             if (!LevelLoaderPlugin.Instance.itemObjects.ContainsKey(itemId)) return;
@@ -93,9 +98,64 @@ namespace PlusLevelStudio.Lua
     {
         [MoonSharpHidden]
         public NPC npc;
+
+
+        public void AddArrow(int r, int g, int b)
+        {
+            Entity npcEnt = npc.GetComponent<Entity>();
+            if (npcEnt == null) return;
+            npc.ec.map.AddArrow(npcEnt, new Color(r / 255f, g / 255f, b / 255f));
+        }
+
+        public string id { get; private set; }
+
+        MovementModifier moveMod;
+
+        public float moveSpeedMultiplier
+        {
+            get
+            {
+                if (moveMod == null)
+                {
+                    return 1f;
+                }
+                return moveMod.movementMultiplier;
+            }
+            set
+            {
+                if (moveMod == null)
+                {
+                    Entity npcEntity = npc.GetComponent<Entity>();
+                    if (npcEntity == null) return;
+                    moveMod = new MovementModifier(Vector3.zero, value);
+                    moveMod.ignoreAirborne = false;
+                    moveMod.ignoreGrounded = false;
+                    npc.GetComponent<Entity>().ExternalActivity.moveMods.Add(moveMod);
+                }
+                moveMod.movementMultiplier = value;
+            }
+        }
+
         public NPCProxy(NPC npc)
         {
             this.npc = npc;
+            foreach (KeyValuePair<string, NPC> kvp in LevelLoaderPlugin.Instance.npcAliases)
+            {
+                if (kvp.Value.name == npc.name.Replace("(Clone)", ""))
+                {
+                    id = kvp.Key;
+                    return;
+                }
+            }
+            foreach (KeyValuePair<string, NPC> kvp in LevelLoaderPlugin.Instance.npcAliases)
+            {
+                if (kvp.Value.Character == npc.Character)
+                {
+                    id = kvp.Key;
+                    return;
+                }
+            }
+            id = "unknown";
         }
     }
 
