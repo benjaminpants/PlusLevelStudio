@@ -1298,7 +1298,6 @@ namespace PlusLevelStudio
             uiAssetMan.Add<Sprite>("Segment9", allVanillaSprites.First(x => x.name == "Segment_Sheet_9"));
             uiAssetMan.Add<Sprite>("SegmentD", allVanillaSprites.First(x => x.name == "Segment_Sheet_10"));
 
-
             UIBuilder.elementBuilders.Add("image", new ImageBuilder());
             UIBuilder.elementBuilders.Add("imageButton", new ButtonBuilder());
             UIBuilder.elementBuilders.Add("hotslot", new HotSlotBuilder());

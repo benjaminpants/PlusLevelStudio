@@ -34,13 +34,11 @@ namespace PlusLevelStudio.Lua
             
         }
 
-        public bool ScriptSelected(string fileName)
+        public bool ScriptSelected(string path)
         {
-            string path = Path.Combine(LevelStudioPlugin.luaPath, fileName + ".lua");
-            Debug.Log(path);
             if (!File.Exists(path)) return false;
             ((CustomChallengeGameModeSettings)settings).luaScript = File.ReadAllText(path);
-            return false;
+            return true;
         }
 
         public override void SendInteractionMessage(string message, object data = null)
@@ -48,7 +46,7 @@ namespace PlusLevelStudio.Lua
             switch (message)
             {
                 case "loadScript":
-                    EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.luaPath, "lua", ScriptSelected);
+                    EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.luaPath, "test", "lua", ScriptSelected);
                     break;
             }
         }

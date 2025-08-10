@@ -10,42 +10,6 @@ using TMPro;
 
 namespace PlusLevelStudio.Editor
 {
-    public class EditorUIFileBrowser : EditorOverlayUIExchangeHandler
-    {
-        Func<string, bool> onSubmit;
-        TextMeshProUGUI textbox;
-
-        public override void OnElementsCreated()
-        {
-            base.OnElementsCreated();
-            textbox = transform.Find("Textbox").GetComponent<TextMeshProUGUI>();
-        }
-
-        public void Setup(string path, string extension, Func<string, bool> action)
-        {
-            onSubmit = action;
-            textbox.text = "MyFirstLevel";
-            if (!string.IsNullOrEmpty(EditorController.Instance.currentFileName))
-            {
-                textbox.text = EditorController.Instance.currentFileName;
-            }
-        }
-
-        public override void SendInteractionMessage(string message, object data)
-        {
-            if (message == "submit")
-            {
-                if (onSubmit(textbox.text)) // TODO: MOVE THIS OUTTA HERE
-                {
-                    EditorController.Instance.currentFileName = textbox.text;
-                }
-                base.SendInteractionMessage("exit", null);
-                return;
-            }
-            base.SendInteractionMessage(message, data);
-        }
-    }
-
     public class EditorUIGlobalSettingsHandler : UIExchangeHandler
     {
         public bool somethingChanged = false;
@@ -338,30 +302,30 @@ namespace PlusLevelStudio.Editor
                     }
                     break;
                 case "load":
-                    EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.levelFilePath, "ebpl", (string typedName) =>
+                    EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.levelFilePath, EditorController.Instance.currentFileName, "ebpl", (string path) =>
                     {
-                        return EditorController.Instance.LoadEditorLevelFromFile(Path.Combine(LevelStudioPlugin.levelFilePath, typedName + ".ebpl"));
+                        return EditorController.Instance.LoadEditorLevelFromFile(path);
                     });
                     break;
                 case "save":
-                    EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.levelFilePath, "ebpl", (string typedName) =>
+                    EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.levelFilePath, EditorController.Instance.currentFileName, "ebpl", (string path) =>
                     {
-                        EditorController.Instance.SaveEditorLevelToFile(Path.Combine(LevelStudioPlugin.levelFilePath, typedName + ".ebpl"));
+                        EditorController.Instance.SaveEditorLevelToFile(path);
                         return true;
                     });
                     break;
                 case "saveAndPlay":
-                    EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.levelFilePath, "ebpl", (string typedName) =>
+                    EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.levelFilePath, EditorController.Instance.currentFileName, "ebpl", (string path) =>
                     {
-                        EditorController.Instance.SaveEditorLevelToFile(Path.Combine(LevelStudioPlugin.levelFilePath, typedName + ".ebpl"));
+                        EditorController.Instance.SaveEditorLevelToFile(path);
                         PlayLevel();
                         return true;
                     });
                     break;
                 case "saveAndExport":
-                    EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.levelFilePath, "ebpl", (string typedName) =>
+                    EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.levelFilePath, EditorController.Instance.currentFileName, "ebpl", (string path) =>
                     {
-                        EditorController.Instance.SaveEditorLevelToFile(Path.Combine(LevelStudioPlugin.levelFilePath, typedName + ".ebpl"));
+                        EditorController.Instance.SaveEditorLevelToFile(path);
                         EditorController.Instance.Export();
                         return true;
                     });

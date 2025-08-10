@@ -29,7 +29,14 @@ namespace PlusLevelStudio.UI
             {
                 box.typeMessage = data["onType"].Value<string>();
             }
-            box.typeDoneMessage = data["onFinish"].Value<string>();
+            if (data.ContainsKey("onFinish"))
+            {
+                box.typeDoneMessage = data["onFinish"].Value<string>();
+            }
+            else
+            {
+                box.typeDoneMessage = null;
+            }
             box.handler = handler;
             if (data.ContainsKey("allowedCharacters"))
             {
@@ -138,7 +145,10 @@ namespace PlusLevelStudio.UI
                 CursorController.Instance.Hide(false);
                 typing = false;
                 text.fontStyle = FontStyles.Normal;
-                handler.SendInteractionMessage(typeDoneMessage, text.text);
+                if (typeDoneMessage != null)
+                {
+                    handler.SendInteractionMessage(typeDoneMessage, text.text);
+                }
             }
         }
     }

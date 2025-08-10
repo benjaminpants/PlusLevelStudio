@@ -16,6 +16,7 @@
 {"key":"Ed_Menu_BaldiSpawnsAtHappyBaldi","value":"Baldi Spawns At Happy Baldi"},
 {"key":"Ed_Menu_GiveChalkErasers","value":"Give Chalk Erasers"},
 {"key":"Ed_Menu_LoadLuaScript","value":"Load Lua Script"},
+{"key":"Ed_Menu_SelectFile","value":"Select File (.{0})"},
 
 {"key":"Ed_Menu_NoLevels","value":"No Levels Found..."},
 {"key":"Ed_Menu_LoadingLevels","value":"Loading Levels..."},

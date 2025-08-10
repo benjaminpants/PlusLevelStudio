@@ -261,6 +261,7 @@ namespace PlusLevelStudio.Editor
             }
             //EditorController.Instance.LoadEditorLevel(EditorLevelData.ReadFrom(reader), true);
             reader.Close();
+            currentFileName = Path.GetFileNameWithoutExtension(path);
             return true;
         }
 
@@ -272,6 +273,7 @@ namespace PlusLevelStudio.Editor
             currentFile.Write(writer);
             writer.Close();
             hasUnsavedChanges = false;
+            currentFileName = Path.GetFileNameWithoutExtension(path);
         }
 
         public void LoadEditorLevel(EditorLevelData newData, bool wipeUndoHistory = true)
@@ -765,10 +767,10 @@ namespace PlusLevelStudio.Editor
             handler.OnNo = onNo;
         }
 
-        public void CreateUIFileBrowser(string path, string extension, Func<string, bool> onSubmit)
+        public void CreateUIFileBrowser(string path, string startingFile, string extension, Func<string, bool> onSubmit)
         {
             EditorUIFileBrowser fileBrowser = EditorController.Instance.CreateUI<EditorUIFileBrowser>("FileBrowser");
-            fileBrowser.Setup(path, extension, onSubmit);
+            fileBrowser.Setup(path, extension, startingFile, onSubmit);
 
         }
 
