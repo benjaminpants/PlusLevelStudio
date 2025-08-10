@@ -14,13 +14,12 @@ namespace PlusStudioLevelLoader
         public StandardDoorMats doorMat;
         public RoomFunctionContainer container;
 
-        public RoomSettings(RoomCategory cat, RoomType type, Color color, StandardDoorMats doors, Material mapMaterial = null, RoomFunctionContainer container = null)
+        public RoomSettings(RoomCategory cat, RoomType type, Color color, StandardDoorMats doors, Material mapMaterial = null)
         {
             category = cat;
             this.type = type;
             this.color = color;
             this.doorMat = doors;
-            this.container = container;
             if (mapMaterial != null)
             {
                 this.mapMaterial = mapMaterial;
