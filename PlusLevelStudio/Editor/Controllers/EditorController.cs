@@ -565,7 +565,7 @@ namespace PlusLevelStudio.Editor
             renderCam.targetTexture.filterMode = FilterMode.Point;
             renderCam.useOcclusionCulling = false;
             renderCam.clearFlags = CameraClearFlags.Skybox;
-            renderCam.farClipPlane = 100f;
+            renderCam.farClipPlane = 1000f;
             renderCam.cullingMask = LayerMask.GetMask("Default", "TransparentFX", "IgnoreRaycast", "Water", "PostProcessing", "CollidableEntities", "Ignore Raycast B", "Block Raycast", "Disabled", "Windows", "Maskable", "Mask", "Billboard");
             transform.position = levelData.PracticalSpawnPoint;
             transform.rotation = levelData.PracticalSpawnDirection.ToRotation();
