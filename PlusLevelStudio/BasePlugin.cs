@@ -107,6 +107,10 @@ namespace PlusLevelStudio
             LoadingEvents.RegisterOnAssetsLoaded(Info, SetupModes(), LoadingEventOrder.Post);
             harmony.PatchAllConditionals();
             UserData.RegisterAssembly();
+            Directory.CreateDirectory(levelFilePath);
+            Directory.CreateDirectory(levelExportPath);
+            Directory.CreateDirectory(playableLevelPath);
+            Directory.CreateDirectory(luaPath);
         }
 
         void AddSolidColorLightmap(string name, Color color)
