@@ -15,8 +15,8 @@ namespace PlusLevelStudio.Lua
 {
     public class CustomChallengeGameModeSettings : EditorGameModeSettings
     {
-        public string luaScript;
-        public string fileName;
+        public string luaScript = string.Empty;
+        public string fileName = string.Empty;
         public override void ApplySettingsToManager(BaseGameManager manager)
         {
             ((CustomChallengeManager)manager).luaScript = luaScript;
@@ -27,7 +27,7 @@ namespace PlusLevelStudio.Lua
             byte version = reader.ReadByte();
             if (version == 0)
             {
-                fileName = "";
+                fileName = string.Empty;
                 luaScript = reader.ReadString();
                 return;
             }
