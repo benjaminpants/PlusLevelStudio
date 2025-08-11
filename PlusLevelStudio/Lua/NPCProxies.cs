@@ -44,6 +44,41 @@ namespace PlusLevelStudio.Lua
             npc.ec.map.AddArrow(npcEnt, new Color(r / 255f, g / 255f, b / 255f));
         }
 
+        public bool squished
+        {
+            get
+            {
+                Entity npcEnt = npc.GetComponent<Entity>();
+                if (npcEnt == null) return false;
+                return npcEnt.Squished;
+            }
+            set
+            {
+                if (value)
+                {
+                    Squish(float.MaxValue);
+                }
+                else
+                {
+                    Unsquish();
+                }
+            }
+        }
+
+        public void Squish(float time)
+        {
+            Entity npcEnt = npc.GetComponent<Entity>();
+            if (npcEnt == null) return;
+            npcEnt.Squish(time);
+        }
+
+        public void Unsquish()
+        {
+            Entity npcEnt = npc.GetComponent<Entity>();
+            if (npcEnt == null) return;
+            npcEnt.Unsquish();
+        }
+
         public string id { get; private set; }
 
         MovementModifier moveMod;

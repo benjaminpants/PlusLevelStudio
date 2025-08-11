@@ -4,16 +4,47 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using MTM101BaldAPI;
+using MTM101BaldAPI.PlusExtensions;
 
 namespace PlusLevelStudio.Lua
 {
     [MoonSharpUserData]
     public class PlayerProxy
     {
-        [MoonSharpHidden]
         PlayerManager pm;
 
         MovementModifier moveMod;
+        PlayerMovementStatModifier statMod;
+
+        public bool squished
+        {
+            get
+            {
+                return pm.plm.Entity.Squished;
+            }
+            set
+            {
+                if (value)
+                {
+                    Squish(float.MaxValue);
+                }
+                else
+                {
+                    Unsquish();
+                }
+            }
+        }
+
+        public void Squish(float time)
+        {
+            pm.plm.Entity.Squish(time);
+        }
+
+        public void Unsquish()
+        {
+            pm.plm.Entity.Unsquish();
+        }
 
         public float moveSpeedMultiplier
         {
@@ -24,6 +55,130 @@ namespace PlusLevelStudio.Lua
             set
             {
                 moveMod.movementMultiplier = value;
+            }
+        }
+
+        public float baseWalkSpeed
+        {
+            get
+            {
+                return statMod.baseStats["walkSpeed"];
+            }
+            set
+            {
+                statMod.ChangeBaseStat("walkSpeed", value);
+            }
+        }
+
+        public float baseRunSpeed
+        {
+            get
+            {
+                return statMod.baseStats["runSpeed"];
+            }
+            set
+            {
+                statMod.ChangeBaseStat("runSpeed", value);
+            }
+        }
+
+        public float baseStaminaDrop
+        {
+            get
+            {
+                return statMod.baseStats["staminaDrop"];
+            }
+            set
+            {
+                statMod.ChangeBaseStat("staminaDrop", value);
+            }
+        }
+
+        public float baseStaminaMax
+        {
+            get
+            {
+                return statMod.baseStats["staminaMax"];
+            }
+            set
+            {
+                statMod.ChangeBaseStat("staminaMax", value);
+            }
+        }
+
+        public float baseStaminaRise
+        {
+            get
+            {
+                return statMod.baseStats["staminaRise"];
+            }
+            set
+            {
+                statMod.ChangeBaseStat("staminaRise", value);
+            }
+        }
+
+        public float walkSpeed
+        {
+            get
+            {
+                return pm.plm.walkSpeed;
+            }
+        }
+
+        public float runSpeed
+        {
+            get
+            {
+                return pm.plm.runSpeed;
+            }
+        }
+
+        public float staminaDrop
+        {
+            get
+            {
+                return pm.plm.staminaDrop;
+            }
+        }
+
+        public float staminaMax
+        {
+            get
+            {
+                return pm.plm.staminaMax;
+            }
+        }
+
+        public float staminaRise
+        {
+            get
+            {
+                return pm.plm.staminaRise;
+            }
+        }
+
+        public float stamina
+        {
+            get
+            {
+                return pm.plm.stamina;
+            }
+            set
+            {
+                pm.plm.stamina = value;
+            }
+        }
+
+        public float staminaNormal
+        {
+            get
+            {
+                return pm.plm.stamina / pm.plm.staminaMax;
+            }
+            set
+            {
+                pm.plm.stamina = value * pm.plm.staminaMax;
             }
         }
 
@@ -67,6 +222,7 @@ namespace PlusLevelStudio.Lua
         public PlayerProxy(PlayerManager pm)
         {
             this.pm = pm;
+            statMod = pm.GetMovementStatModifier();
             moveMod = new MovementModifier(Vector3.zero, 1f);
             moveMod.ignoreGrounded = false;
             moveMod.ignoreAirborne = false;

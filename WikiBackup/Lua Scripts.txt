@@ -121,6 +121,15 @@ This spawns and returns the NPC at the specified Vector3 position. The ID being 
 ## GetNPCs()
 This gets all NPCs on the map and returns them in a table.
 
+## ActivateBonusProblems(includeLast)
+This makes all activities activate their bonus problems. If includeLast is true, this will also activate bonus problems on the most recently completed machine.
+
+## ForceLose()
+This forcefully ends the game, showing the Baldi jumpscare animation.
+
+## ForceWin()
+This causes the level to be instantly completed. Not advised to be used.
+
 ## notebookAngerVal
 This variable is the amount that Baldi will get angry by when you collect a notebook. If you collect a notebook before Baldi is spawned, this value will get changed.
 
@@ -143,14 +152,23 @@ This variable is the current player timescale modifier. (not the current player 
 
 NPC Functions:
 * AddArrow(r,g,b)
+* Squish(time)
+* Unsquish()
 
 ## AddArrow(r,g,b)
 This adds an arrow onto the map that tracks this NPC with a color of the specified R G and B values. (0-255)
+
+## Squish(time)
+Squishes the NPC for the specified amount of time.
+
+## Unsquish()
+Unsquishes the NPC.
 
 NPC Variables:
 * moveSpeedMultiplier
 * position
 * id
+* squished
 
 ## moveSpeedMultiplier
 This variable is a multiplier to the NPC's movement speed, higher values make the NPC faster while lower values make the NPC slower.
@@ -160,6 +178,9 @@ This is the variable that stores the NPC's id.
 
 ## position
 This is the NPCs current position. Changing this will teleport the NPC to the specified coordinates.
+
+## squished
+Returns if the NPC is currently squished. If it is set to true, the NPC will be squished for an infinite amount of time. Calling Unsquish or setting squished to false would be required to unsquish.
 
 # Baldi Functions And Variables
 Baldi shares all the functions and variables with NPCs. But he also has the additional functions:
@@ -184,6 +205,19 @@ Variables:
 * slotCount
 * points
 * moveSpeedMultiplier
+* stamina
+* staminaNormal
+* baseWalkSpeed
+* baseRunSpeed
+* baseStaminaMax
+* baseStaminaDrop
+* baseStaminaRise
+* walkSpeed
+* runSpeed
+* staminaMax
+* staminaDrop
+* staminaRise
+* squished
 
 ## position
 The player's current position, setting this will teleport the player.
@@ -196,6 +230,45 @@ The player's current amount of YTPs. Setting this will show the YTP incrementing
 
 ## moveSpeedMultiplier
 This variable is a multiplier to the player's movement speed, higher values make the NPC faster while lower values make the player slower.
+
+## stamina
+This variable is the player's current stamina.
+
+## staminaNormal
+This variable is the player's current stamina divided by max stamina, where 1 is always the current max stamina. Can be set as well.
+
+## walkSpeed
+The player's walk speed. Cannot be set.
+
+## runSpeed
+The player's run speed. Cannot be set.
+
+## staminaMax
+The max amount of stamina the player can naturally regenerate. Cannot be set.
+
+## staminaDrop
+The amount stamina will be reduced by when running. Cannot be set.
+
+## staminaRise
+The amount stamina will increase by when resting. Cannot be set.
+
+## baseWalkSpeed
+The player's base walk speed. Can be set.
+
+## baseRunSpeed
+The player's base run speed. Can be set.
+
+## baseStaminaMax
+The base max amount of stamina the player can naturally regenerate. Can be set.
+
+## baseStaminaDrop
+The base amount stamina will be reduced by when running. Can be set.
+
+## baseStaminaRise
+The base amount stamina will increase by when resting. Can be set.
+
+## squished
+Returns if the player is currently squished. If it is set to true, the player will be squished for an infinite amount of time. Calling Unsquish or setting squished to false would be required to unsquish.
 
 Functions:
 * SetItem(itemId, slot)
@@ -210,6 +283,8 @@ Functions:
 * RemoveItemOfID(itemId)
 * RemoveItem(slot)
 * MakeGuilty(ruleBreak, time)
+* Squish(time)
+* Unsquish()
 
 ## SetItem(itemId, slot)
 This forcefully sets the item in the specified slot to be the item with the specified id.
@@ -246,6 +321,12 @@ Removes the item at the specified slot.
 
 ## MakeGuilty(ruleBreak, time)
 Makes the player guilty of violating the specified rule for the specified time. Refer to the cheatsheet for valid vanilla rule breaks.
+
+## Squish(time)
+Squishes the NPC for the specified amount of time.
+
+## Unsquish()
+Unsquishes the NPC.
 
 # Cell Functions and Variables
 Cells, or also commonly referred to as tiles, are something you are probably already familiar with.

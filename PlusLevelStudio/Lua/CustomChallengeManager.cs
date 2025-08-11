@@ -249,6 +249,18 @@ namespace PlusLevelStudio.Lua
             script.Call(script.Globals["NotebookCollected"], new Vector3Proxy(notebook.transform.position));
         }
 
+
+        public void ActivateBonusProblems(bool includeLast)
+        {
+            foreach (Activity activity in ec.activities)
+            {
+                if ((activity != lastActivity) || includeLast)
+                {
+                    activity.Corrupt(false);
+                    activity.SetBonusMode(true);
+                }
+            }
+        }
         void Update()
         {
             if (!globalsDefined) return;
@@ -316,6 +328,26 @@ namespace PlusLevelStudio.Lua
         public void OpenExits(bool doEscape)
         {
             myManager.ActivateExits(doEscape);
+        }
+
+        public void ActivateBonusProblems(bool includeLast)
+        {
+            myManager.ActivateBonusProblems(includeLast);
+        }
+
+        public void ForceLose()
+        {
+            Baldi baldi = myManager.Ec.GetBaldi();
+            if (baldi == null)
+            {
+                baldi = (Baldi)myManager.Ec.SpawnNPC(LevelLoaderPlugin.Instance.npcAliases["baldi"], myManager.Ec.CellFromPosition(Singleton<CoreGameManager>.Instance.GetPlayer(0).transform.position).position);
+            }
+            Singleton<CoreGameManager>.Instance.EndGame(Singleton<CoreGameManager>.Instance.GetPlayer(0).transform, baldi);
+        }
+
+        public void ForceWin()
+        {
+            myManager.LoadNextLevel();
         }
 
         public CellProxy GetRandomEntitySafeCell()
