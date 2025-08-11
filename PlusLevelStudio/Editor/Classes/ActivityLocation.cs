@@ -94,6 +94,11 @@ namespace PlusLevelStudio.Editor
         {
             EditorController.Instance.GetVisual(this).GetComponentInChildren<EditorRendererContainer>().Highlight("none");
             // re-attempt setup so we can see if our room is null now
+            SetupDeleteIfInvalid();
+        }
+
+        public void SetupDeleteIfInvalid()
+        {
             Setup(EditorController.Instance.levelData);
             if (myRoom == null)
             {

@@ -1,6 +1,7 @@
 ﻿using Rewired;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using UnityEngine;
 
@@ -65,7 +66,9 @@ namespace PlusLevelStudio.Editor.Tools
             if (lastFoundArea != null)
             {
                 EditorController.Instance.AddUndo();
-                EditorController.Instance.levelData.areas.Remove(lastFoundArea); // TODO: switch this out for the appropiate area removal logic
+                EditorController.Instance.levelData.RemoveObjectsInArea(lastFoundArea);
+                EditorController.Instance.levelData.areas.Remove(lastFoundArea);
+                EditorController.Instance.levelData.ValidateActivityInRoom(EditorController.Instance.levelData.RoomFromId(lastFoundArea.roomId));
                 EditorController.Instance.levelData.RemoveUnusedRoom(lastFoundArea.roomId);
                 // ACK HACK
                 EditorController.Instance.levelData.UpdateCells(true);

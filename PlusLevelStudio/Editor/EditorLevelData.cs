@@ -263,6 +263,48 @@ namespace PlusLevelStudio.Editor
             return changedSomething;
         }
 
+        public void ValidateActivityInRoom(EditorRoom room)
+        {
+            if (room.activity == null) return;
+            room.activity.SetupDeleteIfInvalid();
+        }
+
+        public void RemoveObjectsInArea(CellArea area)
+        {
+            List<IntVector2> ownedCells = area.CalculateOwnedCells().ToList();
+
+            for (int i = objects.Count - 1; i >= 0; i--)
+            {
+                IntVector2 calculatedPosition = new IntVector2(Mathf.RoundToInt((objects[i].position.x - 5f) / 10f), Mathf.RoundToInt((objects[i].position.z - 5f) / 10f));
+                if (ownedCells.Contains(calculatedPosition))
+                {
+                    objects[i].OnDelete(this);
+                }
+            }
+            for (int i = items.Count - 1; i >= 0; i--)
+            {
+                IntVector2 calculatedPosition = new IntVector2(Mathf.RoundToInt((items[i].position.x - 5f) / 10f), Mathf.RoundToInt((items[i].position.y - 5f) / 10f));
+                if (ownedCells.Contains(calculatedPosition))
+                {
+                    items[i].OnDelete(this);
+                }
+            }
+            for (int i = itemSpawns.Count - 1; i >= 0; i--)
+            {
+                IntVector2 calculatedPosition = new IntVector2(Mathf.RoundToInt((itemSpawns[i].position.x - 5f) / 10f), Mathf.RoundToInt((itemSpawns[i].position.y - 5f) / 10f));
+                if (ownedCells.Contains(calculatedPosition))
+                {
+                    itemSpawns[i].OnDelete(this);
+                }
+            }
+            for (int i = npcs.Count - 1; i >= 0; i--)
+            {
+                if (ownedCells.Contains(npcs[i].position))
+                {
+                    npcs[i].OnDelete(this);
+                }
+            }
+        }
 
         protected void ApplyCellModifiers(IEnumerable<IEditorCellModifier> modifiers, bool forEditor)
         {

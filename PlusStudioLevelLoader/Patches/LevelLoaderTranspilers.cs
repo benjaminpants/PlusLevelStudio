@@ -25,8 +25,19 @@ namespace PlusStudioLevelLoader.Patches
         {
             { "Level loader setting up events.", "AddTimeOut" },
             { "Level loader letting EnvironmentObjects know level generation has complete.", "InformStructureBuildersDone" },
-            { "Level loader blocking tiles marked to be blocked.", "ApplyCellCoverages" }
+            { "Level loader blocking tiles marked to be blocked.", "ApplyCellCoverages" },
+            { "Tile data loaded.", "ApplyCellSecrets" }
         };
+
+        public static void ApplyCellSecrets(LevelLoader loader, LevelData data)
+        {
+            Debug.Log("Level loader marking secret cells... (Loader Extension)");
+            List<IntVector2> secretCells = data.rooms.SelectMany(x => x.secretCells).Distinct().ToList();
+            for (int i = 0; i < secretCells.Count; i++)
+            {
+                loader.Ec.CellFromPosition(secretCells[i]).hideFromMap = true;
+            }
+        }
 
         public static void ApplyCellCoverages(LevelLoader loader, LevelData data)
         {

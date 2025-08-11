@@ -20,6 +20,13 @@ namespace PlusLevelStudio.Editor.Tools
             height = heightOffset;
         }
 
+        public override bool ValidLocation(IntVector2 position)
+        {
+            if (!base.ValidLocation(position)) return false;
+            EditorRoom room = EditorController.Instance.levelData.RoomFromPos(position, true); // cant be null because base.ValidPosition would've returned false
+            return room.activity == null;
+        }
+
         protected override bool TryPlace(IntVector2 position, Direction dir)
         {
             EditorController.Instance.HoldUndo();
