@@ -233,6 +233,9 @@ namespace PlusLevelStudio.Editor
             {
                 transform.rotation = Quaternion.identity;
             }
+            // thanks to blayms for this
+            float normalizedDistance = Mathf.Clamp01(Vector3.Distance(Singleton<EditorController>.Instance.camera.transform.position, transform.position) / 1000f);
+            transform.localScale = Vector3.one * Mathf.Lerp(1f, 15f, normalizedDistance);
         }
 
     }
