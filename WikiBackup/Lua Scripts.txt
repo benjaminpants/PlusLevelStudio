@@ -385,6 +385,7 @@ A room has a set of textures, a function, and cells are assigned to it.
 Variables:
 * category - The category this room is (Class, Faculty, Office, Special, etc) as a string. Cannot be set.
 * mapColor - The color of this room on the map. Changing this will update the map accordingly.
+* powered - The rooms power state. If the room is powered off, then the activity will be as well. Can be changed.
 
 Functions:
 * GetCells()
