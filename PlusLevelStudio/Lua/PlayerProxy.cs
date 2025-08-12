@@ -36,6 +36,11 @@ namespace PlusLevelStudio.Lua
             }
         }
 
+        public bool IsHidden()
+        {
+            return pm.Invisible;
+        }
+
         public void Squish(float time)
         {
             pm.plm.Entity.Squish(time);

@@ -44,6 +44,13 @@ namespace PlusLevelStudio.Lua
             npc.ec.map.AddArrow(npcEnt, new Color(r / 255f, g / 255f, b / 255f));
         }
 
+        public bool IsHidden()
+        {
+            Entity npcEnt = npc.GetComponent<Entity>();
+            if (npcEnt == null) return false;
+            return npcEnt.Hidden;
+        }
+
         public bool squished
         {
             get

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using HarmonyLib;
@@ -63,12 +64,18 @@ namespace PlusLevelStudio.Lua
             return new IntVector2Proxy(x,z);
         }
 
+        ColorProxy CreateColor(int r, int g, int b)
+        {
+            return new ColorProxy(r, g, b);
+        }
+
         public void InitializeScriptGlobals()
         {
             myProxy = new EditorLuaGameProxy { myManager = this };
             script.Globals["self"] = myProxy;
             script.Globals["Vector3"] = (Func<float, float, float, Vector3Proxy>)CreateVector;
             script.Globals["IntVector2"] = (Func<int, int, IntVector2Proxy>)CreateIntVector;
+            script.Globals["Color"] = (Func<int, int, int, ColorProxy>)CreateColor;
             globalsDefined = true;
         }
 
@@ -335,8 +342,19 @@ namespace PlusLevelStudio.Lua
             myManager.ActivateBonusProblems(includeLast);
         }
 
+        public List<LightProxy> GetAllLights()
+        {
+            return myManager.Ec.lights.Select(x => new LightProxy(x)).ToList();
+        }
+
+        public List<RoomProxy> GetAllRooms()
+        {
+            return myManager.Ec.rooms.Select(x => new RoomProxy(x)).ToList();
+        }
+
         public void ForceLose()
         {
+            if (Singleton<CoreGameManager>.Instance.disablePause) return;
             Baldi baldi = myManager.Ec.GetBaldi();
             if (baldi == null)
             {

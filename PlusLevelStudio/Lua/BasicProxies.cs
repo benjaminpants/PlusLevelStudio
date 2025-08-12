@@ -8,8 +8,48 @@ using UnityEngine;
 namespace PlusLevelStudio.Lua
 {
     [MoonSharpUserData]
+    public class ColorProxy
+    {
+        public int r;
+        public int g;
+        public int b;
+
+        public ColorProxy()
+        {
+            r = 0;
+            g = 0;
+            b = 0;
+        }
+
+        public ColorProxy(int r, int g, int b)
+        {
+            this.r = r;
+            this.g = g;
+            this.b = b;
+        }
+
+        public ColorProxy(Color color)
+        {
+            r = Mathf.RoundToInt(color.r * 255f);
+            g = Mathf.RoundToInt(color.g * 255f);
+            b = Mathf.RoundToInt(color.b * 255f);
+        }
+
+        [MoonSharpHidden]
+        public Color ToColor()
+        {
+            return new Color(r / 255f, g / 255f, b / 255f);
+        }
+    }
+
+    [MoonSharpUserData]
     public class Vector3Proxy
     {
+        public override string ToString()
+        {
+            return string.Format("({0},{1},{2})", x, y, z);
+        }
+
         public float x { get; private set; }
         public float y { get; private set; }
         public float z { get; private set; }
@@ -57,6 +97,11 @@ namespace PlusLevelStudio.Lua
     [MoonSharpUserData]
     public class IntVector2Proxy
     {
+        public override string ToString()
+        {
+            return string.Format("({0},{1})",x,z);
+        }
+
         public int x { get; private set; }
         public int z { get; private set; }
 
