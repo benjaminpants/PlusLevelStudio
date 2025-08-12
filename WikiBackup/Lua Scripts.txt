@@ -75,6 +75,7 @@ Global Variables:
 Global Functions:
 * Vector3(x,y,z) - Creates a new Vector3 with the specified x, y, and z coordinates.
 * IntVector2(x,z) - Creates a new IntVector2 with the specified x and z coordinates.
+* Color(r,g,b) - Creates a new Color with the specified r, g, and b values. (0-255)
 
 # Self Functions And Variables
 You may have seen the "self" variable being used. This refers to BB+'s game manager, which is what your script is managing. You cannot add custom variables to self. (You can define variables in the global scope/outside a function if you want custom variables)
@@ -108,6 +109,12 @@ This returns a random cell that is safe for entites to be on.
 
 ## CellFromPosition(position)
 Position can be either a Vector3 or an IntVector2. This gets the cell at the corresponding position.
+
+## GetAllRooms()
+Returns a table of all the rooms in the map.
+
+## GetAllLights()
+Returns a table of all lights on the map.
 
 ## MakeNoise(position, noiseValue)
 This makes noise that Baldi and others can hear at the specified position and noise value.
@@ -154,6 +161,7 @@ NPC Functions:
 * AddArrow(r,g,b)
 * Squish(time)
 * Unsquish()
+* IsHidden()
 
 ## AddArrow(r,g,b)
 This adds an arrow onto the map that tracks this NPC with a color of the specified R G and B values. (0-255)
@@ -163,6 +171,9 @@ Squishes the NPC for the specified amount of time.
 
 ## Unsquish()
 Unsquishes the NPC.
+
+## IsHidden()
+Returns true if the NPC is hidden.
 
 NPC Variables:
 * moveSpeedMultiplier
@@ -285,6 +296,7 @@ Functions:
 * MakeGuilty(ruleBreak, time)
 * Squish(time)
 * Unsquish()
+* IsHidden()
 
 ## SetItem(itemId, slot)
 This forcefully sets the item in the specified slot to be the item with the specified id.
@@ -323,10 +335,13 @@ Removes the item at the specified slot.
 Makes the player guilty of violating the specified rule for the specified time. Refer to the cheatsheet for valid vanilla rule breaks.
 
 ## Squish(time)
-Squishes the NPC for the specified amount of time.
+Squishes the player for the specified amount of time.
 
 ## Unsquish()
-Unsquishes the NPC.
+Unsquishes the player.
+
+## IsHidden()
+Returns true if the player is hidden.
 
 # Cell Functions and Variables
 Cells, or also commonly referred to as tiles, are something you are probably already familiar with.
@@ -335,6 +350,70 @@ Variables:
 * position - The cells grid position as an IntVector2.
 * FloorWorldPosition - The Vector3 corresponding to the floor of the cell.
 * CenterWorldPosition - The Vector3 corresponding to the center of the cell.
+
+Functions:
+* GetLight()
+* GetRoom()
+* SetLight(color, strength)
+
+## GetLight()
+Returns the light for the cell, if it exists. Otherwise, returns nil.
+
+## GetRoom()
+Returns the room for the cell.
+
+## SetLight(color, strength)
+Creates or modifies the light at the cell, then returns the newly added or modified light. Can return nil.
+
+## Light Functions and Variables
+A light lights up an area, determined by strength, with the color.
+
+Variables:
+* cell - The cell this light belongs to.
+* color - The color of the light. Changing this will update the light.
+* strength - The strength of the light. Changing this will update the light.
+
+Functions:
+* SetPower()
+
+## SetPower(on)
+Sets the power to the specified state. Internally Plus keeps track of how many times the light has been turned off, so do not call this in a loop, or else the light will be unable to turn on.
+
+## Room Functions and Variables
+A room has a set of textures, a function, and cells are assigned to it.
+
+Variables:
+* category - The category this room is (Class, Faculty, Office, Special, etc) as a string. Cannot be set.
+* mapColor - The color of this room on the map. Changing this will update the map accordingly.
+
+Functions:
+* GetCells()
+* GetEntitySafeCells()
+* GetLights()
+* GetRandomEntitySafeCell()
+* IsHall()
+
+## GetCells()
+Returns all cells belonging to this room.
+
+## GetEntitySafeCells()
+Returns all entity safe cells belonging to this room.
+
+## GetLights()
+Get all lights belonging to this room.
+
+## GetRandomEntitySafeCell()
+Returns a random entity safe cell that belongs to this room, defaulting to the first cell if not found.
+
+## IsHall()
+Returns if this room is a hall.
+
+## IntVector2 Functions and Variables
+An IntVector2 is used to represent a cell position. They can be added and subtracted from other IntVector2s.
+
+Variables:
+* x - The x position. Cannot be set.
+* z - The z position. Cannot be set.
 
 ## Vector3 Functions and Variables
 A Vector3 is usually used to represent a position. They can be added and subtracted from other Vector3s.
@@ -356,3 +435,15 @@ An IntVector2 is used to represent a cell position. They can be added and subtra
 Variables:
 * x - The x position. Cannot be set.
 * z - The z position. Cannot be set.
+
+## Color Functions and Variables
+A Color represents a well, color.
+
+Variables:
+* r - The r channel. Cannot be set.
+* g - The g channel. Cannot be set.
+* b - The b channel. Cannot be set.
+
+Functions:
+
+There are no functions for this type.

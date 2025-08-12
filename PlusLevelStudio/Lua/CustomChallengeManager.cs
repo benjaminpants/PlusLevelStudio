@@ -86,7 +86,7 @@ namespace PlusLevelStudio.Lua
 
         void Print(string text)
         {
-            Debug.Log("Lua: " + text);
+            Debug.Log("(Lua) " + text);
         }
 
         public override void Initialize()

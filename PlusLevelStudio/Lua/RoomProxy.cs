@@ -22,14 +22,55 @@ namespace PlusLevelStudio.Lua
             return roomController.type == RoomType.Hall;
         }
 
-        public string GetCategory()
+        public string category
         {
-            return EnumExtensions.GetExtendedName<RoomCategory>((int)roomController.category);
+            get
+            {
+                return EnumExtensions.GetExtendedName<RoomCategory>((int)roomController.category);
+            }
+        }
+
+        public bool powered
+        {
+            get
+            {
+                return roomController.Powered;
+            }
+            set
+            {
+                roomController.SetPower(value);
+            }
+        }
+
+        public ColorProxy mapColor
+        {
+            get
+            {
+                return new ColorProxy(roomController.color);
+            }
+            set
+            {
+                roomController.color = value.ToColor();
+                foreach (Cell cell in roomController.cells)
+                {
+                    roomController.ec.map.UpdateTile(cell.position.x, cell.position.z, cell.ConstBin, roomController);
+                }
+            }
         }
 
         public List<CellProxy> GetCells()
         {
             return roomController.cells.Select(x => new CellProxy(x)).ToList();
+        }
+
+        public CellProxy GetRandomEntitySafeCell()
+        {
+            return new CellProxy(roomController.RandomEntitySafeCellNoGarbage());
+        }
+
+        public List<CellProxy> GetEntitySafeCells()
+        {
+            return roomController.AllEntitySafeCellsNoGarbage().Select(x => new CellProxy(x)).ToList();
         }
 
         public List<LightProxy> GetLights()

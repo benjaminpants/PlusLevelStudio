@@ -10,9 +10,9 @@ namespace PlusLevelStudio.Lua
     [MoonSharpUserData]
     public class ColorProxy
     {
-        public int r;
-        public int g;
-        public int b;
+        public int r { get; private set; }
+        public int g { get; private set; }
+        public int b { get; private set; }
 
         public ColorProxy()
         {
