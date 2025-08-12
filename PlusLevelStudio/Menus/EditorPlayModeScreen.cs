@@ -11,7 +11,6 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Playables;
 using UnityEngine.UI;
-using static System.Net.WebRequestMethods;
 
 namespace PlusLevelStudio.Menus
 {
@@ -169,6 +168,7 @@ namespace PlusLevelStudio.Menus
             button.modeText = modeText;
             button.thumbnail = thumbImage;
             button.playButton = playButton;
+            button.discardButton = discardButton;
             return button;
         }
     }
@@ -176,6 +176,7 @@ namespace PlusLevelStudio.Menus
     public class EditorPlayScreenManager : MonoBehaviour
     {
         public List<PlayableEditorLevel> playableLevels = new List<PlayableEditorLevel>();
+        public Dictionary<PlayableEditorLevel, string> playableToPath = new Dictionary<PlayableEditorLevel, string>();
         public EditorPlayLevelButton[] buttons = new EditorPlayLevelButton[3];
         public TextMeshProUGUI pageDisplay;
         public StandardMenuButton upButton;
@@ -200,7 +201,14 @@ namespace PlusLevelStudio.Menus
             {
                 int index = i;
                 buttons[i].playButton.OnPress.AddListener(() => PlayLevel(index));
+                buttons[i].discardButton.OnPress.AddListener(() => DiscardLevel(index));
             }
+        }
+
+        public void DiscardLevel(int buttonIndex)
+        {
+            int startIndex = (currentPage * buttons.Length);
+            File.Delete(playableToPath[playableLevels[startIndex + buttonIndex]]);
         }
 
         public void PlayLevel(int buttonIndex)
@@ -309,6 +317,7 @@ namespace PlusLevelStudio.Menus
             {
                 playableLevels.Insert(index, level);
             }
+            playableToPath.Add(level, path);
             reader.Close();
         }
 
@@ -328,6 +337,7 @@ namespace PlusLevelStudio.Menus
                 }
             }
             playableLevels.Clear();
+            playableToPath.Clear();
             Directory.CreateDirectory(LevelStudioPlugin.playableLevelPath);
             string[] files = Directory.GetFiles(LevelStudioPlugin.playableLevelPath, "*.pbpl");
             StartCoroutine(LoadEnumerator(files));
@@ -386,6 +396,7 @@ namespace PlusLevelStudio.Menus
         public TextMeshProUGUI modeText;
         public RawImage thumbnail;
         public StandardMenuButton playButton;
+        public StandardMenuButton discardButton;
 
         public void UpdateDisplay(PlayableEditorLevel level)
         {
