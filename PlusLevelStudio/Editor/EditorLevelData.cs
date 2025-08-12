@@ -1073,6 +1073,7 @@ namespace PlusLevelStudio.Editor
                     name = levelData.elevatorTitle,
                     modeSettings = LevelStudioPlugin.Instance.gameModeAliases["standard"].CreateSettings(),
                     gameMode = "standard", // all versions of EditorLevelData before this point only officially support the "full" mode, so we can assume standard here
+                    contentPackage = new EditorCustomContentPackage(true)
                 };
             }
             if (version == 0)
@@ -1123,7 +1124,7 @@ namespace PlusLevelStudio.Editor
             levelData.minLightColor = reader.ReadUnityColor().ToStandard();
             levelData.lightMode = (LightMode)reader.ReadByte();
             if (version <= 6) return levelData;
-            levelData.meta = PlayableLevelMeta.Read(reader);
+            levelData.meta = PlayableLevelMeta.Read(reader, true);
             return levelData;
         }
 

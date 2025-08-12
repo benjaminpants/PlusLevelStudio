@@ -8,6 +8,11 @@ namespace PlusStudioLevelFormat
         public string wall = "null";
         public string ceiling = "null";
 
+        public bool UsesTexture(string id)
+        {
+            return (floor == id) || (wall == id) || (ceiling == id);
+        }
+
         public TextureContainer()
         {
         }

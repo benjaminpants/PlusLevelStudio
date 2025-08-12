@@ -174,6 +174,21 @@
 			"onPressed":"nextPage"
 		},
 		{
+			"name":"CustomTextureButton",
+			"type":"textbutton",
+			"anchoredPosition":[40,-80],
+			"size":[100,32],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"font":"ComicSans12",
+			"color":[255,255,255],
+			"text":"Browse Custom Textures",
+			"alignment":"Center",
+			"onPressed":"customTextures",
+			"localized":false
+		},
+		{
 			"name":"PreviewBorder",
 			"type":"image",
 			"graphic":"TexturePreviewBox",

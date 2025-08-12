@@ -1,7 +1,9 @@
-﻿using PlusLevelStudio.UI;
+﻿using MTM101BaldAPI.AssetTools;
+using PlusLevelStudio.UI;
 using PlusStudioLevelLoader;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using TMPro;
@@ -29,11 +31,16 @@ namespace PlusLevelStudio.Editor.SettingsUI
             }
             preview = transform.Find("Preview").GetComponent<RawImage>();
             pageCountText = transform.Find("PageCount").GetComponent<TextMeshProUGUI>();
+            if (EditorController.Instance.currentMode.vanillaComplaint)
+            {
+                transform.Find("CustomTextureButton").gameObject.SetActive(false);
+                transform.Find("CustomTextureButton_Collision").gameObject.SetActive(false);
+            }
         }
 
         public void UpdatePreview()
         {
-            preview.texture = LevelLoaderPlugin.Instance.roomTextureAliases[currentTexture];
+            preview.texture = LevelLoaderPlugin.RoomTextureFromAlias(currentTexture);
         }
 
         public void RefreshPage(int page)
@@ -47,7 +54,7 @@ namespace PlusLevelStudio.Editor.SettingsUI
                     continue;
                 }
                 textureDisplays[i - startIndex].gameObject.SetActive(true);
-                textureDisplays[i - startIndex].texture = LevelLoaderPlugin.Instance.roomTextureAliases[LevelStudioPlugin.Instance.selectableTextures[i]];
+                textureDisplays[i - startIndex].texture = LevelLoaderPlugin.RoomTextureFromAlias(LevelStudioPlugin.Instance.selectableTextures[i]);
             }
             pageCountText.text = (page + 1) + "/" + currentMaxPages;
         }
@@ -61,15 +68,34 @@ namespace PlusLevelStudio.Editor.SettingsUI
             UpdatePreview();
         }
 
+        public void SelectTexture(string id)
+        {
+            currentTexture = id;
+            UpdatePreview();
+            parentExchange.SendInteractionMessage("changeTexture", currentTexture);
+        }
+
+        public bool CustomTextureSubmitted(string path)
+        {
+            string id = "cstm_" + Path.GetFileNameWithoutExtension(path);
+            string filePath = Path.GetFileName(path); // unfortunately Path.GetRelativePath doesn't exist in .net 2.0
+            if (!EditorController.Instance.customContent.textures.ContainsKey(id))
+            {
+                Texture2D texture = AssetLoader.TextureFromFile(path);
+                EditorController.Instance.customContent.textures.Add(id, texture);
+                EditorController.Instance.customContentPackage.entries.Add(new EditorCustomContentEntry("texture", id, filePath));
+            }
+            SelectTexture(id);
+            return true;
+        }
+
         public override void SendInteractionMessage(string message, object data)
         {
             if (message.StartsWith("select"))
             {
                 int num = int.Parse(message.Replace("select", ""));
                 num += currentPage * textureDisplays.Length;
-                currentTexture = LevelStudioPlugin.Instance.selectableTextures[num];
-                UpdatePreview();
-                parentExchange.SendInteractionMessage("changeTexture", currentTexture);
+                SelectTexture(LevelStudioPlugin.Instance.selectableTextures[num]);
             }
             switch (message)
             {
@@ -80,6 +106,9 @@ namespace PlusLevelStudio.Editor.SettingsUI
                 case "prevPage":
                     currentPage = Mathf.Clamp(currentPage - 1, 0, currentMaxPages - 1);
                     RefreshPage(currentPage);
+                    break;
+                case "customTextures":
+                    EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.customTexturePath, string.Empty, "png", CustomTextureSubmitted);
                     break;
             }
             base.SendInteractionMessage(message, data);
@@ -140,8 +169,10 @@ namespace PlusLevelStudio.Editor.SettingsUI
             }
             EditorController.Instance.RefreshCells();
             EditorController.Instance.levelData.doors.ForEach(x => EditorController.Instance.UpdateVisual(x));
+            EditorController.Instance.levelData.windows.ForEach(x => EditorController.Instance.UpdateVisual(x));
             somethingChanged = true;
             UpdateTextures();
+            EditorController.Instance.CleanupUnusedTexturesFromData();
         }
 
         public override void OnElementsCreated()

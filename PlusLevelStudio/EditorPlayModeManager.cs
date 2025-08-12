@@ -18,6 +18,10 @@ namespace PlusLevelStudio
         public string editorModeToLoad;
         public void OnExit()
         {
+            if (customContent != null)
+            {
+                customContent.CleanupContent();
+            }
             if (!returnToEditor) return;
             GoToEditor();
         }
@@ -26,10 +30,6 @@ namespace PlusLevelStudio
         {
             Singleton<MusicManager>.Instance.StopMidi();
             LevelStudioPlugin.Instance.StartCoroutine(LevelStudioPlugin.Instance.LoadEditorScene(editorModeToLoad, editorLevelToLoad == null ? null : Path.Combine(LevelStudioPlugin.levelFilePath, editorLevelToLoad + ".ebpl"), editorLevelToLoad));
-            if (customContent != null)
-            {
-                customContent.CleanupContent();
-            }
             for (int i = 0; i < sceneObjectsToCleanUp.Count; i++)
             {
                 GameObject.Destroy(sceneObjectsToCleanUp[i].extraAsset);
@@ -41,13 +41,15 @@ namespace PlusLevelStudio
 
         public static void LoadLevel(PlayableEditorLevel level, int lives, bool returnToEditor, string levelToLoad = null, string modeToLoad = "full")
         {
+            // we must establish the PlayModeManager first so we can load custom content BEFORE the SceneObject is created.
+            EditorPlayModeManager pmm = GameObject.Instantiate<EditorPlayModeManager>(LevelStudioPlugin.Instance.assetMan.Get<EditorPlayModeManager>("playModeManager"));
+            pmm.customContent = new EditorCustomContent();
+            pmm.customContent.LoadFromPackage(level.meta.contentPackage);
             SceneObject sceneObj = LevelImporter.CreateSceneObject(level.data);
             sceneObj.manager = LevelStudioPlugin.Instance.gameModeAliases[level.meta.gameMode].prefab;
             GameLoader loader = GameObject.Instantiate<GameLoader>(LevelStudioPlugin.Instance.assetMan.Get<GameLoader>("gameLoaderPrefab"));
             ElevatorScreen screen = GameObject.Instantiate<ElevatorScreen>(LevelStudioPlugin.Instance.assetMan.Get<ElevatorScreen>("elevatorScreenPrefab"));
-            EditorPlayModeManager pmm = GameObject.Instantiate<EditorPlayModeManager>(LevelStudioPlugin.Instance.assetMan.Get<EditorPlayModeManager>("playModeManager"));
             pmm.returnToEditor = returnToEditor;
-            pmm.customContent = new EditorCustomContent(); // TODO: get this from PlayableEditorLevel somehow
             if (level.meta.modeSettings != null)
             {
                 BaseGameManager modifiedManager = GameObject.Instantiate<BaseGameManager>(LevelStudioPlugin.Instance.gameModeAliases[level.meta.gameMode].prefab, MTM101BaldAPI.MTM101BaldiDevAPI.prefabTransform);

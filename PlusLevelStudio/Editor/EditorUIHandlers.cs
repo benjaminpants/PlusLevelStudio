@@ -271,6 +271,7 @@ namespace PlusLevelStudio.Editor
             Destroy(Singleton<EditorController>.Instance.camera.gameObject);
             Singleton<InputManager>.Instance.ActivateActionSet("Interface");
             Singleton<GlobalCam>.Instance.ChangeType(CameraRenderType.Base);
+            Singleton<EditorController>.Instance.customContent.CleanupContent();
             SceneManager.LoadScene("MainMenu");
         }
 

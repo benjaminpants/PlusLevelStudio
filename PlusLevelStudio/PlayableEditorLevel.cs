@@ -59,7 +59,7 @@ namespace PlusLevelStudio
                     }
                 }
             }
-            playable.meta = PlayableLevelMeta.Read(reader);
+            playable.meta = PlayableLevelMeta.Read(reader, false);
             playable.data = BaldiLevel.Read(reader);
             return playable;
         }
@@ -71,8 +71,21 @@ namespace PlusLevelStudio
         public string author = "Unknown";
         public string gameMode = "standard";
         public EditorGameModeSettings modeSettings;
+        public EditorCustomContentPackage contentPackage;
 
-        public const byte version = 1; // so we can read files from earlier versions, we fudge the version number here
+        public PlayableLevelMeta CompileContent()
+        {
+            return new PlayableLevelMeta()
+            {
+                name = name,
+                author = author,
+                gameMode = gameMode,
+                modeSettings = modeSettings.MakeCopy(),
+                contentPackage = contentPackage.AsFilePathless()
+            };
+        }
+
+        public const byte version = 2;
 
         public void Write(BinaryWriter writer)
         {
@@ -81,11 +94,14 @@ namespace PlusLevelStudio
             writer.Write(author);
             writer.Write(gameMode);
             writer.Write(modeSettings != null);
-            if (modeSettings == null) return;
-            modeSettings.Write(writer);
+            if (modeSettings != null)
+            {
+                modeSettings.Write(writer);
+            }
+            contentPackage.Write(writer);
         }
 
-        public static PlayableLevelMeta Read(BinaryReader reader)
+        public static PlayableLevelMeta Read(BinaryReader reader, bool oldVersionsUsePaths)
         {
             PlayableLevelMeta meta = new PlayableLevelMeta();
             byte version = reader.ReadByte();
@@ -98,10 +114,20 @@ namespace PlusLevelStudio
             if (!reader.ReadBoolean())
             {
                 meta.modeSettings = LevelStudioPlugin.Instance.gameModeAliases[meta.gameMode].CreateSettings();
-                return meta;
             }
-            meta.modeSettings = LevelStudioPlugin.Instance.gameModeAliases[meta.gameMode].CreateSettings();
-            meta.modeSettings.ReadInto(reader);
+            else
+            {
+                meta.modeSettings = LevelStudioPlugin.Instance.gameModeAliases[meta.gameMode].CreateSettings();
+                meta.modeSettings.ReadInto(reader);
+            }
+            if (version < 2)
+            {
+                meta.contentPackage = new EditorCustomContentPackage(oldVersionsUsePaths);
+            }
+            else
+            {
+                meta.contentPackage = EditorCustomContentPackage.Read(reader);
+            }
             return meta;
         }
     }

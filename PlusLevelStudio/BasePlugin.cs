@@ -74,6 +74,9 @@ namespace PlusLevelStudio
         public static string levelExportPath => Path.Combine(levelFilePath, "Exports");
         public static string luaPath => Path.Combine(levelFilePath, "LuaScripts");
 
+        public static string customContentPath => Path.Combine(levelFilePath, "User Content");
+        public static string customTexturePath => Path.Combine(customContentPath, "Textures");
+
         private Dictionary<Texture2D, Sprite> smallIconsFromTextures = new Dictionary<Texture2D, Sprite>();
 
         public Sprite GenerateOrGetSmallPosterSprite(PosterObject obj)

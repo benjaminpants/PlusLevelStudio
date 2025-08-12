@@ -36,6 +36,7 @@ namespace PlusLevelStudio.Editor
 
         public EditorMode currentMode;
         public EditorFileContainer currentFile;
+        public EditorCustomContent customContent;
         public EditorLevelData levelData
         {
             get
@@ -45,6 +46,13 @@ namespace PlusLevelStudio.Editor
             set
             {
                 currentFile.data = value;
+            }
+        }
+        public EditorCustomContentPackage customContentPackage
+        {
+            get
+            {
+                return levelData.meta.contentPackage;
             }
         }
         public Canvas canvas;
@@ -228,6 +236,7 @@ namespace PlusLevelStudio.Editor
         public void LoadEditorLevelAndMeta(EditorFileContainer file)
         {
             currentFile = file;
+            // before we load our file, we must load the data
             LoadEditorLevel(file.data);
             if (file.meta == null)
             {
@@ -278,6 +287,8 @@ namespace PlusLevelStudio.Editor
 
         public void LoadEditorLevel(EditorLevelData newData, bool wipeUndoHistory = true)
         {
+            customContent.ClearEntriesNotInPackage(newData.meta.contentPackage);
+            customContent.LoadFromPackage(newData.meta.contentPackage); // load custom content before we do anything
             if (heldInteractable != null)
             {
                 heldInteractable.OnReleased();
@@ -351,6 +362,21 @@ namespace PlusLevelStudio.Editor
                 hasUnsavedChanges = false;
                 undoStreams.Clear(); // memorystreams dont need .dispose
             }
+        }
+
+        public void CleanupUnusedTexturesFromData()
+        {
+            List<EditorCustomContentEntry> entriesQueuedForDeletion = new List<EditorCustomContentEntry>();
+            List<EditorCustomContentEntry> textureEntries = customContentPackage.GetAllOfType("texture");
+            foreach (EditorCustomContentEntry entry in textureEntries)
+            {
+                if (levelData.rooms.Count(x => x.textureContainer.UsesTexture(entry.id)) == 0)
+                {
+                    entriesQueuedForDeletion.Add(entry);
+                }
+            }
+            entriesQueuedForDeletion.Do(x => customContentPackage.entries.Remove(x));
+            customContent.ClearEntriesNotInPackage(customContentPackage);
         }
 
         public StructureLocation GetStructureData(string type)
@@ -451,6 +477,7 @@ namespace PlusLevelStudio.Editor
 
         public void DestroySelf()
         {
+            customContent.CleanupContent();
             Destroy(workerCgm.gameObject);
             Destroy(camera.gameObject);
             Destroy(canvas.gameObject);
@@ -613,7 +640,7 @@ namespace PlusLevelStudio.Editor
             BaldiLevel level = Compile();
             PlayableEditorLevel playableLevel = new PlayableEditorLevel();
             playableLevel.data = level;
-            playableLevel.meta = levelData.meta;
+            playableLevel.meta = levelData.meta.CompileContent();
             playableLevel.texture = GenerateThumbnail();
             Directory.CreateDirectory(LevelStudioPlugin.levelExportPath);
 
@@ -648,7 +675,7 @@ namespace PlusLevelStudio.Editor
             AccessTools.Field(typeof(Singleton<CoreGameManager>), "m_Instance").SetValue(null, null); // so coregamemanager gets created properly
             PlayableEditorLevel playableLevel = new PlayableEditorLevel();
             playableLevel.data = level;
-            playableLevel.meta = levelData.meta;
+            playableLevel.meta = levelData.meta; // we actually dont need to compile here i think
             EditorPlayModeManager.LoadLevel(playableLevel, 0, true, lastPlayedLevel, currentMode.id);
             DestroySelf();
         }
@@ -882,7 +909,8 @@ namespace PlusLevelStudio.Editor
                     name = "My Awesome Level!",
                     modeSettings = LevelStudioPlugin.Instance.gameModeAliases[currentMode.availableGameModes[0]].CreateSettings(),
                     gameMode = currentMode.availableGameModes[0],
-                    author = Singleton<PlayerFileManager>.Instance.fileName
+                    author = Singleton<PlayerFileManager>.Instance.fileName,
+                    contentPackage = new EditorCustomContentPackage(true)
                 };
             }
             if (!currentMode.caresAboutSpawn) return;
@@ -1321,6 +1349,7 @@ namespace PlusLevelStudio.Editor
         {
             currentFile = new EditorFileContainer();
             currentFile.meta = new EditorFileMeta();
+            customContent = new EditorCustomContent();
             levelData = new EditorLevelData(new IntVector2(50,50));
             gridManager = GameObject.Instantiate(gridManagerPrefab);
             gridManager.editor = this;

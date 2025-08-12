@@ -38,9 +38,10 @@
 			"anchorMax":"#center",
 			"font":"SmoothComicSans24",
 			"color":[255,255,255],
-			"text":"Yes",
+			"text":"But_Yes",
 			"onPressed":"yes",
-			"alignment":"BottomLeft"
+			"alignment":"BottomLeft",
+			"localized":true
 		},
 		{
 			"name":"NoOpt",
@@ -52,9 +53,10 @@
 			"anchorMax":"#center",
 			"font":"SmoothComicSans24",
 			"color":[255,255,255],
-			"text":"No",
+			"text":"But_No",
 			"onPressed":"no",
-			"alignment":"BottomRight"
+			"alignment":"BottomRight",
+			"localized":true
 		},
 	]
 }
