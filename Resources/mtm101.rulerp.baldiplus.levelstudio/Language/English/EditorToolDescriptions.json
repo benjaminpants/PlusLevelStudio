@@ -60,6 +60,8 @@
 {"key":"Ed_Tool_light_cordedhanging_Desc","value":"Most ceilings cannot handle the vast power of this light..."},
 {"key":"Ed_Tool_light_standardhanging_Title","value":"Hanging Light"},
 {"key":"Ed_Tool_light_standardhanging_Desc","value":"Snazzy!"},
+{"key":"Ed_Tool_light_null_Title","value":"Invisible Light"},
+{"key":"Ed_Tool_light_null_Desc","value":"Oooooh.... It's a ghost lightttttt.... Spooookyyyy...."},
 
 {"key":"Ed_Tool_exit_elevator_Title","value":"Elevator"},
 {"key":"Ed_Tool_exit_elevator_Desc","value":"An elevator that can be used to exit the level."},

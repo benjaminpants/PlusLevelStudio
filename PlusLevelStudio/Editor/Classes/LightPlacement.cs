@@ -38,9 +38,12 @@ namespace PlusLevelStudio.Editor
         public void InitializeVisual(GameObject visualObject)
         {
             visualObject.GetComponent<EditorDeletableObject>().toDelete = this;
-            Transform lightTransform = GameObject.Instantiate<Transform>(LevelLoaderPlugin.Instance.lightTransforms[type], visualObject.transform);
-            lightTransform.localPosition = Vector3.down * 12f; // TODO: change?
-            visualObject.GetComponent<EditorRendererContainer>().AddRendererRange(lightTransform.GetComponentsInChildren<Renderer>(), "none");
+            if (LevelLoaderPlugin.Instance.lightTransforms[type] != null)
+            {
+                Transform lightTransform = GameObject.Instantiate<Transform>(LevelLoaderPlugin.Instance.lightTransforms[type], visualObject.transform);
+                lightTransform.localPosition = Vector3.down * 12f; // TODO: change?
+                visualObject.GetComponent<EditorRendererContainer>().AddRendererRange(lightTransform.GetComponentsInChildren<Renderer>(), "none");
+            }
             visualObject.GetComponent<SettingsComponent>().activateSettingsOn = this;
             UpdateVisual(visualObject);
         }

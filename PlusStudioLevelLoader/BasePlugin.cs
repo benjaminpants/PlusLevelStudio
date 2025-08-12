@@ -118,6 +118,7 @@ namespace PlusStudioLevelLoader
             lightTransforms.Add("caged", transforms.First(x => x.name == "CagedLight"));
             lightTransforms.Add("cordedhanging", transforms.First(x => x.name == "CordedHangingLight"));
             lightTransforms.Add("standardhanging", transforms.First(x => x.name == "HangingLight"));
+            lightTransforms.Add("null", null);
 
 
             Door[] doors = Resources.FindObjectsOfTypeAll<Door>().Where(x => x.GetInstanceID() >= 0 && x.transform.parent == null).ToArray();

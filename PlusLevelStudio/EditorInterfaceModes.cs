@@ -90,7 +90,8 @@ namespace PlusLevelStudio
                 new LightTool("fluorescent"),
                 new LightTool("caged"),
                 new LightTool("cordedhanging"),
-                new LightTool("standardhanging")
+                new LightTool("standardhanging"),
+                new LightTool("null")
             }, true);
         }
 
