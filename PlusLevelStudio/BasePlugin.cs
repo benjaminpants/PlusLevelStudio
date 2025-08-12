@@ -69,12 +69,14 @@ namespace PlusLevelStudio
 
         public Dictionary<string, EditorMode> modes = new Dictionary<string, EditorMode>();
 
-        public static string playableLevelPath => Path.Combine(levelFilePath, "Playables");
-        public static string levelFilePath => Path.Combine(Application.persistentDataPath, "Custom Levels");
-        public static string levelExportPath => Path.Combine(levelFilePath, "Exports");
-        public static string luaPath => Path.Combine(levelFilePath, "LuaScripts");
+        public static string playableLevelPath => Path.Combine(basePath, "Playables");
+        public static string basePath => Path.Combine(Application.persistentDataPath, "Level Studio");
+        public static string levelFilePath => Path.Combine(basePath, "Editor Levels");
+        public static string oldLevelFilePath => Path.Combine(Application.persistentDataPath, "Custom Levels");
+        public static string levelExportPath => Path.Combine(basePath, "Exports");
+        public static string luaPath => Path.Combine(basePath, "LuaScripts");
 
-        public static string customContentPath => Path.Combine(levelFilePath, "User Content");
+        public static string customContentPath => Path.Combine(basePath, "User Content");
         public static string customTexturePath => Path.Combine(customContentPath, "Textures");
 
         private Dictionary<Texture2D, Sprite> smallIconsFromTextures = new Dictionary<Texture2D, Sprite>();
@@ -110,10 +112,22 @@ namespace PlusLevelStudio
             LoadingEvents.RegisterOnAssetsLoaded(Info, SetupModes(), LoadingEventOrder.Post);
             harmony.PatchAllConditionals();
             UserData.RegisterAssembly();
-            Directory.CreateDirectory(levelFilePath);
+            if (Directory.Exists(oldLevelFilePath))
+            {
+                string[] levels = Directory.GetFiles(oldLevelFilePath, "*.ebpl");
+                Directory.CreateDirectory(Path.Combine(oldLevelFilePath, "Editor Levels"));
+                for (int i = 0; i < levels.Length; i++)
+                {
+                    File.Move(levels[i], Path.Combine(Path.Combine(oldLevelFilePath, "Editor Levels"), Path.GetFileName(levels[i])));
+                }
+                Directory.Move(oldLevelFilePath, basePath);
+            }
+
+            Directory.CreateDirectory(levelFilePath); // this will also create the base path
             Directory.CreateDirectory(levelExportPath);
             Directory.CreateDirectory(playableLevelPath);
             Directory.CreateDirectory(luaPath);
+            Directory.CreateDirectory(customTexturePath); // this will also create the custom content path
         }
 
         void AddSolidColorLightmap(string name, Color color)
