@@ -21,7 +21,7 @@ namespace PlusStudioLevelLoader
         /// <summary>
         /// Converts the underlying bits that represent the float into an int.
         /// Note that the "int" returned by this method is nonsense until converted bakc into a float.
-        /// For example, passing in 10f will not get you an int with the value of "10."
+        /// For example, passing in 10f will give you an int with the value of "1092616192"
         /// This method is used to store floats in fields that typically only support ints.
         /// </summary>
         /// <param name="value"></param>
