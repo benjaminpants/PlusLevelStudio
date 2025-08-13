@@ -262,6 +262,13 @@ namespace PlusLevelStudio
             yield return "Setting up editor modes...";
             // setup modes
 
+            GlobalStructurePage factoryBoxStructurePage = new GlobalStructurePage()
+            {
+                nameKey = "Ed_GlobalStructure_FactoryBox_Title",
+                descKey = "Ed_GlobalStructure_FactoryBox_Desc",
+                structureToSpawn = "factorybox"
+            };
+
             string editorModePath = Path.Combine(AssetLoader.GetModPath(this), "Data", "UI", "GlobalPages");
 
             // full mode
@@ -309,11 +316,22 @@ namespace PlusLevelStudio
                     },
                     new EditorGlobalPage()
                     {
+                        filePath = Path.Combine(editorModePath, "GlobalStructures.json"),
+                        managerType = typeof(GlobalStructuresExchangeHandler),
+                        pageName = "GlobalStructures",
+                        pageKey = "Ed_GlobalPage_GlobalStructures"
+                    },
+                    new EditorGlobalPage()
+                    {
                         filePath = Path.Combine(editorModePath, "ModeSettings.json"),
                         managerType = typeof(ModeSettingsUIExchangeHandler),
                         pageName = "ModeSettings",
                         pageKey = "Ed_GlobalPage_ModeSettings"
                     }
+                },
+                globalStructures = new List<GlobalStructurePage>()
+                {
+                    factoryBoxStructurePage
                 },
                 availableGameModes = new List<string>()
                 {
@@ -374,6 +392,17 @@ namespace PlusLevelStudio
                         pageName = "VisualAndLightSettings",
                         pageKey = "Ed_GlobalPage_VisualSettings"
                     },
+                    new EditorGlobalPage()
+                    {
+                        filePath = Path.Combine(editorModePath, "GlobalStructures.json"),
+                        managerType = typeof(GlobalStructuresExchangeHandler),
+                        pageName = "GlobalStructures",
+                        pageKey = "Ed_GlobalPage_GlobalStructures"
+                    },
+                },
+                globalStructures = new List<GlobalStructurePage>()
+                {
+                    
                 },
                 defaultTools = new string[] { "room_hall", "room_class", "room_faculty", "room_office", "light_fluorescent", "door_swinging", "door_standard", "merge", "delete" },
                 vanillaComplaint = true,
@@ -802,6 +831,10 @@ namespace PlusLevelStudio
             editorPowerLeverBuilder.name = "EditorPowerLeverConstructor";
             LevelLoaderPlugin.Instance.structureAliases.Add("powerlever", new LoaderStructureData(editorPowerLeverBuilder));
 
+            Structure_LevelBoxEditor editorFactoryBoxBuilder = GameObject.Instantiate<Structure_LevelBox>(Resources.FindObjectsOfTypeAll<Structure_LevelBox>().First(x => x.name == "FactoryBoxConstructor" && x.GetInstanceID() >= 0), MTM101BaldiDevAPI.prefabTransform).gameObject.SwapComponent<Structure_LevelBox, Structure_LevelBoxEditor>();
+            editorFactoryBoxBuilder.name = "EditorFactoryBoxConstructor";
+            LevelLoaderPlugin.Instance.structureAliases.Add("factorybox", new LoaderStructureData(editorFactoryBoxBuilder));
+
             yield return "Creating editor prefab visuals...";
 
             // create light display
@@ -1090,7 +1123,7 @@ namespace PlusLevelStudio
             powerLeverLineRenderer.material.name = "Power Lever Line Renderer";
             powerLeverLineRenderer.widthMultiplier = 0.5f;
 
-
+            // power lever breaker visual stuff
             GameObject breakerVisual = EditorInterface.AddStructureGenericVisual("powerlever_breaker", Resources.FindObjectsOfTypeAll<BreakerController>().First(x => x.name == "PowerBreaker" && x.GetInstanceID() >= 0).gameObject);
             breakerVisual.AddComponent<SettingsComponent>().offset = Vector3.up * 15f;
             breakerVisual.GetComponent<EditorRendererContainer>().myRenderers.Clear();
@@ -1098,6 +1131,9 @@ namespace PlusLevelStudio
             breakerVisual.GetComponent<EditorRendererContainer>().AddRendererRange(breakerVisual.GetComponentsInChildren<Renderer>(), "none");
 
             structureTypes.Add("powerlever", typeof(PowerLeverStructureLocation));
+
+            // factory boxes
+            structureTypes.Add("factorybox", typeof(FactoryBoxStructureLocation));
 
             // npcs
 

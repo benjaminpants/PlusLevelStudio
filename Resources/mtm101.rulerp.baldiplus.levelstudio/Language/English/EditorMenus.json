@@ -18,6 +18,8 @@
 {"key":"Ed_Menu_LoadLuaScript","value":"Load New Lua Script"},
 {"key":"Ed_Menu_RefreshLua","value":"Reload {0}."},
 {"key":"Ed_Menu_SelectFile","value":"Select File (.{0})"},
+{"key":"Ed_Menu_StructureEnabled","value":"Structure Enabled"},
+{"key":"Ed_Menu_NoGlobalStructures","value":"No Global Structures Available"},
 
 {"key":"Ed_Menu_NoLevels","value":"No Levels Found..."},
 {"key":"Ed_Menu_LoadingLevels","value":"Loading Levels..."},
@@ -27,6 +29,7 @@
 {"key":"Ed_GlobalPage_ModeSettings","value":"Mode\nSettings"},
 {"key":"Ed_GlobalPage_MetaSettings","value":"Meta\nSettings"},
 {"key":"Ed_GlobalPage_LightPreview","value":"Light\nPreview"},
+{"key":"Ed_GlobalPage_GlobalStructures","value":"Global\nStructures"},
 
 {"key":"Ed_LightMode_Cumulative","value":"Cumulative"},
 {"key":"Ed_LightMode_Greatest","value":"Greatest"},

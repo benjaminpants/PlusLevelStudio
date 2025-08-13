@@ -40,5 +40,6 @@ namespace PlusLevelStudio.Editor
         public List<string> availableRandomEvents = new List<string>();
         public List<string> availableGameModes = new List<string>();
         public List<EditorGlobalPage> pages = new List<EditorGlobalPage>();
+        public List<GlobalStructurePage> globalStructures = new List<GlobalStructurePage>();
     }
 }

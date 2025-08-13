@@ -1,0 +1,97 @@
+{
+	"defines":{
+
+	},
+	"elements":[
+		{
+			"name":"PageLeft",
+			"type":"imageButton",
+			"graphic":"MenuArrowLeft",
+			"hoverGraphic":"MenuArrowLeftHigh",
+			"anchoredPosition":[-120, 40],
+			"size":[32,32],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"onPressed":"prevPage"
+		},
+		{
+			"name":"PageRight",
+			"type":"imageButton",
+			"graphic":"MenuArrowRight",
+			"hoverGraphic":"MenuArrowRightHigh",
+			"anchoredPosition":[120, 40],
+			"size":[32,32],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"onPressed":"nextPage"
+		},
+		{
+			"name":"Title",
+			"type":"text",
+			"anchoredPosition":[0, 32],
+			"size":[230, 50],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"font":"ComicSans24",
+			"color":[0,0,0],
+			"text":"Standard",
+			"alignment":"Top",
+			"localized":false
+		},
+		{
+			"name":"StructureEnabledText",
+			"type":"text",
+			"anchoredPosition":[-111, 0],
+			"size":[250, 50],
+			"pivot":"#centerLeft",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"font":"ComicSans24",
+			"color":[0,0,0],
+			"text":"Ed_Menu_StructureEnabled",
+			"alignment":"Left",
+			"localized":true
+		},
+		{
+			"name":"Checkbox",
+			"type":"checkbox",
+			"anchoredPosition":[-127, 0],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"onToggled":"toggleStructure",
+			"value":false
+		},
+		{
+			"name":"NoConfigurableSettings",
+			"type":"text",
+			"anchoredPosition":[0, -100],
+			"size":[300, 50],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"font":"ComicSans24",
+			"color":[77,77,77],
+			"text":"Ed_Menu_NoConfigSettings",
+			"alignment":"Center",
+			"localized":true
+		},
+		{
+			"name":"NoGlobalStructures",
+			"type":"text",
+			"anchoredPosition":[0, 0],
+			"size":[300, 50],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"font":"ComicSans24",
+			"color":[77,77,77],
+			"text":"Ed_Menu_NoGlobalStructures",
+			"alignment":"Center",
+			"localized":true
+		},
+	]
+}
