@@ -22,7 +22,11 @@ namespace PlusLevelStudio
             {
                 customContent.CleanupContent();
             }
-            if (!returnToEditor) return;
+            if (!returnToEditor)
+            {
+                Destroy(gameObject);
+                return;
+            }
             GoToEditor();
         }
 
