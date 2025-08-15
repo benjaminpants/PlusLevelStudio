@@ -77,7 +77,7 @@ namespace PlusLevelStudio.Editor
         public Func<EditorLevelData, PointLocation, bool> deleteAction;
         public string prefab;
         public IntVector2 position;
-        public void CleanupVisual(GameObject visualObject)
+        public virtual void CleanupVisual(GameObject visualObject)
         {
 
         }

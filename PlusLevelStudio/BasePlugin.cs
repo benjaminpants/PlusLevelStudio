@@ -588,6 +588,11 @@ namespace PlusLevelStudio
             forcedUnsafeMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "ForcedUnsafeCell.png"));
             forcedUnsafeMat.SetTexture("_LightMap", lightmaps["white"]);
 
+            Material floorRadMat = new Material(assetMan.Get<Material>("tileAlpha"));
+            floorRadMat.name = "FloorRadiusMap";
+            floorRadMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "FloorRadius.png"));
+            floorRadMat.SetTexture("_LightMap", lightmaps["white"]);
+
             yield return "Setting up GridManager...";
             GameObject gridManagerObject = new GameObject("GridManager");
             gridManagerObject.ConvertToPrefab(true);
@@ -1134,6 +1139,37 @@ namespace PlusLevelStudio
 
             // factory boxes
             structureTypes.Add("factorybox", typeof(FactoryBoxStructureLocation));
+
+            // steam valves
+            GameValve valve = Resources.FindObjectsOfTypeAll<GameValve>().First(x => x.GetInstanceID() >= 0 && x.name == "GameValve" && x.transform.parent == null);
+            EditorInterface.AddStructureGenericVisual("valve", valve.gameObject);
+
+            GameObject steamVisualObject = new GameObject("SteamVisual");
+            steamVisualObject.transform.SetParent(MTM101BaldiDevAPI.prefabTransform);
+            GameObject steamSpriteObject = new GameObject("Sprite");
+            steamSpriteObject.transform.SetParent(steamVisualObject.transform);
+            steamSpriteObject.layer = LayerMask.NameToLayer("Billboard");
+            steamSpriteObject.transform.localPosition = Vector3.up * 2f;
+            SpriteRenderer steamSpriteRenderer = steamSpriteObject.AddComponent<SpriteRenderer>();
+            steamSpriteRenderer.material = assetMan.Get<Material>("spriteBillboard");
+            steamSpriteRenderer.sprite = AssetLoader.SpriteFromMod(this, Vector2.one / 2f, 32f, "Editor", "SteamIndicator.png");
+            steamSpriteRenderer.material.SetTexture("_LightMap", lightmaps["white"]);
+            BoxCollider steamBoxC = steamVisualObject.AddComponent<BoxCollider>();
+            steamBoxC.size = new Vector3(1f, 2f, 1f);
+            steamBoxC.center += Vector3.up * 2f;
+            steamBoxC.gameObject.layer = editorInteractableLayer;
+            GameObject radVis = CreateQuad("RadiusVisual", floorRadMat, Vector3.zero, new Vector3(90f,0f,0f));
+            radVis.transform.SetParent(steamVisualObject.transform, true);
+            EditorDeletableObject steamEdo = steamBoxC.gameObject.AddComponent<EditorDeletableObject>();
+            steamEdo.gameObject.AddComponent<SettingsComponent>();
+            steamEdo.gameObject.AddComponent<EditorRendererContainer>().AddRendererRange(steamVisualObject.GetComponentsInChildren<Renderer>(), "white");
+            steamEdo.renderContainer = steamBoxC.gameObject.GetComponent<EditorRendererContainer>();
+            genericStructureDisplays.Add("steamvalve", steamVisualObject);
+            structureTypes.Add("steamvalves", typeof(SteamValveStructureLocation));
+
+            Structure_SteamValvesEditor steamValveStructure = GameObject.Instantiate<Structure_SteamValves>(Resources.FindObjectsOfTypeAll<Structure_SteamValves>().First(x => x.GetInstanceID() >= 0), MTM101BaldiDevAPI.prefabTransform).gameObject.SwapComponent<Structure_SteamValves, Structure_SteamValvesEditor>();
+            steamValveStructure.name = "SteamValvesEditor";
+            LevelLoaderPlugin.Instance.structureAliases.Add("steamvalves", new LoaderStructureData(steamValveStructure));
 
             // npcs
 

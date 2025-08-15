@@ -255,6 +255,8 @@
 {"key":"Ed_Tool_structure_powerlever_lever_gray_Title","value":"Power Lever (Gray Wire)"},
 {"key":"Ed_Tool_structure_powerlever_lever_black_Title","value":"Power Lever (Black Wire)"},
 {"key":"Ed_Tool_structure_powerlever_lever_Desc","value":"Connect this to a room to make it so the player has to turn this lever on in order to perform any activities inside."},
+{"key":"Ed_Tool_structure_steamvalves_Title","value":"Steam Valve"},
+{"key":"Ed_Tool_structure_steamvalves_Desc","value":"Creates a cloud of smoke of a configurable radius that can be hidden in."},
 
 {"key":"Ed_RandomEvent_fog","value":"Fog\nThe school is covered in a thick fog.\nNPCs have a reduced vision distance."},
 {"key":"Ed_RandomEvent_flood","value":"Flood\nThe school is flooded and whirlpools cover the ground.\nThe whirlpools suck up any nearby entity, teleporting them randomly."},

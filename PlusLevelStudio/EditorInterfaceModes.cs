@@ -206,6 +206,7 @@ namespace PlusLevelStudio
                 new PowerLeverLeverTool(CableColor.gray),
                 new PowerLeverLeverTool(CableColor.black),
                 new PowerLeverBreakerTool(),
+                new SteamValveTool()
             }, true);
         }
 
