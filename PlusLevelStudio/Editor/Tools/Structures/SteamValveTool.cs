@@ -10,6 +10,7 @@ namespace PlusLevelStudio.Editor.Tools
         public override string id => "structure_steamvalves";
         public SteamValveLocation valveLocation;
         protected IntVector2? buttonPos;
+        bool successfulyPlaced = false;
 
         public SteamValveTool()
         {
@@ -23,7 +24,16 @@ namespace PlusLevelStudio.Editor.Tools
 
         public override void Exit()
         {
-            
+            if ((valveLocation != null) && (!successfulyPlaced) && (EditorController.Instance != null))
+            {
+                if (EditorController.Instance.GetVisual(valveLocation))
+                {
+                    EditorController.Instance.RemoveVisual(valveLocation);
+                }
+            }
+            successfulyPlaced = false;
+            valveLocation = null;
+            buttonPos = null;
         }
 
         public override bool Cancelled()
@@ -52,6 +62,7 @@ namespace PlusLevelStudio.Editor.Tools
             EditorController.Instance.AddVisual(valveLocation.valve);
             SteamValveStructureLocation structure = (SteamValveStructureLocation)EditorController.Instance.AddOrGetStructureToData("steamvalves", true);
             structure.valves.Add(valveLocation);
+            successfulyPlaced = true;
             EditorController.Instance.SwitchToTool(null);
         }
 

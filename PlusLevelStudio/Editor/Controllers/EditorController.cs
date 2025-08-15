@@ -18,7 +18,6 @@ using PlusStudioLevelLoader;
 using System.Linq;
 using MidiPlayerTK;
 using PlusLevelStudio.Editor.SettingsUI;
-using static MidiPlayerTK.SFFile;
 
 namespace PlusLevelStudio.Editor
 {

@@ -280,6 +280,7 @@ namespace PlusLevelStudio.Editor
             switch (message)
             {
                 case "exit":
+                    EditorController.Instance.SwitchToTool(null);
                     if (EditorController.Instance.hasUnsavedChanges)
                     {
                         EditorController.Instance.CreateUIPopup(LocalizationManager.Instance.GetLocalizedText("Ed_Menu_UnsavedChangesExit"), CloseEditor, () => { });
@@ -290,6 +291,7 @@ namespace PlusLevelStudio.Editor
                     }
                     break;
                 case "play":
+                    EditorController.Instance.SwitchToTool(null);
                     if (EditorController.Instance.hasUnsavedChanges)
                     {
                         EditorController.Instance.CreateUIPopup(LocalizationManager.Instance.GetLocalizedText("Ed_Menu_UnsavedChanges"), () =>
@@ -303,12 +305,14 @@ namespace PlusLevelStudio.Editor
                     }
                     break;
                 case "load":
+                    EditorController.Instance.SwitchToTool(null);
                     EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.levelFilePath, EditorController.Instance.currentFileName, "ebpl", (string path) =>
                     {
                         return EditorController.Instance.LoadEditorLevelFromFile(path);
                     });
                     break;
                 case "save":
+                    EditorController.Instance.SwitchToTool(null);
                     EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.levelFilePath, EditorController.Instance.currentFileName, "ebpl", (string path) =>
                     {
                         EditorController.Instance.SaveEditorLevelToFile(path);
@@ -316,6 +320,7 @@ namespace PlusLevelStudio.Editor
                     });
                     break;
                 case "saveAndPlay":
+                    EditorController.Instance.SwitchToTool(null);
                     EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.levelFilePath, EditorController.Instance.currentFileName, "ebpl", (string path) =>
                     {
                         EditorController.Instance.SaveEditorLevelToFile(path);
@@ -324,6 +329,7 @@ namespace PlusLevelStudio.Editor
                     });
                     break;
                 case "saveAndExport":
+                    EditorController.Instance.SwitchToTool(null);
                     EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.levelFilePath, EditorController.Instance.currentFileName, "ebpl", (string path) =>
                     {
                         EditorController.Instance.SaveEditorLevelToFile(path);
@@ -332,6 +338,7 @@ namespace PlusLevelStudio.Editor
                     });
                     break;
                 case "export":
+                    EditorController.Instance.SwitchToTool(null);
                     EditorController.Instance.ExportWithChecks();
                     break;
                 case "undo":
