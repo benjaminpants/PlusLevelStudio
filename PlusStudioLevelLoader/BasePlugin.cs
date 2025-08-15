@@ -86,6 +86,7 @@ namespace PlusStudioLevelLoader
             roomTextureAliases.Add("BasicFloor", textures.First(x => x.name == "BasicFloor"));
             roomTextureAliases.Add("Black", textures.First(x => x.name == "BlackTexture"));
             roomTextureAliases.Add("Vent", textures.First(x => x.name == "Vent_Base"));
+            roomTextureAliases.Add("PlasticTable", textures.First(x => x.name == "PlasticTable"));
             yield return "Fetching materials...";
             assetMan.AddFromResourcesNoClones<Material>();
             assetMan.AddFromResourcesNoClones<Cubemap>();

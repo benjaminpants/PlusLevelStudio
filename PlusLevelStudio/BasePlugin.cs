@@ -1201,11 +1201,12 @@ namespace PlusLevelStudio
             selectableTextures.Add("WallWithMolding");
             selectableTextures.Add("TileFloor");
             selectableTextures.Add("ElevatorCeiling");
+            selectableTextures.Add("PlasticTable");
             selectableTextures.Add("Grass");
             selectableTextures.Add("Fence");
-            selectableTextures.Add("JohnnyWall");
-            selectableTextures.Add("BasicFloor");
             selectableTextures.Add("None");
+            selectableTextures.Add("BasicFloor");
+            selectableTextures.Add("JohnnyWall");
             selectableTextures.Add("PlaceholderFloor");
             selectableTextures.Add("PlaceholderWall");
             selectableTextures.Add("PlaceholderCeiling");
