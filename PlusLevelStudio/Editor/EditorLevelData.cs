@@ -614,6 +614,7 @@ namespace PlusLevelStudio.Editor
             }
             for (int i = 0; i < doors.Count; i++)
             {
+                string typeToCompileAs = doors[i].type;
                 bool usedSmartPosition = GetSmartDoorPosition(doors[i].position, doors[i].direction, out IntVector2 smartPosition, out Direction smartDirection);
                 bool shouldBeTile = false;
                 switch (LevelStudioPlugin.Instance.doorIngameStatus[doors[i].type])
@@ -633,20 +634,22 @@ namespace PlusLevelStudio.Editor
                 {
                     if (RoomFromPos(smartPosition, false).roomType == "mystery")
                     {
-                        doors[i].type = "mysterydoor";
+                        typeToCompileAs = "mysterydoor";
+                        shouldBeTile = false;
                     }
                     else if (RoomFromPos(doors[i].position + doors[i].direction.ToIntVector2(), false).roomType == "mystery")
                     {
                         smartPosition = doors[i].position + doors[i].direction.ToIntVector2();
                         smartDirection = doors[i].direction.GetOpposite();
-                        doors[i].type = "mysterydoor";
+                        typeToCompileAs = "mysterydoor";
+                        shouldBeTile = false;
                     }
                 }
                 if (shouldBeTile)
                 {
                     compiled.tileObjects.Add(new TileObjectInfo()
                     {
-                        prefab = doors[i].type,
+                        prefab = typeToCompileAs,
                         position = doors[i].position.ToByte(),
                         direction = (PlusDirection)doors[i].direction,
                     });
@@ -655,7 +658,7 @@ namespace PlusLevelStudio.Editor
                 {
                     compiled.doors.Add(new DoorInfo()
                     {
-                        prefab = doors[i].type,
+                        prefab = typeToCompileAs,
                         position = smartPosition.ToByte(),
                         direction = (PlusDirection)smartDirection,
                         roomId = GetCellSafe(smartPosition.x, smartPosition.z).roomId
