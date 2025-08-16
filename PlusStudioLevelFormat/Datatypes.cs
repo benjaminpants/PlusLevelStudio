@@ -36,6 +36,21 @@ namespace PlusStudioLevelFormat
 
         public static bool operator ==(ByteVector2 a, ByteVector2 b) => ((a.x == b.x) && (a.y == b.y));
         public static bool operator !=(ByteVector2 a, ByteVector2 b) => !(a == b);
+
+        public override bool Equals(object obj)
+        {
+            return obj is ByteVector2 vector &&
+                   _x == vector._x &&
+                   _y == vector._y;
+        }
+
+        public override int GetHashCode()
+        {
+            int hashCode = 979593255;
+            hashCode = hashCode * -1521134295 + _x.GetHashCode();
+            hashCode = hashCode * -1521134295 + _y.GetHashCode();
+            return hashCode;
+        }
     }
 
     public struct MystIntVector2
@@ -69,6 +84,21 @@ namespace PlusStudioLevelFormat
 
         public static bool operator ==(MystIntVector2 a, MystIntVector2 b) => ((a.x == b.x) && (a.z == b.z));
         public static bool operator !=(MystIntVector2 a, MystIntVector2 b) => !(a == b);
+
+        public override bool Equals(object obj)
+        {
+            return obj is MystIntVector2 vector &&
+                   _x == vector._x &&
+                   _z == vector._z;
+        }
+
+        public override int GetHashCode()
+        {
+            int hashCode = 929260398;
+            hashCode = hashCode * -1521134295 + _x.GetHashCode();
+            hashCode = hashCode * -1521134295 + _z.GetHashCode();
+            return hashCode;
+        }
     }
 
     // TODO: Write Nybble array writer and Nybble array reader for BinaryReader and BinaryWriter
@@ -145,9 +175,14 @@ namespace PlusStudioLevelFormat
             return result;
         }
 
+        public override bool Equals(object obj)
+        {
+            return _internal.Equals(obj);
+        }
+
         public override int GetHashCode()
         {
-            return _internal.GetHashCode();
+            return _internal.GetHashCode() + 1;
         }
 
         public override string ToString()

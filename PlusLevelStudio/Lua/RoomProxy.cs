@@ -78,6 +78,17 @@ namespace PlusLevelStudio.Lua
             return roomController.lights.Select(x => new LightProxy(x)).ToList();
         }
 
+        public override bool Equals(object obj)
+        {
+            return obj is RoomProxy proxy &&
+                   EqualityComparer<RoomController>.Default.Equals(roomController, proxy.roomController);
+        }
+
+        public override int GetHashCode()
+        {
+            return -1905862734 + EqualityComparer<RoomController>.Default.GetHashCode(roomController);
+        }
+
         public static bool operator ==(RoomProxy a, RoomProxy b) => a.roomController == b.roomController;
         public static bool operator !=(RoomProxy a, RoomProxy b) => a.roomController != b.roomController;
     }

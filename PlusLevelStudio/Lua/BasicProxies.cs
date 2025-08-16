@@ -54,7 +54,6 @@ namespace PlusLevelStudio.Lua
         public float y { get; private set; }
         public float z { get; private set; }
 
-
         public Vector3Proxy()
         {
             x = 0;
@@ -92,6 +91,22 @@ namespace PlusLevelStudio.Lua
             return Vector3.Distance(ToVector(),other.ToVector());
         }
 
+        public override bool Equals(object obj)
+        {
+            return obj is Vector3Proxy proxy &&
+                   x == proxy.x &&
+                   y == proxy.y &&
+                   z == proxy.z;
+        }
+
+        public override int GetHashCode()
+        {
+            int hashCode = 373119288;
+            hashCode = hashCode * -1521134295 + x.GetHashCode();
+            hashCode = hashCode * -1521134295 + y.GetHashCode();
+            hashCode = hashCode * -1521134295 + z.GetHashCode();
+            return hashCode;
+        }
     }
 
     [MoonSharpUserData]
@@ -128,6 +143,21 @@ namespace PlusLevelStudio.Lua
         public IntVector2 ToVector()
         {
             return new IntVector2(x, z);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is IntVector2Proxy proxy &&
+                   x == proxy.x &&
+                   z == proxy.z;
+        }
+
+        public override int GetHashCode()
+        {
+            int hashCode = 1553271884;
+            hashCode = hashCode * -1521134295 + x.GetHashCode();
+            hashCode = hashCode * -1521134295 + z.GetHashCode();
+            return hashCode;
         }
 
         public static IntVector2Proxy operator +(IntVector2Proxy a, IntVector2Proxy b) => new IntVector2Proxy(a.x + b.x, a.z + b.z);
