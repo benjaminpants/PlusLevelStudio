@@ -72,6 +72,16 @@ namespace PlusLevelStudio.Editor
                 EditorController.Instance.AddHeldUndo();
             }
             moved = false;
+            if (!ValidatePosition(EditorController.Instance.levelData))
+            {
+                EditorController.Instance.RemoveVisual(this);
+                EditorController.Instance.levelData.objects.Remove(this);
+            }
+        }
+
+        public bool ValidatePosition(EditorLevelData data)
+        {
+            return data.GetCellSafe(Mathf.RoundToInt((position.x / 10f) - 5f), Mathf.RoundToInt((position.z / 10f) - 5f)) != null;
         }
 
         public void UpdateVisual(GameObject visualObject)

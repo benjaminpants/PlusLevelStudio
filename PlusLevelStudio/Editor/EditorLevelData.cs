@@ -260,6 +260,30 @@ namespace PlusLevelStudio.Editor
                     changedSomething = true;
                 }
             }
+            for (int i = objects.Count - 1; i >= 0; i--)
+            {
+                if (!objects[i].ValidatePosition(this))
+                {
+                    if (updateVisuals)
+                    {
+                        EditorController.Instance.RemoveVisual(objects[i]);
+                    }
+                    objects.RemoveAt(i);
+                    changedSomething = true;
+                }
+            }
+            for (int i = items.Count - 1; i >= 0; i--)
+            {
+                if (!items[i].ValidatePosition(this))
+                {
+                    if (updateVisuals)
+                    {
+                        EditorController.Instance.RemoveVisual(items[i]);
+                    }
+                    items.RemoveAt(i);
+                    changedSomething = true;
+                }
+            }
             return changedSomething;
         }
 
