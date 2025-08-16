@@ -17,6 +17,23 @@ namespace PlusLevelStudio.Lua
         MovementModifier moveMod;
         PlayerMovementStatModifier statMod;
 
+        public float direction
+        {
+            get
+            {
+                return pm.plm.transform.eulerAngles.y;
+            }
+            set
+            {
+                pm.plm.transform.eulerAngles = new Vector3(pm.plm.transform.eulerAngles.x, value, pm.plm.transform.eulerAngles.z);
+            }
+        }
+
+        public Vector3Proxy GetForward()
+        {
+            return new Vector3Proxy(pm.plm.transform.forward);
+        }
+
         public bool squished
         {
             get

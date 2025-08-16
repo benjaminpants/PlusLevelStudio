@@ -37,6 +37,23 @@ namespace PlusLevelStudio.Lua
             }
         }
 
+        public float direction
+        {
+            get
+            {
+                return npc.transform.eulerAngles.y;
+            }
+            set
+            {
+                npc.transform.eulerAngles = new Vector3(npc.transform.eulerAngles.x, value, npc.transform.eulerAngles.z);
+            }
+        }
+
+        public Vector3Proxy GetForward()
+        {
+            return new Vector3Proxy(npc.transform.forward);
+        }
+
         public void AddArrow(int r, int g, int b)
         {
             Entity npcEnt = npc.GetComponent<Entity>();
