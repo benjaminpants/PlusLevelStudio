@@ -80,7 +80,7 @@ namespace PlusLevelStudio
                 name = name,
                 author = author,
                 gameMode = gameMode,
-                modeSettings = modeSettings.MakeCopy(),
+                modeSettings = (modeSettings == null ? null : modeSettings.MakeCopy()),
                 contentPackage = contentPackage.AsFilePathless()
             };
         }

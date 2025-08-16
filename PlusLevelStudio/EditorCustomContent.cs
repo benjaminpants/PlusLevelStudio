@@ -54,7 +54,7 @@ namespace PlusLevelStudio
             foreach (EditorCustomContentEntry entry in textureEntries)
             {
                 if (textures.ContainsKey(entry.id)) continue; // the texture is already loaded
-                if (package.usingFilePaths)
+                if (package.allowingFilePaths)
                 {
                     textures.Add(entry.id, AssetLoader.TextureFromFile(Path.Combine(LevelStudioPlugin.customTexturePath, entry.filePath)));
                 }
@@ -73,11 +73,11 @@ namespace PlusLevelStudio
 
     public class EditorCustomContentPackage
     {
-        public bool usingFilePaths { get; private set; }
+        public bool allowingFilePaths { get; private set; }
 
         public EditorCustomContentPackage(bool filePaths)
         {
-            usingFilePaths = filePaths;
+            allowingFilePaths = filePaths;
         }
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace PlusLevelStudio
         /// <returns></returns>
         public EditorCustomContentPackage AsFilePathless()
         {
-            if (!usingFilePaths) throw new InvalidOperationException("Can't convert to pathless if already pathless!");
+            if (!allowingFilePaths) throw new InvalidOperationException("Can't convert to pathless if already pathless!");
             EditorCustomContentPackage newPackage = new EditorCustomContentPackage(false);
             for (int i = 0; i < entries.Count; i++)
             {
@@ -108,17 +108,21 @@ namespace PlusLevelStudio
             return entries.FindAll(x => x.contentType == type);
         }
 
-        public const byte version = 0;
+        public const byte version = 1;
 
         public void Write(BinaryWriter writer)
         {
             writer.Write(version);
             writer.Write(EditorCustomContentEntry.version);
-            writer.Write(usingFilePaths);
+            writer.Write(allowingFilePaths);
             writer.Write(entries.Count);
             for (int i = 0; i < entries.Count; i++)
             {
-                entries[i].Write(writer, usingFilePaths);
+                if (allowingFilePaths)
+                {
+                    writer.Write(entries[i].usingFilePath);
+                }
+                entries[i].Write(writer, allowingFilePaths);
             }
         }
 
@@ -130,7 +134,14 @@ namespace PlusLevelStudio
             int streamCount = reader.ReadInt32();
             for (int i = 0; i < streamCount; i++)
             {
-                package.entries.Add(EditorCustomContentEntry.Read(reader, entryVersion, package.usingFilePaths));
+                if ((version == 0) || (!package.allowingFilePaths))
+                {
+                    package.entries.Add(EditorCustomContentEntry.Read(reader, entryVersion, package.allowingFilePaths));
+                }
+                else
+                {
+                    package.entries.Add(EditorCustomContentEntry.Read(reader, entryVersion, reader.ReadBoolean()));
+                }
             }
             return package;
         }
@@ -150,10 +161,19 @@ namespace PlusLevelStudio
             this.id = id;
         }
 
+        public EditorCustomContentEntry(string contentType, string id, byte[] data)
+        {
+            this.contentType = contentType;
+            this.id = id;
+            this.data = data;
+        }
+
         public string contentType = "undefined";
         public string filePath = string.Empty;
         public string id = string.Empty;
         public byte[] data = null;
+
+        public bool usingFilePath => data == null;
 
         public const byte version = 0;
 
@@ -167,12 +187,19 @@ namespace PlusLevelStudio
             {
                 return data;
             }
+            byte[] fromPath = GetDataFromFilePath();
+            if (fromPath == null) return new byte[0];
+            return fromPath;
+        }
+
+        protected byte[] GetDataFromFilePath()
+        {
             switch (contentType)
             {
                 case "texture":
                     return File.ReadAllBytes(Path.Combine(LevelStudioPlugin.customTexturePath, filePath));
             }
-            return new byte[0];
+            return null;
         }
 
         public void Write(BinaryWriter writer, bool writePath)
