@@ -151,8 +151,9 @@ namespace PlusLevelStudio.Editor
 
         protected IEditorInteractable heldInteractable = null;
 
-        public int maxUndos = 15;
-        public List<MemoryStream> undoStreams = new List<MemoryStream>();
+        public static int maxUndos = 15;
+        public int currentUndoIndex = 0;
+        public List<MemoryStream> undoStreams = new List<MemoryStream>() { null };
         public MemoryStream currentlyHeldUndo = null;
 
         /// <summary>
@@ -179,6 +180,21 @@ namespace PlusLevelStudio.Editor
             levelData.Write(writer);
             newStream.Seek(0, SeekOrigin.Begin);
             currentlyHeldUndo = newStream;
+            writer.Close();
+        }
+
+        /// <summary>
+        /// Prepares for an undo by filling in the latest undo slot.
+        /// </summary>
+        public void PrepareForUndo()
+        {
+            if (undoStreams[undoStreams.Count - 1] != null) return;
+            MemoryStream newStream = new MemoryStream();
+            BinaryWriter writer = new BinaryWriter(newStream, Encoding.Default, true);
+            levelData.Write(writer);
+            newStream.Seek(0, SeekOrigin.Begin);
+            undoStreams[undoStreams.Count - 1] = newStream;
+            writer.Close();
         }
 
         /// <summary>
@@ -195,25 +211,34 @@ namespace PlusLevelStudio.Editor
         public void AddHeldUndo()
         {
             hasUnsavedChanges = true;
-            if (undoStreams.Count >= maxUndos) //we already have 5 undos
+            // if our undo index is in the past and we add an undo, wipe the previous undo history ahead of ours
+            while (undoStreams.Count > (currentUndoIndex + 1))
+            {
+                undoStreams.RemoveAt(undoStreams.Count - 1);
+            }
+            undoStreams[undoStreams.Count - 1] = currentlyHeldUndo;
+            undoStreams.Add(null);
+            currentUndoIndex += 1;
+            currentlyHeldUndo = null;
+
+            MemoryStream currentStream = undoStreams[currentUndoIndex];
+            if (undoStreams.Count > maxUndos)
             {
                 undoStreams.RemoveAt(0); // memory streams dont need .Dispose to be called
             }
-            undoStreams.Add(currentlyHeldUndo);
-            currentlyHeldUndo = null;
+            currentUndoIndex = undoStreams.IndexOf(currentStream);
         }
 
-        /// <summary>
-        /// Pops the most recently added undo and loads it
-        /// </summary>
-        public void PopUndo()
+        public void SwitchToUndo(int index)
         {
-            if (undoStreams.Count == 0) return;
-            MemoryStream recentUndo = undoStreams[undoStreams.Count - 1];
-            undoStreams.Remove(recentUndo);
-            BinaryReader reader = new BinaryReader(recentUndo);
+            if (index < 0) return;
+            if (index >= undoStreams.Count) return;
+            currentUndoIndex = index;
+            MemoryStream recentUndo = undoStreams[index];
+            BinaryReader reader = new BinaryReader(recentUndo, Encoding.UTF8, true);
             LoadEditorLevel(EditorLevelData.ReadFrom(reader), false);
-            reader.Close();
+            recentUndo.Seek(0, SeekOrigin.Begin);
+            reader.Dispose();
         }
 
         static FieldInfo _TextTextureGenerator = AccessTools.Field(typeof(EnvironmentController), "TextTextureGenerator");

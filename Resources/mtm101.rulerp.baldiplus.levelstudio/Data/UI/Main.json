@@ -20,13 +20,26 @@
 			"type":"imageButton",
 			"graphic":"UndoButton",
 			"hoverGraphic":"UndoButtonHover",
-			"anchoredPosition":[32,0],
+			"anchoredPosition":[33,0],
 			"size":[32,32],
 			"pivot":"#bottomLeft",
 			"anchorMin":"#bottomLeft",
 			"anchorMax":"#bottomLeft",
 			"onPressed":"undo",
 			"tooltip":"Ed_Tip_Undo"
+		},
+		{
+			"name":"redoButton",
+			"type":"imageButton",
+			"graphic":"RedoButton",
+			"hoverGraphic":"RedoButtonHover",
+			"anchoredPosition":[66,0],
+			"size":[32,32],
+			"pivot":"#bottomLeft",
+			"anchorMin":"#bottomLeft",
+			"anchorMax":"#bottomLeft",
+			"onPressed":"redo",
+			"tooltip":"Ed_Tip_Redo"
 		},
 		{
 			"name":"globalSettingsButton",

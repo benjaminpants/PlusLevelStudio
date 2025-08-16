@@ -342,7 +342,11 @@ namespace PlusLevelStudio.Editor
                     EditorController.Instance.ExportWithChecks();
                     break;
                 case "undo":
-                    EditorController.Instance.PopUndo();
+                    EditorController.Instance.PrepareForUndo();
+                    EditorController.Instance.SwitchToUndo(EditorController.Instance.currentUndoIndex - 1);
+                    break;
+                case "redo":
+                    EditorController.Instance.SwitchToUndo(EditorController.Instance.currentUndoIndex + 1);
                     break;
                 case "toolbox":
                     EditorController.Instance.SwitchToTool(null);
