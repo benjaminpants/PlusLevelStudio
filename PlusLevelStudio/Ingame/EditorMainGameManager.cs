@@ -49,7 +49,7 @@ namespace PlusLevelStudio.Ingame
 
         public override void LoadNextLevel()
         {
-            Singleton<CoreGameManager>.Instance.Quit();
+            Singleton<EditorPlayModeManager>.Instance.Win();
         }
     }
 }

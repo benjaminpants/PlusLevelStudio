@@ -276,7 +276,7 @@ namespace PlusLevelStudio.Lua
 
         public override void LoadNextLevel()
         {
-            Singleton<CoreGameManager>.Instance.Quit();
+            Singleton<EditorPlayModeManager>.Instance.Win();
         }
     }
 
@@ -363,9 +363,16 @@ namespace PlusLevelStudio.Lua
             Singleton<CoreGameManager>.Instance.EndGame(Singleton<CoreGameManager>.Instance.GetPlayer(0).transform, baldi);
         }
 
-        public void ForceWin()
+        public void ForceWin(string text)
         {
-            myManager.LoadNextLevel();
+            if (text == null)
+            {
+                myManager.LoadNextLevel();
+            }
+            else
+            {
+                Singleton<EditorPlayModeManager>.Instance.Win(text);
+            }
         }
 
         public CellProxy GetRandomEntitySafeCell()

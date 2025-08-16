@@ -6,12 +6,16 @@ using System.IO;
 using System.Text;
 using UnityEngine.UIElements;
 using UnityEngine;
+using TMPro;
+using static Rewired.InputMapper;
 
 namespace PlusLevelStudio
 {
     public class EditorPlayModeManager : Singleton<EditorPlayModeManager>
     {
         public EditorCustomContent customContent;
+        public ChallengeWin winScreen;
+        public TextMeshProUGUI winText;
         public List<SceneObject> sceneObjectsToCleanUp = new List<SceneObject>();
         public bool returnToEditor = true;
         public string editorLevelToLoad;
@@ -28,6 +32,16 @@ namespace PlusLevelStudio
                 return;
             }
             GoToEditor();
+        }
+
+        public void Win(string text = "Congratulation! You won!")
+        {
+            Singleton<MusicManager>.Instance.StopMidi();
+            AudioListener.pause = true;
+            Time.timeScale = 0f;
+            Singleton<CoreGameManager>.Instance.disablePause = true;
+            winText.text = text;
+            winScreen.gameObject.SetActive(true);
         }
 
         public void GoToEditor()

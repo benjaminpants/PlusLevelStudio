@@ -818,6 +818,12 @@ namespace PlusLevelStudio
             playModeGameObject.ConvertToPrefab(true);
             EditorPlayModeManager playModeManager = playModeGameObject.AddComponent<EditorPlayModeManager>();
 
+            ChallengeWin winCopy = GameObject.Instantiate<ChallengeWin>(Resources.FindObjectsOfTypeAll<ChallengeWin>().First(x => x.GetInstanceID() >= 0 && x.transform.parent.name == "GrappleChallengeManager"), playModeGameObject.transform);
+            winCopy.name = "GameWin";
+            winCopy.transform.Find("Canvas").Find("Text (TMP)").GetComponent<TextMeshProUGUI>().text = "Congratulation! You won!";
+            playModeManager.winScreen = winCopy;
+            playModeManager.winText = winCopy.transform.Find("Canvas").Find("Text (TMP)").GetComponent<TextMeshProUGUI>();
+
             yield return "Creating editor ingame objects...";
             GameLock[] foundLocks = Resources.FindObjectsOfTypeAll<GameLock>().Where(x => x.GetInstanceID() >= 0).ToArray();
             Structure_LockedRoom lockedRoomBuilder = new GameObject("LockedRoomBuilder").AddComponent<Structure_LockedRoom>();

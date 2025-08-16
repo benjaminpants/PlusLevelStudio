@@ -11,7 +11,7 @@ namespace PlusLevelStudio.Ingame
     {
         public override void LoadNextLevel()
         {
-            Singleton<CoreGameManager>.Instance.Quit();
+            Singleton<EditorPlayModeManager>.Instance.Win();
         }
 
         protected override void ExitedSpawn()
@@ -27,7 +27,7 @@ namespace PlusLevelStudio.Ingame
         static FieldInfo _allKnowing = AccessTools.Field(typeof(Principal), "allKnowing");
         public override void LoadNextLevel()
         {
-            Singleton<CoreGameManager>.Instance.Quit();
+            Singleton<EditorPlayModeManager>.Instance.Win();
         }
 
         protected override void ExitedSpawn()
@@ -71,7 +71,7 @@ namespace PlusLevelStudio.Ingame
         }
         public override void LoadNextLevel()
         {
-            Singleton<CoreGameManager>.Instance.Quit();
+            Singleton<EditorPlayModeManager>.Instance.Win();
         }
     }
 }
