@@ -12,21 +12,34 @@ namespace PlusLevelStudio.Editor
         public EditorRoom myRoom;
         public EditorLevelData myLevelData;
 
+        /// <summary>
+        /// Called when this is about to be destroyed.
+        /// </summary>
         public virtual void Cleanup()
         {
 
         }
 
+        /// <summary>
+        /// Called when this is initially created.
+        /// </summary>
         public virtual void Initialize()
         {
 
         }
 
+        /// <summary>
+        /// Used to modify the lights.
+        /// </summary>
+        /// <param name="workerEc"></param>
         public virtual void ModifyLightsForEditor(EnvironmentController workerEc)
         {
 
         }
 
+        /// <summary>
+        /// Called whenever this room is updated, supposedly. Only appears to be called when every visual gets refreshed.
+        /// </summary>
         public virtual void RoomUpdated()
         {
 
