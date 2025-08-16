@@ -6,6 +6,7 @@
 {"key":"Ed_Tip_ExportButton","value":"Export your level to share with others!"},
 {"key":"Ed_Tip_GlobalSettings","value":"Global Settings"},
 {"key":"Ed_Tip_Undo","value":"Undo"},
+{"key":"Ed_Tip_Redo","value":"Redo"},
 {"key":"Ed_Tip_Worldspace","value":"World space translations"},
 {"key":"Ed_Tip_Localspace","value":"Local space translations"},
 {"key":"Ed_Tip_MoveSetting","value":"Move Handles Visible"},

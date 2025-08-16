@@ -128,6 +128,16 @@ namespace PlusLevelStudio
             Directory.CreateDirectory(playableLevelPath);
             Directory.CreateDirectory(luaPath);
             Directory.CreateDirectory(customTexturePath); // this will also create the custom content path
+
+            EditorController.maxUndos = Config.Bind("General",
+                "Max Undos",
+                15,
+                "Determines the maximum amount of undos. 2 is the minimum, 0 or below will allow for infinite undos.\nNote that the higher this number is, the more memory the game will consume.").Value;
+            if (EditorController.maxUndos <= 0)
+            {
+                EditorController.maxUndos = int.MaxValue;
+            }
+            EditorController.maxUndos = Mathf.Max(EditorController.maxUndos, 2);
         }
 
         void AddSolidColorLightmap(string name, Color color)
