@@ -46,6 +46,15 @@ namespace PlusStudioLevelLoader
             return Instance.roomTextureAliases[alias];
         }
 
+        public static PosterObject PosterFromAlias(string alias)
+        {
+            if (!Instance.posterAliases.ContainsKey(alias))
+            {
+                return null;
+            }
+            return Instance.posterAliases[alias];
+        }
+
         void Awake()
         {
             Harmony harmony = new Harmony("mtm101.rulerp.baldiplus.levelstudioloader");

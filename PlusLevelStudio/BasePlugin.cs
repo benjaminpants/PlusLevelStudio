@@ -24,6 +24,7 @@ using PlusLevelStudio.Ingame;
 using PlusLevelStudio.Editor.ModeSettings;
 using MoonSharp.Interpreter;
 using PlusLevelStudio.Lua;
+using PlusLevelStudio.Editor.Tools.Customs;
 
 namespace PlusLevelStudio
 {
@@ -78,6 +79,7 @@ namespace PlusLevelStudio
 
         public static string customContentPath => Path.Combine(basePath, "User Content");
         public static string customTexturePath => Path.Combine(customContentPath, "Textures");
+        public static string customPostersPath => Path.Combine(customContentPath, "Posters");
 
         private Dictionary<Texture2D, Sprite> smallIconsFromTextures = new Dictionary<Texture2D, Sprite>();
 
@@ -128,6 +130,7 @@ namespace PlusLevelStudio
             Directory.CreateDirectory(playableLevelPath);
             Directory.CreateDirectory(luaPath);
             Directory.CreateDirectory(customTexturePath); // this will also create the custom content path
+            Directory.CreateDirectory(customPostersPath);
 
             EditorController.maxUndos = Config.Bind("General",
                 "Max Undos",
@@ -362,6 +365,7 @@ namespace PlusLevelStudio
             EditorInterfaceModes.AddVanillaStructures(fullMode, true);
             EditorInterfaceModes.AddVanillaLights(fullMode);
             EditorInterfaceModes.AddVanillaPosters(fullMode);
+            EditorInterfaceModes.AddToolToCategory(fullMode, "posters", new CustomPosterTool());
             EditorInterfaceModes.AddVanillaToolTools(fullMode);
             EditorInterfaceModes.AddVanillaEvents(fullMode, true);
 

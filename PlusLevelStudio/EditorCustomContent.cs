@@ -1,4 +1,5 @@
-﻿using MTM101BaldAPI.AssetTools;
+﻿using MTM101BaldAPI;
+using MTM101BaldAPI.AssetTools;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,6 +16,7 @@ namespace PlusLevelStudio
         public BaseGameManager gameManagerPre;
 
         public Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
+        public Dictionary<string, PosterObject> posters = new Dictionary<string, PosterObject>();
 
         public void CleanupContent()
         {
@@ -23,11 +25,16 @@ namespace PlusLevelStudio
                 UnityEngine.Object.Destroy(gameManagerPre.gameObject);
             }
             gameManagerPre = null;
-            foreach (KeyValuePair<string, Texture2D> kvp in textures)
+            foreach (var kvp in textures)
+            {
+                UnityEngine.Object.Destroy(kvp.Value);
+            }
+            foreach (var kvp in posters)
             {
                 UnityEngine.Object.Destroy(kvp.Value);
             }
             textures.Clear();
+            posters.Clear();
         }
 
         public void ClearEntriesNotInPackage(EditorCustomContentPackage package)
@@ -46,6 +53,38 @@ namespace PlusLevelStudio
                 UnityEngine.Object.Destroy(textures[texturesKeyedForRemoval[i]]);
                 textures.Remove(texturesKeyedForRemoval[i]);
             }
+
+            List<EditorCustomContentEntry> imagePosterEntries = package.GetAllOfType("imageposter");
+            List<string> imagePostersKeyedForRemoval = new List<string>();
+            foreach (KeyValuePair<string, PosterObject> kvp in posters)
+            {
+                if (imagePosterEntries.Find(x => x.id == kvp.Key) == null)
+                {
+                    imagePostersKeyedForRemoval.Add(kvp.Key);
+                }
+            }
+            for (int i = 0; i < imagePostersKeyedForRemoval.Count; i++)
+            {
+                UnityEngine.Object.Destroy(posters[imagePostersKeyedForRemoval[i]]);
+                posters.Remove(imagePostersKeyedForRemoval[i]);
+            }
+        }
+
+        protected Texture2D LoadTextureFromPathOrData(EditorCustomContentEntry entry, string basePath)
+        {
+            Texture2D returnVal;
+            if (entry.usingFilePath)
+            {
+                returnVal = AssetLoader.TextureFromFile(Path.Combine(basePath, entry.filePath));
+            }
+            else
+            {
+                returnVal = new Texture2D(128, 128, TextureFormat.ARGB32, false);
+                returnVal.filterMode = FilterMode.Point;
+                returnVal.LoadImage(entry.data);
+                returnVal.name = entry.id;
+            }
+            return returnVal;
         }
 
         public void LoadFromPackage(EditorCustomContentPackage package)
@@ -54,18 +93,16 @@ namespace PlusLevelStudio
             foreach (EditorCustomContentEntry entry in textureEntries)
             {
                 if (textures.ContainsKey(entry.id)) continue; // the texture is already loaded
-                if (package.allowingFilePaths)
-                {
-                    textures.Add(entry.id, AssetLoader.TextureFromFile(Path.Combine(LevelStudioPlugin.customTexturePath, entry.filePath)));
-                }
-                else
-                {
-                    Texture2D texture = new Texture2D(128,128,TextureFormat.ARGB32, false);
-                    texture.filterMode = FilterMode.Point;
-                    texture.LoadImage(entry.data);
-                    texture.name = entry.id;
-                    textures.Add(entry.id, texture);
-                }
+                textures.Add(entry.id, LoadTextureFromPathOrData(entry, LevelStudioPlugin.customTexturePath));
+            }
+
+            List<EditorCustomContentEntry> imagePosterEntries = package.GetAllOfType("imageposter");
+            foreach (EditorCustomContentEntry entry in imagePosterEntries)
+            {
+                if (posters.ContainsKey(entry.id)) continue; // the texture is already loaded
+                PosterObject posterObj = ObjectCreators.CreatePosterObject(LoadTextureFromPathOrData(entry, LevelStudioPlugin.customPostersPath), new PosterTextData[0]);
+                posterObj.name = entry.id;
+                posters.Add(entry.id, posterObj);
             }
 
         }
@@ -198,6 +235,8 @@ namespace PlusLevelStudio
             {
                 case "texture":
                     return File.ReadAllBytes(Path.Combine(LevelStudioPlugin.customTexturePath, filePath));
+                case "imageposter":
+                    return File.ReadAllBytes(Path.Combine(LevelStudioPlugin.customPostersPath, filePath));
             }
             return null;
         }

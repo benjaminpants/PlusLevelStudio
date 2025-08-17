@@ -227,6 +227,11 @@ namespace PlusLevelStudio.Editor
                 undoStreams.RemoveAt(0); // memory streams dont need .Dispose to be called
             }
             currentUndoIndex = undoStreams.IndexOf(currentStream);
+            if (currentUndoIndex == -1)
+            {
+                Debug.Log("The fuck?");
+                currentUndoIndex = undoStreams.Count - 1;
+            }
         }
 
         public void SwitchToUndo(int index)
@@ -301,6 +306,7 @@ namespace PlusLevelStudio.Editor
         public void SaveEditorLevelToFile(string path)
         {
             UpdateMeta();
+            CleanupUnusedContentFromData();
             Directory.CreateDirectory(LevelStudioPlugin.levelFilePath);
             BinaryWriter writer = new BinaryWriter(new FileStream(path, FileMode.Create, FileAccess.Write));
             currentFile.Write(writer);
@@ -385,16 +391,30 @@ namespace PlusLevelStudio.Editor
             {
                 hasUnsavedChanges = false;
                 undoStreams.Clear(); // memorystreams dont need .dispose
+                undoStreams.Add(null);
             }
         }
 
-        public void CleanupUnusedTexturesFromData()
+        /// <summary>
+        /// Attempts to clean up all unused data.
+        /// </summary>
+        public void CleanupUnusedContentFromData()
         {
+            if (customContentPackage.entries.Count == 0) return; // micro optimization. honestly probably doesn't help
             List<EditorCustomContentEntry> entriesQueuedForDeletion = new List<EditorCustomContentEntry>();
             List<EditorCustomContentEntry> textureEntries = customContentPackage.GetAllOfType("texture");
             foreach (EditorCustomContentEntry entry in textureEntries)
             {
                 if (levelData.rooms.Count(x => x.textureContainer.UsesTexture(entry.id)) == 0)
+                {
+                    entriesQueuedForDeletion.Add(entry);
+                }
+            }
+
+            List<EditorCustomContentEntry> posterEntries = customContentPackage.GetAllOfType("imageposter");
+            foreach (EditorCustomContentEntry entry in posterEntries)
+            {
+                if (levelData.posters.Count(x => x.type == entry.id) == 0)
                 {
                     entriesQueuedForDeletion.Add(entry);
                 }
@@ -661,6 +681,7 @@ namespace PlusLevelStudio.Editor
 
         public virtual void Export()
         {
+            CleanupUnusedContentFromData();
             BaldiLevel level = Compile();
             PlayableEditorLevel playableLevel = new PlayableEditorLevel();
             playableLevel.data = level;
@@ -818,11 +839,11 @@ namespace PlusLevelStudio.Editor
             handler.OnNo = onNo;
         }
 
-        public void CreateUIFileBrowser(string path, string startingFile, string extension, Func<string, bool> onSubmit)
+        public EditorUIFileBrowser CreateUIFileBrowser(string path, string startingFile, string extension, Func<string, bool> onSubmit)
         {
             EditorUIFileBrowser fileBrowser = EditorController.Instance.CreateUI<EditorUIFileBrowser>("FileBrowser");
             fileBrowser.Setup(path, extension, startingFile, onSubmit);
-
+            return fileBrowser;
         }
 
         public void RemoveUI(GameObject obj)

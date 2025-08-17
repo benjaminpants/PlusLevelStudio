@@ -78,12 +78,12 @@ namespace PlusLevelStudio.Editor.SettingsUI
         public bool CustomTextureSubmitted(string path)
         {
             string id = "cstm_" + Path.GetFileNameWithoutExtension(path);
-            string filePath = Path.GetFileName(path); // unfortunately Path.GetRelativePath doesn't exist in .net 2.0
+            string fileName = Path.GetFileName(path); // unfortunately Path.GetRelativePath doesn't exist in .net 2.0
             if (!EditorController.Instance.customContent.textures.ContainsKey(id))
             {
                 Texture2D texture = AssetLoader.TextureFromFile(path);
                 EditorController.Instance.customContent.textures.Add(id, texture);
-                EditorController.Instance.customContentPackage.entries.Add(new EditorCustomContentEntry("texture", id, filePath));
+                EditorController.Instance.customContentPackage.entries.Add(new EditorCustomContentEntry("texture", id, fileName));
             }
             SelectTexture(id);
             return true;
@@ -172,7 +172,7 @@ namespace PlusLevelStudio.Editor.SettingsUI
             EditorController.Instance.levelData.windows.ForEach(x => EditorController.Instance.UpdateVisual(x));
             somethingChanged = true;
             UpdateTextures();
-            EditorController.Instance.CleanupUnusedTexturesFromData();
+            EditorController.Instance.CleanupUnusedContentFromData();
         }
 
         public override void OnElementsCreated()

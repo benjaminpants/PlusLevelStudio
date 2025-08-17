@@ -84,7 +84,7 @@ namespace PlusStudioLevelLoader
                 {
                     position = info.posters[i].position.ToInt(),
                     direction = (Direction)info.posters[i].direction,
-                    poster = LevelLoaderPlugin.Instance.posterAliases[info.posters[i].poster]
+                    poster = LevelLoaderPlugin.PosterFromAlias(info.posters[i].poster)
                 });
             }
             for (int i = 0; i < info.lights.Count; i++)
@@ -325,7 +325,7 @@ namespace PlusStudioLevelLoader
                 {
                     position = level.posters[i].position.ToInt(),
                     direction = (Direction)level.posters[i].direction,
-                    poster = LevelLoaderPlugin.Instance.posterAliases[level.posters[i].poster]
+                    poster = LevelLoaderPlugin.PosterFromAlias(level.posters[i].poster)
                 });
             }
             for (int i = 0; i < level.randomEvents.Count; i++)
