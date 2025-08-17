@@ -455,6 +455,7 @@ namespace PlusLevelStudio
                 },
                 defaultTools = new string[] { "room_class", "room_faculty", "room_office", "technical_potentialdoor", "technical_lightspot", "technical_nosafe", "itemspawn_100", "merge", "delete" },
                 vanillaComplaint = true,
+                allowOutOfRoomObjects = false,
                 caresAboutSpawn = false,
                 prefab = rce,
                 pages = new List<EditorGlobalPage>()

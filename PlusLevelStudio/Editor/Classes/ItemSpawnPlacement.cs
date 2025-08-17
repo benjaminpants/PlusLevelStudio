@@ -65,6 +65,17 @@ namespace PlusLevelStudio.Editor
             }
             EditorController.Instance.GetVisual(this).GetComponent<EditorRendererContainer>().Highlight("none");
             moved = false;
+            if (!ValidatePosition(EditorController.Instance.levelData))
+            {
+                EditorController.Instance.RemoveVisual(this);
+                EditorController.Instance.levelData.itemSpawns.Remove(this);
+            }
+        }
+
+        public bool ValidatePosition(EditorLevelData data)
+        {
+            if (!EditorController.Instance.currentMode.allowOutOfRoomObjects) return data.RoomFromPos(new IntVector2(Mathf.RoundToInt((position.x - 5f) / 10f), Mathf.RoundToInt((position.y - 5f) / 10f)), true) != null;
+            return data.GetCellSafe(Mathf.RoundToInt((position.x - 5f) / 10f), Mathf.RoundToInt((position.y - 5f) / 10f)) != null;
         }
 
         public void UpdateVisual(GameObject visualObject)

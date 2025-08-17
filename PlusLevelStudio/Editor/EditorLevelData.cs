@@ -284,6 +284,18 @@ namespace PlusLevelStudio.Editor
                     changedSomething = true;
                 }
             }
+            for (int i = itemSpawns.Count - 1; i >= 0; i--)
+            {
+                if (!itemSpawns[i].ValidatePosition(this))
+                {
+                    if (updateVisuals)
+                    {
+                        EditorController.Instance.RemoveVisual(itemSpawns[i]);
+                    }
+                    itemSpawns.RemoveAt(i);
+                    changedSomething = true;
+                }
+            }
             return changedSomething;
         }
 

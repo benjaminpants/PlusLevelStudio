@@ -77,7 +77,8 @@ namespace PlusLevelStudio.Editor
 
         public bool ValidatePosition(EditorLevelData data)
         {
-            return data.GetCellSafe(Mathf.RoundToInt((position.x / 10f) - 5f), Mathf.RoundToInt((position.y / 10f) - 5f)) != null;
+            if (!EditorController.Instance.currentMode.allowOutOfRoomObjects) return data.RoomFromPos(new IntVector2(Mathf.RoundToInt((position.x - 5f) / 10f), Mathf.RoundToInt((position.y - 5f) / 10f)), true) != null;
+            return data.GetCellSafe(Mathf.RoundToInt((position.x - 5f) / 10f), Mathf.RoundToInt((position.y - 5f) / 10f)) != null;
         }
 
         public void UpdateVisual(GameObject visualObject)

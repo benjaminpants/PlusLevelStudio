@@ -36,6 +36,7 @@ namespace PlusLevelStudio.Editor
         public string[] defaultTools = new string[0];
         public string[] categoryOrder = new string[0];
         public bool vanillaComplaint = false;
+        public bool allowOutOfRoomObjects = true;
         public bool caresAboutSpawn = true;
         public List<string> availableRandomEvents = new List<string>();
         public List<string> availableGameModes = new List<string>();
