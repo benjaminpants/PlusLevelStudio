@@ -833,7 +833,7 @@ namespace PlusLevelStudio.Editor
 
         public void CreateUIPopup(string text, Action onYes, Action onNo)
         {
-            EditorPopupExchangeHandler handler = CreateUI<EditorPopupExchangeHandler>("2ChoicePopUp");
+            EditorPopupExchangeHandler handler = CreateUI<EditorPopupExchangeHandler>("2ChoicePopup");
             handler.transform.Find("Title").GetComponent<TextMeshProUGUI>().text = text;
             handler.OnYes = onYes;
             handler.OnNo = onNo;
@@ -841,7 +841,7 @@ namespace PlusLevelStudio.Editor
 
         public void CreateUIOnePopup(string text)
         {
-            EditorPopupExchangeHandler handler = CreateUI<EditorPopupExchangeHandler>("1ChoicePopUp");
+            EditorPopupExchangeHandler handler = CreateUI<EditorPopupExchangeHandler>("1ChoicePopup");
             handler.transform.Find("Title").GetComponent<TextMeshProUGUI>().text = text;
         }
 

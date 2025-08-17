@@ -35,7 +35,7 @@ namespace PlusLevelStudio.Editor.Tools.Customs
             // check to make sure the entry doesn't already exist
             if (EditorController.Instance.customContentPackage.entries.Find(x => x.id == currentId) != null)
             {
-                lastUsedFile = fileName;
+                lastUsedFile = Path.GetFileNameWithoutExtension(path);
                 imageSelected = true;
                 onWaitFrame = true;
                 return true;
@@ -47,7 +47,7 @@ namespace PlusLevelStudio.Editor.Tools.Customs
                 EditorController.Instance.CreateUIOnePopup("Ed_Error_MustBe256");
                 return false;
             }
-            lastUsedFile = fileName;
+            lastUsedFile = Path.GetFileNameWithoutExtension(path);
             imageSelected = true;
             onWaitFrame = true;
             EditorCustomContentEntry entry = new EditorCustomContentEntry("imageposter", currentId, fileName);
