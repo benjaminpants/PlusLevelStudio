@@ -108,7 +108,7 @@ namespace PlusLevelStudio.Editor.SettingsUI
                     RefreshPage(currentPage);
                     break;
                 case "customTextures":
-                    EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.customTexturePath, string.Empty, "png", CustomTextureSubmitted);
+                    EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.customTexturePath, string.Empty, "png", false, CustomTextureSubmitted);
                     break;
             }
             base.SendInteractionMessage(message, data);

@@ -25,29 +25,31 @@ namespace PlusLevelStudio.Editor.Tools.Customs
         public override void Begin()
         {
             base.Begin();
-            currentBrowser = EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.customPostersPath, lastUsedFile, "png", OnSubmit);
+            currentBrowser = EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.customPostersPath, lastUsedFile, "png", false, OnSubmit);
         }
 
         public bool OnSubmit(string path)
         {
-            if (!File.Exists(path)) return false;
-            imageSelected = true;
-            onWaitFrame = true;
             currentId = "cstm_simple_" + Path.GetFileNameWithoutExtension(path);
             string fileName = Path.GetFileName(path);
             // check to make sure the entry doesn't already exist
             if (EditorController.Instance.customContentPackage.entries.Find(x => x.id == currentId) != null)
             {
                 lastUsedFile = fileName;
+                imageSelected = true;
+                onWaitFrame = true;
                 return true;
             }
             Texture2D texture = AssetLoader.TextureFromFile(path);
             if ((texture.width != 256) || (texture.height != 256))
             {
                 UnityEngine.Object.Destroy(texture);
+                EditorController.Instance.CreateUIOnePopup("Ed_Error_MustBe256");
                 return false;
             }
             lastUsedFile = fileName;
+            imageSelected = true;
+            onWaitFrame = true;
             EditorCustomContentEntry entry = new EditorCustomContentEntry("imageposter", currentId, fileName);
             PosterObject posterObj = ObjectCreators.CreatePosterObject(texture, new PosterTextData[0]);
             posterObj.name = entry.id;

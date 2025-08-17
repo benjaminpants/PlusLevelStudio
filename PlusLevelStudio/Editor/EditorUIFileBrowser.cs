@@ -36,6 +36,7 @@ namespace PlusLevelStudio.Editor
         TextMeshProUGUI[] fileTexts = new TextMeshProUGUI[11];
         string path;
         string extension;
+        bool allowNonExistantFiles = false;
         int offset = 0;
         List<BrowserFile> files = new List<BrowserFile>();
 
@@ -50,7 +51,7 @@ namespace PlusLevelStudio.Editor
             }
         }
 
-        public void Setup(string path, string extension, string startingFile, Func<string, bool> action)
+        public void Setup(string path, string extension, string startingFile, bool allowNonExistantFiles, Func<string, bool> action)
         {
             this.path = path;
             this.extension = extension;
@@ -61,6 +62,7 @@ namespace PlusLevelStudio.Editor
             {
                 textbox.text = startingFile;
             }
+            this.allowNonExistantFiles = allowNonExistantFiles;
             UpdateFiles();
         }
 
@@ -107,6 +109,11 @@ namespace PlusLevelStudio.Editor
             {
                 case "submit":
                     string generatedPath = Path.Combine(path, textbox.text + "." + extension);
+                    if ((!allowNonExistantFiles) && (!File.Exists(generatedPath)))
+                    {
+                        EditorController.Instance.TriggerError("Ed_Error_FileNoExist");
+                        return;
+                    }
                     if (onSubmit(generatedPath))
                     {
                         base.SendInteractionMessage("exit", null);

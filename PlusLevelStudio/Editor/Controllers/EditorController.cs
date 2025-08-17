@@ -293,7 +293,7 @@ namespace PlusLevelStudio.Editor
             }
             else
             {
-                TriggerError("File of mismatched editor mode!");
+                TriggerError("Ed_Error_MismatchedEditorMode");
                 reader.Close();
                 return false;
             }
@@ -839,10 +839,16 @@ namespace PlusLevelStudio.Editor
             handler.OnNo = onNo;
         }
 
-        public EditorUIFileBrowser CreateUIFileBrowser(string path, string startingFile, string extension, Func<string, bool> onSubmit)
+        public void CreateUIOnePopup(string text)
+        {
+            EditorPopupExchangeHandler handler = CreateUI<EditorPopupExchangeHandler>("1ChoicePopUp");
+            handler.transform.Find("Title").GetComponent<TextMeshProUGUI>().text = text;
+        }
+
+        public EditorUIFileBrowser CreateUIFileBrowser(string path, string startingFile, string extension, bool allowNonExistantFiles, Func<string, bool> onSubmit)
         {
             EditorUIFileBrowser fileBrowser = EditorController.Instance.CreateUI<EditorUIFileBrowser>("FileBrowser");
-            fileBrowser.Setup(path, extension, startingFile, onSubmit);
+            fileBrowser.Setup(path, extension, startingFile, allowNonExistantFiles, onSubmit);
             return fileBrowser;
         }
 
@@ -977,6 +983,7 @@ namespace PlusLevelStudio.Editor
         public void TriggerError(string errorString)
         {
             Debug.LogWarning("Encountered error: " + errorString + "!");
+            CreateUIOnePopup(LocalizationManager.Instance.GetLocalizedText(errorString)); // placeholder
         }
 
         /// <summary>
@@ -1044,12 +1051,12 @@ namespace PlusLevelStudio.Editor
         {
             if (sizeDif.x == 0 && sizeDif.z == 0) return; // no point in doing anything
             IntVector2 targetSize = levelData.mapSize + sizeDif;
-            if (targetSize.x > 255 || targetSize.z > 255) { TriggerError("LevelTooBig"); return; }
-            if (targetSize.x < 1 || targetSize.z < 1) { TriggerError("LevelTooSmall"); return; }
+            if (targetSize.x > 255 || targetSize.z > 255) { TriggerError("Ed_Error_RescaleTooBig"); return; }
+            if (targetSize.x < 1 || targetSize.z < 1) { TriggerError("Ed_Error_RescaleTooSmall!"); return; }
 
             if (!levelData.ResizeLevel(posDif, sizeDif, this))
             {
-                TriggerError("RoomClipped");
+                TriggerError("Ed_Error_AreaClipped");
                 return;
             }
             UpdateSpawnVisual();

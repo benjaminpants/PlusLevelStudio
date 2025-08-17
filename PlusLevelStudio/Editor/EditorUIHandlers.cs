@@ -306,14 +306,14 @@ namespace PlusLevelStudio.Editor
                     break;
                 case "load":
                     EditorController.Instance.SwitchToTool(null);
-                    EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.levelFilePath, EditorController.Instance.currentFileName, "ebpl", (string path) =>
+                    EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.levelFilePath, EditorController.Instance.currentFileName, "ebpl", false, (string path) =>
                     {
                         return EditorController.Instance.LoadEditorLevelFromFile(path);
                     });
                     break;
                 case "save":
                     EditorController.Instance.SwitchToTool(null);
-                    EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.levelFilePath, EditorController.Instance.currentFileName, "ebpl", (string path) =>
+                    EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.levelFilePath, EditorController.Instance.currentFileName, "ebpl", true, (string path) =>
                     {
                         EditorController.Instance.SaveEditorLevelToFile(path);
                         return true;
@@ -321,7 +321,7 @@ namespace PlusLevelStudio.Editor
                     break;
                 case "saveAndPlay":
                     EditorController.Instance.SwitchToTool(null);
-                    EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.levelFilePath, EditorController.Instance.currentFileName, "ebpl", (string path) =>
+                    EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.levelFilePath, EditorController.Instance.currentFileName, "ebpl", true, (string path) =>
                     {
                         EditorController.Instance.SaveEditorLevelToFile(path);
                         PlayLevel();
@@ -330,7 +330,7 @@ namespace PlusLevelStudio.Editor
                     break;
                 case "saveAndExport":
                     EditorController.Instance.SwitchToTool(null);
-                    EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.levelFilePath, EditorController.Instance.currentFileName, "ebpl", (string path) =>
+                    EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.levelFilePath, EditorController.Instance.currentFileName, "ebpl", true, (string path) =>
                     {
                         EditorController.Instance.SaveEditorLevelToFile(path);
                         EditorController.Instance.Export();

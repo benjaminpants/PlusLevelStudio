@@ -46,7 +46,6 @@ namespace PlusLevelStudio.Lua
 
         public bool ScriptSelected(string path)
         {
-            if (!File.Exists(path)) return false;
             luaSettings.luaScript = File.ReadAllText(path);
             luaSettings.fileName = Path.GetFileNameWithoutExtension(path);
             refreshText.text = String.Format(LocalizationManager.Instance.GetLocalizedText("Ed_Menu_RefreshLua"), luaSettings.fileName + ".lua");
@@ -58,7 +57,7 @@ namespace PlusLevelStudio.Lua
             switch (message)
             {
                 case "loadScript":
-                    EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.luaPath, ((CustomChallengeGameModeSettings)settings).fileName, "lua", ScriptSelected);
+                    EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.luaPath, ((CustomChallengeGameModeSettings)settings).fileName, "lua", false, ScriptSelected);
                     break;
                 case "refreshScript":
                     if (!string.IsNullOrEmpty(luaSettings.fileName))
