@@ -56,7 +56,7 @@ namespace PlusLevelStudio
                 textures.Remove(texturesKeyedForRemoval[i]);
             }
 
-            List<EditorCustomContentEntry> posterEntries = package.GetAllOfTypes("imageposter", "baldisaysposter", "chalkboardposter");
+            List<EditorCustomContentEntry> posterEntries = package.GetAllOfTypes("imageposter", "baldisaysposter", "chalkboardposter", "bulletinposter", "bulletinsmallposter");
             List<string> posterEntriesKeyedForRemoval = new List<string>();
             foreach (KeyValuePair<string, PosterObject> kvp in posters)
             {

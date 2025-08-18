@@ -74,7 +74,7 @@ namespace PlusLevelStudio.Editor.SettingsUI
                 case "setMaxLevers":
                     if (int.TryParse((string)data, out int maxLevers))
                     {
-                        GetStructure().maxLevers = Mathf.Min(maxLevers, 1);
+                        GetStructure().maxLevers = Mathf.Max(maxLevers, 1);
                         somethingChanged = true;
                     }
                     Refresh();
