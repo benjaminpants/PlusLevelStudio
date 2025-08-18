@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.IO;
 using PlusLevelStudio.Editor;
+using System.Runtime.InteropServices;
 
 namespace PlusLevelStudio.UI
 {
@@ -137,28 +138,8 @@ namespace PlusLevelStudio.UI
             }
         }
 
-        public static UIExchangeHandler BuildUIFromFile(Type type, RectTransform parent, string name, string path)
+        public static void BuildGameObjectsFromJArray(GameObject obj, UIExchangeHandler handler, JArray elementsArray, Dictionary<string, JToken> defines)
         {
-            GameObject obj = new GameObject(name);
-            obj.transform.SetParent(parent.transform, false);
-            RectTransform rect = obj.AddComponent<RectTransform>();
-            rect.sizeDelta = parent.sizeDelta;
-            JObject parsedFile = JObject.Parse(File.ReadAllText(path));
-
-            UIExchangeHandler handler = (UIExchangeHandler)obj.AddComponent(type);
-
-
-            // handle defines
-            Dictionary<string, JToken> defines = new Dictionary<string, JToken>(globalDefines);
-            JToken definesToken = parsedFile["defines"];
-
-            foreach (JProperty child in definesToken.Children())
-            {
-                defines.Add(child.Name, child.Value);
-            }
-
-            // now handle elements themselves
-            JArray elementsArray = parsedFile["elements"] as JArray;
             for (int i = 0; i < elementsArray.Count; i++)
             {
                 JObject currentElement = elementsArray[i] as JObject;
@@ -188,8 +169,41 @@ namespace PlusLevelStudio.UI
                 // handle this last just incase some evil lunatic decides to use macros for defining types
                 string elementType = elementData["type"].ToString();
 
-                elementBuilders[elementType].Build(obj, handler, elementData);
+                GameObject builtObject = elementBuilders[elementType].Build(obj, handler, elementData);
+
+                // now parse their children, if they exist
+                if (elementData.ContainsKey("children"))
+                {
+                    if (elementData["children"].Type == JTokenType.Array)
+                    {
+                        BuildGameObjectsFromJArray(builtObject, handler, elementData["children"] as JArray, defines);
+                    }
+                }
             }
+        }
+
+        public static UIExchangeHandler BuildUIFromFile(Type type, RectTransform parent, string name, string path)
+        {
+            GameObject obj = new GameObject(name);
+            obj.transform.SetParent(parent.transform, false);
+            RectTransform rect = obj.AddComponent<RectTransform>();
+            rect.sizeDelta = parent.sizeDelta;
+            JObject parsedFile = JObject.Parse(File.ReadAllText(path));
+
+            UIExchangeHandler handler = (UIExchangeHandler)obj.AddComponent(type);
+
+
+            // handle defines
+            Dictionary<string, JToken> defines = new Dictionary<string, JToken>(globalDefines);
+            JToken definesToken = parsedFile["defines"];
+
+            foreach (JProperty child in definesToken.Children())
+            {
+                defines.Add(child.Name, child.Value);
+            }
+
+            // now handle elements themselves
+            BuildGameObjectsFromJArray(obj, handler, parsedFile["elements"] as JArray, defines);
 
             handler.OnElementsCreated();
 

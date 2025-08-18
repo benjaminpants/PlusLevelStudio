@@ -1,5 +1,6 @@
 ﻿using MTM101BaldAPI;
 using MTM101BaldAPI.AssetTools;
+using PlusLevelStudio.UI;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,11 +12,11 @@ namespace PlusLevelStudio.Editor.Tools.Customs
     public class CustomPosterTool : PlaceAndRotateTool
     {
         public override string id => "custom_imageposter";
-        EditorUIFileBrowser currentBrowser;
-        bool imageSelected = false;
-        bool onWaitFrame = false;
-        string lastUsedFile = "myPoster";
-        string currentId = string.Empty;
+        protected UIExchangeHandler currentPopup;
+        protected bool posterSelected = false;
+        protected bool onWaitFrame = false;
+        protected string lastUsedFile = string.Empty;
+        protected string currentId = string.Empty;
 
         public CustomPosterTool()
         {
@@ -24,11 +25,10 @@ namespace PlusLevelStudio.Editor.Tools.Customs
 
         public override void Begin()
         {
-            base.Begin();
-            currentBrowser = EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.customPostersPath, lastUsedFile, "png", false, OnSubmit);
+            currentPopup = EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.customPostersPath, lastUsedFile, "png", false, OnSubmit);
         }
 
-        public bool OnSubmit(string path)
+        public virtual bool OnSubmit(string path)
         {
             currentId = "cstm_simple_" + Path.GetFileNameWithoutExtension(path);
             string fileName = Path.GetFileName(path);
@@ -36,7 +36,7 @@ namespace PlusLevelStudio.Editor.Tools.Customs
             if (EditorController.Instance.customContentPackage.entries.Find(x => x.id == currentId) != null)
             {
                 lastUsedFile = Path.GetFileNameWithoutExtension(path);
-                imageSelected = true;
+                posterSelected = true;
                 onWaitFrame = true;
                 return true;
             }
@@ -48,7 +48,7 @@ namespace PlusLevelStudio.Editor.Tools.Customs
                 return false;
             }
             lastUsedFile = Path.GetFileNameWithoutExtension(path);
-            imageSelected = true;
+            posterSelected = true;
             onWaitFrame = true;
             EditorCustomContentEntry entry = new EditorCustomContentEntry("imageposter", currentId, fileName);
             PosterObject posterObj = ObjectCreators.CreatePosterObject(texture, new PosterTextData[0]);
@@ -60,9 +60,9 @@ namespace PlusLevelStudio.Editor.Tools.Customs
 
         public override void Exit()
         {
-            imageSelected = false;
+            posterSelected = false;
             currentId = string.Empty;
-            currentBrowser = null;
+            currentPopup = null;
             base.Exit();
         }
 
@@ -73,10 +73,10 @@ namespace PlusLevelStudio.Editor.Tools.Customs
                 onWaitFrame = false;
                 return;
             }
-            if (!imageSelected)
+            if (!posterSelected)
             {
                 EditorController.Instance.selector.DisableSelection();
-                if (currentBrowser == null)
+                if (currentPopup == null)
                 {
                     EditorController.Instance.SwitchToTool(null);
                 }
@@ -104,7 +104,7 @@ namespace PlusLevelStudio.Editor.Tools.Customs
 
         public override bool MousePressed()
         {
-            if (!imageSelected) return false;
+            if (!posterSelected) return false;
             if (onWaitFrame) return false;
             return base.MousePressed();
         }

@@ -3,8 +3,10 @@ using MTM101BaldAPI.AssetTools;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using UnityEngine;
+using MTM101BaldAPI.UI;
 
 namespace PlusLevelStudio
 {
@@ -54,19 +56,19 @@ namespace PlusLevelStudio
                 textures.Remove(texturesKeyedForRemoval[i]);
             }
 
-            List<EditorCustomContentEntry> imagePosterEntries = package.GetAllOfType("imageposter");
-            List<string> imagePostersKeyedForRemoval = new List<string>();
+            List<EditorCustomContentEntry> posterEntries = package.GetAllOfTypes("imageposter", "baldisaysposter", "chalkboardposter");
+            List<string> posterEntriesKeyedForRemoval = new List<string>();
             foreach (KeyValuePair<string, PosterObject> kvp in posters)
             {
-                if (imagePosterEntries.Find(x => x.id == kvp.Key) == null)
+                if (posterEntries.Find(x => x.id == kvp.Key) == null)
                 {
-                    imagePostersKeyedForRemoval.Add(kvp.Key);
+                    posterEntriesKeyedForRemoval.Add(kvp.Key);
                 }
             }
-            for (int i = 0; i < imagePostersKeyedForRemoval.Count; i++)
+            for (int i = 0; i < posterEntriesKeyedForRemoval.Count; i++)
             {
-                UnityEngine.Object.Destroy(posters[imagePostersKeyedForRemoval[i]]);
-                posters.Remove(imagePostersKeyedForRemoval[i]);
+                UnityEngine.Object.Destroy(posters[posterEntriesKeyedForRemoval[i]]);
+                posters.Remove(posterEntriesKeyedForRemoval[i]);
             }
         }
 
@@ -102,6 +104,38 @@ namespace PlusLevelStudio
                 if (posters.ContainsKey(entry.id)) continue; // the texture is already loaded
                 PosterObject posterObj = ObjectCreators.CreatePosterObject(LoadTextureFromPathOrData(entry, LevelStudioPlugin.customPostersPath), new PosterTextData[0]);
                 posterObj.name = entry.id;
+                posters.Add(entry.id, posterObj);
+            }
+
+            List<EditorCustomContentEntry> baldiPosterEntries = package.GetAllOfType("baldisaysposter");
+            foreach (EditorCustomContentEntry entry in baldiPosterEntries)
+            {
+                if (posters.ContainsKey(entry.id)) continue; // the texture is already loaded
+                PosterObject posterObj = LevelStudioPlugin.Instance.GenerateBaldiSaysPoster(entry.id, Encoding.Unicode.GetString(entry.GetData()));
+                posters.Add(entry.id, posterObj);
+            }
+
+            List<EditorCustomContentEntry> chalkPosterEntries = package.GetAllOfType("chalkboardposter");
+            foreach (EditorCustomContentEntry entry in chalkPosterEntries)
+            {
+                if (posters.ContainsKey(entry.id)) continue; // the texture is already loaded
+                PosterObject posterObj = LevelStudioPlugin.Instance.GenerateChalkPoster(entry.id, Encoding.Unicode.GetString(entry.GetData()));
+                posters.Add(entry.id, posterObj);
+            }
+
+            List<EditorCustomContentEntry> bulletinEntries = package.GetAllOfType("bulletinposter");
+            foreach (EditorCustomContentEntry entry in bulletinEntries)
+            {
+                if (posters.ContainsKey(entry.id)) continue; // the texture is already loaded
+                PosterObject posterObj = LevelStudioPlugin.Instance.GenerateBulletInPoster(entry.id, Encoding.Unicode.GetString(entry.GetData()), BaldiFonts.ComicSans18);
+                posters.Add(entry.id, posterObj);
+            }
+
+            List<EditorCustomContentEntry> bulletinSmallEntries = package.GetAllOfType("bulletinsmallposter");
+            foreach (EditorCustomContentEntry entry in bulletinSmallEntries)
+            {
+                if (posters.ContainsKey(entry.id)) continue; // the texture is already loaded
+                PosterObject posterObj = LevelStudioPlugin.Instance.GenerateBulletInPoster(entry.id, Encoding.Unicode.GetString(entry.GetData()), BaldiFonts.ComicSans12);
                 posters.Add(entry.id, posterObj);
             }
 
@@ -145,6 +179,11 @@ namespace PlusLevelStudio
             return entries.FindAll(x => x.contentType == type);
         }
 
+        public List<EditorCustomContentEntry> GetAllOfTypes(params string[] types)
+        {
+            return entries.FindAll(x => types.Contains(x.contentType));
+        }
+
         public const byte version = 1;
 
         public void Write(BinaryWriter writer)
@@ -159,7 +198,7 @@ namespace PlusLevelStudio
                 {
                     writer.Write(entries[i].usingFilePath);
                 }
-                entries[i].Write(writer, allowingFilePaths);
+                entries[i].Write(writer, (entries[i].usingFilePath) && allowingFilePaths);
             }
         }
 
@@ -237,6 +276,9 @@ namespace PlusLevelStudio
                     return File.ReadAllBytes(Path.Combine(LevelStudioPlugin.customTexturePath, filePath));
                 case "imageposter":
                     return File.ReadAllBytes(Path.Combine(LevelStudioPlugin.customPostersPath, filePath));
+                case "chalkboardposter":
+                case "baldisaysposter":
+                    throw new Exception("Attempted to get text poster from filePath even though that shouldn't happen?!");
             }
             return null;
         }

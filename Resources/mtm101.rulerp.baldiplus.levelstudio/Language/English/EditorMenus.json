@@ -26,6 +26,7 @@
 {"key":"Ed_Error_AreaClipped","value":"Area got clipped during resizing!"},
 {"key":"Ed_Error_MismatchedEditorMode","value":"File's editor mode doesn't match the current mode!"},
 {"key":"Ed_Error_FileNoExist","value":"The specified file doesn't exist!"},
+{"key":"Ed_Menu_ShowMarkdown","value":"Show Markdown?"},
 
 {"key":"Ed_Menu_NoLevels","value":"No Levels Found..."},
 {"key":"Ed_Menu_LoadingLevels","value":"Loading Levels..."},

@@ -83,6 +83,76 @@ namespace PlusLevelStudio
 
         private Dictionary<Texture2D, Sprite> smallIconsFromTextures = new Dictionary<Texture2D, Sprite>();
 
+        private Texture2D baldiSaysTexture;
+        private Texture2D chalkTexture;
+        private Texture2D bulletinTexture;
+        // TODO: move to API?
+        internal PosterObject GenerateBaldiSaysPoster(string name, string text)
+        {
+            PosterObject newPoster = ScriptableObject.CreateInstance<PosterObject>();
+            newPoster.name = name;
+            newPoster.baseTexture = baldiSaysTexture;
+            newPoster.textData = new PosterTextData[]
+            {
+                new PosterTextData()
+                {
+                    alignment = TextAlignmentOptions.Center,
+                    color = Color.black,
+                    font = BaldiFonts.ComicSans18.FontAsset(),
+                    fontSize = (int)BaldiFonts.ComicSans18.FontSize(),
+                    position = new IntVector2(110,57),
+                    size = new IntVector2(128,192),
+                    style = FontStyles.Normal,
+                    textKey = text
+                }
+            };
+            return newPoster;
+        }
+
+        internal PosterObject GenerateChalkPoster(string name, string text)
+        {
+            PosterObject newPoster = ScriptableObject.CreateInstance<PosterObject>();
+            newPoster.name = name;
+            newPoster.baseTexture = chalkTexture;
+            newPoster.textData = new PosterTextData[]
+            {
+                new PosterTextData()
+                {
+                    alignment = TextAlignmentOptions.Center,
+                    color = Color.white,
+                    font = BaldiFonts.SmoothComicSans24.FontAsset(),
+                    fontSize = (int)BaldiFonts.SmoothComicSans24.FontSize(),
+                    position = new IntVector2(24,88),
+                    size = new IntVector2(208,128),
+                    style = FontStyles.Normal,
+                    textKey = text
+                }
+            };
+            return newPoster;
+        }
+
+        internal PosterObject GenerateBulletInPoster(string name, string text, BaldiFonts font)
+        {
+            PosterObject newPoster = ScriptableObject.CreateInstance<PosterObject>();
+            newPoster.name = name;
+            newPoster.baseTexture = bulletinTexture;
+            newPoster.textData = new PosterTextData[]
+            {
+                new PosterTextData()
+                {
+                    alignment = TextAlignmentOptions.Center,
+                    color = Color.black,
+                    font = font.FontAsset(),
+                    fontSize = (int)font.FontSize(),
+                    position = new IntVector2(68,58),
+                    size = new IntVector2(120,144),
+                    style = FontStyles.Normal,
+                    textKey = text
+                }
+            };
+            return newPoster;
+        }
+
         public Sprite GenerateOrGetSmallPosterSprite(PosterObject obj)
         {
             if (smallIconsFromTextures.ContainsKey(obj.baseTexture))
@@ -365,7 +435,14 @@ namespace PlusLevelStudio
             EditorInterfaceModes.AddVanillaStructures(fullMode, true);
             EditorInterfaceModes.AddVanillaLights(fullMode);
             EditorInterfaceModes.AddVanillaPosters(fullMode);
-            EditorInterfaceModes.AddToolToCategory(fullMode, "posters", new CustomPosterTool());
+            EditorInterfaceModes.AddToolsToCategory(fullMode, "posters", new EditorTool[]
+            {
+                new CustomPosterTool(),
+                new BaldiSaysPosterTool(),
+                new ChalkboardPosterTool(),
+                new BulletinBoardPosterTool(),
+                new BulletinBoardSmallPosterTool()
+            });
             EditorInterfaceModes.AddVanillaToolTools(fullMode);
             EditorInterfaceModes.AddVanillaEvents(fullMode, true);
 
@@ -534,6 +611,10 @@ namespace PlusLevelStudio
 
             assetMan.Add<Material>("OneWayRight", materials.First(x => x.name == "SwingDoorRightWay_Closed"));
             assetMan.Add<Material>("OneWayWrong", materials.First(x => x.name == "SwingDoorTextureOneWay_Closed"));
+            Texture2D[] allTextures = Resources.FindObjectsOfTypeAll<Texture2D>().Where(x => x.GetInstanceID() >= 0).ToArray();
+            baldiSaysTexture = allTextures.First(x => x.name == "BaldiSpeaksPoster");
+            chalkTexture = allTextures.First(x => x.name == "chk_blank");
+            bulletinTexture = allTextures.First(x => x.name == "BulletinBoard_Blank");
 
             string[] cableNames = Enum.GetNames(typeof(CableColor));
             for (int i = 0; i < cableNames.Length; i++)
@@ -1412,6 +1493,9 @@ namespace PlusLevelStudio
             uiAssetMan.Add<Sprite>("Segment8", allVanillaSprites.First(x => x.name == "Segment_Sheet_8"));
             uiAssetMan.Add<Sprite>("Segment9", allVanillaSprites.First(x => x.name == "Segment_Sheet_9"));
             uiAssetMan.Add<Sprite>("SegmentD", allVanillaSprites.First(x => x.name == "Segment_Sheet_10"));
+            uiAssetMan.Add<Sprite>("BaldiSpeaksPoster", AssetLoader.SpriteFromTexture2D(baldiSaysTexture, 1f));
+            uiAssetMan.Add<Sprite>("chk_blank", AssetLoader.SpriteFromTexture2D(chalkTexture, 1f));
+            uiAssetMan.Add<Sprite>("BulletinBoard_Blank", AssetLoader.SpriteFromTexture2D(bulletinTexture, 1f));
 
             UIBuilder.elementBuilders.Add("image", new ImageBuilder());
             UIBuilder.elementBuilders.Add("imageButton", new ButtonBuilder());

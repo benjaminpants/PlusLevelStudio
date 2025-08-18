@@ -283,6 +283,14 @@
 {"key":"Ed_Tool_itemspawn_25_Desc","value":"A potential item spawn with the weight of 25."},
 
 {"key":"Ed_Tool_custom_imageposter_Title","value":"Custom Image Poster"},
-{"key":"Ed_Tool_custom_imageposter_Desc","value":"Import a custom image to use as a poster!"}
+{"key":"Ed_Tool_custom_imageposter_Desc","value":"Import a custom image to use as a poster!"},
+{"key":"Ed_Tool_custom_baldisaysposter_Title","value":"Custom Baldi Says"},
+{"key":"Ed_Tool_custom_baldisaysposter_Desc","value":"You can make Baldi say whatever you want!\nUse this power responsibly."},
+{"key":"Ed_Tool_custom_chalkboardposter_Title","value":"Custom Chalkboard"},
+{"key":"Ed_Tool_custom_chalkboardposter_Desc","value":"Write whatever you want on this chalkboard!"},
+{"key":"Ed_Tool_custom_bulletinposter_Title","value":"Custom Bulletin Board"},
+{"key":"Ed_Tool_custom_bulletinposter_Desc","value":"Write whatever you want on this bulletin board!"},
+{"key":"Ed_Tool_custom_bulletinsmallposter_Title","value":"Custom Bulletin Board (Small)"},
+{"key":"Ed_Tool_custom_bulletinsmallposter_Desc","value":"Write whatever you want on this bulletin board, but with a smaller font!"}
 
 ]}

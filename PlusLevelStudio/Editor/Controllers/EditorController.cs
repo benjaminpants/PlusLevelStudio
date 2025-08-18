@@ -411,7 +411,7 @@ namespace PlusLevelStudio.Editor
                 }
             }
 
-            List<EditorCustomContentEntry> posterEntries = customContentPackage.GetAllOfType("imageposter");
+            List<EditorCustomContentEntry> posterEntries = customContentPackage.GetAllOfTypes("imageposter", "baldisaysposter", "chalkboardposter", "bulletinposter", "bulletinsmallposter");
             foreach (EditorCustomContentEntry entry in posterEntries)
             {
                 if (levelData.posters.Count(x => x.type == entry.id) == 0)
