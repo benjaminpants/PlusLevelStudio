@@ -103,9 +103,11 @@ namespace PlusLevelStudio.Menus
             titleText.rectTransform.anchorMin = center;
             titleText.rectTransform.anchorMax = center;
             titleText.rectTransform.pivot = new Vector2(0.5f, 0.5f);
-            titleText.rectTransform.sizeDelta = new Vector2(164f,16f);
+            titleText.rectTransform.sizeDelta = new Vector2(164f,18f);
             titleText.rectTransform.anchoredPosition = new Vector2(14f,24f);
             titleText.alignment = TextAlignmentOptions.Left;
+            titleText.richText = false;
+            titleText.overflowMode = TextOverflowModes.Ellipsis;
 
             TextMeshProUGUI authorText = UIHelpers.CreateText<TextMeshProUGUI>(BaldiFonts.ComicSans12, "By MissingTextureMan101", playBase.transform, Vector3.zero, false);
             authorText.name = "Author";
@@ -116,6 +118,7 @@ namespace PlusLevelStudio.Menus
             authorText.rectTransform.anchoredPosition = new Vector2(0f, 6f);
             authorText.alignment = TextAlignmentOptions.Left;
             authorText.overflowMode = TextOverflowModes.Ellipsis;
+            authorText.richText = false;
 
             TextMeshProUGUI modeText = UIHelpers.CreateText<TextMeshProUGUI>(BaldiFonts.ComicSans12, "Hide & Seek", playBase.transform, Vector3.zero, false);
             modeText.name = "ModeTitle";

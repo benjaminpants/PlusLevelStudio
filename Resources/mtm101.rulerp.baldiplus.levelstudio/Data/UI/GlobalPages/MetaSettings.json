@@ -16,7 +16,8 @@
 			"alignment":"Left",
 			"upper":false,
 			"characterLimit":32,
-			"onFinish":"titleChanged"
+			"onFinish":"titleChanged",
+			"rich":false,
 		},
 		{
 			"name":"LevelTitleText",
@@ -46,7 +47,8 @@
 			"alignment":"Left",
 			"upper":false,
 			"characterLimit":32,
-			"onFinish":"authorChanged"
+			"onFinish":"authorChanged",
+			"rich":false,
 		},
 		{
 			"name":"AuthorNameText",

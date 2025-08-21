@@ -33,6 +33,10 @@ namespace PlusLevelStudio.UI
                     localizer.GetLocalizedText(localizer.key);
                 }
             }
+            if (data.ContainsKey("rich"))
+            {
+                baseText.richText = data["rich"].Value<bool>();
+            }
             return baseText.gameObject;
         }
     }
