@@ -392,6 +392,7 @@ namespace PlusLevelStudio.Editor
                 hasUnsavedChanges = false;
                 undoStreams.Clear(); // memorystreams dont need .dispose
                 undoStreams.Add(null);
+                currentUndoIndex = 0;
             }
         }
 
