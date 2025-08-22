@@ -11,7 +11,7 @@ namespace PlusStudioLevelLoader
     public static class LevelImporter
     {
 
-        internal static T CreateRoomAsset<T>(BaldiRoomAsset info) where T : RoomAsset
+        internal static T CreateRoomAsset<T>(BaldiRoomAsset info, bool padBorders) where T : RoomAsset
         {
             T asset = ScriptableObject.CreateInstance<T>();
             asset.name = info.name;
@@ -66,6 +66,10 @@ namespace PlusStudioLevelLoader
             {
                 asset.eventSafeCells.Add(info.eventSafeCells[i].ToInt());
             }
+            for (int i = 0; i < info.secretCells.Count; i++)
+            {
+                asset.secretCells.Add(info.secretCells[i].ToInt());
+            }
             for (int i = 0; i < info.standardLightCells.Count; i++)
             {
                 asset.standardLightCells.Add(info.standardLightCells[i].ToInt());
@@ -110,12 +114,64 @@ namespace PlusStudioLevelLoader
             asset.windowChance = info.windowChance;
             asset.windowObject = LevelLoaderPlugin.Instance.windowObjects[info.windowType];
             asset.posterChance = info.posterChance;
+            // mark as out of bounds if appropiate
+            // (we do this by marking it as out of bounds and then unmarking it if we find a single cell that isn't secret)
+            asset.offLimits = true;
+            for (int i = 0; i < asset.cells.Count; i++)
+            {
+                if (asset.secretCells.FindIndex(x => x == asset.cells[i].pos) == -1)
+                {
+                    asset.offLimits = false;
+                    break;
+                }
+            }
+
+            // pad cells
+            if (!padBorders) return asset;
+            IntVector2 lowestCell = new IntVector2(int.MaxValue, int.MaxValue);
+            IntVector2 highestCell = new IntVector2(0,0);
+            for (int i = 0; i < asset.cells.Count; i++)
+            {
+                CellData cell = asset.cells[i];
+                if ((cell.pos.x <= lowestCell.x) && (cell.pos.z <= lowestCell.z))
+                {
+                    lowestCell = cell.pos;
+                }
+                if ((cell.pos.x >= highestCell.x) && (cell.pos.z >= highestCell.z))
+                {
+                    highestCell = cell.pos;
+                }
+            }
+            for (int x = lowestCell.x; x <= highestCell.x; x++)
+            {
+                for (int z = lowestCell.z; z <= highestCell.z; z++)
+                {
+                    IntVector2 cellAtPos = new IntVector2(x, z);
+                    if (asset.cells.Find(c => c.pos == cellAtPos) == null)
+                    {
+                        asset.cells.Add(new CellData()
+                        {
+                            pos = cellAtPos,
+                            roomId = 0,
+                            type = 0
+                        });
+                        asset.secretCells.Add(cellAtPos);
+                        asset.blockedWallCells.Add(cellAtPos);
+                    }
+                }
+            }
             return asset;
         }
 
-        public static ExtendedRoomAsset CreateRoomAsset(BaldiRoomAsset info)
+        /// <summary>
+        /// Creates an ExtendedRoomAsset from the specified BaldiRoomAsset.
+        /// </summary>
+        /// <param name="info">The BaldiRoomAsset to construct the ExtendedRoomAsset from</param>
+        /// <param name="addPadding">If true, padding will be added in the form of secret and blocked cells, commonly used for non-square special rooms.</param>
+        /// <returns></returns>
+        public static ExtendedRoomAsset CreateRoomAsset(BaldiRoomAsset info, bool addPadding = false)
         {
-            ExtendedRoomAsset extendedAsset = CreateRoomAsset<ExtendedRoomAsset>(info);
+            ExtendedRoomAsset extendedAsset = CreateRoomAsset<ExtendedRoomAsset>(info, addPadding);
             for (int i = 0; i < info.cells.Count; i++)
             {
                 if (info.cells[i].coverage != PlusCellCoverage.None)
@@ -126,9 +182,15 @@ namespace PlusStudioLevelLoader
             return extendedAsset;
         }
 
-        public static RoomAsset CreateVanillaRoomAsset(BaldiRoomAsset info)
+        /// <summary>
+        /// Creates an RoomAsset from the specified BaldiRoomAsset.
+        /// </summary>
+        /// <param name="info">The BaldiRoomAsset to construct the RoomAsset from</param>
+        /// <param name="addPadding">If true, padding will be added in the form of secret and blocked cells, commonly used for non-square special rooms.</param>
+        /// <returns></returns>
+        public static RoomAsset CreateVanillaRoomAsset(BaldiRoomAsset info, bool addPadding = false)
         {
-            RoomAsset asset = CreateRoomAsset<RoomAsset>(info);
+            RoomAsset asset = CreateRoomAsset<RoomAsset>(info, addPadding);
             for (int i = 0; i < info.cells.Count; i++)
             {
                 if (info.cells[i].coverage != PlusCellCoverage.None)
@@ -154,6 +216,12 @@ namespace PlusStudioLevelLoader
             return scene;
         }
 
+        /// <summary>
+        /// Creates a SceneObject from the specified BaldiLevel.
+        /// The manager has to be assigned manually, and it is advised to rename the created objects from their auto generated names.
+        /// </summary>
+        /// <param name="level"></param>
+        /// <returns></returns>
         public static SceneObject CreateSceneObject(BaldiLevel level)
         {
             SceneObject scene = CreateEmptySceneObject();
@@ -179,6 +247,11 @@ namespace PlusStudioLevelLoader
             return scene;
         }
 
+        /// <summary>
+        /// Create a LevelAsset from the specified BaldiLevel.
+        /// </summary>
+        /// <param name="level"></param>
+        /// <returns></returns>
         public static LevelAsset LoadLevelAsset(BaldiLevel level)
         {
             LevelAsset asset = ScriptableObject.CreateInstance<LevelAsset>();

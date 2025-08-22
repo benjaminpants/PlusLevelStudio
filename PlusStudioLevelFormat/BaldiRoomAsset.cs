@@ -40,6 +40,7 @@ namespace PlusStudioLevelFormat
         public List<ByteVector2> forcedDoorPositions = new List<ByteVector2>();
         public List<ByteVector2> entitySafeCells = new List<ByteVector2>();
         public List<ByteVector2> eventSafeCells = new List<ByteVector2>();
+        public List<ByteVector2> secretCells = new List<ByteVector2>();
         public List<ByteVector2> standardLightCells = new List<ByteVector2>();
         public List<PosterInfo> posters = new List<PosterInfo>();
         public int maxItemValue = 100;
@@ -47,7 +48,7 @@ namespace PlusStudioLevelFormat
         public float posterChance = 0f;
 
 
-        const byte version = 0;
+        const byte version = 1;
         public void Write(BinaryWriter writer)
         {
             writer.Write(version);
@@ -143,6 +144,11 @@ namespace PlusStudioLevelFormat
             for (int i = 0; i < eventSafeCells.Count; i++)
             {
                 writer.Write(eventSafeCells[i]);
+            }
+            writer.Write(secretCells.Count);
+            for (int i = 0; i < secretCells.Count; i++)
+            {
+                writer.Write(secretCells[i]);
             }
         }
 
@@ -258,6 +264,12 @@ namespace PlusStudioLevelFormat
             for (int i = 0; i < eventSafeCellCount; i++)
             {
                 info.eventSafeCells.Add(reader.ReadByteVector2());
+            }
+            if (version <= 0) return info;
+            int secretCellCount = reader.ReadInt32();
+            for (int i = 0; i < secretCellCount; i++)
+            {
+                info.secretCells.Add(reader.ReadByteVector2());
             }
             return info;
         }

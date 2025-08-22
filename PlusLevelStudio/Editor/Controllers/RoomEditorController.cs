@@ -52,6 +52,10 @@ namespace PlusLevelStudio.Editor
                             {
                                 roomAsset.eventSafeCells.Add(new ByteVector2(x, y));
                             }
+                            if (baseLevel.secretCells[x, y])
+                            {
+                                roomAsset.secretCells.Add(new ByteVector2(x, y));
+                            }
                         }
                     }
                 }
