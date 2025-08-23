@@ -7,7 +7,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlusLevelStudio", "PlusLeve
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlusStudioLevelFormat", "PlusStudioLevelFormat\PlusStudioLevelFormat.csproj", "{E949C986-0F06-47EC-981A-22BB6023A141}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlusStudioLevelLoader", "PlusStudioLevelLoader\PlusStudioLevelLoader.csproj", "{921ABD5A-228F-43D3-8E52-700232C60FDC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlusStudioLevelLoader", "PlusStudioLevelLoader\PlusStudioLevelLoader.csproj", "{921ABD5A-228F-43D3-8E52-700232C60FDC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{01873E56-EA8C-4E67-9319-05E2CB67C195}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
