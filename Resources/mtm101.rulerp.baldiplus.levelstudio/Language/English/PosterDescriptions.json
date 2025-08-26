@@ -151,6 +151,13 @@
 {"key":"Ed_Poster_Title_StoreNeon_3","value":"Store Neon 3"},
 {"key":"Ed_Poster_Desc_StoreNeon_3","value":""},
 {"key":"Ed_Poster_Title_StoreNeon_4","value":"Store Neon 4"},
-{"key":"Ed_Poster_Desc_StoreNeon_4","value":""}
+{"key":"Ed_Poster_Desc_StoreNeon_4","value":""},
+
+{"key":"Ed_Poster_Title_Chk_Act_BalloonBuster","value":"Balloon Buster Activity Hint"},
+{"key":"Ed_Poster_Desc_Chk_Act_BalloonBuster","value":"A nice reminder on how the Balloon Buster activity works!"},
+{"key":"Ed_Poster_Title_Chk_Act_Match","value":"Match Mathine Activity Hint"},
+{"key":"Ed_Poster_Desc_Chk_Act_Match","value":"A nice reminder on how the Match Machine activity works!"},
+{"key":"Ed_Poster_Title_Chk_Act_MathMachine","value":"Math Mathine Activity Hint"},
+{"key":"Ed_Poster_Desc_Chk_Act_MathMachine","value":"A nice reminder on how the Math Machine activity works!\nNot be confused with the Ma<b>t</b>ch Machine!"}
 
 ]}

@@ -2,6 +2,7 @@
 using MTM101BaldAPI.UI;
 using PlusLevelStudio.Menus;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
@@ -34,8 +35,17 @@ namespace PlusLevelStudio.Patches
             button.transitionOnPress = true;
             button.transitionTime = 0.0167f;
             button.transitionType = UiTransition.Dither;
+            __instance.StartCoroutine(WaitForAdditiveManager(button));
+        }
+
+        static IEnumerator WaitForAdditiveManager(StandardMenuButton button)
+        {
+            while (Singleton<AdditiveSceneManager>.Instance.Busy)
+            {
+                yield return null;
+            }
             EditorModeSelectionMenu menu = EditorModeSelectionMenu.Build();
-            menu.mainMenu = GameObject.Find("Menu"); ;
+            menu.mainMenu = GameObject.Find("Menu");
             button.OnPress.AddListener(() =>
             {
                 menu.mainMenu.SetActive(false);

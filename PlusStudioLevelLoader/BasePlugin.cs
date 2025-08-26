@@ -240,6 +240,8 @@ namespace PlusStudioLevelLoader
             activityAliases.Add("notebook", activites.First(x => x.name == "NoActivity"));
             activityAliases.Add("mathmachine", activites.First(x => (x.name == "MathMachine" && (x.transform.parent == null))));
             activityAliases.Add("mathmachine_corner", activites.First(x => (x.name == "MathMachine_Corner" && (x.transform.parent == null))));
+            activityAliases.Add("balloonbuster", activites.First(x => (x.name == "Activity_BalloonBuster" && (x.transform.parent == null))));
+            activityAliases.Add("matchmachine", activites.First(x => (x.name == "Activity_Match" && (x.transform.parent == null))));
 
             // structures
 
@@ -301,6 +303,8 @@ namespace PlusStudioLevelLoader
             randomEventAliases.Add("gravitychaos", randomEvents.First(x => x.name == "Event_GravityChaos"));
             randomEventAliases.Add("mysteryroom", randomEvents.First(x => x.name == "Event_MysteryRoom"));
             randomEventAliases.Add("timeout", randomEvents.First(x => x.name == "Event_TimeOut_Base"));
+            randomEventAliases.Add("studentshuffle", randomEvents.First(x => x.name == "Event_StudentShuffle"));
+            randomEventAliases.Add("balderdash", randomEvents.First(x => x.name == "Event_BalderDash"));
 
             // skyboxes
             Cubemap[] skyboxes = Resources.FindObjectsOfTypeAll<Cubemap>().Where(x => x.GetInstanceID() >= 0).ToArray();

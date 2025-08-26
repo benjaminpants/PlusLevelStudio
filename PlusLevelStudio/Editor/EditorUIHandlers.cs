@@ -272,7 +272,8 @@ namespace PlusLevelStudio.Editor
             Singleton<InputManager>.Instance.ActivateActionSet("Interface");
             Singleton<GlobalCam>.Instance.ChangeType(CameraRenderType.Base);
             Singleton<EditorController>.Instance.customContent.CleanupContent();
-            SceneManager.LoadScene("MainMenu");
+            Singleton<AdditiveSceneManager>.Instance.LoadScene("MainMenu");
+            Singleton<EditorController>.Instance.gameObject.SetActive(false); // to prevent error spam
         }
 
         public override void SendInteractionMessage(string message, object data)

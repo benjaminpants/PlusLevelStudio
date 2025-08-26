@@ -235,11 +235,16 @@ namespace PlusLevelStudio
 
         public IEnumerator LoadEditorScene(string modeToLoad, string pathToLoad = null, string loadedLevel = null)
         {
-            AsyncOperation waitForSceneLoad = SceneManager.LoadSceneAsync("Game");
-            while (!waitForSceneLoad.isDone)
+            while (Singleton<AdditiveSceneManager>.Instance.Busy)
             {
                 yield return null;
             }
+            Singleton<AdditiveSceneManager>.Instance.LoadScene("Game");
+            while (Singleton<AdditiveSceneManager>.Instance.Busy)
+            {
+                yield return null;
+            }
+            GameObject.Destroy(GameObject.FindObjectOfType<GameInitializer>());
             Shader.SetGlobalTexture("_Skybox", Resources.FindObjectsOfTypeAll<Cubemap>().First(x => x.name == "Cubemap_DayStandard"));
             Shader.SetGlobalColor("_SkyboxColor", Color.white);
             Shader.SetGlobalColor("_FogColor", Color.white);
@@ -1118,6 +1123,8 @@ namespace PlusLevelStudio
             mathMachineCollider.gameObject.AddComponent<EditorDeletableObject>().renderContainer = mathMachineCollider.gameObject.GetComponent<EditorRendererContainer>();
             mathMachineVisual.gameObject.layer = LevelStudioPlugin.editorInteractableLayer;
             mathMachineCollider.gameObject.layer = LevelStudioPlugin.editorInteractableLayer;
+            EditorInterface.AddActivityVisual("balloonbuster", LevelLoaderPlugin.Instance.activityAliases["balloonbuster"].gameObject);
+            EditorInterface.AddActivityVisual("matchmachine", LevelLoaderPlugin.Instance.activityAliases["matchmachine"].gameObject);
 
             GameObject mathMachineCornerVisual = EditorInterface.CloneToPrefabStripMonoBehaviors(LevelLoaderPlugin.Instance.activityAliases["mathmachine_corner"].gameObject, new Type[] { typeof(TMP_Text) });
             mathMachineCornerVisual.name = mathMachineCornerVisual.name.Replace("_Stripped", "_Visual");
@@ -1520,7 +1527,9 @@ namespace PlusLevelStudio
                 "party",
                 "mysteryroom",
                 "testprocedure",
-                "gravitychaos"
+                "gravitychaos",
+                "studentshuffle",
+                "balderdash"
             };
 
             for (int i = 0; i < eventSpritesToPrepare.Count; i++)

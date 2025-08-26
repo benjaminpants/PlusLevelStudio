@@ -106,6 +106,8 @@ namespace PlusLevelStudio
                 new ActivityTool("notebook", 5f),
                 new ActivityTool("mathmachine", 0f),
                 new ActivityTool("mathmachine_corner", 0f),
+                new ActivityTool("balloonbuster", 0f),
+                new ActivityTool("matchmachine", 0f)
             }, true);
         }
 
@@ -167,7 +169,9 @@ namespace PlusLevelStudio
                 "party",
                 "mysteryroom",
                 "testprocedure",
-                "gravitychaos"
+                "gravitychaos",
+                "studentshuffle",
+                "balderdash",
             });
         }
 
