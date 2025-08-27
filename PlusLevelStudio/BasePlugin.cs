@@ -55,7 +55,9 @@ namespace PlusLevelStudio
         public Dictionary<string, EditorBasicObject> basicObjectDisplays = new Dictionary<string, EditorBasicObject>();
         public Dictionary<string, GameObject> activityDisplays = new Dictionary<string, GameObject>();
         public Dictionary<string, Type> structureTypes = new Dictionary<string, Type>();
+        public Dictionary<string, Type> markerTypes = new Dictionary<string, Type>();
         public Dictionary<string, GameObject> genericStructureDisplays = new Dictionary<string, GameObject>();
+        public Dictionary<string, GameObject> genericMarkerDisplays = new Dictionary<string, GameObject>();
         public Dictionary<string, GameObject> npcDisplays = new Dictionary<string, GameObject>();
         public List<string> selectableTextures = new List<string>();
         public List<string> selectableSkyboxes = new List<string>();
@@ -231,6 +233,13 @@ namespace PlusLevelStudio
             StructureLocation structure = (StructureLocation)LevelStudioPlugin.Instance.structureTypes[type].GetConstructor(new Type[0]).Invoke(new object[0]);
             structure.type = type;
             return structure;
+        }
+
+        public MarkerLocation ConstructMarkerOfType(string type)
+        {
+            MarkerLocation marker = (MarkerLocation)LevelStudioPlugin.Instance.markerTypes[type].GetConstructor(new Type[0]).Invoke(new object[0]);
+            marker.type = type;
+            return marker;
         }
 
         public IEnumerator LoadEditorScene(string modeToLoad, string pathToLoad = null, string loadedLevel = null)
@@ -435,7 +444,7 @@ namespace PlusLevelStudio
             EditorInterfaceModes.AddVanillaDoors(fullMode);
             EditorInterfaceModes.AddVanillaNPCs(fullMode);
             EditorInterfaceModes.AddVanillaItems(fullMode);
-            EditorInterfaceModes.AddVanillaActivities(fullMode);
+            EditorInterfaceModes.AddVanillaActivities(fullMode, true);
             EditorInterfaceModes.AddVanillaObjects(fullMode);
             EditorInterfaceModes.AddVanillaStructures(fullMode, true);
             EditorInterfaceModes.AddVanillaLights(fullMode);
@@ -513,7 +522,7 @@ namespace PlusLevelStudio
             EditorInterfaceModes.AddVanillaDoors(complaintMode);
             EditorInterfaceModes.AddVanillaNPCs(complaintMode);
             EditorInterfaceModes.AddVanillaItems(complaintMode);
-            EditorInterfaceModes.AddVanillaActivities(complaintMode);
+            EditorInterfaceModes.AddVanillaActivities(complaintMode, false);
             EditorInterfaceModes.AddVanillaObjects(complaintMode);
             EditorInterfaceModes.AddVanillaStructures(complaintMode, false);
             EditorInterfaceModes.AddVanillaLights(complaintMode);
@@ -563,7 +572,7 @@ namespace PlusLevelStudio
             EditorInterfaceModes.AddVanillaRooms(roomsMode);
             roomsMode.availableTools["rooms"].RemoveAt(roomsMode.availableTools["rooms"].FindIndex(x => x.id == "room_hall")); // because halls aren't supported quite yet
             EditorInterfaceModes.AddVanillaObjects(roomsMode);
-            EditorInterfaceModes.AddVanillaActivities(roomsMode);
+            EditorInterfaceModes.AddVanillaActivities(roomsMode, false);
             EditorInterfaceModes.AddToolsToCategory(roomsMode, "items", new EditorTool[]
             {
                 new ItemSpawnTool(100),
@@ -1467,6 +1476,16 @@ namespace PlusLevelStudio
 
             // okay we're done with this
             Destroy(genericPlaneVisual);
+
+            // markers
+            GameObject matchBalloonVisual = EditorInterface.AddMarkerGenericVisual("matchballoon", Resources.FindObjectsOfTypeAll<MatchActivityBalloon>().First(x => x.name == "MatchBalloon_0" && x.GetInstanceID() >= 0).gameObject);
+            MovableObjectInteraction matchBalloonMove = matchBalloonVisual.AddComponent<MovableObjectInteraction>();
+            matchBalloonMove.allowedRotations = RotateAxis.None;
+            matchBalloonMove.allowedAxis = MoveAxis.Horizontal;
+            GameObject matchBalloonIngame = new GameObject("EditorMatchBalloonMarker");
+            matchBalloonIngame.ConvertToPrefab(true);
+            LevelLoaderPlugin.Instance.basicObjects.Add("matchballoon", matchBalloonIngame);
+            markerTypes.Add("matchballoon", typeof(MatchBalloonMarker));
 
             yield return "Setting up UI assets...";
 

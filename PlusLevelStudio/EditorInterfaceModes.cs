@@ -99,7 +99,8 @@ namespace PlusLevelStudio
         /// Add the vanilla activities to the specified EditorMode.
         /// </summary>
         /// <param name="modeToModify"></param>
-        public static void AddVanillaActivities(EditorMode modeToModify)
+        /// <param name="includeNonVanillaCompliant"></param>
+        public static void AddVanillaActivities(EditorMode modeToModify, bool includeNonVanillaCompliant)
         {
             AddToolsToCategory(modeToModify, "activities", new EditorTool[]
             {
@@ -109,6 +110,10 @@ namespace PlusLevelStudio
                 new ActivityTool("balloonbuster", 0f),
                 new ActivityTool("matchmachine", 0f)
             }, true);
+            if (includeNonVanillaCompliant)
+            {
+                AddToolToCategory(modeToModify, "activities", new MatchBalloonTool());
+            }
         }
 
         /// <summary>

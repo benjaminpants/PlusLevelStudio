@@ -232,12 +232,30 @@ namespace PlusLevelStudio
         public static GameObject AddStructureGenericVisual(string key, GameObject obj)
         {
             GameObject clone = CloneToPrefabStripMonoBehaviors(obj);
-            clone.name = clone.name.Replace("_Stripped", "_GenericVisual");
+            clone.name = clone.name.Replace("_Stripped", "_GenericStructureVisual");
             EditorRendererContainer container = clone.gameObject.AddComponent<EditorRendererContainer>();
             container.AddRendererRange(clone.GetComponentsInChildren<Renderer>(), "none");
             clone.gameObject.AddComponent<EditorDeletableObject>().renderContainer = container;
             clone.layer = LevelStudioPlugin.editorInteractableLayer;
             LevelStudioPlugin.Instance.genericStructureDisplays.Add(key, clone);
+            return clone;
+        }
+
+        /// <summary>
+        /// Generates a visual for the specified marker, and adds it to the genericMarkerDisplays dictionary.
+        /// </summary>
+        /// <param name="key">The key to use for the dictionary.</param>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static GameObject AddMarkerGenericVisual(string key, GameObject obj)
+        {
+            GameObject clone = CloneToPrefabStripMonoBehaviors(obj);
+            clone.name = clone.name.Replace("_Stripped", "_GenericMarkerVisual");
+            EditorRendererContainer container = clone.gameObject.AddComponent<EditorRendererContainer>();
+            container.AddRendererRange(clone.GetComponentsInChildren<Renderer>(), "none");
+            clone.gameObject.AddComponent<EditorDeletableObject>().renderContainer = container;
+            clone.layer = LevelStudioPlugin.editorInteractableLayer;
+            LevelStudioPlugin.Instance.genericMarkerDisplays.Add(key, clone);
             return clone;
         }
 

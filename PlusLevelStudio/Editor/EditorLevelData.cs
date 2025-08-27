@@ -9,7 +9,6 @@ using PlusStudioLevelFormat;
 using PlusStudioLevelLoader;
 using UnityEngine;
 using UnityEngine.UIElements;
-using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 
 namespace PlusLevelStudio.Editor
 {
@@ -34,6 +33,7 @@ namespace PlusLevelStudio.Editor
         public List<NPCPlacement> npcs = new List<NPCPlacement>();
         public List<PosterPlacement> posters = new List<PosterPlacement>();
         public List<WallLocation> walls = new List<WallLocation>();
+        public List<MarkerLocation> markers = new List<MarkerLocation>();
         public string elevatorTitle = "WIP";
 
         public string skybox = "daystandard";
@@ -296,6 +296,18 @@ namespace PlusLevelStudio.Editor
                     changedSomething = true;
                 }
             }
+            for (int i = markers.Count - 1; i >= 0; i--)
+            {
+                if (!markers[i].ValidatePosition(this))
+                {
+                    if (updateVisuals)
+                    {
+                        EditorController.Instance.RemoveVisual(markers[i]);
+                    }
+                    markers.RemoveAt(i);
+                    changedSomething = true;
+                }
+            }
             return changedSomething;
         }
 
@@ -482,6 +494,10 @@ namespace PlusLevelStudio.Editor
             for (int i = 0; i < walls.Count; i++)
             {
                 walls[i].position -= posDif;
+            }
+            for (int i = 0; i < markers.Count; i++)
+            {
+                markers[i].ShiftBy(new Vector3(posDif.x * 10f, 0f, posDif.z * 10f), posDif, sizeDif);
             }
             spawnPoint -= new Vector3(posDif.x * 10f, 0f, posDif.z * 10f);
             ValidatePlacements(true);
@@ -773,7 +789,7 @@ namespace PlusLevelStudio.Editor
             return compiled;
         }
 
-        public const byte version = 8;
+        public const byte version = 9;
 
         public bool WallFree(IntVector2 pos, Direction dir, bool ignoreSelf)
         {
@@ -823,7 +839,9 @@ namespace PlusLevelStudio.Editor
             stringComp.AddStrings(rooms.Select(x => x.textureContainer.ceiling));
             stringComp.AddStrings(rooms.Where(x => x.activity != null).Select(x => x.activity.type));
             stringComp.AddStrings(structures.Select(x => x.type));
+            stringComp.AddStrings(markers.Select(x => x.type));
             structures.ForEach(x => x.AddStringsToCompressor(stringComp));
+            markers.ForEach(x => x.AddStringsToCompressor(stringComp));
             stringComp.AddString("null");
             stringComp.FinalizeDatabase();
             stringComp.WriteStringDatabase(writer);
@@ -940,6 +958,12 @@ namespace PlusLevelStudio.Editor
             {
                 writer.Write(removeWalls[i].position.ToByte());
                 writer.Write((byte)removeWalls[i].direction);
+            }
+            writer.Write(markers.Count);
+            for (int i = 0; i < markers.Count; i++)
+            {
+                stringComp.WriteStoredString(writer, markers[i].type);
+                markers[i].Write(this, writer, stringComp);
             }
             writer.Write(spawnPoint.ToData());
             writer.Write((byte)spawnDirection);
@@ -1140,6 +1164,17 @@ namespace PlusLevelStudio.Editor
                     position = reader.ReadByteVector2().ToInt(),
                     direction = (Direction)reader.ReadByte()
                 });
+            }
+            if (version >= 9)
+            {
+                int markerCount = reader.ReadInt32();
+                for (int i = 0; i < markerCount; i++)
+                {
+                    string type = stringComp.ReadStoredString(reader);
+                    MarkerLocation marker = LevelStudioPlugin.Instance.ConstructMarkerOfType(type);
+                    marker.ReadInto(levelData, reader, stringComp);
+                    levelData.markers.Add(marker);
+                }
             }
             levelData.spawnPoint = reader.ReadUnityVector3().ToUnity();
             levelData.spawnDirection = (Direction)reader.ReadByte();
