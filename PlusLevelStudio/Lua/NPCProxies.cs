@@ -49,6 +49,18 @@ namespace PlusLevelStudio.Lua
             }
         }
 
+        public string objectName
+        {
+            get
+            {
+                return npc.name;
+            }
+            set
+            {
+                npc.name = value;
+            }
+        }
+
         public Vector3Proxy GetForward()
         {
             return new Vector3Proxy(npc.transform.forward);

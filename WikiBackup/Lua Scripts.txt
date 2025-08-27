@@ -43,7 +43,7 @@ This is called every update frame/tick. Delta is the delta time, which is the ti
 This is called when the player has collected all notebooks. For most challenges, you want to call `self:OpenExits(true)` here.
 
 # Optional Functions
-* NotebookCollected()
+* NotebookCollected(notebookPosition)
 * AngerBaldi(value)
 * AllNPCsSpawned()
 * OnItemUse(itemId, slot)
@@ -185,6 +185,7 @@ NPC Variables:
 * id
 * squished
 * direction
+* objectName
 
 ## moveSpeedMultiplier
 This variable is a multiplier to the NPC's movement speed, higher values make the NPC faster while lower values make the NPC slower.
@@ -200,6 +201,9 @@ Returns if the NPC is currently squished. If it is set to true, the NPC will be 
 
 ## direction
 The direction the NPC is facing/its rotation on the y axis.
+
+## objectName
+The name of the NPC's GameObject. Useful for identifying NPCs even if id is "unknown." Can be set.
 
 # Baldi Functions And Variables
 Baldi shares all the functions and variables with NPCs. But he also has the additional functions:

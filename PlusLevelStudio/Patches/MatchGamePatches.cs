@@ -21,10 +21,11 @@ namespace PlusLevelStudio.Patches
                 }
             }
             if (foundSpawns.Count == 0) return; // we got nothing to do
-            // for every null balloon, add a spawn. do this so the code below spawns in extra balloons.
+            // for every null balloon that isn't accounted for, add a spawn. do this so the code below spawns in extra balloons.
             // as if there are < ___balloon.Length balloons, the activity breaks
             for (int i = 0; i < ___balloon.Length; i++)
             {
+                if (i < foundSpawns.Count) continue;
                 if (___balloon[i] == null)
                 {
                     foundSpawns.Add(__instance.room.RandomEventSafeCellNoGarbage().CenterWorldPosition);
@@ -49,7 +50,7 @@ namespace PlusLevelStudio.Patches
                 ___balloon[i + 1] = UnityEngine.Object.Instantiate<MatchActivityBalloon>(___balloonPrefab, __instance.room.transform);
                 // initialize them with dummy positions
                 ___balloon[i].Initialize(__instance, __instance.room, ___balloon[i + 1], sprite, __instance.room.cells[0].position);
-                ___balloon[i + 1].Initialize(__instance, __instance.room, ___balloon[i + 1], sprite, __instance.room.cells[0].position);
+                ___balloon[i + 1].Initialize(__instance, __instance.room, ___balloon[i], sprite, __instance.room.cells[0].position);
                 // teleport them to their proper positions
                 ___balloon[i].GetComponent<Entity>().Teleport(foundSpawns[i]);
                 ___balloon[i + 1].GetComponent<Entity>().Teleport(foundSpawns[i + 1]);
