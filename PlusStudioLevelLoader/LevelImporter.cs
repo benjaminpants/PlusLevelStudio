@@ -400,11 +400,17 @@ namespace PlusStudioLevelLoader
             }
             for (int i = 0; i < level.posters.Count; i++)
             {
+                PosterObject po = LevelLoaderPlugin.PosterFromAlias(level.posters[i].poster);
+                if (po == null)
+                {
+                    Debug.LogWarning("Missing poster: " + level.posters[i].poster);
+                    continue;
+                }
                 asset.posters.Add(new PosterData()
                 {
                     position = level.posters[i].position.ToInt(),
                     direction = (Direction)level.posters[i].direction,
-                    poster = LevelLoaderPlugin.PosterFromAlias(level.posters[i].poster)
+                    poster = po
                 });
             }
             for (int i = 0; i < level.randomEvents.Count; i++)
