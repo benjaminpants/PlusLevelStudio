@@ -38,7 +38,7 @@ namespace PlusLevelStudio.Editor.Tools
         public override void Exit()
         {
             startingPos = null;
-            if (holdingBelt)
+            if (currentBelt != null)
             {
                 EditorController.Instance.RemoveVisual(currentBelt);
             }
