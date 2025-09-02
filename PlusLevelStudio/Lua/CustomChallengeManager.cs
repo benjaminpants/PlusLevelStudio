@@ -572,8 +572,15 @@ namespace PlusLevelStudio.Lua
                 }    
             }
             if (myManager.Ec.GetBaldi() == null) return null;
-            baldi = new BaldiProxy(myManager.Ec.GetBaldi());
-            proxies.Add(baldi.npc, baldi);
+            if (proxies.TryGetValue(myManager.Ec.GetBaldi(), out NPCProxy outBald))
+            {
+                baldi = (BaldiProxy)outBald;
+            }
+            else
+            {
+                baldi = new BaldiProxy(myManager.Ec.GetBaldi());
+                proxies.Add(baldi.npc, baldi);
+            }
             return baldi;
         }
     }
