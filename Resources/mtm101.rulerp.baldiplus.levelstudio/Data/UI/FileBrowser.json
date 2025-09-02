@@ -249,5 +249,18 @@
 			"anchorMax":"#center",
 			"onPressed":"exit"
 		},
+		{
+			"name":"OpenFolder",
+			"type":"imageButton",
+			"graphic":"OpenFolderIcon",
+			"hoverGraphic":"OpenFolderIconHover",
+			"anchoredPosition":[164,120],
+			"size":[32,32],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"onPressed":"openFolder",
+			"tooltip":"Ed_Tip_OpenFolder"
+		},
 	]
 }

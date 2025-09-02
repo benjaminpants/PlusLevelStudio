@@ -1522,6 +1522,8 @@ namespace PlusLevelStudio
             uiAssetMan.Add<Sprite>("BaldiSpeaksPoster", AssetLoader.SpriteFromTexture2D(baldiSaysTexture, 1f));
             uiAssetMan.Add<Sprite>("chk_blank", AssetLoader.SpriteFromTexture2D(chalkTexture, 1f));
             uiAssetMan.Add<Sprite>("BulletinBoard_Blank", AssetLoader.SpriteFromTexture2D(bulletinTexture, 1f));
+            uiAssetMan.Add<Sprite>("OpenFolderIcon", assetMan.Get<Sprite>("OpenFolderIcon"));
+            uiAssetMan.Add<Sprite>("OpenFolderIconHover", assetMan.Get<Sprite>("OpenFolderIconHover"));
 
             UIBuilder.elementBuilders.Add("image", new ImageBuilder());
             UIBuilder.elementBuilders.Add("imageButton", new ButtonBuilder());
@@ -1613,6 +1615,8 @@ namespace PlusLevelStudio
             assetMan.Add<Sprite>("MDiscardButton", AssetLoader.SpriteFromMod(this, Vector2.one / 2f, 1f, "UI", "TitleScreen", "MDiscardButton.png"));
             assetMan.Add<Sprite>("MDiscardButtonHover", AssetLoader.SpriteFromMod(this, Vector2.one / 2f, 1f, "UI", "TitleScreen", "MDiscardButtonHover.png"));
             assetMan.Add<Sprite>("PlayLevelBorder", AssetLoader.SpriteFromMod(this, Vector2.one / 2f, 1f, "UI", "TitleScreen", "PlayLevelBorder.png"));
+            assetMan.Add<Sprite>("OpenFolderIcon", AssetLoader.SpriteFromMod(this, Vector2.one / 2f, 1f, "UI", "TitleScreen", "OpenFolderIcon.png"));
+            assetMan.Add<Sprite>("OpenFolderIconHover", AssetLoader.SpriteFromMod(this, Vector2.one / 2f, 1f, "UI", "TitleScreen", "OpenFolderIconHover.png"));
             assetMan.Add<Texture2D>("IconMissing", AssetLoader.TextureFromMod(this, "UI", "TitleScreen", "IconMissing.png"));
             Sprite[] baseSprites = Resources.FindObjectsOfTypeAll<Sprite>().Where(x => x.GetInstanceID() >= 0).ToArray();
 

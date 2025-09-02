@@ -1061,7 +1061,7 @@ namespace PlusLevelStudio.Editor
             if (sizeDif.x == 0 && sizeDif.z == 0) return; // no point in doing anything
             IntVector2 targetSize = levelData.mapSize + sizeDif;
             if (targetSize.x > 255 || targetSize.z > 255) { TriggerError("Ed_Error_RescaleTooBig"); return; }
-            if (targetSize.x < 1 || targetSize.z < 1) { TriggerError("Ed_Error_RescaleTooSmall!"); return; }
+            if (targetSize.x < 1 || targetSize.z < 1) { TriggerError("Ed_Error_RescaleTooSmall"); return; }
 
             if (!levelData.ResizeLevel(posDif, sizeDif, this))
             {

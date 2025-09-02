@@ -44,7 +44,7 @@ namespace PlusLevelStudio.Editor.Tools.Customs
             if ((texture.width != 256) || (texture.height != 256))
             {
                 UnityEngine.Object.Destroy(texture);
-                EditorController.Instance.CreateUIOnePopup("Ed_Error_MustBe256");
+                EditorController.Instance.TriggerError("Ed_Error_MustBe256");
                 return false;
             }
             lastUsedFile = Path.GetFileNameWithoutExtension(path);

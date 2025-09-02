@@ -76,12 +76,18 @@ namespace PlusLevelStudio.Menus
 
             menu.playScreenManager.bigText = BIGText;
 
-            /*TextMeshProUGUI openFolderButton = UIHelpers.CreateText<TextMeshProUGUI>(BaldiFonts.ComicSans18, "Open Folder", menu.playParent.transform, Vector3.zero);
-            openFolderButton.name = "OpenFolderButton";
-            openFolderButton.rectTransform.sizeDelta = new Vector2(72f, 20f);
-            openFolderButton.alignment = TextAlignmentOptions.Left;
-            openFolderButton.rectTransform.anchoredPosition = new Vector2(-96f, -120f);
-            openFolderButton.gameObject.ConvertToButton<StandardMenuButton>();*/
+            Image openFolderImage = UIHelpers.CreateImage(LevelStudioPlugin.Instance.assetMan.Get<Sprite>("OpenFolderIcon"), menu.playParent.transform, Vector3.zero, false);
+            openFolderImage.name = "OpenFolderButton";
+            openFolderImage.rectTransform.sizeDelta = new Vector2(32f, 32f);
+            openFolderImage.rectTransform.anchoredPosition = new Vector2(175f, 120f);
+            StandardMenuButton openFolderButton = openFolderImage.gameObject.ConvertToButton<StandardMenuButton>();
+            openFolderButton.swapOnHigh = true;
+            openFolderButton.highlightedSprite = LevelStudioPlugin.Instance.assetMan.Get<Sprite>("OpenFolderIconHover");
+            openFolderButton.unhighlightedSprite = LevelStudioPlugin.Instance.assetMan.Get<Sprite>("OpenFolderIcon");
+            openFolderButton.OnPress.AddListener(() =>
+            {
+                Application.OpenURL("file:///" + LevelStudioPlugin.playableLevelPath);
+            });
         }
 
         internal static EditorPlayLevelButton CreateLevelPlay(Transform parent, Vector2 anchoredPosition)

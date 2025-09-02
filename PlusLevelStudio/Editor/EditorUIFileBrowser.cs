@@ -125,6 +125,9 @@ namespace PlusLevelStudio.Editor
                 case "down":
                     UpdateTexts(fileTexts.Length);
                     break;
+                case "openFolder":
+                    Application.OpenURL("file:///" + path);
+                    break;
             }
             base.SendInteractionMessage(message, data);
         }
