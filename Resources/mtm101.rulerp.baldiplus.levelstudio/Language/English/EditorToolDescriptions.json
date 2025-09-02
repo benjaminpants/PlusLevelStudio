@@ -220,7 +220,7 @@
 {"key":"Ed_Tool_activity_matchmachine_Title","value":"Match Machine"},
 {"key":"Ed_Tool_activity_matchmachine_Desc","value":"Match the balloon pairs together to get the book!"},
 {"key":"Ed_Tool_marker_matchballoon_Title","value":"Match Balloon Marker"},
-{"key":"Ed_Tool_marker_matchballoon_Desc","value":"Place 8 of these with the Match machine to manually place the balloons!\n(If a Match event is throwing exceptions, placing 8 of these should help!)"},
+{"key":"Ed_Tool_marker_matchballoon_Desc","value":"Place 8 or less of these with the Match machine to manually place the balloons!\n(If a Match event is throwing exceptions, placing 8 of these should help!)"},
 {"key":"Ed_Tool_activity_balloonbuster_Title","value":"Balloon Buster"},
 {"key":"Ed_Tool_activity_balloonbuster_Desc","value":"Destroy balloons until it matches the number shown and flick the switch to get the book!"},
 

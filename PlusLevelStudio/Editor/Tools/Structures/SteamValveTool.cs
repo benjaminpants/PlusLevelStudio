@@ -63,6 +63,7 @@ namespace PlusLevelStudio.Editor.Tools
             SteamValveStructureLocation structure = (SteamValveStructureLocation)EditorController.Instance.AddOrGetStructureToData("steamvalves", true);
             structure.valves.Add(valveLocation);
             successfulyPlaced = true;
+            valveLocation.deleteAction = structure.OnDeleteValve;
             EditorController.Instance.SwitchToTool(null);
         }
 

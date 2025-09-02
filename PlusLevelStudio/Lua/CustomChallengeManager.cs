@@ -11,6 +11,8 @@ using MoonSharp.Interpreter;
 using PlusLevelStudio.Editor;
 using PlusStudioLevelLoader;
 using UnityEngine;
+using System.IO.Compression;
+using PlusStudioLevelFormat;
 
 namespace PlusLevelStudio.Lua
 {
@@ -33,15 +35,42 @@ namespace PlusLevelStudio.Lua
                 return;
             }
             fileName = reader.ReadString();
-            luaScript = reader.ReadString();
+            if (version == 1)
+            {
+                luaScript = reader.ReadString();
+                return;
+            }
+            int bytesToRead = reader.ReadInt32();
+            // thanks to https://gist.github.com/GoSato/aff1ffd60e0cf2bb3db7615e56ce6c9a
+            byte[] source = reader.ReadBytes(bytesToRead);
+            using (MemoryStream input = new MemoryStream(source))
+            using (MemoryStream output = new MemoryStream())
+            using (DeflateStream decompressedDstream = new DeflateStream(input, CompressionMode.Decompress))
+            {
+                decompressedDstream.CopyTo(output);
+
+                byte[] destination = output.ToArray();
+
+                luaScript = Encoding.UTF8.GetString(destination);
+            }
         }
 
-        const byte version = 1;
+        const byte version = 2;
         public override void Write(BinaryWriter writer)
         {
             writer.Write(version);
             writer.Write(fileName);
-            writer.Write(luaScript);
+            byte[] source = Encoding.UTF8.GetBytes(luaScript);
+            // thanks to https://gist.github.com/GoSato/aff1ffd60e0cf2bb3db7615e56ce6c9a
+            using (MemoryStream ms = new MemoryStream())
+            using (DeflateStream compressedDStream = new DeflateStream(ms, CompressionMode.Compress, true))
+            {
+                compressedDStream.Write(source, 0, source.Length);
+                compressedDStream.Close();
+                byte[] destination = ms.ToArray();
+                writer.Write(destination.Length);
+                writer.Write(destination);
+            }
         }
     }
 
@@ -190,7 +219,7 @@ namespace PlusLevelStudio.Lua
         public bool OnUseItem(ItemManager manager, ItemObject attempted, int slot)
         {
             if (!globalsDefined) return true;
-            string itemId = "unknown";
+            string itemId;
             if (attempted == manager.nothing)
             {
                 itemId = "nothing";

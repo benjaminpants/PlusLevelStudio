@@ -30,12 +30,34 @@ namespace PlusLevelStudio.Ingame
             Singleton<EditorPlayModeManager>.Instance.Win();
         }
 
+        static FieldInfo _ignorePlayerOnSpawn = AccessTools.Field(typeof(NPC), "ignorePlayerOnSpawn");
         protected override void ExitedSpawn()
         {
-            base.ExitedSpawn();
-            foreach (NPC npc in this.ec.Npcs)
+            Dictionary<NPC, bool> toRevert = new Dictionary<NPC, bool>();
+            // change all the principal prefabs to ignore the player so we dont have any issues with that
+            for (int i = 0; i < ec.npcsToSpawn.Count; i++)
             {
-                if (npc is Principal)
+                if (ec.npcsToSpawn[i].Character == Character.Principal)
+                {
+                    if (!toRevert.ContainsKey(ec.npcsToSpawn[i]))
+                    {
+                        toRevert.Add(ec.npcsToSpawn[i], (bool)_ignorePlayerOnSpawn.GetValue(ec.npcsToSpawn[i]));
+                    }
+                    _ignorePlayerOnSpawn.SetValue(ec.npcsToSpawn[i], true);
+                }
+            }
+            base.ExitedSpawn();
+            // change it back
+            for (int i = 0; i < ec.npcsToSpawn.Count; i++)
+            {
+                if (ec.npcsToSpawn[i].Character == Character.Principal)
+                {
+                    _ignorePlayerOnSpawn.SetValue(ec.npcsToSpawn[i], toRevert[ec.npcsToSpawn[i]]);
+                }
+            }
+            foreach (NPC npc in ec.Npcs)
+            {
+                if ((npc.Character == Character.Principal) && (npc is Principal))
                 {
                     _allKnowing.SetValue(npc, true);
                 }

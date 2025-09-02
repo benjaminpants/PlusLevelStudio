@@ -10,6 +10,7 @@ namespace PlusLevelStudio.Editor.Tools
     {
         public string type;
         public override string id => "structure_" + type;
+        EditorRoom foundRoom;
         internal ShapeLockTool(string type) : this(type, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/structure_" + type))
         {
         }
@@ -32,7 +33,7 @@ namespace PlusLevelStudio.Editor.Tools
 
         public override void Exit()
         {
-
+            foundRoom = null;
         }
 
         public override bool MousePressed()
@@ -40,16 +41,16 @@ namespace PlusLevelStudio.Editor.Tools
             if (EditorController.Instance.levelData.RoomIdFromPos(EditorController.Instance.mouseGridPosition, true) != 0)
             {
                 EditorController.Instance.HoldUndo();
-                EditorRoom room = EditorController.Instance.levelData.RoomFromPos(EditorController.Instance.mouseGridPosition, true);
+                foundRoom = EditorController.Instance.levelData.RoomFromPos(EditorController.Instance.mouseGridPosition, true);
                 ShapeLockStructureLocation structure = (ShapeLockStructureLocation)EditorController.Instance.AddOrGetStructureToData("shapelock", true);
-                if (structure.lockedRooms.Find(x => x.room == room) != null)
+                if (structure.lockedRooms.Find(x => x.room == foundRoom) != null)
                 {
                     EditorController.Instance.CancelHeldUndo();
                     structure.DeleteIfInvalid();
                     return false;
                 }
                 EditorController.Instance.AddHeldUndo();
-                structure.CreateAndAddRoom(type, room);
+                structure.CreateAndAddRoom(type, foundRoom);
                 EditorController.Instance.UpdateVisual(structure);
                 return true;
             }
@@ -63,7 +64,22 @@ namespace PlusLevelStudio.Editor.Tools
 
         public override void Update()
         {
-            EditorController.Instance.selector.SelectTile(EditorController.Instance.mouseGridPosition);
+            EditorRoom oldRoom = foundRoom;
+            foundRoom = EditorController.Instance.levelData.RoomFromPos(EditorController.Instance.mouseGridPosition, true);
+            StructureLocation structure = EditorController.Instance.GetStructureData("shapelock");
+            bool isValid = true;
+            if (structure != null)
+            {
+                isValid = (((ShapeLockStructureLocation)structure).lockedRooms.Find(x => x.room == foundRoom) == null);
+            }
+            if (oldRoom != foundRoom)
+            {
+                if (oldRoom != null)
+                {
+                    EditorController.Instance.HighlightCells(EditorController.Instance.levelData.GetCellsOwnedByRoom(oldRoom), "none");
+                }
+                EditorController.Instance.HighlightCells(EditorController.Instance.levelData.GetCellsOwnedByRoom(foundRoom), isValid ? "yellow" : "red");
+            }
         }
     }
 }

@@ -10,7 +10,7 @@ namespace PlusLevelStudio.Patches
     [HarmonyPatch("ReInit")]
     class MatchGameInitPatch
     {
-        static void Postfix(MatchActivity __instance, List<Sprite> ___potentialBalloonSprites, MatchActivityBalloon ___balloonPrefab, MatchActivityBalloon[] ___balloon)
+        static void Postfix(MatchActivity __instance, List<Sprite> ___potentialBalloonSprites, MatchActivityBalloon ___balloonPrefab, ref MatchActivityBalloon[] ___balloon)
         {
             List<Vector3> foundSpawns = new List<Vector3>();
             for (int i = 0; i < __instance.room.objectObject.transform.childCount; i++)
@@ -21,15 +21,25 @@ namespace PlusLevelStudio.Patches
                 }
             }
             if (foundSpawns.Count == 0) return; // we got nothing to do
-            // for every null balloon that isn't accounted for, add a spawn. do this so the code below spawns in extra balloons.
-            // as if there are < ___balloon.Length balloons, the activity breaks
+            // if its odd and we don't already have enough, add an extra random spawn to prevent problems
+            if (((foundSpawns.Count % 2) != 0) && (foundSpawns.Count < ___balloon.Length))
+            {
+                foundSpawns.Add(__instance.room.RandomEventSafeCellNoGarbage().CenterWorldPosition);
+            }
+            // destroy excess balloons
             for (int i = 0; i < ___balloon.Length; i++)
             {
                 if (i < foundSpawns.Count) continue;
-                if (___balloon[i] == null)
+                if (___balloon[i] != null)
                 {
-                    foundSpawns.Add(__instance.room.RandomEventSafeCellNoGarbage().CenterWorldPosition);
+                    GameObject.Destroy(___balloon[i].gameObject);
                 }
+            }
+            MatchActivityBalloon[] originalArray = ___balloon;
+            ___balloon = new MatchActivityBalloon[foundSpawns.Count];
+            for (int i = 0; i < ___balloon.Length; i++)
+            {
+                ___balloon[i] = originalArray[i];
             }
             foundSpawns.Shuffle();
             while (foundSpawns.Count > ___balloon.Length)
