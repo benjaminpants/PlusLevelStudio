@@ -123,6 +123,7 @@ namespace PlusLevelStudio
         public static void AddVanillaPosters(EditorMode modeToModify)
         {
             List<PosterObject> allPosters = LevelLoaderPlugin.Instance.posterAliases.Values.Where(x => x.GetInstanceID() >= 0).ToList();
+            allPosters.Remove(allPosters.Find(x => x.name == "TestTextPoster"));
             allPosters.Sort((a, b) =>
             {
                 int texNameCompare = a.baseTexture.name.CompareTo(b.baseTexture.name);

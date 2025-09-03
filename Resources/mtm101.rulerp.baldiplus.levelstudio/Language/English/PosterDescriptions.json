@@ -160,9 +160,6 @@
 {"key":"Ed_Poster_Title_Chk_Act_MathMachine","value":"Math Machine Activity Hint"},
 {"key":"Ed_Poster_Desc_Chk_Act_MathMachine","value":"A nice reminder on how the Math Machine activity works!\nNot be confused with the Ma<b>t</b>ch Machine!"},
 {"key":"Ed_Poster_Title_Chk_Blank","value":"Blank Chalkboard"},
-{"key":"Ed_Poster_Desc_Chk_Blank","value":"Also known as a nice reminder of the absence of an activity."},
-
-{"key":"Ed_Poster_Title_TestTextPoster","value":"Text Test Chalkboard"},
-{"key":"Ed_Poster_Desc_TestTextPoster","value":"A test poster found in a leftover test level.\n<b>Will eventually become unavailable after a game update.</b>"}
+{"key":"Ed_Poster_Desc_Chk_Blank","value":"Also known as a nice reminder of the absence of an activity."}
 
 ]}
