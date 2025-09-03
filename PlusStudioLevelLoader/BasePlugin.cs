@@ -13,7 +13,7 @@ using System.IO;
 
 namespace PlusStudioLevelLoader
 {
-    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudioloader", "Plus Level Loader", "1.0.0.0")]
+    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudioloader", "Plus Level Loader", "1.1.0.0")]
     [BepInDependency("mtm101.rulerp.bbplus.baldidevapi")]
     public class LevelLoaderPlugin : BaseUnityPlugin
     {
@@ -247,7 +247,9 @@ namespace PlusStudioLevelLoader
 
             StructureBuilder[] builders = Resources.FindObjectsOfTypeAll<StructureBuilder>().Where(x => x.GetInstanceID() >= 0).ToArray();
             structureAliases.Add("facultyonlydoor", new LoaderStructureData(builders.First(x => x.name == "FacultyOnlyDoorConstructor")));
-            structureAliases.Add("lockdowndoor", new LoaderStructureData(builders.First(x => x.name == "LockdownDoorConstructor"), new Dictionary<string, GameObject>() { { "lockdowndoor_shut", Resources.FindObjectsOfTypeAll<LockdownDoor>().First(x => x.GetInstanceID() >= 0 && x.name == "LockdownDoor_Shut").gameObject } }));
+            LockdownDoor[] lockdownDoors = Resources.FindObjectsOfTypeAll<LockdownDoor>().Where(x => x.GetInstanceID() >= 0).ToArray();
+            structureAliases.Add("lockdowndoor", new LoaderStructureData(builders.First(x => x.name == "LockdownDoorConstructor"), new Dictionary<string, GameObject>() { { "lockdowndoor_shut", lockdownDoors.First(x => x.name == "LockdownDoor_Shut").gameObject } }));
+            structureAliases.Add("lockdowndoor_button", new LoaderStructureData(builders.First(x => x.name == "LockdownDoorConstructor_Button"), new Dictionary<string, GameObject>() { { "lockdowndoor_shut_stayopen", lockdownDoors.First(x => x.name == "LockdownDoor_Shut_StaysOpen").gameObject } }));
             structureAliases.Add("conveyorbelt", new LoaderStructureData(builders.First(x => x.name == "ConveyorBeltConstructor")));
             structureAliases.Add("vent", new LoaderStructureData(builders.First(x => x.name == "Structure_Vent")));
             // the factory box doesn't work outside of randomly generated levels

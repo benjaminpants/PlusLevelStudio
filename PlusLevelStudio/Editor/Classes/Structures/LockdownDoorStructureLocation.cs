@@ -7,6 +7,17 @@ using UnityEngine;
 
 namespace PlusLevelStudio.Editor
 {
+    public class LockdownDoorWithButtonsStructureLocation : HallDoorStructureLocationWithButtons
+    {
+        public override SimpleLocation CreateNewChild()
+        {
+            LockdownDoorLocation simple = new LockdownDoorLocation();
+            simple.prefab = type;
+            simple.deleteAction = OnSubDelete;
+            return simple;
+        }
+    }
+
     public class LockdownDoorStructureLocation : HallDoorStructureLocationWithLevers
     {
         public override bool ShouldLeverBeDown(SimpleLeverLocation lever)
@@ -27,7 +38,10 @@ namespace PlusLevelStudio.Editor
     {
         public override void InitializeVisual(GameObject visualObject)
         {
-            visualObject.GetComponent<SettingsComponent>().activateSettingsOn = this;
+            if (visualObject.TryGetComponent<SettingsComponent>(out SettingsComponent settings))
+            {
+                settings.activateSettingsOn = this;
+            }
             base.InitializeVisual(visualObject);
         }
         public void SettingsClicked()

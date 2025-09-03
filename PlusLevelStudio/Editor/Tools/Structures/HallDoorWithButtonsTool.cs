@@ -8,8 +8,9 @@ namespace PlusLevelStudio.Editor.Tools
 {
     public class HallDoorWithButtonsTool : EditorTool
     {
-        public string type;
-        public override string id => "structure_" + type;
+        protected string type;
+        protected string prefabType;
+        public override string id => "structure_" + (string.IsNullOrEmpty(prefabType) ? type : prefabType);
         protected IntVector2? firstPos;
         protected bool firstPlaced = false;
         public SimpleLocation first;
@@ -20,10 +21,23 @@ namespace PlusLevelStudio.Editor.Tools
 
         }
 
+        internal HallDoorWithButtonsTool(string structureType, string prefabType) : this(structureType, prefabType, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/structure_" + prefabType))
+        {
+
+        }
+
         public HallDoorWithButtonsTool(string type, Sprite sprite)
         {
             this.type = type;
+            prefabType = string.Empty;
             this.sprite = sprite;
+        }
+
+        public HallDoorWithButtonsTool(string structureType, string prefabType, Sprite sprite)
+        {
+            type = structureType;
+            this.sprite = sprite;
+            this.prefabType = prefabType;
         }
 
         public override void Begin()
@@ -75,10 +89,17 @@ namespace PlusLevelStudio.Editor.Tools
             SimpleLocation local = structure.CreateNewChild();
             local.position = firstPos.Value;
             local.direction = dir;
+            ModifyChild(local);
             EditorController.Instance.AddVisual(local);
             first = local;
             firstPlaced = true;
             EditorController.Instance.selector.DisableSelection();
+        }
+
+        public virtual void ModifyChild(SimpleLocation local)
+        {
+            if (string.IsNullOrEmpty(prefabType)) return;
+            local.prefab = prefabType;
         }
 
         public virtual void PlaceButton(Direction dir)

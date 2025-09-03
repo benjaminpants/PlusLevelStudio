@@ -191,6 +191,7 @@ namespace PlusLevelStudio
             {
                 new HallDoorStructureTool("facultyonlydoor"),
                 new HallDoorWithButtonsTool("lockdowndoor"),
+                new HallDoorWithButtonsTool("lockdowndoor_button", "lockdowndoor_shut_stayopen"),
                 new ConveyorBeltTool("conveyorbelt", true),
                 new ConveyorBeltTool("conveyorbelt", false),
                 new VentTool("vent")

@@ -228,6 +228,8 @@
 {"key":"Ed_Tool_structure_facultyonlydoor_Desc","value":"This door closes if it spots the player! It can be bypassed by hiding or going fast!"},
 {"key":"Ed_Tool_structure_lockdowndoor_Title","value":"Lockdown Door"},
 {"key":"Ed_Tool_structure_lockdowndoor_Desc","value":"This door can be toggled by a lever into being shut or open, now without power restrictions!"},
+{"key":"Ed_Tool_structure_lockdowndoor_shut_stayopen_Title","value":"Stay Open Lockdown Door"},
+{"key":"Ed_Tool_structure_lockdowndoor_shut_stayopen_Desc","value":"This lockdown door is connected to a button, and can't be shut once opened!"},
 {"key":"Ed_Tool_structure_shapelock_circle_Title","value":"Circle Shapelock"},
 {"key":"Ed_Tool_structure_shapelock_circle_Desc","value":"Makes the room require a Circle Key to open!"},
 {"key":"Ed_Tool_structure_shapelock_triangle_Title","value":"Triangle Shapelock"},

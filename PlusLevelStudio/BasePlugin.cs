@@ -28,7 +28,7 @@ using PlusLevelStudio.Editor.Tools.Customs;
 
 namespace PlusLevelStudio
 {
-    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudio", "Plus Level Studio", "1.1.0.0")]
+    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudio", "Plus Level Studio", "1.2.0.0")]
     [BepInDependency("mtm101.rulerp.bbplus.baldidevapi")]
     [BepInDependency("mtm101.rulerp.baldiplus.levelstudioloader")]
     public class LevelStudioPlugin : BaseUnityPlugin
@@ -1177,6 +1177,10 @@ namespace PlusLevelStudio
             shutLockdownDoorVisual.GetComponent<BoxCollider>();
             shutLockdownDoorVisual.transform.Find("LockdownDoor_Model").transform.position += Vector3.down * 10f;
             shutLockdownDoorVisual.AddComponent<SettingsComponent>().offset = new Vector3(0f, 20f, 5f);
+
+            GameObject shutStayOpenVisual = EditorInterface.AddStructureGenericVisual("lockdowndoor_shut_stayopen", Resources.FindObjectsOfTypeAll<LockdownDoor>().First(x => x.GetInstanceID() >= 0 && x.name == "LockdownDoor").gameObject);
+            shutStayOpenVisual.transform.Find("LockdownDoor_Model").transform.position += Vector3.down * 10f;
+            structureTypes.Add("lockdowndoor_button", typeof(LockdownDoorWithButtonsStructureLocation));
 
             // shape locks
 

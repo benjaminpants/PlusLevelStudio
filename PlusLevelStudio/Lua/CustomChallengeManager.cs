@@ -81,6 +81,7 @@ namespace PlusLevelStudio.Lua
         public EditorLuaGameProxy myProxy;
         public TimeScaleModifier timeScaleModifier;
         DynValue updateFunction;
+        System.Random myRandom;
         bool globalsDefined = false;
 
         Vector3Proxy CreateVector(float x, float y, float z)
@@ -98,6 +99,13 @@ namespace PlusLevelStudio.Lua
             return new ColorProxy(r, g, b);
         }
 
+        double RandomNumber(double min, double max)
+        {
+            if (min > max) throw new InvalidDataException("Min can't be greater than max!");
+            double range = (max - min);
+            return min + (myRandom.NextDouble() * range);
+        }
+
         public void InitializeScriptGlobals()
         {
             myProxy = new EditorLuaGameProxy { myManager = this };
@@ -105,6 +113,7 @@ namespace PlusLevelStudio.Lua
             script.Globals["Vector3"] = (Func<float, float, float, Vector3Proxy>)CreateVector;
             script.Globals["IntVector2"] = (Func<int, int, IntVector2Proxy>)CreateIntVector;
             script.Globals["Color"] = (Func<int, int, int, ColorProxy>)CreateColor;
+            script.Globals["RandomDecimalNumber"] = (Func<double,double,double>)RandomNumber;
             globalsDefined = true;
         }
 
@@ -121,6 +130,7 @@ namespace PlusLevelStudio.Lua
         public override void Initialize()
         {
             base.Initialize();
+            myRandom = new System.Random();
             timeScaleModifier = new TimeScaleModifier();
             ec.AddTimeScale(timeScaleModifier);
             PlayerManager pm = Singleton<CoreGameManager>.Instance.GetPlayer(0);
