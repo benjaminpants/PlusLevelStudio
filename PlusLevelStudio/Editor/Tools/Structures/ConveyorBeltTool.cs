@@ -16,6 +16,7 @@ namespace PlusLevelStudio.Editor.Tools
         bool holdingBelt = false;
         bool placesButton = false;
         bool placingButton = false;
+        bool successfullyPlaced = false;
         ConveyorBeltStructureLocation currentStructure;
 
         internal ConveyorBeltTool(string type, bool placesButton) : this(type, placesButton, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/structure_" + type))
@@ -38,10 +39,11 @@ namespace PlusLevelStudio.Editor.Tools
         public override void Exit()
         {
             startingPos = null;
-            if (currentBelt != null)
+            if ((currentBelt != null) && !successfullyPlaced)
             {
                 EditorController.Instance.RemoveVisual(currentBelt);
             }
+            successfullyPlaced = false;
             holdingBelt = false;
             currentBelt = null;
             placingButton = false;
@@ -104,6 +106,7 @@ namespace PlusLevelStudio.Editor.Tools
             currentStructure.belts.Add(currentBelt);
             EditorController.Instance.AddVisual(button);
             EditorController.Instance.AddHeldUndo();
+            successfullyPlaced = true;
             EditorController.Instance.SwitchToTool(null);
         }
 
@@ -145,6 +148,7 @@ namespace PlusLevelStudio.Editor.Tools
                 {
                     currentStructure.belts.Add(currentBelt);
                     EditorController.Instance.AddHeldUndo();
+                    successfullyPlaced = true;
                     return true;
                 }
                 placingButton = true;
