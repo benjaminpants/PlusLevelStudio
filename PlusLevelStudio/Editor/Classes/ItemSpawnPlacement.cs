@@ -63,6 +63,10 @@ namespace PlusLevelStudio.Editor
             {
                 EditorController.Instance.AddHeldUndo();
             }
+            else
+            {
+                EditorController.Instance.CancelHeldUndo();
+            }
             EditorController.Instance.GetVisual(this).GetComponent<EditorRendererContainer>().Highlight("none");
             moved = false;
             if (!ValidatePosition(EditorController.Instance.levelData))

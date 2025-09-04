@@ -11,6 +11,7 @@ namespace PlusLevelStudio.Editor
     public abstract class PositionMarker : MarkerLocation, IEditorMovable
     {
         public Vector3 position;
+        protected bool moved = false;
         public override void AddStringsToCompressor(StringCompressor compressor)
         {
             
@@ -44,6 +45,7 @@ namespace PlusLevelStudio.Editor
             {
                 this.position = position.Value;
                 EditorController.Instance.UpdateVisual(this);
+                moved = true;
             }
         }
 
@@ -55,6 +57,7 @@ namespace PlusLevelStudio.Editor
         public void Selected()
         {
             EditorController.Instance.GetVisual(this).GetComponentInChildren<EditorRendererContainer>().Highlight("yellow");
+            EditorController.Instance.HoldUndo();
         }
 
         public override void ShiftBy(Vector3 worldOffset, IntVector2 cellOffset, IntVector2 sizeDifference)
@@ -65,6 +68,15 @@ namespace PlusLevelStudio.Editor
         public void Unselected()
         {
             EditorController.Instance.GetVisual(this).GetComponentInChildren<EditorRendererContainer>().Highlight("none");
+            if (moved)
+            {
+                EditorController.Instance.AddHeldUndo();
+            }
+            else
+            {
+                EditorController.Instance.CancelHeldUndo();
+            }
+            moved = false;
             if (!ValidatePosition(EditorController.Instance.levelData))
             {
                 OnDelete(EditorController.Instance.levelData);

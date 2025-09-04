@@ -11,6 +11,7 @@ namespace PlusLevelStudio.Editor
         public Vector3 position;
         public Direction direction;
         public EditorRoom myRoom;
+        bool moved = false;
 
 
         public void CleanupVisual(GameObject visualObject)
@@ -68,10 +69,12 @@ namespace PlusLevelStudio.Editor
             if (position.HasValue)
             {
                 this.position = position.Value;
+                moved = true;
             }
             if (rotation.HasValue)
             {
                 direction = Directions.DirFromVector3(rotation.Value * Vector3.forward, 45f);
+                moved = true;
             }
             EditorController.Instance.UpdateVisual(this);
         }
@@ -89,11 +92,21 @@ namespace PlusLevelStudio.Editor
         public void Selected()
         {
             EditorController.Instance.GetVisual(this).GetComponentInChildren<EditorRendererContainer>().Highlight("yellow");
+            EditorController.Instance.HoldUndo();
         }
 
         public void Unselected()
         {
             EditorController.Instance.GetVisual(this).GetComponentInChildren<EditorRendererContainer>().Highlight("none");
+            if (moved)
+            {
+                EditorController.Instance.AddHeldUndo();
+            }
+            else
+            {
+                EditorController.Instance.CancelHeldUndo();
+            }
+            moved = false;
             // re-attempt setup so we can see if our room is null now
             SetupDeleteIfInvalid();
         }
