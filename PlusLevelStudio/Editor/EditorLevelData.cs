@@ -101,6 +101,7 @@ namespace PlusLevelStudio.Editor
             defaultTextures.Add("shop", new TextureContainer("HallFloor", "JohnnyWall", "Ceiling"));
             defaultTextures.Add("lightbulbtesting", new TextureContainer("MaintenanceFloor", "RedBrickWall", "ElevatorCeiling"));
             defaultTextures.Add("mystery", new TextureContainer("Black", "Black", "Black"));
+            defaultTextures.Add("wormhole_room", new TextureContainer("Vent", "Vent", "Vent"));
             for (int i = 0; i < defaultTextureActions.Count; i++)
             {
                 defaultTextureActions[i].Invoke(defaultTextures);

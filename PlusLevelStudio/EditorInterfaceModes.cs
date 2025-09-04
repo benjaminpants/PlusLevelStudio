@@ -217,7 +217,8 @@ namespace PlusLevelStudio
                 new PowerLeverLeverTool(CableColor.gray),
                 new PowerLeverLeverTool(CableColor.black),
                 new PowerLeverBreakerTool(),
-                new SteamValveTool()
+                new SteamValveTool(),
+                new ObjectToolNoRotation("wormhole", 5f), // not even a structure but i think its better categorized here
             }, true);
         }
 
@@ -267,7 +268,8 @@ namespace PlusLevelStudio
         /// Adds the vanilla rooms to the specified editor mode.
         /// </summary>
         /// <param name="modeToModify"></param>
-        public static void AddVanillaRooms(EditorMode modeToModify)
+        /// <param name="includeNonVanillaComplaintTools">If true, includes tools that require editor exclusive rooms</param>
+        public static void AddVanillaRooms(EditorMode modeToModify, bool includeNonVanillaComplaintTools)
         {
             AddToolsToCategory(modeToModify, "rooms", new EditorTool[]
             {
@@ -283,6 +285,11 @@ namespace PlusLevelStudio
                     new RoomTool("library"),
                     new RoomTool("lightbulbtesting")
             }, true);
+            if (!includeNonVanillaComplaintTools) return;
+            AddToolsToCategory(modeToModify, "rooms", new EditorTool[]
+            {
+                new RoomTool("wormhole_room")
+            });
         }
 
         /// <summary>

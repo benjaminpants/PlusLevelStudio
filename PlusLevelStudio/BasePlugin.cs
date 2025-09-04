@@ -440,7 +440,7 @@ namespace PlusLevelStudio
                 }
             };
 
-            EditorInterfaceModes.AddVanillaRooms(fullMode);
+            EditorInterfaceModes.AddVanillaRooms(fullMode, true);
             EditorInterfaceModes.AddVanillaDoors(fullMode);
             EditorInterfaceModes.AddVanillaNPCs(fullMode);
             EditorInterfaceModes.AddVanillaItems(fullMode);
@@ -518,7 +518,7 @@ namespace PlusLevelStudio
                 }
             };
 
-            EditorInterfaceModes.AddVanillaRooms(complaintMode);
+            EditorInterfaceModes.AddVanillaRooms(complaintMode, false);
             EditorInterfaceModes.AddVanillaDoors(complaintMode);
             EditorInterfaceModes.AddVanillaNPCs(complaintMode);
             EditorInterfaceModes.AddVanillaItems(complaintMode);
@@ -569,7 +569,7 @@ namespace PlusLevelStudio
                 }
             };
 
-            EditorInterfaceModes.AddVanillaRooms(roomsMode);
+            EditorInterfaceModes.AddVanillaRooms(roomsMode, false);
             roomsMode.availableTools["rooms"].RemoveAt(roomsMode.availableTools["rooms"].FindIndex(x => x.id == "room_hall")); // because halls aren't supported quite yet
             EditorInterfaceModes.AddVanillaObjects(roomsMode);
             EditorInterfaceModes.AddVanillaActivities(roomsMode, false);
@@ -956,6 +956,32 @@ namespace PlusLevelStudio
             editorFactoryBoxBuilder.name = "EditorFactoryBoxConstructor";
             LevelLoaderPlugin.Instance.structureAliases.Add("factorybox", new LoaderStructureData(editorFactoryBoxBuilder));
 
+            // wormhole needs some special stuff
+            EditorWormholeController editorWormhole = GameObject.Instantiate<WormholeController>(Resources.FindObjectsOfTypeAll<WormholeController>().First(x => x.GetInstanceID() >= 0), MTM101BaldiDevAPI.prefabTransform).gameObject.SwapComponent<WormholeController, EditorWormholeController>(false);
+            editorWormhole.name = "Wormhole_Editor";
+            editorWormhole.mixerGroup = Resources.FindObjectsOfTypeAll<UnityEngine.Audio.AudioMixerGroup>().First(x => x.name == "Effects");
+            editorWormhole.ambienceClip = Resources.FindObjectsOfTypeAll<AudioClip>().First(x => x.GetInstanceID() >= 0 && x.name == "WormholeAmbience");
+            // fix some broken references
+            editorWormhole.GetComponentInChildren<EntityPull>().ReflectionSetVariable("environmentObject", editorWormhole);
+            editorWormhole.GetComponentInChildren<EntitySpinner>().ReflectionSetVariable("environmentObject", editorWormhole);
+            editorWormhole.GetComponentInChildren<EntitySpinner>().ReflectionSetVariable("environmentObject", editorWormhole);
+
+            // setup wormhole room
+            GameObject editorWormholeFunctionObject = new GameObject("EditorWormholeRoomFunction");
+            editorWormholeFunctionObject.ConvertToPrefab(true);
+            RoomFunctionContainer editorWormholeFunctionContainer = editorWormholeFunctionObject.AddComponent<RoomFunctionContainer>();
+            editorWormholeFunctionContainer.ReflectionSetVariable("functions", new List<RoomFunction>());
+            EditorCoverRoomFunction editorWormholeCoverFunction = editorWormholeFunctionObject.AddComponent<EditorCoverRoomFunction>();
+            editorWormholeCoverFunction.coverage = (CellCoverage)(-1);
+            editorWormholeCoverFunction.hardCover = true;
+            editorWormholeCoverFunction.onInitialize = true;
+            editorWormholeFunctionContainer.AddFunction(editorWormholeCoverFunction);
+
+            RoomSettings wormholeRoomSettings = new RoomSettings(RoomCategory.Special, RoomType.Room, new Color(1f, 1f, 1f, 1f), Resources.FindObjectsOfTypeAll<StandardDoorMats>().First(x => x.name == "BaldiLabDoorSet"));
+            wormholeRoomSettings.container = editorWormholeFunctionContainer;
+            LevelLoaderPlugin.Instance.roomSettings.Add("wormhole_room", wormholeRoomSettings);
+
+
             yield return "Creating editor prefab visuals...";
 
             // create light display
@@ -1088,6 +1114,9 @@ namespace PlusLevelStudio
             EditorInterface.AddObjectVisualWithCustomCapsuleCollider("plant", LevelLoaderPlugin.Instance.basicObjects["plant"], 1f, 7f, 1, Vector3.up * 3.5f);
             EditorInterface.AddObjectVisualWithCustomBoxCollider("ceilingfan", LevelLoaderPlugin.Instance.basicObjects["ceilingfan"], new Vector3(10f,2f,10f), Vector3.up * 9f);
             EditorInterface.AddObjectVisualWithCustomSphereCollider("exitsign", LevelLoaderPlugin.Instance.basicObjects["exitsign"], 1f, Vector3.down);
+
+            EditorInterface.AddObjectVisual("wormhole", editorWormhole.gameObject, true);
+            LevelLoaderPlugin.Instance.basicObjects.Add("wormhole", editorWormhole.gameObject);
 
             EditorBasicObject arrowObjectVisual = EditorInterface.AddObjectVisualWithCustomSphereCollider("arrow", LevelLoaderPlugin.Instance.basicObjects["arrow"], 1f, Vector3.zero);
             AnimatedSpriteRotator[] rotators = arrowObjectVisual.GetComponentsInChildren<AnimatedSpriteRotator>();
