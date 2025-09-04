@@ -1,6 +1,7 @@
-PLANS:
+SHORT TERM PLANS:
+Finish setting up region marker "structure"
+Create 4 region doors for each region/zone, so the wormhole room can be fully recreated
+Lab teleporters
 
-finalize exporting for rooms
-fix weird file name stuff when a level isn't loaded due to mismatched mode
-Consider tutorial? (Save for public release?)
-Create more EditorTool bases (STOP RE-USING DOOR TOOL!)
+LONG TERM PLANS:
+Consider tutorial?
