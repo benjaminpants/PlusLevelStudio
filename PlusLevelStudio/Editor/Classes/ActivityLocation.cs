@@ -35,6 +35,7 @@ namespace PlusLevelStudio.Editor
             }
             EditorRoom room = data.RoomFromPos(position.ToCellVector(), true);
             if (room == null) return;
+            if (room.activity != null) return;
             Setup(room);
             return;
         }
