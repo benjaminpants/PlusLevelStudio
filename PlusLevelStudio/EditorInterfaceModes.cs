@@ -390,6 +390,7 @@ namespace PlusLevelStudio
                 new ObjectTool("merrygoround"),
                 new ObjectTool("hopscotch"),
                 new ObjectTool("hoop"),
+                new ObjectTool("dirtcircle"),
                 new ObjectTool("picnictable"),
                 new ObjectToolNoRotation("picnicbasket"),
                 new ObjectToolNoRotation("rock"),

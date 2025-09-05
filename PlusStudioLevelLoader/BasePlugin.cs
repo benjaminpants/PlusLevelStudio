@@ -226,6 +226,7 @@ namespace PlusStudioLevelLoader
             basicObjects.Add("decor_banana", objects.First(x => (x.name == "Decor_Banana")));
             basicObjects.Add("decor_zoneflag", objects.First(x => (x.name == "Decor_ZoningFlag")));
             basicObjects.Add("hopscotch", objects.First(x => (x.name == "PlaygroundPavement")));
+            basicObjects.Add("dirtcircle", objects.First(x => (x.name == "DirtCircle")));
             basicObjects.Add("chairsanddesk", objects.First(x => (x.name == "Chairs_Desk_Perfect")));
             basicObjects.Add("picnictable", objects.First(x => (x.name == "PicnicTable")));
             basicObjects.Add("tent", objects.First(x => (x.name == "Tent_Object")));

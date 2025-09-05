@@ -1108,6 +1108,7 @@ namespace PlusLevelStudio
             EditorInterface.AddObjectVisualWithMeshCollider("cafeteriatable", LevelLoaderPlugin.Instance.basicObjects["cafeteriatable"], true);
             EditorInterface.AddObjectVisual("hoop", LevelLoaderPlugin.Instance.basicObjects["hoop"], true);
             EditorInterface.AddObjectVisualWithCustomBoxCollider("hopscotch", LevelLoaderPlugin.Instance.basicObjects["hopscotch"], new Vector3(30f,0.01f,30f), Vector3.zero);
+            EditorInterface.AddObjectVisualWithCustomBoxCollider("dirtcircle", LevelLoaderPlugin.Instance.basicObjects["dirtcircle"], new Vector3(20f, 0.01f, 20f), Vector3.zero);
             EditorInterface.AddObjectVisual("tree", LevelLoaderPlugin.Instance.basicObjects["tree"], true);
             EditorInterface.AddObjectVisual("pinetree", LevelLoaderPlugin.Instance.basicObjects["pinetree"], true);
             EditorInterface.AddObjectVisual("picnictable", LevelLoaderPlugin.Instance.basicObjects["picnictable"], true);

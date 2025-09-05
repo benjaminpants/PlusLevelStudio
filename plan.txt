@@ -1,6 +1,5 @@
 SHORT TERM PLANS:
-Finish setting up region marker "structure"
-Create 4 region doors for each region/zone, so the wormhole room can be fully recreated
+Rotohalls
 Lab teleporters
 
 LONG TERM PLANS:

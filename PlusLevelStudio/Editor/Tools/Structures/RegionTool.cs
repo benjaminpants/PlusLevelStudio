@@ -10,6 +10,9 @@ namespace PlusLevelStudio.Editor.Tools
     {
         public int type;
         public override string id => "structure_region_" + type;
+        public override string titleKey => LocalizationManager.Instance.GetLocalizedText("Ed_Tool_structure_region_X_Title").Replace("X",type.ToString());
+        public override string descKey => LocalizationManager.Instance.GetLocalizedText("Ed_Tool_structure_region_X_Desc").Replace("X", type.ToString());
+
         EditorRoom foundRoom;
         internal RegionTool(int type) : this(type, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/structure_region_" + type))
         {
