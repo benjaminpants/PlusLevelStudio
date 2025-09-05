@@ -33,8 +33,9 @@ namespace PlusLevelStudio
         /// <summary>
         /// Adds the vanilla tools (the ones in the tools category) to the specified EditorMode
         /// </summary>
+        /// <param name="includeNonVanillaCompliant"></param>
         /// <param name="modeToModify"></param>
-        public static void AddVanillaToolTools(EditorMode modeToModify)
+        public static void AddVanillaToolTools(EditorMode modeToModify, bool includeNonVanillaCompliant)
         {
             if (modeToModify.caresAboutSpawn)
             {
@@ -57,6 +58,14 @@ namespace PlusLevelStudio
             {
                 new MergeTool(),
                 new DeleteTool(),
+            });
+            if (!includeNonVanillaCompliant) return;
+            AddToolsToCategory(modeToModify, "tools", new EditorTool[]
+            {
+                new RegionTool(1),
+                new RegionTool(2),
+                new RegionTool(3),
+                new RegionTool(4),
             });
         }
 
@@ -219,6 +228,10 @@ namespace PlusLevelStudio
                 new PowerLeverBreakerTool(),
                 new SteamValveTool(),
                 new ObjectToolNoRotation("wormhole", 5f), // not even a structure but i think its better categorized here
+                new HallDoorStructureTool("regionlockdowndoors", "regionlockdowndoor_1"),
+                new HallDoorStructureTool("regionlockdowndoors", "regionlockdowndoor_2"),
+                new HallDoorStructureTool("regionlockdowndoors", "regionlockdowndoor_3"),
+                new HallDoorStructureTool("regionlockdowndoors", "regionlockdowndoor_4"),
             }, true);
         }
 

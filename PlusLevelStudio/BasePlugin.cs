@@ -457,7 +457,7 @@ namespace PlusLevelStudio
                 new BulletinBoardPosterTool(),
                 new BulletinBoardSmallPosterTool()
             });
-            EditorInterfaceModes.AddVanillaToolTools(fullMode);
+            EditorInterfaceModes.AddVanillaToolTools(fullMode, true);
             EditorInterfaceModes.AddVanillaEvents(fullMode, true);
 
             modes.Add("full", fullMode);
@@ -527,7 +527,7 @@ namespace PlusLevelStudio
             EditorInterfaceModes.AddVanillaStructures(complaintMode, false);
             EditorInterfaceModes.AddVanillaLights(complaintMode);
             EditorInterfaceModes.AddVanillaPosters(complaintMode);
-            EditorInterfaceModes.AddVanillaToolTools(complaintMode);
+            EditorInterfaceModes.AddVanillaToolTools(complaintMode, false);
             EditorInterfaceModes.AddVanillaEvents(complaintMode, false);
 
             modes.Add("compliant", complaintMode);
@@ -590,7 +590,7 @@ namespace PlusLevelStudio
                 new PointTechnicalStructureTool("forceddoor"),
                 new PointTechnicalStructureTool("nosafe"),
             }, true);
-            EditorInterfaceModes.AddVanillaToolTools(roomsMode);
+            EditorInterfaceModes.AddVanillaToolTools(roomsMode, false);
 
             modes.Add("rooms", roomsMode);
 
@@ -981,6 +981,26 @@ namespace PlusLevelStudio
             wormholeRoomSettings.container = editorWormholeFunctionContainer;
             LevelLoaderPlugin.Instance.roomSettings.Add("wormhole_room", wormholeRoomSettings);
 
+            // region builder settings
+            GameObject regionBuilderObject = new GameObject("RegionBuilder");
+            regionBuilderObject.gameObject.ConvertToPrefab(true);
+
+            LevelLoaderPlugin.Instance.structureAliases.Add("region", new LoaderStructureData(regionBuilderObject.AddComponent<Structure_EditorRegions>()));
+
+            LockdownDoor regionDoorBase = Resources.FindObjectsOfTypeAll<LockdownDoor>().First(x => x.name == "LockdownDoor_Shut_StaysOpen" && x.GetInstanceID() >= 0);
+            Structure_RegionBasedDoor regionDoorBuilder = new GameObject("regionDoorBuilder").AddComponent<Structure_RegionBasedDoor>();
+            regionDoorBuilder.gameObject.ConvertToPrefab(true);
+            regionDoorBuilder.ReflectionSetVariable("defaultIfTrapped", false);
+            LevelLoaderPlugin.Instance.structureAliases.Add("regionlockdowndoors", new LoaderStructureData(regionDoorBuilder));
+            structureTypes.Add("regionlockdowndoors", typeof(HallDoorStructureLocation));
+            for (int i = 1; i <= 4; i++)
+            {
+                RegionBasedLockdownDoor regionDoor = GameObject.Instantiate<LockdownDoor>(regionDoorBase, MTM101BaldiDevAPI.prefabTransform).gameObject.SwapComponent<LockdownDoor, RegionBasedLockdownDoor>();
+                regionDoor.name = "RegionLockdownDoor_" + i;
+                regionDoor.regionToCheck = i;
+                LevelLoaderPlugin.Instance.structureAliases["regionlockdowndoors"].prefabAliases.Add("regionlockdowndoor_" + i, regionDoor.gameObject);
+            }
+
 
             yield return "Creating editor prefab visuals...";
 
@@ -1203,7 +1223,6 @@ namespace PlusLevelStudio
             structureTypes.Add("lockdowndoor", typeof(LockdownDoorStructureLocation));
 
             GameObject shutLockdownDoorVisual = EditorInterface.AddStructureGenericVisual("lockdowndoor_shut", Resources.FindObjectsOfTypeAll<LockdownDoor>().First(x => x.GetInstanceID() >= 0 && x.name == "LockdownDoor").gameObject);
-            shutLockdownDoorVisual.GetComponent<BoxCollider>();
             shutLockdownDoorVisual.transform.Find("LockdownDoor_Model").transform.position += Vector3.down * 10f;
             shutLockdownDoorVisual.AddComponent<SettingsComponent>().offset = new Vector3(0f, 20f, 5f);
 
@@ -1340,6 +1359,42 @@ namespace PlusLevelStudio
             EditorInterface.AddNPCVisual("cloudy", LevelLoaderPlugin.Instance.npcAliases["cloudy"]);
             EditorInterface.AddNPCVisual("reflex", LevelLoaderPlugin.Instance.npcAliases["reflex"]);
 
+            // regions stuff
+
+            // frankly i need to move this to its own thing and store it in asset manager or something as a template
+            GameObject genericPlaneVisual = new GameObject("genericPlaneVisual");
+            GameObject genericPlaneVisualVisual = CreateQuad("Visual", null, Vector3.zero, Vector3.zero);
+            genericPlaneVisualVisual.transform.forward = Vector3.down;
+            genericPlaneVisualVisual.transform.SetParent(genericPlaneVisual.transform, true);
+            genericPlaneVisual.AddComponent<BoxCollider>().size = new Vector3(10f, 0.025f, 10f);
+            genericPlaneVisual.layer = editorInteractableLayer;
+            EditorRendererContainer genericPlaneRenderContainer = genericPlaneVisual.AddComponent<EditorRendererContainer>();
+            genericPlaneRenderContainer.AddRenderer(genericPlaneVisualVisual.GetComponent<MeshRenderer>(), "white");
+            genericPlaneVisual.AddComponent<EditorDeletableObject>().renderContainer = genericPlaneRenderContainer;
+
+            GameObject regionVisualBase = GameObject.Instantiate(genericPlaneVisual, MTM101BaldiDevAPI.prefabTransform);
+            regionVisualBase.name = "RegionVisual";
+            Material regionMat = new Material(potentialDoorMat);
+            regionMat.name = "RegionMat";
+            regionVisualBase.GetComponentInChildren<MeshRenderer>().material = regionMat;
+            RegionLocation.regionTextures.Add(1,AssetLoader.TextureFromMod(this, "Editor", "Region1.png"));
+            RegionLocation.regionTextures.Add(2, AssetLoader.TextureFromMod(this, "Editor", "Region2.png"));
+            RegionLocation.regionTextures.Add(3, AssetLoader.TextureFromMod(this, "Editor", "Region3.png"));
+            RegionLocation.regionTextures.Add(4, AssetLoader.TextureFromMod(this, "Editor", "Region4.png"));
+            genericStructureDisplays.Add("region", regionVisualBase);
+            structureTypes.Add("region", typeof(RegionStructureLocation));
+
+            // region doors
+
+            for (int i = 1; i <= 4; i++)
+            {
+                GameObject regionLockdownVisual = EditorInterface.AddStructureGenericVisual("regionlockdowndoor_" + i, LevelLoaderPlugin.Instance.structureAliases["regionlockdowndoors"].prefabAliases["regionlockdowndoor_" + i].gameObject);
+                regionLockdownVisual.transform.Find("LockdownDoor_Model").transform.position += Vector3.down * 10f;
+                MeshRenderer regionLockdownRenderer = regionLockdownVisual.GetComponentInChildren<MeshRenderer>();
+                Material[] regionMats = regionLockdownRenderer.materials;
+                regionMats[2].SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "RegionLockdownTexture" + i +".png")); // do this here as we only want to change the in-editor appearence
+            }
+
             // rooms
             EditorInterface.AddRoomVisualManager<OutsideRoomVisualManager>("outside");
 
@@ -1471,16 +1526,6 @@ namespace PlusLevelStudio
             assetMan.Add<EditorController>("MainEditorController", standardEditorController);
 
             yield return "Setting up misc editor stuff...";
-
-            GameObject genericPlaneVisual = new GameObject("genericPlaneVisual");
-            GameObject genericPlaneVisualVisual = CreateQuad("Visual", null, Vector3.zero, Vector3.zero);
-            genericPlaneVisualVisual.transform.forward = Vector3.down;
-            genericPlaneVisualVisual.transform.SetParent(genericPlaneVisual.transform, true);
-            genericPlaneVisual.AddComponent<BoxCollider>().size = new Vector3(10f, 0.025f, 10f);
-            genericPlaneVisual.layer = editorInteractableLayer;
-            EditorRendererContainer genericPlaneRenderContainer = genericPlaneVisual.AddComponent<EditorRendererContainer>();
-            genericPlaneRenderContainer.AddRenderer(genericPlaneVisualVisual.GetComponent<MeshRenderer>(), "white");
-            genericPlaneVisual.AddComponent<EditorDeletableObject>().renderContainer = genericPlaneRenderContainer;
 
             GameObject potentialDoorVisual = GameObject.Instantiate(genericPlaneVisual, MTM101BaldiDevAPI.prefabTransform);
             potentialDoorVisual.name = "PotentialDoorPrefab";
