@@ -301,7 +301,11 @@ namespace PlusLevelStudio
             if (!includeNonVanillaComplaintTools) return;
             AddToolsToCategory(modeToModify, "rooms", new EditorTool[]
             {
-                new RoomTool("wormhole_room")
+                new RoomTool("wormhole_room"),
+                new OnlyOneRoomTool("teleportroom_1"),
+                new OnlyOneRoomTool("teleportroom_2"),
+                new OnlyOneRoomTool("teleportroom_3"),
+                new OnlyOneRoomTool("teleportroom_4")
             });
         }
 

@@ -977,7 +977,9 @@ namespace PlusLevelStudio
             editorWormholeCoverFunction.onInitialize = true;
             editorWormholeFunctionContainer.AddFunction(editorWormholeCoverFunction);
 
-            RoomSettings wormholeRoomSettings = new RoomSettings(RoomCategory.Special, RoomType.Room, new Color(1f, 1f, 1f, 1f), Resources.FindObjectsOfTypeAll<StandardDoorMats>().First(x => x.name == "BaldiLabDoorSet"));
+            StandardDoorMats baldiLabDoor = Resources.FindObjectsOfTypeAll<StandardDoorMats>().First(x => x.name == "BaldiLabDoorSet");
+
+            RoomSettings wormholeRoomSettings = new RoomSettings(RoomCategory.Special, RoomType.Room, new Color(1f, 1f, 1f, 1f), baldiLabDoor);
             wormholeRoomSettings.container = editorWormholeFunctionContainer;
             LevelLoaderPlugin.Instance.roomSettings.Add("wormhole_room", wormholeRoomSettings);
 
@@ -987,6 +989,7 @@ namespace PlusLevelStudio
 
             LevelLoaderPlugin.Instance.structureAliases.Add("region", new LoaderStructureData(regionBuilderObject.AddComponent<Structure_EditorRegions>()));
 
+            // region/zone doors
             LockdownDoor regionDoorBase = Resources.FindObjectsOfTypeAll<LockdownDoor>().First(x => x.name == "LockdownDoor_Shut_StaysOpen" && x.GetInstanceID() >= 0);
             Structure_RegionBasedDoor regionDoorBuilder = new GameObject("regionDoorBuilder").AddComponent<Structure_RegionBasedDoor>();
             regionDoorBuilder.gameObject.ConvertToPrefab(true);
@@ -1001,6 +1004,35 @@ namespace PlusLevelStudio
                 LevelLoaderPlugin.Instance.structureAliases["regionlockdowndoors"].prefabAliases.Add("regionlockdowndoor_" + i, regionDoor.gameObject);
             }
 
+            // setup editor versions of the teleporter rooms
+            EditorTeleporterRoomFunction editorTeleporterRoomFunction = GameObject.Instantiate<TeleporterRoomFunction>(Resources.FindObjectsOfTypeAll<TeleporterRoomFunction>().First(x => x.GetInstanceID() >= 0), MTM101BaldiDevAPI.prefabTransform).gameObject.SwapComponent<TeleporterRoomFunction, EditorTeleporterRoomFunction>();
+            editorTeleporterRoomFunction.name = "EditorTeleporterRoomFunctionBase";
+            GameObject.DestroyImmediate(editorTeleporterRoomFunction.GetComponent<CoverRoomFunction>());
+            ((List<RoomFunction>)editorTeleporterRoomFunction.gameObject.GetComponent<RoomFunctionContainer>().ReflectionGetVariable("functions")).RemoveAll(x => x == null);
+            EditorCoverRoomFunction editorTeleporterRoomCoverFunction = editorTeleporterRoomFunction.gameObject.AddComponent<EditorCoverRoomFunction>();
+            editorTeleporterRoomCoverFunction.coverage = (CellCoverage)(-1);
+            editorTeleporterRoomCoverFunction.hardCover = true;
+            editorTeleporterRoomCoverFunction.onInitialize = true;
+            editorTeleporterRoomFunction.gameObject.GetComponent<RoomFunctionContainer>().AddFunction(editorTeleporterRoomCoverFunction);
+            DestroyImmediate(editorTeleporterRoomFunction.transform.Find("TeleporterRoomFunctionObjectBase").gameObject);
+            new GameObject("DummyTransform").transform.SetParent(editorTeleporterRoomFunction.transform);
+            editorTeleporterRoomFunction.ReflectionSetVariable("teleporterObjects", editorTeleporterRoomFunction.transform.Find("DummyTransform"));
+
+            // setup the rooms themselves
+            for (int i = 1; i <= 4; i++)
+            {
+                EditorTeleporterRoomFunction teleportRF = GameObject.Instantiate<EditorTeleporterRoomFunction>(editorTeleporterRoomFunction, MTM101BaldiDevAPI.prefabTransform);
+                teleportRF.name = "EditorTeleporterRoom_" + i;
+                EditorRegionMarkFunction teleporterRegionMarker = teleportRF.gameObject.AddComponent<EditorRegionMarkFunction>();
+                teleporterRegionMarker.region = i;
+                teleportRF.GetComponent<RoomFunctionContainer>().AddFunction(teleporterRegionMarker);
+                LevelLoaderPlugin.Instance.roomSettings.Add("teleportroom_" + i, new RoomSettings(RoomCategory.Null, RoomType.Null, new Color(0f,1f,1f,1f), baldiLabDoor, materials.First(x => x.name == "MapBG_" + i))
+                {
+                    container = teleportRF.GetComponent<RoomFunctionContainer>()
+                });
+            }
+
+            Destroy(editorTeleporterRoomFunction.gameObject); // we dont need the base one anymore
 
             yield return "Creating editor prefab visuals...";
 
