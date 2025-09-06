@@ -1005,7 +1005,8 @@ namespace PlusLevelStudio
             }
 
             // setup editor versions of the teleporter rooms
-            EditorTeleporterRoomFunction editorTeleporterRoomFunction = GameObject.Instantiate<TeleporterRoomFunction>(Resources.FindObjectsOfTypeAll<TeleporterRoomFunction>().First(x => x.GetInstanceID() >= 0), MTM101BaldiDevAPI.prefabTransform).gameObject.SwapComponent<TeleporterRoomFunction, EditorTeleporterRoomFunction>();
+            TeleporterRoomFunction teleporterRoom = Resources.FindObjectsOfTypeAll<TeleporterRoomFunction>().First(x => x.GetInstanceID() >= 0);
+            EditorTeleporterRoomFunction editorTeleporterRoomFunction = GameObject.Instantiate<TeleporterRoomFunction>(teleporterRoom, MTM101BaldiDevAPI.prefabTransform).gameObject.SwapComponent<TeleporterRoomFunction, EditorTeleporterRoomFunction>();
             editorTeleporterRoomFunction.name = "EditorTeleporterRoomFunctionBase";
             GameObject.DestroyImmediate(editorTeleporterRoomFunction.GetComponent<CoverRoomFunction>());
             ((List<RoomFunction>)editorTeleporterRoomFunction.gameObject.GetComponent<RoomFunctionContainer>().ReflectionGetVariable("functions")).RemoveAll(x => x == null);
@@ -1014,6 +1015,7 @@ namespace PlusLevelStudio
             editorTeleporterRoomCoverFunction.hardCover = true;
             editorTeleporterRoomCoverFunction.onInitialize = true;
             editorTeleporterRoomFunction.gameObject.GetComponent<RoomFunctionContainer>().AddFunction(editorTeleporterRoomCoverFunction);
+            editorTeleporterRoomFunction.gameObject.GetComponent<RoomFunctionContainer>().AddFunction(editorTeleporterRoomFunction);
             DestroyImmediate(editorTeleporterRoomFunction.transform.Find("TeleporterRoomFunctionObjectBase").gameObject);
             new GameObject("DummyTransform").transform.SetParent(editorTeleporterRoomFunction.transform);
             editorTeleporterRoomFunction.ReflectionSetVariable("teleporterObjects", editorTeleporterRoomFunction.transform.Find("DummyTransform"));
@@ -1033,6 +1035,39 @@ namespace PlusLevelStudio
             }
 
             Destroy(editorTeleporterRoomFunction.gameObject); // we dont need the base one anymore
+
+            // split the teleporter into two objects
+            Transform teleporterRoomFunctionBaseCone = GameObject.Instantiate<Transform>(teleporterRoom.transform.Find("TeleporterRoomFunctionObjectBase"), MTM101BaldiDevAPI.prefabTransform);
+            TeleporterController teleporterMachine = GameObject.Instantiate<TeleporterController>(teleporterRoomFunctionBaseCone.Find("TeleporterMachine").GetComponent<TeleporterController>(), MTM101BaldiDevAPI.prefabTransform);
+            teleporterMachine.name = "EditorTeleporterMachine";
+
+            // handle the button panel
+            Transform buttonPanelTransform = teleporterRoomFunctionBaseCone.Find("ButtonPanel");
+            // i thought i could assign these directly but apparently not
+            Transform editorButtonPanel = new GameObject("EditorButtonPanel").transform;
+            // so the positions are still properly relative
+            editorButtonPanel.transform.position = buttonPanelTransform.position;
+            editorButtonPanel.transform.rotation = buttonPanelTransform.rotation;
+            editorButtonPanel.gameObject.ConvertToPrefab(true);
+            teleporterRoomFunctionBaseCone.Find("GameButton_0").SetParent(editorButtonPanel, true);
+            teleporterRoomFunctionBaseCone.Find("GameButton_1").SetParent(editorButtonPanel, true);
+            teleporterRoomFunctionBaseCone.Find("GameButton_2").SetParent(editorButtonPanel, true);
+            teleporterRoomFunctionBaseCone.Find("RoomLabels_0").SetParent(editorButtonPanel, true);
+            teleporterRoomFunctionBaseCone.Find("RoomLabels_1").SetParent(editorButtonPanel, true);
+            teleporterRoomFunctionBaseCone.Find("RoomLabels_2").SetParent(editorButtonPanel, true);
+            teleporterRoomFunctionBaseCone.Find("RoomLabels_3").SetParent(editorButtonPanel, true);
+            buttonPanelTransform.SetParent(editorButtonPanel, true);
+            editorButtonPanel.transform.position = Vector3.zero;
+            editorButtonPanel.transform.rotation = Quaternion.identity;
+            DestroyImmediate(teleporterRoomFunctionBaseCone);
+
+            // setup builder
+
+            Structure_Teleporters teleporterBuilder = new GameObject("EditorTeleporterBuilder").AddComponent<Structure_Teleporters>();
+            teleporterBuilder.gameObject.ConvertToPrefab(true);
+            teleporterBuilder.buttonPanelPre = editorButtonPanel;
+            teleporterBuilder.controllerPre = teleporterMachine;
+            LevelLoaderPlugin.Instance.structureAliases.Add("teleporters", new LoaderStructureData(teleporterBuilder));
 
             yield return "Creating editor prefab visuals...";
 
@@ -1427,6 +1462,31 @@ namespace PlusLevelStudio
                 Material[] regionMats = regionLockdownRenderer.materials;
                 regionMats[2].SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "RegionLockdownTexture" + i +".png")); // do this here as we only want to change the in-editor appearence
             }
+
+            // teleporters
+            GameObject teleporterButtonEditorVisual = EditorInterface.CloneToPrefabStripMonoBehaviors(editorButtonPanel.gameObject);
+            teleporterButtonEditorVisual.name = teleporterButtonEditorVisual.name.Replace("_Stripped", "_GenericStructureVisual");
+            teleporterButtonEditorVisual.layer = editorInteractableLayer;
+            Collider[] teleporterButtonEditorColliders = teleporterButtonEditorVisual.GetComponentsInChildren<Collider>();
+            for (int i = (teleporterButtonEditorColliders.Length - 1); i >= 0; i--)
+            {
+                Destroy(teleporterButtonEditorColliders[i]);
+            }
+            BoxCollider teleporterButtonEditorCollider = teleporterButtonEditorVisual.AddComponent<BoxCollider>();
+            teleporterButtonEditorCollider.size = new Vector3(11f,9f,7f);
+            teleporterButtonEditorCollider.center = new Vector3(0f, 4.5f, 1.5f);
+            teleporterButtonEditorVisual.AddComponent<EditorRendererContainer>().AddRendererRange(teleporterButtonEditorVisual.GetComponentsInChildren<Renderer>(), "white");
+            teleporterButtonEditorCollider.gameObject.AddComponent<EditorDeletableObject>().renderContainer = teleporterButtonEditorVisual.GetComponent<EditorRendererContainer>();
+            MovableObjectInteraction editorTeleporterButtonMove = teleporterButtonEditorCollider.gameObject.AddComponent<MovableObjectInteraction>();
+            editorTeleporterButtonMove.allowedAxis = MoveAxis.Horizontal;
+            editorTeleporterButtonMove.allowedRotations = RotateAxis.Flat;
+            genericStructureDisplays.Add("teleporter_buttons", teleporterButtonEditorVisual);
+            GameObject teleporterMachineEditorVisual = EditorInterface.AddStructureGenericVisual("teleporter_machine", teleporterMachine.gameObject);
+            MovableObjectInteraction editorTeleporterMove = teleporterMachineEditorVisual.gameObject.AddComponent<MovableObjectInteraction>();
+            editorTeleporterMove.allowedAxis = MoveAxis.Horizontal;
+            editorTeleporterMove.allowedRotations = RotateAxis.Flat;
+
+            structureTypes.Add("teleporters", typeof(TeleporterStructureLocation));
 
             // rooms
             EditorInterface.AddRoomVisualManager<OutsideRoomVisualManager>("outside");

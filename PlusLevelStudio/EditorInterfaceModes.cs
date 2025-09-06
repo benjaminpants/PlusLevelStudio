@@ -232,6 +232,7 @@ namespace PlusLevelStudio
                 new HallDoorStructureTool("regionlockdowndoors", "regionlockdowndoor_2"),
                 new HallDoorStructureTool("regionlockdowndoors", "regionlockdowndoor_3"),
                 new HallDoorStructureTool("regionlockdowndoors", "regionlockdowndoor_4"),
+                new TeleporterTool()
             }, true);
         }
 

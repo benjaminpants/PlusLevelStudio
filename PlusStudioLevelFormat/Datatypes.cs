@@ -68,8 +68,8 @@ namespace PlusStudioLevelFormat
 
         public MystIntVector2(int x, int y)
         {
-            _x = (byte)x;
-            _z = (byte)y;
+            _x = x;
+            _z = y;
         }
 
         public static MystIntVector2 one => new MystIntVector2(1, 1);
