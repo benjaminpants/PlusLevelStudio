@@ -12,6 +12,7 @@ namespace PlusLevelStudio.Editor.Tools
         bool successfullyPlaced = false;
         IntVector2? currentMachinePos;
         IntVector2? currentButtonsPos;
+        EditorRoom currentRoom = null;
 
         public TeleporterTool()
         {
@@ -34,6 +35,7 @@ namespace PlusLevelStudio.Editor.Tools
             if (machine != null)
             {
                 EditorController.Instance.RemoveVisual(machine);
+                currentRoom = null;
                 machine = null;
                 currentMachinePos = null;
                 return false;
@@ -60,6 +62,7 @@ namespace PlusLevelStudio.Editor.Tools
             currentMachinePos = null;
             currentButtonsPos = null;
             successfullyPlaced = false;
+            currentRoom = null;
         }
 
         void MachineDirectionClicked(Direction dir)
@@ -69,6 +72,7 @@ namespace PlusLevelStudio.Editor.Tools
             machine.position = new Vector2(worldPos.x, worldPos.z);
             machine.direction = dir.GetOpposite().ToRotation().eulerAngles.y;
             EditorController.Instance.AddVisual(machine);
+            currentRoom = EditorController.Instance.levelData.RoomFromPos(currentMachinePos.Value, true);
         }
 
         void ButtonsDirectionClicked(Direction dir)
@@ -88,16 +92,37 @@ namespace PlusLevelStudio.Editor.Tools
             EditorController.Instance.SwitchToTool(null);
         }
 
+        bool PositionValid(IntVector2 position)
+        {
+            EditorRoom room = EditorController.Instance.levelData.RoomFromPos(position, true);
+            if (!TeleporterLocation.RoomValid(room)) return false;
+            StructureLocation structure = EditorController.Instance.GetStructureData("teleporters");
+            if (structure == null) return true;
+            TeleporterStructureLocation teleStructure = (TeleporterStructureLocation)structure;
+            for (int i = 0; i < teleStructure.teleporters.Count; i++)
+            {
+                IntVector2 telePos = new Vector3(teleStructure.teleporters[i].position.x, 0f, teleStructure.teleporters[i].position.y).ToCellVector();
+                // we only need to check the first one, as if they were in different rooms they would've been destroyed.
+                if (EditorController.Instance.levelData.RoomFromPos(telePos, true) == room)
+                {
+                    return true;
+                }
+            }
+            return true;
+        }
+
         public override bool MousePressed()
         {
             if (currentMachinePos == null)
             {
+                if (!TeleporterLocation.RoomValid(EditorController.Instance.levelData.RoomFromPos(EditorController.Instance.mouseGridPosition, true))) return false;
                 currentMachinePos = EditorController.Instance.mouseGridPosition;
                 EditorController.Instance.selector.SelectRotation(currentMachinePos.Value, MachineDirectionClicked);
                 return false;
             }
             if (currentButtonsPos == null)
             {
+                if (currentRoom != EditorController.Instance.levelData.RoomFromPos(currentButtonsPos.Value, true)) return false;
                 currentButtonsPos = EditorController.Instance.mouseGridPosition;
                 EditorController.Instance.selector.SelectRotation(currentButtonsPos.Value, ButtonsDirectionClicked);
                 return false;

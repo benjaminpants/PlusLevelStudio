@@ -6,6 +6,7 @@ using System.Text;
 using UnityEngine;
 using PlusLevelStudio;
 using PlusStudioLevelLoader;
+using UnityEngine.UIElements;
 
 namespace PlusLevelStudio.Editor
 {
@@ -35,7 +36,7 @@ namespace PlusLevelStudio.Editor
 
         public bool RoomValid(EditorRoom room)
         {
-            return myTeleporter.RoomValid(room);
+            return TeleporterLocation.RoomValid(room);
         }
 
         public void InitializeVisual(GameObject visualObject)
@@ -75,6 +76,7 @@ namespace PlusLevelStudio.Editor
             {
                 EditorController.Instance.CancelHeldUndo();
             }
+            myTeleporter.myStructure.DeleteIfInvalid();
             hasMoved = false;
         }
 
@@ -123,8 +125,9 @@ namespace PlusLevelStudio.Editor
             return machine.ValidatePosition(data, ignoreSelf);
         }
 
-        public bool RoomValid(EditorRoom room)
+        public static bool RoomValid(EditorRoom room)
         {
+            if (room == null) return false;
             return room.roomType.StartsWith("teleportroom_");
         }
 
@@ -170,6 +173,7 @@ namespace PlusLevelStudio.Editor
             {
                 EditorController.Instance.CancelHeldUndo();
             }
+            myStructure.DeleteIfInvalid();
             hasMoved = false;
         }
 
@@ -283,11 +287,32 @@ namespace PlusLevelStudio.Editor
 
         public override bool ValidatePosition(EditorLevelData data)
         {
+            List<EditorRoom> rooms = new List<EditorRoom>();
             for (int i = (teleporters.Count - 1); i >= 0; i--)
             {
                 if (!teleporters[i].ValidatePosition(data, true))
                 {
                     DeleteTeleporter(teleporters[i], false);
+                }
+                else
+                {
+                    EditorRoom baseRoom = data.RoomFromPos(new IntVector2(Mathf.RoundToInt((teleporters[i].position.x - 5f) / 10f), Mathf.RoundToInt((teleporters[i].position.y - 5f) / 10f)), true);
+                    EditorRoom machineRoom = data.RoomFromPos(new IntVector2(Mathf.RoundToInt((teleporters[i].machine.position.x - 5f) / 10f), Mathf.RoundToInt((teleporters[i].machine.position.y - 5f) / 10f)), true);
+                    if (baseRoom != machineRoom)
+                    {
+                        DeleteTeleporter(teleporters[i], false);
+                    }
+                    else
+                    {
+                        if (!rooms.Contains(baseRoom))
+                        {
+                            rooms.Add(baseRoom);
+                        }
+                        else
+                        {
+                            DeleteTeleporter(teleporters[i], false);
+                        }
+                    }
                 }
             }
             return teleporters.Count > 0;

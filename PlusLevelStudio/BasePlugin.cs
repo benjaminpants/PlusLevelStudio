@@ -1059,7 +1059,7 @@ namespace PlusLevelStudio
             buttonPanelTransform.SetParent(editorButtonPanel, true);
             editorButtonPanel.transform.position = Vector3.zero;
             editorButtonPanel.transform.rotation = Quaternion.identity;
-            DestroyImmediate(teleporterRoomFunctionBaseCone);
+            DestroyImmediate(teleporterRoomFunctionBaseCone.gameObject);
 
             // setup builder
 
@@ -1485,6 +1485,12 @@ namespace PlusLevelStudio
             MovableObjectInteraction editorTeleporterMove = teleporterMachineEditorVisual.gameObject.AddComponent<MovableObjectInteraction>();
             editorTeleporterMove.allowedAxis = MoveAxis.Horizontal;
             editorTeleporterMove.allowedRotations = RotateAxis.Flat;
+            Destroy(teleporterMachineEditorVisual.transform.Find("DoorCollider").gameObject);
+            CapsuleCollider teleporterMachineEditorCollider = teleporterMachineEditorVisual.GetComponent<CapsuleCollider>();
+            teleporterMachineEditorCollider.isTrigger = false;
+            teleporterMachineEditorCollider.center = Vector3.up * 5f;
+            teleporterMachineEditorCollider.height = 10f;
+            teleporterMachineEditorCollider.radius = 5f;
 
             structureTypes.Add("teleporters", typeof(TeleporterStructureLocation));
 

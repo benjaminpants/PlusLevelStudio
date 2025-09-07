@@ -37,25 +37,16 @@ namespace PlusLevelStudio.Ingame
                 Transform buttonPanel = GameObject.Instantiate<Transform>(buttonPanelPre, room.objectObject.transform);
                 buttonPanel.transform.position = new Vector3(buttonPanelData.position.x.ConvertToFloatNoRecast(), 0f, buttonPanelData.position.z.ConvertToFloatNoRecast());
                 buttonPanel.transform.eulerAngles = new Vector3(0f, buttonPanelData.data.ConvertToFloatNoRecast(), 0f);
-                Debug.Log(buttonPanelData.position.x);
-                Debug.Log(buttonPanelData.position.z);
-                Debug.Log("button panel done");
                 StructureData teleporterData = queue.Dequeue();
                 TeleporterController controller = GameObject.Instantiate<TeleporterController>(controllerPre, room.objectObject.transform);
                 controller.transform.position = new Vector3(teleporterData.position.x.ConvertToFloatNoRecast(), 0f, teleporterData.position.z.ConvertToFloatNoRecast());
                 controller.transform.eulerAngles = new Vector3(0f, teleporterData.data.ConvertToFloatNoRecast(), 0f);
-                Debug.Log(teleporterData.position.x);
-                Debug.Log(teleporterData.position.z);
-                Debug.Log("controller done");
                 function.AssignTeleporterController(controller);
-                Debug.Log("assign teleporter done");
                 function.AssignButtonPanel(buttonPanel);
-                Debug.Log("assign button panel done");
                 toSetup.Add(function);
             }
             for (int i = 0; i < toSetup.Count; i++)
             {
-                Debug.Log("setup: " + i);
                 toSetup[i].Setup(toSetup, toSetup[i].Room.GetComponent<EditorRegionMarker>().region - 1);
             }
         }
@@ -86,28 +77,20 @@ namespace PlusLevelStudio.Ingame
             {
                 label[i] = panel.Find("RoomLabels_" + i).gameObject;
             }
-            Debug.Log("array label");
             _label.SetValue(this, label);
-            Debug.Log("array set label");
             TeleporterController controller = (TeleporterController)_teleporterController.GetValue(this);
-            Debug.Log("got controller");
             GameButtonBase[] button = (GameButtonBase[])_button.GetValue(controller);
-            Debug.Log("got buttons");
             for (int i = 0; i < button.Length; i++)
             {
                 int index = i; // this hurts me on some level. but if you dont do it then it'll always do the last button
                 button[i] = panel.Find("GameButton_" + i).GetComponent<GameButton>();
-                Debug.Log("button" + i);
                 // need to re-assign to refer to OUR controller
-                Debug.Log("unity event. fuck");
                 UnityEvent unEvent = new UnityEvent();
                 unEvent.AddListener(() =>
                 {
                     controller.ButtonPressed(index);
                 });
-                Debug.Log("setting onpress");
                 _OnPress.SetValue(button[i], unEvent);
-                Debug.Log("ok");
             }
         }
     }
