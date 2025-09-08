@@ -28,7 +28,7 @@ using PlusLevelStudio.Editor.Tools.Customs;
 
 namespace PlusLevelStudio
 {
-    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudio", "Plus Level Studio", "1.2.0.1")]
+    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudio", "Plus Level Studio", "1.3.0.0")]
     [BepInDependency("mtm101.rulerp.bbplus.baldidevapi")]
     [BepInDependency("mtm101.rulerp.baldiplus.levelstudioloader")]
     public class LevelStudioPlugin : BaseUnityPlugin
@@ -44,6 +44,8 @@ namespace PlusLevelStudio
         public Dictionary<string, Texture2D> lightmaps = new Dictionary<string, Texture2D>();
         public const int editorInteractableLayer = 13; // CollidableEntities
         public const int editorInteractableLayerMask = 1 << editorInteractableLayer;
+
+        private Version expectedLoaderVersion = new Version("1.2.0.0");
 
         public const int editorHandleLayer = 12; // ClickableEntities
         public const int editorHandleLayerMask = 1 << editorHandleLayer;
@@ -1784,6 +1786,12 @@ namespace PlusLevelStudio
         {
             yield return 4;
             yield return "Creating solid color lightmaps...";
+            if (LevelLoaderPlugin.Instance.Info.Metadata.Version < expectedLoaderVersion)
+            {
+                Exception e = new Exception("Loader is out of date! Expected: " + expectedLoaderVersion.ToString() + "!");
+                MTM101BaldiDevAPI.CauseCrash(Info, e);
+                throw e;
+            }
             lightmaps.Add("none", Resources.FindObjectsOfTypeAll<Texture2D>().First(x => x.GetInstanceID() >= 0 && x.name == "LightMap"));
             AddSolidColorLightmap("white", Color.white);
             AddSolidColorLightmap("yellow", Color.yellow);
