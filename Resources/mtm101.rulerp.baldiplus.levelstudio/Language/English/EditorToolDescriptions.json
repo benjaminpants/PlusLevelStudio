@@ -14,7 +14,7 @@
 {"key":"Ed_Tool_room_hall_Title","value":"Main Hallway"},
 {"key":"Ed_Tool_room_hall_Desc","value":"The main building block of any level, required for some NPCs to behave properly."},
 {"key":"Ed_Tool_room_hall_secondary_Title","value":"Extra Hallway"},
-{"key":"Ed_Tool_room_hall_secondary_Desc","value":"Place extra hallways using this tool. <b>Use minimally, as this can cause bugs or weird behavior!"},
+{"key":"Ed_Tool_room_hall_secondary_Desc","value":"Place extra hall rooms using this tool.<b>Use minimally, as extra hall rooms can cause bugs or weird behavior!"},
 {"key":"Ed_Tool_room_class_Title","value":"Classroom"},
 {"key":"Ed_Tool_room_class_Desc","value":"The intended location to place notebooks."},
 {"key":"Ed_Tool_room_faculty_Title","value":"Faculty"},
