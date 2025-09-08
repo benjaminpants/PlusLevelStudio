@@ -9,11 +9,18 @@ using UnityEngine.Events;
 
 namespace PlusLevelStudio.Ingame
 {
+    public class DummyTeleporterController : TeleporterController
+    {
+    }
+
     public class Structure_Teleporters : StructureBuilder
     {
 
         public Transform buttonPanelPre;
         public TeleporterController controllerPre;
+        public DummyTeleporterRoomFunction dummyTeleporter;
+        static FieldInfo _teleporterController = AccessTools.Field(typeof(TeleporterRoomFunction), "teleporterController");
+        static MethodInfo _UpdateButtons = AccessTools.Method(typeof(TeleporterController), "UpdateButtons");
 
         public override void Generate(LevelGenerator lg, System.Random rng)
         {
@@ -25,6 +32,7 @@ namespace PlusLevelStudio.Ingame
             base.Load(data);
             Queue<StructureData> queue = new Queue<StructureData>(data);
             List<TeleporterRoomFunction> toSetup = new List<TeleporterRoomFunction>();
+            Dictionary<TeleporterRoomFunction, int> ids = new Dictionary<TeleporterRoomFunction, int>();
             // teleporters
             while (queue.Count != 0)
             {
@@ -44,11 +52,43 @@ namespace PlusLevelStudio.Ingame
                 function.AssignTeleporterController(controller);
                 function.AssignButtonPanel(buttonPanel);
                 toSetup.Add(function);
+                ids.Add(function, room.GetComponent<EditorRegionMarker>().region);
             }
+            for (int i = 0; i < Mathf.Max(4, toSetup.Count); i++)
+            {
+                if (!ids.ContainsValue(i + 1))
+                {
+                    Debug.Log("no teleporter found for: " + (i + 1));
+                    DummyTeleporterRoomFunction dummy = GameObject.Instantiate<DummyTeleporterRoomFunction>(dummyTeleporter, ec.transform);
+                    dummy.SetUpForDummy();
+                    ids.Add(dummy, i + 1);
+                    toSetup.Add(dummy);
+                }
+            }
+            toSetup.Sort((a, b) => ids[a].CompareTo(ids[b])); // sort by ascending
             for (int i = 0; i < toSetup.Count; i++)
             {
-                toSetup[i].Setup(toSetup, toSetup[i].Room.GetComponent<EditorRegionMarker>().region - 1);
+                if (toSetup[i] is DummyTeleporterRoomFunction) continue;
+                int region = ids[toSetup[i]] - 1;
+                toSetup[i].Setup(toSetup, region);
+                _UpdateButtons.Invoke(_teleporterController.GetValue(toSetup[i]), new object[0]);
             }
+        }
+    }
+
+    public class DummyTeleporterRoomFunction : TeleporterRoomFunction
+    {
+        static FieldInfo _teleporterController = AccessTools.Field(typeof(TeleporterRoomFunction), "teleporterController");
+        static FieldInfo _cooled = AccessTools.Field(typeof(TeleporterController), "cooled");
+
+        public override void Initialize(RoomController room)
+        {
+            throw new InvalidOperationException("DummyTeleporterRoomFunction isn't meant to be used as an actual room function!!");
+        }
+
+        public void SetUpForDummy()
+        {
+            _cooled.SetValue(_teleporterController.GetValue(this), false);
         }
     }
 

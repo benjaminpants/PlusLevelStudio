@@ -35,6 +35,14 @@
 {"key":"Ed_Tool_room_mystery_Desc","value":"All standard doors connected to this will become hidden, only being revealed when the mystery event begins!"},
 {"key":"Ed_Tool_room_wormhole_room_Title","value":"Wormhole Room"},
 {"key":"Ed_Tool_room_wormhole_room_Desc","value":"The usual place you'd place a wormhole.\nCannot be portal postered into."},
+{"key":"Ed_Tool_room_teleportroom_1_Title","value":"Baldi's Lab (Zone 1)"},
+{"key":"Ed_Tool_room_teleportroom_1_Desc","value":"Baldi's lab! Shows up on the map as \"1\". Automatically marked as belonging to Zone 1."},
+{"key":"Ed_Tool_room_teleportroom_2_Title","value":"Baldi's Lab (Zone 2)"},
+{"key":"Ed_Tool_room_teleportroom_2_Desc","value":"Baldi's lab! Shows up on the map as \"2\". Automatically marked as belonging to Zone 2."},
+{"key":"Ed_Tool_room_teleportroom_3_Title","value":"Baldi's Lab (Zone 3)"},
+{"key":"Ed_Tool_room_teleportroom_3_Desc","value":"Baldi's lab! Shows up on the map as \"3\". Automatically marked as belonging to Zone 3."},
+{"key":"Ed_Tool_room_teleportroom_4_Title","value":"Baldi's Lab (Zone 4)"},
+{"key":"Ed_Tool_room_teleportroom_4_Desc","value":"Baldi's lab! Shows up on the map as \"4\". Automatically marked as belonging to Zone 4."},
 
 {"key":"Ed_Tool_door_standard_Title","value":"Standard Door"},
 {"key":"Ed_Tool_door_standard_Desc","value":"It's textures automatically adapt to the room its placed in or by."},
@@ -264,6 +272,8 @@
 {"key":"Ed_Tool_structure_regionlockdowndoor_3_Desc","value":"This lockdown door only opens once all notebooks in zone 3 are collected!\nAppears as a regular lockdown door ingame."},
 {"key":"Ed_Tool_structure_regionlockdowndoor_4_Title","value":"Zone 4 Lockdown Door"},
 {"key":"Ed_Tool_structure_regionlockdowndoor_4_Desc","value":"This lockdown door only opens once all notebooks in zone 4 are collected!\nAppears as a regular lockdown door ingame."},
+{"key":"Ed_Tool_structure_teleporter_Title","value":"Teleporter"},
+{"key":"Ed_Tool_structure_teleporter_Desc","value":"Teleport from any placed teleporters in the map. Can only be placed in Baldi's Lab."},
 
 {"key":"Ed_Tool_structure_powerlever_alarm_Title","value":"Power Alarm"},
 {"key":"Ed_Tool_structure_powerlever_alarm_Desc","value":"This light will turn on when the power goes out due to a breaker. Without a breaker placed, this does nothing."},

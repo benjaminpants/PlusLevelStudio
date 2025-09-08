@@ -1067,6 +1067,11 @@ namespace PlusLevelStudio
             teleporterBuilder.gameObject.ConvertToPrefab(true);
             teleporterBuilder.buttonPanelPre = editorButtonPanel;
             teleporterBuilder.controllerPre = teleporterMachine;
+            GameObject dummyTeleporterObject = new GameObject("DummyTeleporter");
+            dummyTeleporterObject.ConvertToPrefab(true);
+            teleporterBuilder.dummyTeleporter = dummyTeleporterObject.AddComponent<DummyTeleporterRoomFunction>();
+            teleporterBuilder.dummyTeleporter.ReflectionSetVariable("teleporterController", dummyTeleporterObject.AddComponent<DummyTeleporterController>());
+            dummyTeleporterObject.GetComponent<DummyTeleporterController>().enabled = false; // disable
             LevelLoaderPlugin.Instance.structureAliases.Add("teleporters", new LoaderStructureData(teleporterBuilder));
 
             yield return "Creating editor prefab visuals...";

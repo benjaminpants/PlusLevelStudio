@@ -115,14 +115,14 @@ namespace PlusLevelStudio.Editor.Tools
         {
             if (currentMachinePos == null)
             {
-                if (!TeleporterLocation.RoomValid(EditorController.Instance.levelData.RoomFromPos(EditorController.Instance.mouseGridPosition, true))) return false;
+                if (!PositionValid(EditorController.Instance.mouseGridPosition)) return false;
                 currentMachinePos = EditorController.Instance.mouseGridPosition;
                 EditorController.Instance.selector.SelectRotation(currentMachinePos.Value, MachineDirectionClicked);
                 return false;
             }
             if (currentButtonsPos == null)
             {
-                if (currentRoom != EditorController.Instance.levelData.RoomFromPos(currentButtonsPos.Value, true)) return false;
+                if (currentRoom != EditorController.Instance.levelData.RoomFromPos(EditorController.Instance.mouseGridPosition, true)) return false;
                 currentButtonsPos = EditorController.Instance.mouseGridPosition;
                 EditorController.Instance.selector.SelectRotation(currentButtonsPos.Value, ButtonsDirectionClicked);
                 return false;
