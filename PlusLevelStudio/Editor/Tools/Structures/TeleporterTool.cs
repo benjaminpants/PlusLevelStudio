@@ -82,7 +82,7 @@ namespace PlusLevelStudio.Editor.Tools
             TeleporterLocation location = new TeleporterLocation();
             Vector3 worldPos = currentButtonsPos.Value.ToWorld();
             location.position = new Vector2(worldPos.x, worldPos.z);
-            location.direction = dir.ToRotation().eulerAngles.y;
+            location.direction = dir.GetOpposite().ToRotation().eulerAngles.y;
             location.machine = machine;
             machine.myTeleporter = location;
             location.myStructure = structure;
@@ -105,7 +105,7 @@ namespace PlusLevelStudio.Editor.Tools
                 // we only need to check the first one, as if they were in different rooms they would've been destroyed.
                 if (EditorController.Instance.levelData.RoomFromPos(telePos, true) == room)
                 {
-                    return true;
+                    return false;
                 }
             }
             return true;

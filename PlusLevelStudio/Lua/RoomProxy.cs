@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using MoonSharp.Interpreter;
 using MTM101BaldAPI;
+using PlusLevelStudio.Ingame;
 
 namespace PlusLevelStudio.Lua
 {
@@ -20,6 +21,15 @@ namespace PlusLevelStudio.Lua
         public bool IsHall()
         {
             return roomController.type == RoomType.Hall;
+        }
+
+        public int GetZone()
+        {
+            if (roomController.TryGetComponent<EditorRegionMarker>(out EditorRegionMarker marker))
+            {
+                return marker.region;
+            }
+            return 0;
         }
 
         public string category
