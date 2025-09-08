@@ -235,6 +235,7 @@ namespace PlusStudioLevelLoader
             basicObjects.Add("pedestal", objects.First(x => (x.name == "Decor_Pedestal")));
             basicObjects.Add("arrow", objects.First(x => x.name == "Arrow"));
             basicObjects.Add("exitsign", objects.First(x => x.name == "Decor_ExitSign"));
+            basicObjects.Add("johnnysign", objects.First(x => x.name == "JohnnySign"));
 
             // activities
             Activity[] activites = Resources.FindObjectsOfTypeAll<Activity>().Where(x => x.GetInstanceID() >= 0).ToArray();

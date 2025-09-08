@@ -268,12 +268,7 @@ namespace PlusLevelStudio.Editor
 
         public void CloseEditor()
         {
-            Destroy(Singleton<EditorController>.Instance.camera.gameObject);
-            Singleton<InputManager>.Instance.ActivateActionSet("Interface");
-            Singleton<GlobalCam>.Instance.ChangeType(CameraRenderType.Base);
-            Singleton<EditorController>.Instance.customContent.CleanupContent();
-            Singleton<AdditiveSceneManager>.Instance.LoadScene("MainMenu");
-            Singleton<EditorController>.Instance.gameObject.SetActive(false); // to prevent error spam
+            EditorController.Instance.CloseEditor();
         }
 
         public override void SendInteractionMessage(string message, object data)

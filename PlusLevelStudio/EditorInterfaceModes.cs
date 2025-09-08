@@ -287,7 +287,8 @@ namespace PlusLevelStudio
         {
             AddToolsToCategory(modeToModify, "rooms", new EditorTool[]
             {
-                    new RoomTool("hall"),
+                    new OnlyOneRoomTool("hall"),
+                    new SecondaryRoomTool("hall"),
                     new RoomTool("class"),
                     new RoomTool("faculty"),
                     new RoomTool("office"),
@@ -403,6 +404,7 @@ namespace PlusLevelStudio
                 new ObjectToolNoRotation("decor_zoneflag"),
                 new ObjectTool("arrow", 5f),
                 new ObjectToolNoRotation("exitsign", 10f),
+                new ObjectToolNoRotation("johnnysign", 10f),
             }, true);
         }
 

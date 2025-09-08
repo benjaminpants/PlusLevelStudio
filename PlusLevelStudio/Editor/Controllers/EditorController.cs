@@ -18,6 +18,7 @@ using PlusStudioLevelLoader;
 using System.Linq;
 using MidiPlayerTK;
 using PlusLevelStudio.Editor.SettingsUI;
+using UnityEngine.Rendering.Universal;
 
 namespace PlusLevelStudio.Editor
 {
@@ -262,6 +263,24 @@ namespace PlusLevelStudio.Editor
             return tex;
         }
 
+        public void PreFileLoadMods(EditorLevelData data)
+        {
+            for (int i = 0; i < LevelStudioPlugin.Instance.editorLevelPreLoadCallbacks.Count; i++)
+            {
+                LevelStudioPlugin.Instance.editorLevelPreLoadCallbacks[i](currentMode, data);
+            }
+        }
+
+        /// <summary>
+        /// Called right before a file is processed by the editor.
+        /// Use this call to remove any obsolete content.
+        /// It is advised to also call PreFileLoadMods as well.
+        /// </summary>
+        public virtual void PreFileLoad()
+        {
+            PreFileLoadMods(levelData);
+        }
+
         public void LoadEditorLevelAndMeta(EditorFileContainer file)
         {
             currentFile = file;
@@ -281,7 +300,17 @@ namespace PlusLevelStudio.Editor
         public bool LoadEditorLevelFromFile(string path)
         {
             BinaryReader reader = new BinaryReader(new FileStream(path, FileMode.Open, FileAccess.Read));
-            EditorFileContainer file = EditorFileContainer.ReadMindful(reader);
+            EditorFileContainer file;
+            try
+            {
+                file = EditorFileContainer.ReadMindful(reader);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+                TriggerError(string.Format(LocalizationManager.Instance.GetLocalizedText("Ed_Exception_FileLoad"), e.Message), true);
+                return false;
+            }
             if (file.meta == null)
             {
                 file.meta = new EditorFileMeta();
@@ -289,7 +318,22 @@ namespace PlusLevelStudio.Editor
             }
             if (file.meta.editorMode == currentMode.id)
             {
-                LoadEditorLevelAndMeta(file);
+                try
+                {
+                    LoadEditorLevelAndMeta(file);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError(e);
+                    if (!(e is EditorLoadException))
+                    {
+                        TriggerError(string.Format(LocalizationManager.Instance.GetLocalizedText("Ed_Exception_Unknown"), e.Message), true);
+                        return false;
+                    }
+                    EditorLoadException exception = (EditorLoadException)e;
+                    TriggerError(exception.Message, true);
+                    return false;
+                }
             }
             else
             {
@@ -331,59 +375,68 @@ namespace PlusLevelStudio.Editor
                 RemoveVisual(item);
             }
             levelData = newData;
+            PreFileLoad();
             RegenerateGridAndCells();
-            foreach (LightPlacement item in levelData.lights)
+            try
             {
-                AddVisual(item);
+                foreach (LightPlacement item in levelData.lights)
+                {
+                    AddVisual(item);
+                }
+                foreach (DoorLocation item in levelData.doors)
+                {
+                    AddVisual(item);
+                }
+                foreach (WindowLocation item in levelData.windows)
+                {
+                    AddVisual(item);
+                }
+                foreach (ExitLocation item in levelData.exits)
+                {
+                    AddVisual(item);
+                }
+                foreach (ItemPlacement item in levelData.items)
+                {
+                    AddVisual(item);
+                }
+                foreach (ItemSpawnPlacement item in levelData.itemSpawns)
+                {
+                    AddVisual(item);
+                }
+                foreach (BasicObjectLocation item in levelData.objects)
+                {
+                    AddVisual(item);
+                }
+                foreach (EditorRoom room in levelData.rooms)
+                {
+                    if (room.activity == null) continue;
+                    AddVisual(room.activity);
+                }
+                foreach (StructureLocation item in levelData.structures)
+                {
+                    AddVisual(item);
+                }
+                foreach (NPCPlacement item in levelData.npcs)
+                {
+                    AddVisual(item);
+                }
+                foreach (PosterPlacement item in levelData.posters)
+                {
+                    AddVisual(item);
+                }
+                foreach (WallLocation item in levelData.walls)
+                {
+                    AddVisual(item);
+                }
+                foreach (MarkerLocation item in levelData.markers)
+                {
+                    AddVisual(item);
+                }
             }
-            foreach (DoorLocation item in levelData.doors)
+            catch (Exception e)
             {
-                AddVisual(item);
-            }
-            foreach (WindowLocation item in levelData.windows)
-            {
-                AddVisual(item);
-            }
-            foreach (ExitLocation item in levelData.exits)
-            {
-                AddVisual(item);
-            }
-            foreach (ItemPlacement item in levelData.items)
-            {
-                AddVisual(item);
-            }
-            foreach (ItemSpawnPlacement item in levelData.itemSpawns)
-            {
-                AddVisual(item);
-            }
-            foreach (BasicObjectLocation item in levelData.objects)
-            {
-                AddVisual(item);
-            }
-            foreach (EditorRoom room in levelData.rooms)
-            {
-                if (room.activity == null) continue;
-                AddVisual(room.activity);
-            }
-            foreach (StructureLocation item in levelData.structures)
-            {
-                AddVisual(item);
-            }
-            foreach (NPCPlacement item in levelData.npcs)
-            {
-                AddVisual(item);
-            }
-            foreach (PosterPlacement item in levelData.posters)
-            {
-                AddVisual(item);
-            }
-            foreach (WallLocation item in levelData.walls)
-            {
-                AddVisual(item);
-            }
-            foreach (MarkerLocation item in levelData.markers)
-            {
-                AddVisual(item);
+                Debug.LogError(e);
+                throw new EditorLoadException("Ed_Exception_NonSpecific");
             }
             RefreshCells(false);
             SetupVisualsForAllRooms(); // need to do this first before lighting
@@ -848,10 +901,11 @@ namespace PlusLevelStudio.Editor
             handler.OnNo = onNo;
         }
 
-        public void CreateUIOnePopup(string text)
+        public void CreateUIOnePopup(string text, Action onClose)
         {
             EditorPopupExchangeHandler handler = CreateUI<EditorPopupExchangeHandler>("1ChoicePopup");
             handler.transform.Find("Title").GetComponent<TextMeshProUGUI>().text = text;
+            handler.OnNo = onClose;
         }
 
         public EditorUIFileBrowser CreateUIFileBrowser(string path, string startingFile, string extension, bool allowNonExistantFiles, Func<string, bool> onSubmit)
@@ -989,10 +1043,28 @@ namespace PlusLevelStudio.Editor
             }
         }
 
-        public void TriggerError(string errorString)
+        public void TriggerError(string errorString, bool fatal = false)
         {
             Debug.LogWarning("Encountered error: " + errorString + "!");
-            CreateUIOnePopup(LocalizationManager.Instance.GetLocalizedText(errorString)); // placeholder
+            // placeholder?
+            if (!fatal)
+            {
+                CreateUIOnePopup(LocalizationManager.Instance.GetLocalizedText(errorString), null);
+            }
+            else
+            {
+                CreateUIOnePopup(LocalizationManager.Instance.GetLocalizedText(errorString), CloseEditor);
+            }
+        }
+
+        public void CloseEditor()
+        {
+            Destroy(camera.gameObject);
+            Singleton<InputManager>.Instance.ActivateActionSet("Interface");
+            Singleton<GlobalCam>.Instance.ChangeType(CameraRenderType.Base);
+            customContent.CleanupContent();
+            Singleton<AdditiveSceneManager>.Instance.LoadScene("MainMenu");
+            gameObject.SetActive(false); // to prevent error spam
         }
 
         /// <summary>

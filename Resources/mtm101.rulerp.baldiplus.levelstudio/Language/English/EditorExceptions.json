@@ -1,0 +1,10 @@
+{"items":[
+
+{"key":"Ed_Exception_MissingElement","value":"Missing {0} \"{1}\"!"},
+{"key":"Ed_Exception_FileLoad","value":"File Error:{0}\nCheck console/Player.log for more info!"},
+{"key":"Ed_Exception_UnknownStructure","value":"Unknown structure: \"{0}\""},
+{"key":"Ed_Exception_Visual","value":"Error visualizing {0} of type {1}."},
+{"key":"Ed_Exception_Unknown","value":"Uncaught Error:{0}\nCheck console/Player.log for more info!"},
+{"key":"Ed_Exception_NonSpecific","value":"Error during loading. Possible missing objects?\nCheck console/Player.log for more info."}
+
+]}

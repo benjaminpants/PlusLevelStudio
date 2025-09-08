@@ -11,8 +11,10 @@
 {"key":"Ed_Tool_wallremover_Title","value":"Wall Remover Tool"},
 {"key":"Ed_Tool_wallremover_Desc","value":"Click anywhere with any rotation to remove a wall!"},
 
-{"key":"Ed_Tool_room_hall_Title","value":"Hallway"},
-{"key":"Ed_Tool_room_hall_Desc","value":"The building block of any level! There can only be one room of this type in a level!"},
+{"key":"Ed_Tool_room_hall_Title","value":"Main Hallway"},
+{"key":"Ed_Tool_room_hall_Desc","value":"The main building block of any level, required for some NPCs to behave properly."},
+{"key":"Ed_Tool_room_hall_secondary_Title","value":"Extra Hallway"},
+{"key":"Ed_Tool_room_hall_secondary_Desc","value":"Place extra hallways using this tool. <b>Use minimally, as this can cause bugs or weird behavior!"},
 {"key":"Ed_Tool_room_class_Title","value":"Classroom"},
 {"key":"Ed_Tool_room_class_Desc","value":"The intended location to place notebooks."},
 {"key":"Ed_Tool_room_faculty_Title","value":"Faculty"},
@@ -209,6 +211,8 @@
 {"key":"Ed_Tool_object_ceilingfan_Desc","value":"A fan, but for the ceiling!"},
 {"key":"Ed_Tool_object_exitsign_Title","value":"Exit Sign"},
 {"key":"Ed_Tool_object_exitsign_Desc","value":"An exit sign... who knows if it actually indicates the exit."},
+{"key":"Ed_Tool_object_johnnysign_Title","value":"Johnny Sign"},
+{"key":"Ed_Tool_object_johnnysign_Desc","value":"A friendly spinning head for a friendly non-spinning shopkeeper."},
 {"key":"Ed_Tool_object_cafeteriatable_Title","value":"Cafeteria Table"},
 {"key":"Ed_Tool_object_cafeteriatable_Desc","value":"Perfect for Cafeterias or other overly sized rooms!"},
 

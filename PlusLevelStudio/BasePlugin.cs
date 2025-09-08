@@ -85,6 +85,8 @@ namespace PlusLevelStudio
 
         private Dictionary<Texture2D, Sprite> smallIconsFromTextures = new Dictionary<Texture2D, Sprite>();
 
+        public List<Action<EditorMode, EditorLevelData>> editorLevelPreLoadCallbacks = new List<Action<EditorMode, EditorLevelData>>();
+
         private Texture2D baldiSaysTexture;
         private Texture2D chalkTexture;
         private Texture2D bulletinTexture;
@@ -1207,6 +1209,7 @@ namespace PlusLevelStudio
             EditorInterface.AddObjectVisualWithCustomCapsuleCollider("plant", LevelLoaderPlugin.Instance.basicObjects["plant"], 1f, 7f, 1, Vector3.up * 3.5f);
             EditorInterface.AddObjectVisualWithCustomBoxCollider("ceilingfan", LevelLoaderPlugin.Instance.basicObjects["ceilingfan"], new Vector3(10f,2f,10f), Vector3.up * 9f);
             EditorInterface.AddObjectVisualWithCustomSphereCollider("exitsign", LevelLoaderPlugin.Instance.basicObjects["exitsign"], 1f, Vector3.down);
+            EditorInterface.AddObjectVisualWithCustomSphereCollider("johnnysign", LevelLoaderPlugin.Instance.basicObjects["johnnysign"], 2f, Vector3.down * 2);
 
             EditorInterface.AddObjectVisual("wormhole", editorWormhole.gameObject, true);
             LevelLoaderPlugin.Instance.basicObjects.Add("wormhole", editorWormhole.gameObject);
