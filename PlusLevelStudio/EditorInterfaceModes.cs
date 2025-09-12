@@ -47,6 +47,9 @@ namespace PlusLevelStudio
             }
             AddToolsToCategory(modeToModify, "tools", new EditorTool[]
             {
+                new CellMarkerTool("entityunsafe"),
+                new CellMarkerTool("eventunsafe"),
+                new CellMarkerTool("hidden"),
                 new WallTool(true),
                 new WallTool(false),
             }, true);

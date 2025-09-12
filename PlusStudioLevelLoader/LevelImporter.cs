@@ -337,6 +337,7 @@ namespace PlusStudioLevelLoader
                         data.AddCellCoverage(foundCells[j].pos, (CellCoverage)level.coverage[foundCells[j].pos.x, foundCells[j].pos.z]);
                     }
                 }
+                data.offLimits = (asset.tile.Count(x => (x.roomId == i) && (x.type != 16)) == data.secretCells.Count) && (data.secretCells.Count != 0);
                 asset.rooms.Add(data);
             }
             asset.spawnDirection = (Direction)level.spawnDirection;

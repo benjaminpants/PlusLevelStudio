@@ -594,9 +594,6 @@ namespace PlusLevelStudio
             {
                 new PointTechnicalMarkerTool("potentialdoor"),
                 new PointTechnicalMarkerTool("forceddoor"),
-                new CellMarkerTool("entityunsafe"),
-                new CellMarkerTool("eventunsafe"),
-                new CellMarkerTool("hidden"),
             }, true);
             EditorInterfaceModes.AddVanillaToolTools(roomsMode, false);
 
