@@ -134,7 +134,7 @@ namespace PlusLevelStudio.Editor.SettingsUI
             EditorRoom[] nonMatchingRooms = EditorController.Instance.levelData.rooms.Where(x => 
             ((x.textureContainer.floor != myRoom.textureContainer.floor) || 
             (x.textureContainer.wall != myRoom.textureContainer.wall) || 
-            (x.textureContainer.floor != myRoom.textureContainer.floor)) && (x != myRoom) && (x.roomType == myRoom.roomType)).ToArray();
+            (x.textureContainer.ceiling != myRoom.textureContainer.ceiling)) && (x != myRoom) && (x.roomType == myRoom.roomType)).ToArray();
             if ((nonMatchingRooms.Length > 0) && !confirm)
             {
                 EditorController.Instance.CreateUIPopup(String.Format(LocalizationManager.Instance.GetLocalizedText("Ed_Menu_RoomMassChangeWarning"), nonMatchingRooms.Length), () => { ApplyToAllRooms(true); }, () => { });
