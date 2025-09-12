@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Editor\Classes\Markers\SecretCellMarker.cs~RF1f7f04d.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\PlusStudioLevelFormat\PlusStudioLevelFormat.csproj" />
     <ProjectReference Include="..\PlusStudioLevelLoader\PlusStudioLevelLoader.csproj" />
   </ItemGroup>

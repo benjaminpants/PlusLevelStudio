@@ -552,7 +552,7 @@ namespace PlusLevelStudio
                     "items",
                     "tools"
                 },
-                defaultTools = new string[] { "room_class", "room_faculty", "room_office", "technical_potentialdoor", "technical_lightspot", "technical_nosafe", "itemspawn_100", "merge", "delete" },
+                defaultTools = new string[] { "room_class", "room_faculty", "room_office", "technical_potentialdoor", "technical_lightspot", "marker_eventunsafe", "itemspawn_100", "merge", "delete" },
                 vanillaComplaint = true,
                 allowOutOfRoomObjects = false,
                 caresAboutSpawn = false,
@@ -574,7 +574,9 @@ namespace PlusLevelStudio
             };
 
             EditorInterfaceModes.AddVanillaRooms(roomsMode, false);
-            roomsMode.availableTools["rooms"].RemoveAt(roomsMode.availableTools["rooms"].FindIndex(x => x.id == "room_hall")); // because halls aren't supported quite yet
+            roomsMode.availableTools["rooms"].RemoveAt(roomsMode.availableTools["rooms"].FindIndex(x => x.id == "room_hall"));
+            roomsMode.availableTools["rooms"].RemoveAt(roomsMode.availableTools["rooms"].FindIndex(x => x.id == "room_hall_secondary"));
+            roomsMode.availableTools["rooms"].Insert(0, new RoomTool("hall"));
             EditorInterfaceModes.AddVanillaObjects(roomsMode);
             EditorInterfaceModes.AddVanillaActivities(roomsMode, false);
             EditorInterfaceModes.AddToolsToCategory(roomsMode, "items", new EditorTool[]
@@ -585,14 +587,16 @@ namespace PlusLevelStudio
             }, true);
             EditorInterfaceModes.AddVanillaItems(roomsMode);
             EditorInterfaceModes.AddVanillaPosters(roomsMode);
-            EditorInterfaceModes.AddToolToCategory(roomsMode, "lights", new PointTechnicalStructureTool("lightspot"), true);
+            EditorInterfaceModes.AddToolToCategory(roomsMode, "lights", new PointTechnicalMarkerTool("lightspot"), true);
             EditorInterfaceModes.AddVanillaLights(roomsMode);
 
             EditorInterfaceModes.AddToolsToCategory(roomsMode, "tools", new EditorTool[]
             {
-                new PointTechnicalStructureTool("potentialdoor"),
-                new PointTechnicalStructureTool("forceddoor"),
-                new PointTechnicalStructureTool("nosafe"),
+                new PointTechnicalMarkerTool("potentialdoor"),
+                new PointTechnicalMarkerTool("forceddoor"),
+                new CellMarkerTool("entityunsafe"),
+                new CellMarkerTool("eventunsafe"),
+                new CellMarkerTool("hidden"),
             }, true);
             EditorInterfaceModes.AddVanillaToolTools(roomsMode, false);
 
@@ -697,10 +701,20 @@ namespace PlusLevelStudio
             potentialDoorMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "PotentialDoor.png"));
             potentialDoorMat.SetTexture("_LightMap", lightmaps["white"]);
 
-            Material forcedUnsafeMat = new Material(assetMan.Get<Material>("tileAlpha"));
-            forcedUnsafeMat.name = "ForcedUnsafeMat";
-            forcedUnsafeMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "ForcedUnsafeCell.png"));
-            forcedUnsafeMat.SetTexture("_LightMap", lightmaps["white"]);
+            Material forcedEntityUnsafeMat = new Material(assetMan.Get<Material>("tileAlpha"));
+            forcedEntityUnsafeMat.name = "ForcedEntityUnsafeMat";
+            forcedEntityUnsafeMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "ForcedEntityUnsafeCell.png"));
+            forcedEntityUnsafeMat.SetTexture("_LightMap", lightmaps["white"]);
+
+            Material forcedEventUnsafeMat = new Material(assetMan.Get<Material>("tileAlpha"));
+            forcedEventUnsafeMat.name = "ForcedEventUnsafeMat";
+            forcedEventUnsafeMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "ForcedEventUnsafeCell.png"));
+            forcedEventUnsafeMat.SetTexture("_LightMap", lightmaps["white"]);
+
+            Material hiddenCellMat = new Material(assetMan.Get<Material>("tileAlpha"));
+            hiddenCellMat.name = "HiddenCellMat";
+            hiddenCellMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "HiddenCell.png"));
+            hiddenCellMat.SetTexture("_LightMap", lightmaps["white"]);
 
             Material floorRadMat = new Material(assetMan.Get<Material>("tileAlpha"));
             floorRadMat.name = "FloorRadiusMap";
@@ -1639,27 +1653,45 @@ namespace PlusLevelStudio
             GameObject potentialDoorVisual = GameObject.Instantiate(genericPlaneVisual, MTM101BaldiDevAPI.prefabTransform);
             potentialDoorVisual.name = "PotentialDoorPrefab";
             potentialDoorVisual.GetComponentInChildren<MeshRenderer>().material = potentialDoorMat;
-            genericStructureDisplays.Add("technical_potentialdoor", potentialDoorVisual);
+            genericMarkerDisplays.Add("potentialdoor", potentialDoorVisual);
 
             GameObject forcedDoorVisual = GameObject.Instantiate(genericPlaneVisual, MTM101BaldiDevAPI.prefabTransform);
             forcedDoorVisual.name = "ForcedDoorPrefab";
             forcedDoorVisual.GetComponentInChildren<MeshRenderer>().material = forcedDoorMat;
-            genericStructureDisplays.Add("technical_forceddoor", forcedDoorVisual);
+            genericMarkerDisplays.Add("forceddoor", forcedDoorVisual);
 
-            GameObject unsafeCellVisual = GameObject.Instantiate(genericPlaneVisual, MTM101BaldiDevAPI.prefabTransform);
-            unsafeCellVisual.name = "UnsafeCellPrefab";
-            unsafeCellVisual.GetComponentInChildren<MeshRenderer>().material = forcedUnsafeMat;
-            genericStructureDisplays.Add("technical_nosafe", unsafeCellVisual);
-            structureTypes.Add("technical_potentialdoor", typeof(PotentialDoorLocation));
-            structureTypes.Add("technical_forceddoor", typeof(ForcedDoorLocation));
-            structureTypes.Add("technical_nosafe", typeof(UnsafeCellLocation));
-            structureTypes.Add("technical_lightspot", typeof(RoomLightLocation));
+            GameObject entityUnsafePrefab = GameObject.Instantiate(genericPlaneVisual, MTM101BaldiDevAPI.prefabTransform);
+            entityUnsafePrefab.name = "UnsafeEntityCellPrefab";
+            entityUnsafePrefab.GetComponentInChildren<MeshRenderer>().material = forcedEntityUnsafeMat;
+            genericMarkerDisplays.Add("entityunsafe", entityUnsafePrefab);
+
+            GameObject eventUnsafePrefab = GameObject.Instantiate(genericPlaneVisual, MTM101BaldiDevAPI.prefabTransform);
+            eventUnsafePrefab.name = "UnsafeEventCellPrefab";
+            eventUnsafePrefab.GetComponentInChildren<MeshRenderer>().material = forcedEventUnsafeMat;
+            genericMarkerDisplays.Add("eventunsafe", eventUnsafePrefab);
+
+            GameObject hiddenCellPrefab = GameObject.Instantiate(genericPlaneVisual, MTM101BaldiDevAPI.prefabTransform);
+            hiddenCellPrefab.name = "HiddenCellPrefab";
+            hiddenCellPrefab.GetComponentInChildren<MeshRenderer>().material = hiddenCellMat;
+            genericMarkerDisplays.Add("hidden", hiddenCellPrefab);
+
+            markerTypes.Add("potentialdoor", typeof(PotentialDoorLocation));
+            markerTypes.Add("forceddoor", typeof(ForcedDoorLocation));
+            markerTypes.Add("lightspot", typeof(RoomLightLocation));
+            markerTypes.Add("entityunsafe", typeof(EntityUnsafeCellLocation));
+            markerTypes.Add("eventunsafe", typeof(EventUnsafeCellLocation));
+            markerTypes.Add("hidden", typeof(HiddenCellMarker));
+
+            structureTypes.Add("technical_potentialdoor", typeof(LegacyRoomTechnicalStructure));
+            structureTypes.Add("technical_forceddoor", typeof(LegacyRoomTechnicalStructure));
+            structureTypes.Add("technical_nosafe", typeof(LegacyRoomTechnicalStructure));
+            structureTypes.Add("technical_lightspot", typeof(LegacyRoomTechnicalStructure));
 
             GameObject technicalLightVisual = GameObject.Instantiate(lightDisplayObject, MTM101BaldiDevAPI.prefabTransform);
             technicalLightVisual.name = "TechnicalLightVisual";
             DestroyImmediate(technicalLightVisual.GetComponentInChildren<SettingsComponent>());
             technicalLightVisual.GetComponentInChildren<SpriteRenderer>().sprite = AssetLoader.SpriteFromMod(this, Vector2.one / 2f, 32f, "Editor", "LightbulbRoom.png");
-            genericStructureDisplays.Add("technical_lightspot", technicalLightVisual);
+            genericMarkerDisplays.Add("lightspot", technicalLightVisual);
 
             // okay we're done with this
             Destroy(genericPlaneVisual);

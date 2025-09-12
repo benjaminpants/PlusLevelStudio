@@ -11,6 +11,43 @@ namespace PlusLevelStudio.Editor
 {
     public class RoomEditorController : EditorController
     {
+        public override void PreFileLoad()
+        {
+            Dictionary<string, string> obsoleteToMarkerDict = new Dictionary<string, string>()
+            {
+                { "technical_potentialdoor", "potentialdoor"},
+                { "technical_forceddoor", "forceddoor" },
+                { "technical_nosafe", null}, // we have a special case to handle this
+                { "technical_lightspot", "lightspot" }
+            };
+            bool converted = false;
+            for (int i = (levelData.structures.Count - 1); i >= 0; i--)
+            {
+                if (obsoleteToMarkerDict.ContainsKey(levelData.structures[i].type))
+                {
+                    converted = true;
+                    LegacyRoomTechnicalStructure old = (LegacyRoomTechnicalStructure)levelData.structures[i];
+                    levelData.structures.RemoveAt(i);
+                    if (old.type != "technical_nosafe")
+                    {
+                        RoomCellMarker marker = (RoomCellMarker)LevelStudioPlugin.Instance.ConstructMarkerOfType(obsoleteToMarkerDict[old.type]);
+                        marker.position = old.position;
+                        levelData.markers.Add(marker);
+                    }
+                    else
+                    {
+                        levelData.markers.Add(new EntityUnsafeCellLocation() { position = old.position });
+                        levelData.markers.Add(new EventUnsafeCellLocation() { position = old.position });
+                    }
+                }
+            }
+            base.PreFileLoad();
+            if (converted)
+            {
+                CreateUIOnePopup(LocalizationManager.Instance.GetLocalizedText("Ed_Menu_FileConverted"), null);
+            }
+        }
+
         public override void Export()
         {
             List<BaldiRoomAsset> roomAssets = new List<BaldiRoomAsset>();
@@ -18,7 +55,7 @@ namespace PlusLevelStudio.Editor
 
 
             // find the technical structures
-            List<RoomTechnicalStructureBase> technicalStuff = levelData.structures.Where(x => x is RoomTechnicalStructureBase).Select(x => x as RoomTechnicalStructureBase).ToList();
+            List<RoomCellMarker> markers = levelData.markers.Where(x => x is RoomCellMarker).Select(x => x as RoomCellMarker).ToList();
 
             for (int i = 0; i < baseLevel.rooms.Count; i++)
             {
@@ -128,11 +165,11 @@ namespace PlusLevelStudio.Editor
                     roomAsset.activity.position = new UnityVector3(room.activity.position.x - (offset.x * 10f), room.activity.position.y, room.activity.position.z - (offset.z - 10f));
                 }
                 roomAsset.activity = room.activity;
-                for (int j = 0; j < technicalStuff.Count; j++)
+                for (int j = 0; j < markers.Count; j++)
                 {
-                    if (technicalStuff[j].CaresAboutRoom(levelData, baseLevel, offset, roomAsset))
+                    if (markers[j].CaresAboutRoom(levelData, baseLevel, offset, roomAsset))
                     {
-                        technicalStuff[j].CompileIntoRoom(levelData, baseLevel, offset, roomAsset);
+                        markers[j].CompileIntoRoom(levelData, baseLevel, offset, roomAsset);
                     }
                 }
                 roomAsset.name += "_" + i + "_" + roomAsset.cells.Count + "_" + (roomAsset.activity == null ? "null" : roomAsset.activity.type);

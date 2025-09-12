@@ -555,6 +555,7 @@ namespace PlusLevelStudio.Editor
             // now handle anything that might change light
             HandleLightChanges(levelData.exits);
             HandleLightChanges(levelData.structures);
+            HandleLightChanges(levelData.markers);
             roomVisuals.ForEach(x => x.ModifyLightsForEditor(workerEc));
             UpdateStructuresWithReason(PotentialStructureUpdateReason.LightChange);
             workerEc.UpdateQueuedLightChanges();
@@ -987,9 +988,9 @@ namespace PlusLevelStudio.Editor
         {
             for (int i = 0; i < hotSlots.Length; i++)
             {
+                hotSlots[i].currentTool = null;
                 if (i >= tools.Length)
                 {
-                    hotSlots[i].currentTool = null;
                     continue;
                 }
                 foreach (List<EditorTool> list in currentMode.availableTools.Values)
@@ -1474,7 +1475,14 @@ namespace PlusLevelStudio.Editor
             currentFile.meta.cameraRotation = transform.rotation;
             for (int i = 0; i < hotSlots.Length; i++)
             {
-                currentFile.meta.toolbarTools[i] = hotSlots[i].currentTool.id;
+                if (hotSlots[i].currentTool == null)
+                {
+                    currentFile.meta.toolbarTools[i] = "";
+                }
+                else
+                {
+                    currentFile.meta.toolbarTools[i] = hotSlots[i].currentTool.id;
+                }
             }
         }
 

@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace PlusLevelStudio.Editor
 {
-    public abstract class MarkerLocation : IEditorDeletable, IEditorVisualizable
+    public abstract class MarkerLocation : IEditorDeletable, IEditorVisualizable, IEditorCellModifier
     {
         public string type;
         public abstract void CleanupVisual(GameObject visualObject);
@@ -60,5 +60,15 @@ namespace PlusLevelStudio.Editor
         public abstract void UpdateVisual(GameObject visualObject);
 
         public abstract bool ValidatePosition(EditorLevelData data);
+
+        public virtual void ModifyLightsForEditor(EnvironmentController workerEc)
+        {
+
+        }
+
+        public void ModifyCells(EditorLevelData data, bool forEditor)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

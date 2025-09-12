@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace PlusLevelStudio.Editor
 {
-    public class PotentialDoorLocation : RoomTechnicalStructurePoint
+    public class PotentialDoorLocation : RoomCellMarker
     {
         public override void CompileIntoRoom(EditorLevelData data, BaldiLevel compiled, IntVector2 offset, BaldiRoomAsset asset)
         {
@@ -14,7 +14,7 @@ namespace PlusLevelStudio.Editor
         }
     }
 
-    public class ForcedDoorLocation : RoomTechnicalStructurePoint
+    public class ForcedDoorLocation : RoomCellMarker
     {
         public override void CompileIntoRoom(EditorLevelData data, BaldiLevel compiled, IntVector2 offset, BaldiRoomAsset asset)
         {
@@ -22,24 +22,7 @@ namespace PlusLevelStudio.Editor
         }
     }
 
-    public class UnsafeCellLocation : RoomTechnicalStructurePoint
-    {
-        public override void CompileIntoRoom(EditorLevelData data, BaldiLevel compiled, IntVector2 offset, BaldiRoomAsset asset)
-        {
-            int indexOfSafeCell = asset.entitySafeCells.FindIndex(0, x => x == (position - offset).ToByte());
-            if (indexOfSafeCell != -1)
-            {
-                asset.entitySafeCells.RemoveAt(indexOfSafeCell);
-            }
-            indexOfSafeCell = asset.eventSafeCells.FindIndex(0, x => x == (position - offset).ToByte());
-            if (indexOfSafeCell != -1)
-            {
-                asset.eventSafeCells.RemoveAt(indexOfSafeCell);
-            }
-        }
-    }
-
-    public class RoomLightLocation : RoomTechnicalStructurePoint
+    public class RoomLightLocation : RoomCellMarker
     {
         public override void ModifyLightsForEditor(EnvironmentController workerEc)
         {
