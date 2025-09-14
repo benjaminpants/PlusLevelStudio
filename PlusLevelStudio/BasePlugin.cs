@@ -577,6 +577,9 @@ namespace PlusLevelStudio
             roomsMode.availableTools["rooms"].RemoveAt(roomsMode.availableTools["rooms"].FindIndex(x => x.id == "room_hall"));
             roomsMode.availableTools["rooms"].RemoveAt(roomsMode.availableTools["rooms"].FindIndex(x => x.id == "room_hall_secondary"));
             roomsMode.availableTools["rooms"].Insert(0, new RoomTool("hall"));
+            int oldMysteryIndex = roomsMode.availableTools["rooms"].FindIndex(x => x.id == "room_mystery");
+            roomsMode.availableTools["rooms"].RemoveAt(oldMysteryIndex);
+            roomsMode.availableTools["rooms"].Insert(oldMysteryIndex, new RoomTool("mystery"));
             EditorInterfaceModes.AddVanillaObjects(roomsMode);
             EditorInterfaceModes.AddVanillaActivities(roomsMode, false);
             EditorInterfaceModes.AddToolsToCategory(roomsMode, "items", new EditorTool[]
