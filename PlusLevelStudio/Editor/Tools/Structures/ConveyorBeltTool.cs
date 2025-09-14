@@ -96,8 +96,8 @@ namespace PlusLevelStudio.Editor.Tools
             button.direction = dir;
             if (!button.ValidatePosition(EditorController.Instance.levelData, false))
             {
-                EditorController.Instance.RemoveVisual(currentStructure);
-                EditorController.Instance.levelData.structures.Remove(currentStructure);
+                //EditorController.Instance.RemoveVisual(currentStructure);
+                //EditorController.Instance.levelData.structures.Remove(currentStructure);
                 EditorController.Instance.selector.SelectRotation(buttonPos.Value, PlaceButton);
                 return;
             }

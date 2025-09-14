@@ -22,6 +22,7 @@ namespace PlusStudioLevelLoader
             asset.doorMats = rc.doorMat;
             asset.roomFunctionContainer = rc.container;
             asset.color = rc.color;
+            asset.mapMaterial = rc.mapMaterial;
             asset.florTex = LevelLoaderPlugin.RoomTextureFromAlias(info.textureContainer.floor);
             asset.wallTex = LevelLoaderPlugin.RoomTextureFromAlias(info.textureContainer.wall);
             asset.ceilTex = LevelLoaderPlugin.RoomTextureFromAlias(info.textureContainer.ceiling);
@@ -189,7 +190,7 @@ namespace PlusStudioLevelLoader
         }
 
         /// <summary>
-        /// Creates an RoomAsset from the specified BaldiRoomAsset.
+        /// Creates an RoomAsset from the specified BaldiRoomAsset. You almost never need to use this version.
         /// </summary>
         /// <param name="info">The BaldiRoomAsset to construct the RoomAsset from</param>
         /// <param name="addPadding">If true, padding will be added in the form of secret and blocked cells, commonly used for non-square special rooms.</param>
