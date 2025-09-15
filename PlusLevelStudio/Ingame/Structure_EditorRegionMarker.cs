@@ -12,7 +12,7 @@ namespace PlusLevelStudio.Ingame
             base.Load(data);
             for (int i = 0; i < data.Count; i++)
             {
-                if (ec.rooms[data[i].position.x].gameObject.GetComponent<EditorRegionMarker>()) return;
+                if (ec.rooms[data[i].position.x].gameObject.GetComponent<EditorRegionMarker>()) continue;
                 ec.rooms[data[i].position.x].gameObject.AddComponent<EditorRegionMarker>().region = data[i].position.z;
             }
         }
