@@ -160,11 +160,11 @@ namespace PlusLevelStudio.Editor
                         });
                     }
                 }
+                roomAsset.activity = room.activity;
                 if (roomAsset.activity != null)
                 {
-                    roomAsset.activity.position = new UnityVector3(room.activity.position.x - (offset.x * 10f), room.activity.position.y, room.activity.position.z - (offset.z * 10f));
+                    roomAsset.activity.position = new UnityVector3(roomAsset.activity.position.x - (offset.x * 10f), roomAsset.activity.position.y, roomAsset.activity.position.z - (offset.z * 10f));
                 }
-                roomAsset.activity = room.activity;
                 for (int j = 0; j < markers.Count; j++)
                 {
                     if (markers[j].CaresAboutRoom(levelData, baseLevel, offset, roomAsset))
