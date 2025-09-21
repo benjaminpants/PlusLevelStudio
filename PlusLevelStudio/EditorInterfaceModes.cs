@@ -318,7 +318,8 @@ namespace PlusLevelStudio
         /// Adds the vanilla objects to the specified editor mode.
         /// </summary>
         /// <param name="modeToModify"></param>
-        public static void AddVanillaObjects(EditorMode modeToModify)
+        /// /// <param name="includeNonVanillaComplaintTools">If true, includes tools that require editor exclusive rooms</param>
+        public static void AddVanillaObjects(EditorMode modeToModify, bool includeNonVanillaComplaintTools)
         {
             AddToolsToCategory(modeToModify, "objects", new EditorTool[]
             {
@@ -408,7 +409,16 @@ namespace PlusLevelStudio
                 new ObjectTool("arrow", 5f),
                 new ObjectToolNoRotation("exitsign", 10f),
                 new ObjectToolNoRotation("johnnysign", 10f),
+                new ObjectTool("mysterymarks"),
             }, true);
+            if (!includeNonVanillaComplaintTools) return;
+            List<EditorTool> qMarkTools = new List<EditorTool>();
+            qMarkTools.Add(new ScatteredObjectsTool("qmarks", 1, 2, new Bounds(new Vector3(0f,5f,0f), new Vector3(9f,7f,9f)), new string[] { "qmark0", "qmark1", "qmark2", "qmark3", "qmark4", "qmark5", "qmark6", "qmark7"}, false));
+            for (int i = 0; i <= 7; i++)
+            {
+                qMarkTools.Add(new ObjectToolNoRotation("qmark" + i, LevelLoaderPlugin.Instance.basicObjects["qmark" + i].GetComponent<SpriteRenderer>().sprite, 5f));
+            }
+            InsertToolsInCategory(modeToModify, "objects", "mysterymarks", qMarkTools);
         }
 
         /// <summary>

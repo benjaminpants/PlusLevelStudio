@@ -28,7 +28,7 @@ using PlusLevelStudio.Editor.Tools.Customs;
 
 namespace PlusLevelStudio
 {
-    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudio", "Plus Level Studio", "1.3.1.3")]
+    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudio", "Plus Level Studio", "1.3.2.0")]
     [BepInDependency("mtm101.rulerp.bbplus.baldidevapi")]
     [BepInDependency("mtm101.rulerp.baldiplus.levelstudioloader")]
     public class LevelStudioPlugin : BaseUnityPlugin
@@ -45,7 +45,7 @@ namespace PlusLevelStudio
         public const int editorInteractableLayer = 13; // CollidableEntities
         public const int editorInteractableLayerMask = 1 << editorInteractableLayer;
 
-        private Version expectedLoaderVersion = new Version("1.2.1.0");
+        private Version expectedLoaderVersion = new Version("1.3.0.0");
 
         public const int editorHandleLayer = 12; // ClickableEntities
         public const int editorHandleLayerMask = 1 << editorHandleLayer;
@@ -449,7 +449,7 @@ namespace PlusLevelStudio
             EditorInterfaceModes.AddVanillaNPCs(fullMode);
             EditorInterfaceModes.AddVanillaItems(fullMode);
             EditorInterfaceModes.AddVanillaActivities(fullMode, true);
-            EditorInterfaceModes.AddVanillaObjects(fullMode);
+            EditorInterfaceModes.AddVanillaObjects(fullMode, true);
             EditorInterfaceModes.AddVanillaStructures(fullMode, true);
             EditorInterfaceModes.AddVanillaLights(fullMode);
             EditorInterfaceModes.AddVanillaPosters(fullMode);
@@ -527,7 +527,7 @@ namespace PlusLevelStudio
             EditorInterfaceModes.AddVanillaNPCs(complaintMode);
             EditorInterfaceModes.AddVanillaItems(complaintMode);
             EditorInterfaceModes.AddVanillaActivities(complaintMode, false);
-            EditorInterfaceModes.AddVanillaObjects(complaintMode);
+            EditorInterfaceModes.AddVanillaObjects(complaintMode, false);
             EditorInterfaceModes.AddVanillaStructures(complaintMode, false);
             EditorInterfaceModes.AddVanillaLights(complaintMode);
             EditorInterfaceModes.AddVanillaPosters(complaintMode);
@@ -580,7 +580,7 @@ namespace PlusLevelStudio
             int oldMysteryIndex = roomsMode.availableTools["rooms"].FindIndex(x => x.id == "room_mystery");
             roomsMode.availableTools["rooms"].RemoveAt(oldMysteryIndex);
             roomsMode.availableTools["rooms"].Insert(oldMysteryIndex, new RoomTool("mystery"));
-            EditorInterfaceModes.AddVanillaObjects(roomsMode);
+            EditorInterfaceModes.AddVanillaObjects(roomsMode, false);
             EditorInterfaceModes.AddVanillaActivities(roomsMode, false);
             EditorInterfaceModes.AddToolsToCategory(roomsMode, "items", new EditorTool[]
             {
@@ -634,6 +634,7 @@ namespace PlusLevelStudio
             assetMan.Add<Material>("OneWayRight", materials.First(x => x.name == "SwingDoorRightWay_Closed"));
             assetMan.Add<Material>("OneWayWrong", materials.First(x => x.name == "SwingDoorTextureOneWay_Closed"));
             Texture2D[] allTextures = Resources.FindObjectsOfTypeAll<Texture2D>().Where(x => x.GetInstanceID() >= 0).ToArray();
+            Sprite[] allVanillaSprites = Resources.FindObjectsOfTypeAll<Sprite>().Where(x => x.GetInstanceID() >= 0).ToArray();
             baldiSaysTexture = allTextures.First(x => x.name == "BaldiSpeaksPoster");
             chalkTexture = allTextures.First(x => x.name == "chk_blank");
             bulletinTexture = allTextures.First(x => x.name == "BulletinBoard_Blank");
@@ -1092,6 +1093,17 @@ namespace PlusLevelStudio
             dummyTeleporterObject.GetComponent<DummyTeleporterController>().enabled = false; // disable
             LevelLoaderPlugin.Instance.structureAliases.Add("teleporters", new LoaderStructureData(teleporterBuilder));
 
+            // qmarks
+            SpriteRenderer qmarkTemplate = LevelLoaderPlugin.Instance.basicObjects["mysterymarks"].transform.Find("Qmark").GetComponent<SpriteRenderer>();
+            for (int i = 0; i <= 7; i++)
+            {
+                SpriteRenderer qMark = GameObject.Instantiate<SpriteRenderer>(qmarkTemplate, MTM101BaldiDevAPI.prefabTransform);
+                qMark.sprite = allVanillaSprites.First(x => x.name == "QMarkSheet_" + i);
+                qMark.name = "SplitQmark_" + i;
+                LevelLoaderPlugin.Instance.basicObjects.Add("qmark" + i, qMark.gameObject);
+            }
+
+
             yield return "Creating editor prefab visuals...";
 
             // create light display
@@ -1179,7 +1191,7 @@ namespace PlusLevelStudio
             EditorInterface.AddObjectVisualWithMeshCollider("bigdesk", LevelLoaderPlugin.Instance.basicObjects["bigdesk"], true);
             EditorInterface.AddObjectVisual("waterfountain", LevelLoaderPlugin.Instance.basicObjects["waterfountain"], true);
             EditorInterface.AddObjectVisual("rounddesk", LevelLoaderPlugin.Instance.basicObjects["rounddesk"], true);
-            EditorInterface.AddObjectVisual("roundtable", LevelLoaderPlugin.Instance.basicObjects["roundtable"], true);
+            EditorInterface.AddObjectVisualWithMeshCollider("roundtable", LevelLoaderPlugin.Instance.basicObjects["roundtable"], true);
 
             EditorInterface.AddObjectVisual("computer", LevelLoaderPlugin.Instance.basicObjects["computer"], true);
             EditorInterface.AddObjectVisual("computer_off", LevelLoaderPlugin.Instance.basicObjects["computer_off"], true);
@@ -1248,6 +1260,11 @@ namespace PlusLevelStudio
                 }
                 regularRotator.ReflectionSetVariable("sprites", alteredSheet); //mystman why
                 GameObject.DestroyImmediate(rotators[i]);
+            }
+            EditorInterface.AddObjectVisualWithCustomBoxCollider("mysterymarks", LevelLoaderPlugin.Instance.basicObjects["mysterymarks"], new Vector3(50f, 10f, 40f), new Vector3(25f, 0f, 20f));
+            for (int i = 0; i <= 7; i++)
+            {
+                EditorInterface.AddObjectVisualWithCustomSphereCollider("qmark" + i, LevelLoaderPlugin.Instance.basicObjects["qmark" + i], 0.75f, Vector3.zero);
             }
 
             // machines
@@ -1707,8 +1724,6 @@ namespace PlusLevelStudio
             markerTypes.Add("matchballoon", typeof(MatchBalloonMarker));
 
             yield return "Setting up UI assets...";
-
-            Sprite[] allVanillaSprites = Resources.FindObjectsOfTypeAll<Sprite>().Where(x => x.GetInstanceID() >= 0).ToArray();
 
             uiAssetMan.Add<Sprite>("BackArrow_0", allVanillaSprites.First(x => x.name == "BackArrow_0"));
             uiAssetMan.Add<Sprite>("BackArrow_1", allVanillaSprites.First(x => x.name == "BackArrow_1"));

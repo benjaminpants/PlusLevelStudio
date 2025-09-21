@@ -60,7 +60,7 @@ namespace PlusLevelStudio.Editor
             for (int i = 0; i < baseLevel.rooms.Count; i++)
             {
                 RoomInfo room = baseLevel.rooms[i];
-                if (room.type == "hall") continue; // place the holder
+                if (i == 0) continue; // first room is always the regular hallway which is not available.
                 BaldiRoomAsset roomAsset = new BaldiRoomAsset();
                 roomAsset.name = room.type;
                 roomAsset.type = room.type;
