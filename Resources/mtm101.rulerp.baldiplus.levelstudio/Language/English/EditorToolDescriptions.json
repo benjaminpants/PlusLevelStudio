@@ -231,9 +231,9 @@
 {"key":"Ed_Tool_object_qmark4_Desc","value":"Whose dress is this color?"},
 {"key":"Ed_Tool_object_qmark5_Title","value":"Cyan Question Mark"},
 {"key":"Ed_Tool_object_qmark5_Desc","value":"What color is the water in the super schoolhouse?"},
-{"key":"Ed_Tool_object_qmark6_Title","value":"Cyan Question Mark"},
-{"key":"Ed_Tool_object_qmark6_Desc","value":"What color is the water in the super schoolhouse?"},
-{"key":"Ed_Tool_object_qmark7_Title","value":"Cyan Question Mark"},
+{"key":"Ed_Tool_object_qmark6_Title","value":"Yellow Question Mark"},
+{"key":"Ed_Tool_object_qmark6_Desc","value":"Name the color of a certain faculty member's office door!"},
+{"key":"Ed_Tool_object_qmark7_Title","value":"Green Question Mark"},
 {"key":"Ed_Tool_object_qmark7_Desc","value":"Grass is this color due to ___________!"},
 
 {"key":"Ed_Tool_bulkobject_multilockers_Title","value":"Bulk Lockers"},
