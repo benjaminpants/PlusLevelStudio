@@ -284,6 +284,18 @@ namespace PlusLevelStudio.Editor
             return new ConveyorBeltLocation() { owner = this };
         }
 
+        public override bool OccupiesWall(IntVector2 pos, Direction dir)
+        {
+            for (int i = 0; i < buttons.Count; i++)
+            {
+                if (buttons[i].position == pos && buttons[i].direction == dir)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public override bool ValidatePosition(EditorLevelData data)
         {
             for (int i = buttons.Count - 1; i >= 0; i--)

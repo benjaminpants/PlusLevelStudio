@@ -214,7 +214,7 @@ namespace PlusLevelStudio
             clone.layer = LevelStudioPlugin.editorInteractableLayer;
             BoxCollider collider = clone.AddComponent<BoxCollider>();
             collider.center = Vector3.down * 5f;
-            collider.size = new Vector3(10f, 0.1f, 10f);
+            collider.size = new Vector3(6f, 0.1f, 6f);
             collider.isTrigger = true;
             EditorRendererContainer container = clone.gameObject.AddComponent<EditorRendererContainer>();
             container.AddRendererRange(clone.GetComponentsInChildren<Renderer>(), "none");
