@@ -47,7 +47,7 @@ namespace PlusLevelStudio.UI
             if (currentTool == null) return;
             if (EditorController.Instance.currentTool == currentTool)
             {
-                iconImage.color = Color.gray;
+                iconImage.color = Color.clear;
             }
             else
             {

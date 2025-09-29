@@ -25,10 +25,12 @@ using PlusLevelStudio.Editor.ModeSettings;
 using MoonSharp.Interpreter;
 using PlusLevelStudio.Lua;
 using PlusLevelStudio.Editor.Tools.Customs;
+using MTM101BaldAPI.Reflection;
+using UnityEngine.UI;
 
 namespace PlusLevelStudio
 {
-    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudio", "Plus Level Studio", "1.3.2.0")]
+    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudio", "Plus Level Studio", "1.3.2.1")]
     [BepInDependency("mtm101.rulerp.bbplus.baldidevapi")]
     [BepInDependency("mtm101.rulerp.baldiplus.levelstudioloader")]
     public class LevelStudioPlugin : BaseUnityPlugin
@@ -1639,7 +1641,17 @@ namespace PlusLevelStudio
             newTilePrefab.MeshRenderer.material = assetMan.Get<Material>("tileAlpha");
             ecPrefab.ReflectionSetVariable("tilePre", newTilePrefab);
 
-            UIHelpers.AddCursorInitiatorToCanvas(editorCanvas).useRawPosition = true;
+            EditorCursorController ourCursorController = GameObject.Instantiate<CursorController>(((AssetManager)MTM101BaldiDevAPI.Instance.ReflectionGetVariable("AssetMan")).Get<CursorController>("cursorController"), MTM101BaldiDevAPI.prefabTransform).gameObject.SwapComponent<CursorController, EditorCursorController>();
+            ourCursorController.name = "EditorCursorOrigin";
+            Image imageClone = GameObject.Instantiate<Image>(ourCursorController.transform.Find("Cursor").Find("Image").GetComponent<Image>(), ourCursorController.transform.Find("Cursor"));
+            imageClone.name = "Icon";
+            imageClone.rectTransform.anchoredPosition = new Vector2(0f, 0f);
+            imageClone.transform.SetAsFirstSibling();
+            imageClone.enabled = false;
+            imageClone.rectTransform.sizeDelta = new Vector2(32f,32f);
+            ourCursorController.toolIcon = imageClone;
+
+            UIHelpers.AddCursorInitiatorToCanvas(editorCanvas, new Vector2(480f,360f), ourCursorController).useRawPosition = true;
             EditorController standardEditorController = editorControllerObject.AddComponent<EditorController>();
             standardEditorController.ReflectionSetVariable("destroyOnLoad", true);
             standardEditorController.cameraPrefab = assetMan.Get<GameCamera>("gameCam");

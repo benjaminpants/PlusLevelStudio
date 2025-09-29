@@ -1090,7 +1090,9 @@ namespace PlusLevelStudio.Editor
             {
                 toolboxOnNullTool = false;
                 uiObjects[1].SetActive(true);
+                CursorController.Instance.Blink(1);
             }
+            ((EditorCursorController)CursorController.Instance).SetIcon((tool == null) ? null : tool.sprite);
         }
 
         /// <summary>
