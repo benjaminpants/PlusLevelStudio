@@ -244,6 +244,8 @@
 
 {"key":"Ed_Tool_scatter_trees_Title","value":"Trees Scatter Tool"},
 {"key":"Ed_Tool_scatter_trees_Desc","value":"Drag across an area to randomly place trees!"},
+{"key":"Ed_Tool_scatter_qmarks_Title","value":"Question Marks"},
+{"key":"Ed_Tool_scatter_qmarks_Desc","value":"Drag across an area to automatically place question marks!"},
 
 {"key":"Ed_Tool_object_chairsanddesk_Title","value":"Chair + Desk (Connected)"},
 {"key":"Ed_Tool_object_chairsanddesk_Desc","value":"A Chair + Desk but as one object!"},
