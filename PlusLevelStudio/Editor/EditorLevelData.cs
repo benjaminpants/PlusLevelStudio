@@ -2,13 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Numerics;
-using System.Text;
-using PlusLevelStudio.Editor;
 using PlusStudioLevelFormat;
 using PlusStudioLevelLoader;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace PlusLevelStudio.Editor
 {
