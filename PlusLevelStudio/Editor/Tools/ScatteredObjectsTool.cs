@@ -24,6 +24,11 @@ namespace PlusLevelStudio.Editor.Tools
 
         }
 
+        internal ScatteredObjectsTool(string type, int minCountPerTile, int maxCountPerTile, Bounds area, WeightedSelection<string>[] objects, bool randomizeRotations) : this(type, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/scatter_" + type), minCountPerTile, maxCountPerTile, area, objects, randomizeRotations)
+        {
+
+        }
+
         public ScatteredObjectsTool(string type, Sprite sprite, int minCountPerTile, int maxCountPerTile, Bounds area, string[] objects, bool randomizeRotations)
         {
             this.type = type;
@@ -97,7 +102,7 @@ namespace PlusLevelStudio.Editor.Tools
                         IntVector2 cellPos = new IntVector2(x, y);
                         if (EditorController.Instance.levelData.RoomIdFromPos(cellPos, true) == 0) continue;
                         Vector3 origin = cellPos.ToWorld();
-                        int countPerTile = UnityEngine.Random.Range(minCountPerTile, maxCountPerTile + 1);
+                        int countPerTile = Mathf.Max(UnityEngine.Random.Range(minCountPerTile, maxCountPerTile + 1),0);
                         for (int i = 0; i < countPerTile; i++)
                         {
                             string objectType = WeightedSelection<string>.RandomSelection(objects);

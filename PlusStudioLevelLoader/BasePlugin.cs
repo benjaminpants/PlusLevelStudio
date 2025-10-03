@@ -13,7 +13,7 @@ using System.IO;
 
 namespace PlusStudioLevelLoader
 {
-    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudioloader", "Plus Level Loader", "1.3.0.0")]
+    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudioloader", "Plus Level Loader", "1.4.0.0")]
     [BepInDependency("mtm101.rulerp.bbplus.baldidevapi")]
     public class LevelLoaderPlugin : BaseUnityPlugin
     {
@@ -122,6 +122,15 @@ namespace PlusStudioLevelLoader
             roomSettings["outside"].container = roomFunctions.Find(x => x.name == "PlaygroundRoomFunction");
             roomSettings["shop"].container = roomFunctions.Find(x => x.name == "JohnnyStoreRoomFunction");
             roomSettings["lightbulbtesting"].container = roomFunctions.Find(x => x.name == "LightbulbTestRoomFunction");
+
+            // handle the extra class types for premade rooms
+            roomSettings.Add("class_mathmachine", new RoomSettings(RoomCategory.Class, RoomType.Room, Color.green, assetMan.Get<StandardDoorMats>("ClassDoorSet"), assetMan.Get<Material>("MapTile_Classroom")));
+            roomSettings["class_mathmachine"].container = roomFunctions.Find(x => x.name == "ClassRoomFunction_MathMachine");
+            roomSettings.Add("class_matchactivity", new RoomSettings(RoomCategory.Class, RoomType.Room, Color.green, assetMan.Get<StandardDoorMats>("ClassDoorSet"), assetMan.Get<Material>("MapTile_Classroom")));
+            roomSettings["class_matchactivity"].container = roomFunctions.Find(x => x.name == "ClassRoomFunction_MatchActivity");
+            roomSettings.Add("class_balloonbuster", new RoomSettings(RoomCategory.Class, RoomType.Room, Color.green, assetMan.Get<StandardDoorMats>("ClassDoorSet"), assetMan.Get<Material>("MapTile_Classroom")));
+            roomSettings["class_balloonbuster"].container = roomFunctions.Find(x => x.name == "ClassRoomFunction_BalloonBuster");
+
             yield return "Fetching prefabs...";
             Transform[] transforms = Resources.FindObjectsOfTypeAll<Transform>().Where(x => x.GetInstanceID() >= 0 && x.transform.parent == null).ToArray();
             lightTransforms.Add("fluorescent", transforms.First(x => x.name == "FluorescentLight"));

@@ -219,6 +219,9 @@ namespace PlusStudioLevelLoader
             scene.extraAsset.npcSpawnPoints = new List<IntVector2>();
             scene.name = "WIP";
             scene.skybox = LevelLoaderPlugin.Instance.assetMan.Get<Cubemap>("Cubemap_DayStandard");
+            // thanks mystman
+            scene.forcedNpcs = new NPC[0];
+            scene.potentialNPCs = new List<WeightedNPC>();
 
             return scene;
         }

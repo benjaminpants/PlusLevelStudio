@@ -17,6 +17,14 @@
 {"key":"Ed_Tool_room_hall_secondary_Desc","value":"Place extra hall rooms using this tool. <b>Use minimally, as extra hall rooms can cause bugs or weird behavior!"},
 {"key":"Ed_Tool_room_class_Title","value":"Classroom"},
 {"key":"Ed_Tool_room_class_Desc","value":"The intended location to place notebooks."},
+
+{"key":"Ed_Tool_room_class_mathmachine_Title","value":"Classroom (Math Machine)"},
+{"key":"Ed_Tool_room_class_mathmachine_Desc","value":"Shows the math machine instruction chalk board."},
+{"key":"Ed_Tool_room_class_matchactivity_Title","value":"Classroom (Match Machine)"},
+{"key":"Ed_Tool_room_class_matchactivity_Desc","value":"Shows the match machine instruction chalk board."},
+{"key":"Ed_Tool_room_class_balloonbuster_Title","value":"Classroom (Balloon Buster)"},
+{"key":"Ed_Tool_room_class_balloonbuster_Desc","value":"Shows the balloon buster instruction chalk board."},
+
 {"key":"Ed_Tool_room_faculty_Title","value":"Faculty"},
 {"key":"Ed_Tool_room_faculty_Desc","value":"Place rare items in here!"},
 {"key":"Ed_Tool_room_office_Title","value":"Office"},
@@ -217,8 +225,6 @@
 {"key":"Ed_Tool_object_cafeteriatable_Desc","value":"Perfect for Cafeterias or other overly sized rooms!"},
 {"key":"Ed_Tool_object_mysterymarks_Title","value":"Question Marks Bundle"},
 {"key":"Ed_Tool_object_mysterymarks_Desc","value":"A bunch of question marks bundled in one object! Used for mystery rooms!"},
-{"key":"Ed_Tool_scatter_qmarks_Title","value":"Question Marks"},
-{"key":"Ed_Tool_scatter_qmarks_Desc","value":"Drag across an area to automatically place question marks!"},
 {"key":"Ed_Tool_object_qmark0_Title","value":"Orange Question Mark"},
 {"key":"Ed_Tool_object_qmark0_Desc","value":"Fill in the blank!<br>______ you glad I didn't say banana?"},
 {"key":"Ed_Tool_object_qmark1_Title","value":"Purple Question Mark"},
@@ -235,6 +241,12 @@
 {"key":"Ed_Tool_object_qmark6_Desc","value":"Name the color of a certain faculty member's office door!"},
 {"key":"Ed_Tool_object_qmark7_Title","value":"Green Question Mark"},
 {"key":"Ed_Tool_object_qmark7_Desc","value":"Grass is this color due to ___________!"},
+
+{"key":"Ed_Tool_scatter_trees_Title","value":"Trees Scatter Tool"},
+{"key":"Ed_Tool_scatter_trees_Desc","value":"Drag across an area to randomly place trees!"},
+
+{"key":"Ed_Tool_object_chairsanddesk_Title","value":"Chair + Desk (Connected)"},
+{"key":"Ed_Tool_object_chairsanddesk_Desc","value":"A Chair + Desk but as one object!"},
 
 {"key":"Ed_Tool_bulkobject_multilockers_Title","value":"Bulk Lockers"},
 {"key":"Ed_Tool_bulkobject_multilockers_Desc","value":"5 lockers placed side by side, covering a whole wall!"},

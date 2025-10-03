@@ -331,6 +331,7 @@ namespace PlusLevelStudio
                     new BulkObjectData("chair", new Vector3(0f,0f,-2f)),
                     new BulkObjectData("desk", new Vector3(0f,0f,0f)),
                 }),
+                new ObjectTool("chairsanddesk"),
                 new ObjectTool("roundtable"),
                 new BulkObjectTool("roundtable1", new BulkObjectData[]
                 {
@@ -397,6 +398,24 @@ namespace PlusLevelStudio
                 new ObjectToolNoRotation("tree"),
                 new ObjectToolNoRotation("appletree"),
                 new ObjectToolNoRotation("bananatree"),
+                new ScatteredObjectsTool("trees", -5, 1, new Bounds(new Vector3(0f,0f,0f), new Vector3(6f,0f,6f)), new WeightedSelection<string>[]
+                {
+                    new WeightedSelection<string>()
+                    {
+                        selection="tree",
+                        weight=3000
+                    },
+                    new WeightedSelection<string>()
+                    {
+                        selection="appletree",
+                        weight=50
+                    },
+                    new WeightedSelection<string>()
+                    {
+                        selection="bananatree",
+                        weight=100
+                    }
+                }, true),
                 new ObjectTool("merrygoround"),
                 new ObjectTool("hopscotch"),
                 new ObjectTool("hoop"),

@@ -29,7 +29,7 @@ using UnityEngine.UI;
 
 namespace PlusLevelStudio
 {
-    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudio", "Plus Level Studio", "1.3.3.0")]
+    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudio", "Plus Level Studio", "1.3.4.0")]
     [BepInDependency("mtm101.rulerp.bbplus.baldidevapi")]
     [BepInDependency("mtm101.rulerp.baldiplus.levelstudioloader")]
     public class LevelStudioPlugin : BaseUnityPlugin
@@ -46,7 +46,7 @@ namespace PlusLevelStudio
         public const int editorInteractableLayer = 13; // CollidableEntities
         public const int editorInteractableLayerMask = 1 << editorInteractableLayer;
 
-        private Version expectedLoaderVersion = new Version("1.3.0.0");
+        private Version expectedLoaderVersion = new Version("1.4.0.0");
 
         public const int editorHandleLayer = 12; // ClickableEntities
         public const int editorHandleLayerMask = 1 << editorHandleLayer;
@@ -578,6 +578,12 @@ namespace PlusLevelStudio
             roomsMode.availableTools["rooms"].RemoveAt(roomsMode.availableTools["rooms"].FindIndex(x => x.id == "room_hall"));
             roomsMode.availableTools["rooms"].RemoveAt(roomsMode.availableTools["rooms"].FindIndex(x => x.id == "room_hall_secondary"));
             roomsMode.availableTools["rooms"].Insert(0, new RoomTool("hall"));
+            roomsMode.availableTools["rooms"].InsertRange(roomsMode.availableTools["rooms"].FindIndex(x => x.id == "room_class") + 1, new EditorTool[]
+            {
+                new RoomTool("class_mathmachine", uiAssetMan.Get<Sprite>("Tools/room_class")),
+                new RoomTool("class_matchactivity", uiAssetMan.Get<Sprite>("Tools/room_class")),
+                new RoomTool("class_balloonbuster", uiAssetMan.Get<Sprite>("Tools/room_class"))
+            });
             int oldMysteryIndex = roomsMode.availableTools["rooms"].FindIndex(x => x.id == "room_mystery");
             roomsMode.availableTools["rooms"].RemoveAt(oldMysteryIndex);
             roomsMode.availableTools["rooms"].Insert(oldMysteryIndex, new RoomTool("mystery"));
@@ -1190,6 +1196,7 @@ namespace PlusLevelStudio
             EditorInterface.AddObjectVisualWithMeshCollider("desk", LevelLoaderPlugin.Instance.basicObjects["desk"], true);
             EditorInterface.AddObjectVisualWithMeshCollider("chair", LevelLoaderPlugin.Instance.basicObjects["chair"], true);
             EditorInterface.AddObjectVisualWithMeshCollider("bigdesk", LevelLoaderPlugin.Instance.basicObjects["bigdesk"], true);
+            EditorInterface.AddObjectVisualWithCustomBoxCollider("chairsanddesk", LevelLoaderPlugin.Instance.basicObjects["chairsanddesk"], new Vector3(2.5f, 2.5f, 5f), new Vector3(0f,1.25f,0f));
             EditorInterface.AddObjectVisual("waterfountain", LevelLoaderPlugin.Instance.basicObjects["waterfountain"], true);
             EditorInterface.AddObjectVisual("rounddesk", LevelLoaderPlugin.Instance.basicObjects["rounddesk"], true);
             EditorInterface.AddObjectVisualWithMeshCollider("roundtable", LevelLoaderPlugin.Instance.basicObjects["roundtable"], true);
