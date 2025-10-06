@@ -120,7 +120,7 @@ namespace PlusLevelStudio.Editor
                 {
                     roomAsset.eventSafeCells[j] = (roomAsset.eventSafeCells[j].ToInt() - offset).ToByte();
                 }
-                for (int j = 0; j < roomAsset.eventSafeCells.Count; j++)
+                for (int j = 0; j < roomAsset.secretCells.Count; j++)
                 {
                     roomAsset.secretCells[j] = (roomAsset.secretCells[j].ToInt() - offset).ToByte();
                 }
