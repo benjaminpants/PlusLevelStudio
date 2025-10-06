@@ -120,6 +120,10 @@ namespace PlusLevelStudio.Editor
                 {
                     roomAsset.eventSafeCells[j] = (roomAsset.eventSafeCells[j].ToInt() - offset).ToByte();
                 }
+                for (int j = 0; j < roomAsset.eventSafeCells.Count; j++)
+                {
+                    roomAsset.secretCells[j] = (roomAsset.secretCells[j].ToInt() - offset).ToByte();
+                }
                 for (int j = 0; j < room.basicObjects.Count; j++)
                 {
                     room.basicObjects[j].position = new UnityVector3(room.basicObjects[j].position.x - (offset.x * 10f), room.basicObjects[j].position.y, room.basicObjects[j].position.z - (offset.z * 10f));
