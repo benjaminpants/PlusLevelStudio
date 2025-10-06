@@ -618,6 +618,9 @@ namespace PlusLevelStudio.Editor
                     if (toFinalize.rooms[toFinalize.cells[x, y].roomId - 1].type == "mystery")
                     {
                         toFinalize.secretCells[x, y] = true;
+                        toFinalize.entitySafeCells[x, y] = false;
+                        toFinalize.eventSafeCells[x, y] = false;
+                        toFinalize.coverage[x,y] = PlusCellCoverage.North | PlusCellCoverage.South | PlusCellCoverage.West | PlusCellCoverage.East | PlusCellCoverage.Up | PlusCellCoverage.Down | PlusCellCoverage.Center; // cover entirely
                     }
                 }
             }
@@ -791,7 +794,6 @@ namespace PlusLevelStudio.Editor
                     position = posters[i].position.ToByte()
                 });
             }
-            FinalizeCompile(compiled);
             return compiled;
         }
 

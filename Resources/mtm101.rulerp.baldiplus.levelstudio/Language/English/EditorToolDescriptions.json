@@ -352,7 +352,7 @@
 {"key":"Ed_Tool_marker_eventunsafe_Title","value":"Event Unsafe Cell Marker"},
 {"key":"Ed_Tool_marker_eventunsafe_Desc","value":"Marks a cell as not safe for events, regardless of what the compilation process calculated."},
 {"key":"Ed_Tool_marker_hidden_Title","value":"Hidden Cell Marker"},
-{"key":"Ed_Tool_marker_hidden_Desc","value":"Hides a cell from the map and makes it unsafe for entities and events."},
+{"key":"Ed_Tool_marker_hidden_Desc","value":"Hides a cell from the map, makes it unsafe for entities and events, and 'covers' the cell completely."},
 
 {"key":"Ed_Tool_itemspawn_100_Title","value":"Potential Item Spawn (100)"},
 {"key":"Ed_Tool_itemspawn_100_Desc","value":"A potential item spawn with the weight of 100."},

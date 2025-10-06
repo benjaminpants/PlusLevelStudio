@@ -766,6 +766,7 @@ namespace PlusLevelStudio.Editor
             level.entitySafeCells = CompileSafeCells(levelData, 1f);
             level.eventSafeCells = CompileSafeCells(levelData, 2f);
             level.coverage = CompileBlockedCells(levelData, 1.5f, 3.4f);
+            levelData.FinalizeCompile(level);
             for (int i = 0; i < levelData.markers.Count; i++)
             {
                 levelData.markers[i].Compile(levelData, level);
