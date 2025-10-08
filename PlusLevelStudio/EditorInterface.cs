@@ -1,12 +1,12 @@
-﻿using HarmonyLib;
-using MTM101BaldAPI;
-using MTM101BaldAPI.Reflection;
-using PlusLevelStudio.Editor;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using HarmonyLib;
+using MTM101BaldAPI;
+using MTM101BaldAPI.Reflection;
+using PlusLevelStudio.Editor;
 using UnityEngine;
 
 namespace PlusLevelStudio
@@ -32,7 +32,13 @@ namespace PlusLevelStudio
 
     public static class EditorInterface
     {
-
+        // **** PLACE TO INSERT FIELD INFOS BECAUSE IDK WHERE ELSE TO ADD ****
+        static FieldInfo _AnimatedRotator_renderer = AccessTools.Field(typeof(AnimatedSpriteRotator), "renderer"),
+        _AnimatedRotator_spriteMap = AccessTools.Field(typeof(AnimatedSpriteRotator), "spriteMap"),
+        _SpriteRotationMap_overrideSpriteSheet = AccessTools.Field(typeof(SpriteRotationMap), "overrideSpriteSheet"),
+        _SpriteRotationMap_spriteSheet = AccessTools.Field(typeof(SpriteRotationMap), "spriteSheet"),
+        _SpriteRotator_spriteRenderer = AccessTools.Field(typeof(SpriteRotator), "spriteRenderer"),
+        _SpriteRotator_sprites = AccessTools.Field(typeof(SpriteRotator), "sprites");
         private static T AddDoorNoArray<T>(string visualName, Material mask, Material[] sideMaterials = null) where T : DoorDisplay
         {
             GameObject standardDoorDisplayObject = new GameObject(visualName);
@@ -73,7 +79,7 @@ namespace PlusLevelStudio
         /// <returns></returns>
         public static T AddDoor<T>(string key, DoorIngameStatus ingameState, Material mask, Material[] sideMaterials = null) where T : DoorDisplay
         {
-            T standardDoorDisplayBehavior = AddDoorNoArray<T>(key + "_" + typeof(T).Name,mask, sideMaterials);
+            T standardDoorDisplayBehavior = AddDoorNoArray<T>(key + "_" + typeof(T).Name, mask, sideMaterials);
             LevelStudioPlugin.Instance.doorDisplays.Add(key, standardDoorDisplayBehavior);
             LevelStudioPlugin.Instance.doorIngameStatus.Add(key, ingameState);
             return standardDoorDisplayBehavior;
@@ -186,7 +192,7 @@ namespace PlusLevelStudio
             container.AddRendererRange(clone.GetComponentsInChildren<Renderer>(), "none");
             clone.AddComponent<EditorDeletableObject>().renderContainer = container;
             clone.gameObject.layer = LevelStudioPlugin.editorInteractableLayer;
-            
+
             LevelStudioPlugin.Instance.activityDisplays.Add(key, clone);
             return clone;
         }
@@ -257,6 +263,83 @@ namespace PlusLevelStudio
             clone.layer = LevelStudioPlugin.editorInteractableLayer;
             LevelStudioPlugin.Instance.genericMarkerDisplays.Add(key, clone);
             return clone;
+        }
+        /// <summary>
+        /// Replaces all <see cref="AnimatedSpriteRotator"/> components in the hierarchy of the <paramref name="rootObject"/>
+        /// with <see cref="SpriteRotator"/> components, while preserving the sprite mapping.
+        /// <para> If the target sprite cannot be found in the sprite map, or if the sprite sheet is too short, a warning is logged and the conversion for that rotator is skipped. </para>
+        /// </summary>
+        /// <param name="rootObject">The root <see cref="GameObject"/> whose children will be searched for the <see cref="AnimatedSpriteRotator"/> components to replace.</param>
+        public static void ReplaceAnimatedRotators(this GameObject rootObject)
+        {
+            foreach (var animatedRotator in rootObject.GetComponentsInChildren<AnimatedSpriteRotator>())
+            {
+                GameObject targetGameObject = animatedRotator.gameObject;
+                var renderer = (SpriteRenderer)_AnimatedRotator_renderer.GetValue(animatedRotator);
+                Sprite targetSprite = animatedRotator.targetSprite ?? renderer.sprite; // A failsafe for this case
+
+                // Replicate what AnimatedSpriteRotator.LateUpdate does to find the correct animation frame and sprite map based on the targetSprite
+                int foundMapId = -1;
+                int foundSpriteId = -1;
+                bool wasFound = false;
+                var spriteMap = (SpriteRotationMap[])_AnimatedRotator_spriteMap.GetValue(animatedRotator);
+
+                for (int i = 0; i < spriteMap.Length; i++)
+                {
+                    var map = spriteMap[i];
+                    // The original logic iterates through the start of each animation sequence.
+                    for (int j = 0; j < map.SpriteCount; j += map.angleCount)
+                    {
+                        // Check for normal sprite and override, bruh!
+                        if (map.Sprite(j) == targetSprite || (map.HasOverride && map.OverriddenSprite(i) == targetSprite))
+                        {
+                            foundMapId = i;
+                            foundSpriteId = j;
+                            wasFound = true;
+                            break;
+                        }
+                    }
+                    if (wasFound)
+                        break;
+                }
+
+                if (!wasFound)
+                {
+                    Debug.LogWarning($"Could not find targetSprite {targetSprite?.name} in the sprite maps for the rotator on {targetGameObject.name}.", targetGameObject);
+                    return;
+                }
+
+                //New spriterotator data here
+                SpriteRotationMap activeMap = spriteMap[foundMapId];
+                int angleCount = activeMap.angleCount;
+
+                // Create flat array of sprites for the new rotator
+                Sprite[] newSprites = new Sprite[angleCount];
+                Sprite[] sourceSheet = activeMap.HasOverride ?
+                    (Sprite[])_SpriteRotationMap_overrideSpriteSheet.GetValue(activeMap) :
+                    (Sprite[])_SpriteRotationMap_spriteSheet.GetValue(activeMap);
+
+                if (sourceSheet.Length < foundSpriteId + angleCount) // Shouldn't happen much
+                {
+                    Debug.LogWarning($"Failed to convert the sprite array because sourceSheet length ({sourceSheet.Length}) is less than the angleCount from id ({foundSpriteId + angleCount})", targetGameObject);
+                    continue;
+                }
+
+                int shift = Mathf.RoundToInt(angleCount * 0.25f); // quarter rotation step to shift -90°
+                for (int i = 0; i < angleCount; i++)
+                {
+                    newSprites[(i + shift) % angleCount] = sourceSheet[foundSpriteId + i];
+                }
+
+                // Add the SpriteRotator at the end
+                SpriteRotator newRotator = targetGameObject.AddComponent<SpriteRotator>();
+
+                _SpriteRotator_spriteRenderer.SetValue(newRotator, renderer);
+                _SpriteRotator_sprites.SetValue(newRotator, newSprites);
+
+                // Destroy old comp
+                UnityEngine.Object.DestroyImmediate(animatedRotator);
+            }
         }
 
         /// <summary>

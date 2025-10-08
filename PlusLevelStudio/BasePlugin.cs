@@ -1,30 +1,30 @@
-﻿using BepInEx;
-using HarmonyLib;
-using System;
-using MTM101BaldAPI;
-using MTM101BaldAPI.AssetTools;
+﻿using System;
 using System.Collections;
-using UnityEngine;
-using MTM101BaldAPI.Registers;
-using System.Linq;
-using UnityEngine.SceneManagement;
-using MTM101BaldAPI.UI;
-using PlusLevelStudio.Editor;
 using System.Collections.Generic;
 using System.IO;
-using MTM101BaldAPI.Reflection;
-using PlusLevelStudio.UI;
-using PlusLevelStudio.Editor.Tools;
-using TMPro;
-using PlusStudioLevelLoader;
-using PlusStudioLevelFormat;
-using MTM101BaldAPI.ObjectCreation;
-using PlusLevelStudio.Editor.GlobalSettingsMenus;
-using PlusLevelStudio.Ingame;
-using PlusLevelStudio.Editor.ModeSettings;
+using System.Linq;
+using BepInEx;
+using HarmonyLib;
 using MoonSharp.Interpreter;
-using PlusLevelStudio.Lua;
+using MTM101BaldAPI;
+using MTM101BaldAPI.AssetTools;
+using MTM101BaldAPI.ObjectCreation;
+using MTM101BaldAPI.Reflection;
+using MTM101BaldAPI.Registers;
+using MTM101BaldAPI.UI;
+using PlusLevelStudio.Editor;
+using PlusLevelStudio.Editor.GlobalSettingsMenus;
+using PlusLevelStudio.Editor.ModeSettings;
+using PlusLevelStudio.Editor.Tools;
 using PlusLevelStudio.Editor.Tools.Customs;
+using PlusLevelStudio.Ingame;
+using PlusLevelStudio.Lua;
+using PlusLevelStudio.UI;
+using PlusStudioLevelFormat;
+using PlusStudioLevelLoader;
+using TMPro;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace PlusLevelStudio
@@ -166,7 +166,7 @@ namespace PlusLevelStudio
             {
                 return smallIconsFromTextures[obj.baseTexture];
             }
-            Texture2D smallTex = new Texture2D(32,32, TextureFormat.RGBA32, false);
+            Texture2D smallTex = new Texture2D(32, 32, TextureFormat.RGBA32, false);
             smallTex.filterMode = FilterMode.Point;
             smallTex.name = obj.baseTexture.name + "_Tiny";
             Texture2D texToCopy = obj.baseTexture;
@@ -268,7 +268,7 @@ namespace PlusLevelStudio
 
             EditorMode targetMode = modes[modeToLoad];
 
-            EditorController editorController = GameObject.Instantiate<EditorController>(targetMode.prefab);
+            EditorController editorController = Instantiate<EditorController>(targetMode.prefab);
 
             editorController.currentMode = targetMode;
 
@@ -302,12 +302,12 @@ namespace PlusLevelStudio
 
             gameModeAliases.Add("standard", new MainGameMode()
             {
-                prefab=assetMan.Get<BaseGameManager>("EditorMainGameManager"),
+                prefab = assetMan.Get<BaseGameManager>("EditorMainGameManager"),
                 hasSettingsPage = true,
                 settingsPagePath = Path.Combine(settingsPagePath, "MainSettings.json"),
                 settingsPageType = typeof(MainModeSettingsPageUIExchangeHandler),
-                nameKey ="Ed_GameMode_Standard",
-                descKey="Ed_GameMode_Standard_Desc"
+                nameKey = "Ed_GameMode_Standard",
+                descKey = "Ed_GameMode_Standard_Desc"
             });
 
             EditorGrappleChallengeManager editorGrappleChallenge = GameObject.Instantiate<GrappleChallengeManager>(Resources.FindObjectsOfTypeAll<GrappleChallengeManager>().First(x => x.GetInstanceID() >= 0), MTM101BaldiDevAPI.prefabTransform).gameObject.SwapComponent<GrappleChallengeManager, EditorGrappleChallengeManager>();
@@ -512,7 +512,7 @@ namespace PlusLevelStudio
                 },
                 globalStructures = new List<GlobalStructurePage>()
                 {
-                    
+
                 },
                 defaultTools = new string[] { "room_hall", "room_class", "room_faculty", "room_office", "light_fluorescent", "door_swinging", "door_standard", "merge", "delete" },
                 vanillaComplaint = true,
@@ -859,7 +859,7 @@ namespace PlusLevelStudio
             topQuad.transform.localScale = Vector3.one;
             bottomQuad.transform.localScale = -Vector3.one;
             baseLattice.layer = editorHandleLayer;
-            baseLattice.AddComponent<BoxCollider>().size = new Vector3(1f,1f,0.025f);
+            baseLattice.AddComponent<BoxCollider>().size = new Vector3(1f, 1f, 0.025f);
             baseLattice.GetComponentsInChildren<MeshRenderer>().Do(x => x.gameObject.layer = LayerMask.NameToLayer("Overlay"));
             baseLattice.AddComponent<HandleLattice>();
 
@@ -1034,7 +1034,7 @@ namespace PlusLevelStudio
             TeleporterRoomFunction teleporterRoom = Resources.FindObjectsOfTypeAll<TeleporterRoomFunction>().First(x => x.GetInstanceID() >= 0);
             EditorTeleporterRoomFunction editorTeleporterRoomFunction = GameObject.Instantiate<TeleporterRoomFunction>(teleporterRoom, MTM101BaldiDevAPI.prefabTransform).gameObject.SwapComponent<TeleporterRoomFunction, EditorTeleporterRoomFunction>();
             editorTeleporterRoomFunction.name = "EditorTeleporterRoomFunctionBase";
-            GameObject.DestroyImmediate(editorTeleporterRoomFunction.GetComponent<CoverRoomFunction>());
+            DestroyImmediate(editorTeleporterRoomFunction.GetComponent<CoverRoomFunction>());
             ((List<RoomFunction>)editorTeleporterRoomFunction.gameObject.GetComponent<RoomFunctionContainer>().ReflectionGetVariable("functions")).RemoveAll(x => x == null);
             EditorCoverRoomFunction editorTeleporterRoomCoverFunction = editorTeleporterRoomFunction.gameObject.AddComponent<EditorCoverRoomFunction>();
             editorTeleporterRoomCoverFunction.coverage = (CellCoverage)(-1);
@@ -1054,7 +1054,7 @@ namespace PlusLevelStudio
                 EditorRegionMarkFunction teleporterRegionMarker = teleportRF.gameObject.AddComponent<EditorRegionMarkFunction>();
                 teleporterRegionMarker.region = i;
                 teleportRF.GetComponent<RoomFunctionContainer>().AddFunction(teleporterRegionMarker);
-                LevelLoaderPlugin.Instance.roomSettings.Add("teleportroom_" + i, new RoomSettings(RoomCategory.Null, RoomType.Null, new Color(0f,1f,1f,1f), baldiLabDoor, materials.First(x => x.name == "MapBG_" + i))
+                LevelLoaderPlugin.Instance.roomSettings.Add("teleportroom_" + i, new RoomSettings(RoomCategory.Null, RoomType.Null, new Color(0f, 1f, 1f, 1f), baldiLabDoor, materials.First(x => x.name == "MapBG_" + i))
                 {
                     container = teleportRF.GetComponent<RoomFunctionContainer>()
                 });
@@ -1126,7 +1126,7 @@ namespace PlusLevelStudio
             lightSpriteRenderer.material.SetTexture("_LightMap", lightmaps["white"]);
             assetMan.Add<GameObject>("LightDisplay", lightDisplayObject);
             BoxCollider boxC = lightDisplayObject.AddComponent<BoxCollider>();
-            boxC.size = new Vector3(1f,2f,1f);
+            boxC.size = new Vector3(1f, 2f, 1f);
             boxC.center += Vector3.up * 2f;
             boxC.gameObject.layer = editorInteractableLayer;
             EditorDeletableObject lightEdo = boxC.gameObject.AddComponent<EditorDeletableObject>();
@@ -1160,10 +1160,10 @@ namespace PlusLevelStudio
             // poster visual
             GameObject posterVisualBase = new GameObject("PosterVisual");
             posterVisualBase.ConvertToPrefab(true);
-            GameObject posterQuad = CreateQuad("PosterWall", new Material(assetMan.Get<Material>("tileAlpha")), new Vector3(0f,5f,4.999f), Vector3.zero);
+            GameObject posterQuad = CreateQuad("PosterWall", new Material(assetMan.Get<Material>("tileAlpha")), new Vector3(0f, 5f, 4.999f), Vector3.zero);
             posterQuad.transform.SetParent(posterVisualBase.transform, true);
             BoxCollider posterCollider = posterVisualBase.AddComponent<BoxCollider>();
-            posterCollider.size = new Vector3(10f,10f,0.02f);
+            posterCollider.size = new Vector3(10f, 10f, 0.02f);
             posterCollider.center = posterQuad.transform.localPosition;
             posterVisualBase.layer = editorInteractableLayer;
             posterCollider.gameObject.AddComponent<EditorRendererContainer>().AddRenderer(posterQuad.GetComponent<MeshRenderer>(), "none");
@@ -1175,7 +1175,7 @@ namespace PlusLevelStudio
             wallVisualBase.ConvertToPrefab(true);
             GameObject wallQuad = CreateQuad("WallVisualA", wallAddMat, new Vector3(0f, 5f, 4.999f), Vector3.zero);
             wallQuad.transform.SetParent(wallVisualBase.transform, true);
-            GameObject wallQuadB = CreateQuad("WallVisualB", wallAddMat, new Vector3(0f, 5f, 5.001f), new Vector3(0f,180f,0f));
+            GameObject wallQuadB = CreateQuad("WallVisualB", wallAddMat, new Vector3(0f, 5f, 5.001f), new Vector3(0f, 180f, 0f));
             wallQuadB.transform.SetParent(wallVisualBase.transform, true);
             BoxCollider wallCollider = wallVisualBase.AddComponent<BoxCollider>();
             wallCollider.size = new Vector3(10f, 10f, 0.015f);
@@ -1196,7 +1196,7 @@ namespace PlusLevelStudio
             EditorInterface.AddObjectVisualWithMeshCollider("desk", LevelLoaderPlugin.Instance.basicObjects["desk"], true);
             EditorInterface.AddObjectVisualWithMeshCollider("chair", LevelLoaderPlugin.Instance.basicObjects["chair"], true);
             EditorInterface.AddObjectVisualWithMeshCollider("bigdesk", LevelLoaderPlugin.Instance.basicObjects["bigdesk"], true);
-            EditorInterface.AddObjectVisualWithCustomBoxCollider("chairsanddesk", LevelLoaderPlugin.Instance.basicObjects["chairsanddesk"], new Vector3(2.5f, 2.5f, 5f), new Vector3(0f,1.25f,0f));
+            EditorInterface.AddObjectVisualWithCustomBoxCollider("chairsanddesk", LevelLoaderPlugin.Instance.basicObjects["chairsanddesk"], new Vector3(2.5f, 2.5f, 5f), new Vector3(0f, 1.25f, 0f));
             EditorInterface.AddObjectVisual("waterfountain", LevelLoaderPlugin.Instance.basicObjects["waterfountain"], true);
             EditorInterface.AddObjectVisual("rounddesk", LevelLoaderPlugin.Instance.basicObjects["rounddesk"], true);
             EditorInterface.AddObjectVisualWithMeshCollider("roundtable", LevelLoaderPlugin.Instance.basicObjects["roundtable"], true);
@@ -1213,11 +1213,11 @@ namespace PlusLevelStudio
             EditorInterface.AddObjectVisual("cabinet", LevelLoaderPlugin.Instance.basicObjects["cabinet"], true);
             EditorBasicObject pedestalVisual = EditorInterface.AddObjectVisual("pedestal", LevelLoaderPlugin.Instance.basicObjects["pedestal"], true);
             pedestalVisual.GetComponent<CapsuleCollider>().height = 3f;
-            pedestalVisual.GetComponent<CapsuleCollider>().center = new Vector3(0f,2f,0f);
+            pedestalVisual.GetComponent<CapsuleCollider>().center = new Vector3(0f, 2f, 0f);
 
             EditorInterface.AddObjectVisualWithMeshCollider("cafeteriatable", LevelLoaderPlugin.Instance.basicObjects["cafeteriatable"], true);
             EditorInterface.AddObjectVisual("hoop", LevelLoaderPlugin.Instance.basicObjects["hoop"], true);
-            EditorInterface.AddObjectVisualWithCustomBoxCollider("hopscotch", LevelLoaderPlugin.Instance.basicObjects["hopscotch"], new Vector3(30f,0.01f,30f), Vector3.zero);
+            EditorInterface.AddObjectVisualWithCustomBoxCollider("hopscotch", LevelLoaderPlugin.Instance.basicObjects["hopscotch"], new Vector3(30f, 0.01f, 30f), Vector3.zero);
             EditorInterface.AddObjectVisualWithCustomBoxCollider("dirtcircle", LevelLoaderPlugin.Instance.basicObjects["dirtcircle"], new Vector3(20f, 0.01f, 20f), Vector3.zero);
             EditorInterface.AddObjectVisual("tree", LevelLoaderPlugin.Instance.basicObjects["tree"], true);
             EditorInterface.AddObjectVisual("pinetree", LevelLoaderPlugin.Instance.basicObjects["pinetree"], true);
@@ -1243,7 +1243,7 @@ namespace PlusLevelStudio
             EditorInterface.AddObjectVisualWithCustomSphereCollider("decor_pencilnotes", LevelLoaderPlugin.Instance.basicObjects["decor_pencilnotes"], 1f, Vector3.up);
             EditorInterface.AddObjectVisualWithCustomSphereCollider("decor_zoneflag", LevelLoaderPlugin.Instance.basicObjects["decor_zoneflag"], 1f, Vector3.up);
             EditorInterface.AddObjectVisualWithCustomCapsuleCollider("plant", LevelLoaderPlugin.Instance.basicObjects["plant"], 1f, 7f, 1, Vector3.up * 3.5f);
-            EditorInterface.AddObjectVisualWithCustomBoxCollider("ceilingfan", LevelLoaderPlugin.Instance.basicObjects["ceilingfan"], new Vector3(10f,2f,10f), Vector3.up * 9f);
+            EditorInterface.AddObjectVisualWithCustomBoxCollider("ceilingfan", LevelLoaderPlugin.Instance.basicObjects["ceilingfan"], new Vector3(10f, 2f, 10f), Vector3.up * 9f);
             EditorInterface.AddObjectVisualWithCustomSphereCollider("exitsign", LevelLoaderPlugin.Instance.basicObjects["exitsign"], 1f, Vector3.down);
             EditorInterface.AddObjectVisualWithCustomSphereCollider("johnnysign", LevelLoaderPlugin.Instance.basicObjects["johnnysign"], 2f, Vector3.down * 2);
 
@@ -1251,24 +1251,8 @@ namespace PlusLevelStudio
             LevelLoaderPlugin.Instance.basicObjects.Add("wormhole", editorWormhole.gameObject);
 
             EditorBasicObject arrowObjectVisual = EditorInterface.AddObjectVisualWithCustomSphereCollider("arrow", LevelLoaderPlugin.Instance.basicObjects["arrow"], 1f, Vector3.zero);
-            AnimatedSpriteRotator[] rotators = arrowObjectVisual.GetComponentsInChildren<AnimatedSpriteRotator>();
-            // this was originally a more generic solution until i had to figure out that i needed to rotate the sprites. yuck.
-            for (int i = 0; i < rotators.Length; i++)
-            {
-                SpriteRotationMap[] map = (SpriteRotationMap[])rotators[i].ReflectionGetVariable("spriteMap");
-                if (map.Length == 0) continue; // how?
-                SpriteRenderer target = (SpriteRenderer)rotators[i].ReflectionGetVariable("renderer");
-                SpriteRotator regularRotator = rotators[i].gameObject.AddComponent<SpriteRotator>();
-                regularRotator.ReflectionSetVariable("spriteRenderer", target);
-                Sprite[] spriteSheet = (Sprite[])map[0].ReflectionGetVariable("spriteSheet");
-                Sprite[] alteredSheet = new Sprite[spriteSheet.Length];
-                for (int h = 0; h < spriteSheet.Length; h++)
-                {
-                    alteredSheet[h] = spriteSheet[(h + 9) % spriteSheet.Length];
-                }
-                regularRotator.ReflectionSetVariable("sprites", alteredSheet); //mystman why
-                GameObject.DestroyImmediate(rotators[i]);
-            }
+            arrowObjectVisual.gameObject.ReplaceAnimatedRotators(); // Replace animators
+
             EditorInterface.AddObjectVisualWithCustomBoxCollider("mysterymarks", LevelLoaderPlugin.Instance.basicObjects["mysterymarks"], new Vector3(50f, 10f, 40f), new Vector3(25f, 0f, 20f));
             for (int i = 0; i <= 7; i++)
             {
@@ -1333,10 +1317,10 @@ namespace PlusLevelStudio
             leverVisualComp.target = leverVisual.GetComponentInChildren<MeshRenderer>();
             leverVisualComp.leverDownMaterial = (Material)lever.ReflectionGetVariable("offMat");
             leverVisualComp.leverUpMaterial = (Material)lever.ReflectionGetVariable("onMat");
-            
+
             GameObject lockdownDoorVisual = EditorInterface.AddStructureGenericVisual("lockdowndoor", Resources.FindObjectsOfTypeAll<LockdownDoor>().First(x => x.GetInstanceID() >= 0 && x.name == "LockdownDoor").gameObject);
             lockdownDoorVisual.GetComponent<BoxCollider>().center += Vector3.up * 10f; // fix the collision
-            lockdownDoorVisual.AddComponent<SettingsComponent>().offset = new Vector3(0f,25f,0f);
+            lockdownDoorVisual.AddComponent<SettingsComponent>().offset = new Vector3(0f, 25f, 0f);
             structureTypes.Add("lockdowndoor", typeof(LockdownDoorStructureLocation));
 
             GameObject shutLockdownDoorVisual = EditorInterface.AddStructureGenericVisual("lockdowndoor_shut", Resources.FindObjectsOfTypeAll<LockdownDoor>().First(x => x.GetInstanceID() >= 0 && x.name == "LockdownDoor").gameObject);
@@ -1445,7 +1429,7 @@ namespace PlusLevelStudio
             steamBoxC.size = new Vector3(1f, 2f, 1f);
             steamBoxC.center += Vector3.up * 2f;
             steamBoxC.gameObject.layer = editorInteractableLayer;
-            GameObject radVis = CreateQuad("RadiusVisual", floorRadMat, Vector3.zero, new Vector3(90f,0f,0f));
+            GameObject radVis = CreateQuad("RadiusVisual", floorRadMat, Vector3.zero, new Vector3(90f, 0f, 0f));
             radVis.transform.SetParent(steamVisualObject.transform, true);
             EditorDeletableObject steamEdo = steamBoxC.gameObject.AddComponent<EditorDeletableObject>();
             steamEdo.gameObject.AddComponent<SettingsComponent>();
@@ -1494,7 +1478,7 @@ namespace PlusLevelStudio
             Material regionMat = new Material(potentialDoorMat);
             regionMat.name = "RegionMat";
             regionVisualBase.GetComponentInChildren<MeshRenderer>().material = regionMat;
-            RegionLocation.regionTextures.Add(1,AssetLoader.TextureFromMod(this, "Editor", "Region1.png"));
+            RegionLocation.regionTextures.Add(1, AssetLoader.TextureFromMod(this, "Editor", "Region1.png"));
             RegionLocation.regionTextures.Add(2, AssetLoader.TextureFromMod(this, "Editor", "Region2.png"));
             RegionLocation.regionTextures.Add(3, AssetLoader.TextureFromMod(this, "Editor", "Region3.png"));
             RegionLocation.regionTextures.Add(4, AssetLoader.TextureFromMod(this, "Editor", "Region4.png"));
@@ -1509,7 +1493,7 @@ namespace PlusLevelStudio
                 regionLockdownVisual.transform.Find("LockdownDoor_Model").transform.position += Vector3.down * 10f;
                 MeshRenderer regionLockdownRenderer = regionLockdownVisual.GetComponentInChildren<MeshRenderer>();
                 Material[] regionMats = regionLockdownRenderer.materials;
-                regionMats[2].SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "RegionLockdownTexture" + i +".png")); // do this here as we only want to change the in-editor appearence
+                regionMats[2].SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "RegionLockdownTexture" + i + ".png")); // do this here as we only want to change the in-editor appearence
             }
 
             // teleporters
@@ -1522,7 +1506,7 @@ namespace PlusLevelStudio
                 Destroy(teleporterButtonEditorColliders[i]);
             }
             BoxCollider teleporterButtonEditorCollider = teleporterButtonEditorVisual.AddComponent<BoxCollider>();
-            teleporterButtonEditorCollider.size = new Vector3(11f,9f,7f);
+            teleporterButtonEditorCollider.size = new Vector3(11f, 9f, 7f);
             teleporterButtonEditorCollider.center = new Vector3(0f, 4.5f, 1.5f);
             teleporterButtonEditorVisual.AddComponent<EditorRendererContainer>().AddRendererRange(teleporterButtonEditorVisual.GetComponentsInChildren<Renderer>(), "white");
             teleporterButtonEditorCollider.gameObject.AddComponent<EditorDeletableObject>().renderContainer = teleporterButtonEditorVisual.GetComponent<EditorRendererContainer>();
@@ -1654,10 +1638,10 @@ namespace PlusLevelStudio
             imageClone.rectTransform.anchoredPosition = new Vector2(0f, 0f);
             imageClone.transform.SetAsFirstSibling();
             imageClone.enabled = false;
-            imageClone.rectTransform.sizeDelta = new Vector2(32f,32f);
+            imageClone.rectTransform.sizeDelta = new Vector2(32f, 32f);
             ourCursorController.toolIcon = imageClone;
 
-            UIHelpers.AddCursorInitiatorToCanvas(editorCanvas, new Vector2(480f,360f), ourCursorController).useRawPosition = true;
+            UIHelpers.AddCursorInitiatorToCanvas(editorCanvas, new Vector2(480f, 360f), ourCursorController).useRawPosition = true;
             EditorController standardEditorController = editorControllerObject.AddComponent<EditorController>();
             standardEditorController.ReflectionSetVariable("destroyOnLoad", true);
             standardEditorController.cameraPrefab = assetMan.Get<GameCamera>("gameCam");

@@ -1,9 +1,9 @@
-﻿using PlusStudioLevelFormat;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using PlusStudioLevelFormat;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -72,18 +72,18 @@ namespace PlusLevelStudio.Editor
                 {
                     for (int y = 0; y < baseLevel.cells.GetLength(1); y++)
                     {
-                        if (baseLevel.cells[x,y].roomId == (i + 1))
+                        if (baseLevel.cells[x, y].roomId == (i + 1))
                         {
                             originalOwnedCells.Add(new ByteVector2((byte)x, (byte)y));
                             cells.Add(new RoomCellInfo()
                             {
                                 walls = baseLevel.cells[x, y].walls,
                                 position = baseLevel.cells[x, y].position,
-                                coverage = baseLevel.coverage[x,y]
+                                coverage = baseLevel.coverage[x, y]
                             });
-                            if (baseLevel.entitySafeCells[x,y])
+                            if (baseLevel.entitySafeCells[x, y])
                             {
-                                roomAsset.entitySafeCells.Add(new ByteVector2(x,y));
+                                roomAsset.entitySafeCells.Add(new ByteVector2(x, y));
                             }
                             if (baseLevel.eventSafeCells[x, y])
                             {
@@ -164,6 +164,27 @@ namespace PlusLevelStudio.Editor
                         });
                     }
                 }
+                // Hallway exclusive features
+                if (roomAsset.type == "hall")
+                {
+                    // ** Make all the border have no walls
+                    foreach (var cell in roomAsset.cells)
+                    {
+                        for (int z = 0; z < 4; z++)
+                        {
+                            var dir = (Direction)z;
+                            var neighborPos = (cell.position.ToInt() + dir.ToIntVector2()).ToByte();
+                            int mask = 1 << z;
+                            // If there's a wall on that side and no adjacent cell, remove the wall bit and clear coverage
+                            if (((cell.walls & mask) != 0) && !roomAsset.cells.Exists(checkCell => checkCell.position == neighborPos))
+                            {
+                                cell.walls = new Nybble(cell.walls & ~mask);
+                                cell.coverage &= ~(PlusCellCoverage)dir.ToCoverage();
+                            }
+                        }
+                    }
+                }
+
                 roomAsset.activity = room.activity;
                 if (roomAsset.activity != null)
                 {
