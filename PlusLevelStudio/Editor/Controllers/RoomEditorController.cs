@@ -61,11 +61,13 @@ namespace PlusLevelStudio.Editor
             {
                 RoomInfo room = baseLevel.rooms[i];
                 if (i == 0) continue; // first room is always the regular hallway which is not available.
-                BaldiRoomAsset roomAsset = new BaldiRoomAsset();
-                roomAsset.name = room.type;
-                roomAsset.type = room.type;
-                roomAsset.textureContainer = new TextureContainer(room.textureContainer);
-                roomAsset.windowType = "standard";
+                BaldiRoomAsset roomAsset = new BaldiRoomAsset
+                {
+                    name = room.type,
+                    type = room.type,
+                    textureContainer = new TextureContainer(room.textureContainer),
+                    windowType = "standard"
+                };
                 List<RoomCellInfo> cells = new List<RoomCellInfo>();
                 List<ByteVector2> originalOwnedCells = new List<ByteVector2>();
                 for (int x = 0; x < baseLevel.cells.GetLength(0); x++)
@@ -176,10 +178,11 @@ namespace PlusLevelStudio.Editor
                             var neighborPos = (cell.position.ToInt() + dir.ToIntVector2()).ToByte();
                             int mask = 1 << z;
                             // If there's a wall on that side and no adjacent cell, remove the wall bit and clear coverage
-                            if (((cell.walls & mask) != 0) && !roomAsset.cells.Exists(checkCell => checkCell.position == neighborPos))
+                            int wallsVal = cell.walls;
+                            if ((wallsVal & mask) != 0 && !roomAsset.cells.Exists(checkCell => checkCell.position == neighborPos))
                             {
-                                cell.walls = new Nybble(cell.walls & ~mask);
-                                cell.coverage &= ~(PlusCellCoverage)dir.ToCoverage();
+                                cell.walls = new Nybble((byte)(wallsVal & ~mask));
+                                cell.coverage &= (PlusCellCoverage)~(int)dir.ToCoverage();
                             }
                         }
                     }
