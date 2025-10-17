@@ -181,6 +181,7 @@ namespace PlusLevelStudio.Editor
                             int wallsVal = cell.walls;
                             if ((wallsVal & mask) != 0 && !roomAsset.cells.Exists(checkCell => checkCell.position == neighborPos))
                             {
+                                // Debug.Log($"Changed wall cell at ({cell.position.ToInt().ToString()}) | {Convert.ToString(cell.walls, 2).PadLeft(4, '0')} -> {Convert.ToString((byte)(wallsVal & ~mask), 2).PadLeft(4, '0')}");
                                 cell.walls = new Nybble((byte)(wallsVal & ~mask));
                                 cell.coverage &= (PlusCellCoverage)~(int)dir.ToCoverage();
                             }
