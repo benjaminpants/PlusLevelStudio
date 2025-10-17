@@ -19,6 +19,7 @@
 {"key":"Ed_Menu_LoadLuaScript","value":"Load New Lua Script"},
 {"key":"Ed_Menu_RefreshLua","value":"Reload {0}."},
 {"key":"Ed_Menu_SelectFile","value":"Select File (.{0})"},
+{"key":"Ed_Menu_SaveConfirm","value":"{0} already exists! Are you sure you want to overwrite it?"},
 {"key":"Ed_Menu_StructureEnabled","value":"Structure Enabled"},
 {"key":"Ed_Menu_NoGlobalStructures","value":"No Global Structures Available"},
 {"key":"Ed_Error_MustBe256","value":"Image must be 256x256!"},

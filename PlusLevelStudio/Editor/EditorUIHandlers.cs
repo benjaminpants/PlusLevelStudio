@@ -218,6 +218,14 @@ namespace PlusLevelStudio.Editor
         public TextMeshProUGUI angleSnapTextBox;
         public List<GameObject> translationSettings = new List<GameObject>();
         bool settingsHidden = true;
+        EditorUIFileBrowser currentFileBrowser;
+
+        public void CloseBrowser()
+        {
+            if (currentFileBrowser == null) return;
+            currentFileBrowser.SendInteractionMessage("exit", null);
+            currentFileBrowser = null;
+        }
 
         public override bool GetStateBoolean(string key)
         {
@@ -271,6 +279,27 @@ namespace PlusLevelStudio.Editor
             EditorController.Instance.CloseEditor();
         }
 
+        public void SaveAndPlay(string path, Action afterSave)
+        {
+            CloseBrowser();
+            EditorController.Instance.SaveEditorLevelToFile(path);
+            if (afterSave != null)
+            {
+                afterSave();
+            }
+        }
+
+        public bool ConfirmSaveAndAction(string path, Action afterSave)
+        {
+            if (!File.Exists(path))
+            {
+                SaveAndPlay(path, afterSave);
+                return true;
+            }
+            EditorController.Instance.CreateUIPopup(string.Format(LocalizationManager.Instance.GetLocalizedText("Ed_Menu_SaveConfirm"), Path.GetFileName(path)), () => { SaveAndPlay(path, afterSave); }, null);
+            return false;
+        }
+
         public override void SendInteractionMessage(string message, object data)
         {
             switch (message)
@@ -309,28 +338,23 @@ namespace PlusLevelStudio.Editor
                     break;
                 case "save":
                     EditorController.Instance.SwitchToTool(null);
-                    EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.levelFilePath, EditorController.Instance.currentFileName, "ebpl", true, (string path) =>
+                    currentFileBrowser = EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.levelFilePath, EditorController.Instance.currentFileName, "ebpl", true, (string path) =>
                     {
-                        EditorController.Instance.SaveEditorLevelToFile(path);
-                        return true;
+                        return ConfirmSaveAndAction(path, null);
                     });
                     break;
                 case "saveAndPlay":
                     EditorController.Instance.SwitchToTool(null);
-                    EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.levelFilePath, EditorController.Instance.currentFileName, "ebpl", true, (string path) =>
+                    currentFileBrowser = EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.levelFilePath, EditorController.Instance.currentFileName, "ebpl", true, (string path) =>
                     {
-                        EditorController.Instance.SaveEditorLevelToFile(path);
-                        PlayLevel();
-                        return true;
+                        return ConfirmSaveAndAction(path, PlayLevel);
                     });
                     break;
                 case "saveAndExport":
                     EditorController.Instance.SwitchToTool(null);
-                    EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.levelFilePath, EditorController.Instance.currentFileName, "ebpl", true, (string path) =>
+                    currentFileBrowser = EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.levelFilePath, EditorController.Instance.currentFileName, "ebpl", true, (string path) =>
                     {
-                        EditorController.Instance.SaveEditorLevelToFile(path);
-                        EditorController.Instance.Export();
-                        return true;
+                        return ConfirmSaveAndAction(path, EditorController.Instance.Export);
                     });
                     break;
                 case "export":
