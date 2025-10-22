@@ -98,12 +98,16 @@ namespace PlusLevelStudio.Editor
                 }
                 if (cells.Count == 0) continue; // dont.
                 // calculate the offset and apply it
-                ByteVector2 smallestCell = cells[0].position;
+                ByteVector2 smallestCell = new ByteVector2(byte.MaxValue,byte.MaxValue);
                 for (int j = 0; j < cells.Count; j++)
                 {
-                    if ((cells[j].position.x < smallestCell.x) || (cells[j].position.y < smallestCell.y))
+                    if ((cells[j].position.x < smallestCell.x))
                     {
-                        smallestCell = cells[j].position;
+                        smallestCell = new ByteVector2(cells[j].position.x, smallestCell.y);
+                    }
+                    if ((cells[j].position.y < smallestCell.y))
+                    {
+                        smallestCell = new ByteVector2(smallestCell.x, cells[j].position.y);
                     }
                 }
                 IntVector2 offset = smallestCell.ToInt();
