@@ -14,6 +14,7 @@ using MTM101BaldAPI.Registers;
 using MTM101BaldAPI.UI;
 using PlusLevelStudio.Editor;
 using PlusLevelStudio.Editor.GlobalSettingsMenus;
+using PlusLevelStudio.Editor.GlobalSettingsMenus.Structures;
 using PlusLevelStudio.Editor.ModeSettings;
 using PlusLevelStudio.Editor.Tools;
 using PlusLevelStudio.Editor.Tools.Customs;
@@ -375,7 +376,9 @@ namespace PlusLevelStudio
             {
                 nameKey = "Ed_RandomStructure_Lockers_Title",
                 descKey = "Ed_RandomStructure_Lockers_Desc",
-                structureToSpawn = "lockers"
+                structureToSpawn = "lockers",
+                settingsPageType = typeof(RandomLockersUIHandler),
+                settingsPagePath = Path.Combine(AssetLoader.GetModPath(this), "Data", "UI", "GlobalStructures", "Lockers.json")
             };
 
             string editorModePath = Path.Combine(AssetLoader.GetModPath(this), "Data", "UI", "GlobalPages");
