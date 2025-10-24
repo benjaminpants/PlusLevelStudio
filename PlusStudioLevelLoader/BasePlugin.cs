@@ -264,6 +264,8 @@ namespace PlusStudioLevelLoader
             structureAliases.Add("lockdowndoor_button", new LoaderStructureData(builders.First(x => x.name == "LockdownDoorConstructor_Button"), new Dictionary<string, GameObject>() { { "lockdowndoor_shut_stayopen", lockdownDoors.First(x => x.name == "LockdownDoor_Shut_StaysOpen").gameObject } }));
             structureAliases.Add("conveyorbelt", new LoaderStructureData(builders.First(x => x.name == "ConveyorBeltConstructor")));
             structureAliases.Add("vent", new LoaderStructureData(builders.First(x => x.name == "Structure_Vent")));
+
+            structureAliases.Add("lockers", new LoaderStructureData(builders.First(x => x.name == "Structure_Lockers")));
             // the factory box doesn't work outside of randomly generated levels
             //structureAliases.Add("factorybox", new LoaderStructureData(builders.First(x => x.name == "FactoryBoxConstructor")));
 

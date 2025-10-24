@@ -1,6 +1,8 @@
 {"items":[
 
 {"key":"Ed_GlobalStructure_FactoryBox_Title","value":"Factory Box"},
-{"key":"Ed_GlobalStructure_FactoryBox_Desc","value":"A big metal box surrounding the map with green support beams."}
+{"key":"Ed_GlobalStructure_FactoryBox_Desc","value":"A big metal box surrounding the map with green support beams."},
+{"key":"Ed_RandomStructure_Lockers_Title","value":"Lockers"},
+{"key":"Ed_RandomStructure_Lockers_Desc","value":"Randomly placed lockers around the map."}
 
 ]}

@@ -371,6 +371,13 @@ namespace PlusLevelStudio
                 structureToSpawn = "factorybox"
             };
 
+            GlobalStructurePage randomLockersStructurePage = new GlobalStructurePage()
+            {
+                nameKey = "Ed_RandomStructure_Lockers_Title",
+                descKey = "Ed_RandomStructure_Lockers_Desc",
+                structureToSpawn = "lockers"
+            };
+
             string editorModePath = Path.Combine(AssetLoader.GetModPath(this), "Data", "UI", "GlobalPages");
 
             // full mode
@@ -425,6 +432,13 @@ namespace PlusLevelStudio
                     },
                     new EditorGlobalPage()
                     {
+                        filePath = Path.Combine(editorModePath, "RandomStructures.json"),
+                        managerType = typeof(GlobalRandomStructuresExchangeHandler),
+                        pageName = "RandomStructures",
+                        pageKey = "Ed_GlobalPage_RandomStructures"
+                    },
+                    new EditorGlobalPage()
+                    {
                         filePath = Path.Combine(editorModePath, "ModeSettings.json"),
                         managerType = typeof(ModeSettingsUIExchangeHandler),
                         pageName = "ModeSettings",
@@ -434,6 +448,10 @@ namespace PlusLevelStudio
                 globalStructures = new List<GlobalStructurePage>()
                 {
                     factoryBoxStructurePage
+                },
+                globalRandomStructures = new List<GlobalStructurePage>()
+                {
+                    randomLockersStructurePage
                 },
                 availableGameModes = new List<string>()
                 {
@@ -509,10 +527,21 @@ namespace PlusLevelStudio
                         pageName = "GlobalStructures",
                         pageKey = "Ed_GlobalPage_GlobalStructures"
                     },
+                    new EditorGlobalPage()
+                    {
+                        filePath = Path.Combine(editorModePath, "RandomStructures.json"),
+                        managerType = typeof(GlobalRandomStructuresExchangeHandler),
+                        pageName = "RandomStructures",
+                        pageKey = "Ed_GlobalPage_RandomStructures"
+                    },
                 },
                 globalStructures = new List<GlobalStructurePage>()
                 {
 
+                },
+                globalRandomStructures = new List<GlobalStructurePage>()
+                {
+                    randomLockersStructurePage
                 },
                 defaultTools = new string[] { "room_hall", "room_class", "room_faculty", "room_office", "light_fluorescent", "door_swinging", "door_standard", "merge", "delete" },
                 vanillaComplaint = true,
@@ -1441,6 +1470,9 @@ namespace PlusLevelStudio
             Structure_SteamValvesEditor steamValveStructure = GameObject.Instantiate<Structure_SteamValves>(Resources.FindObjectsOfTypeAll<Structure_SteamValves>().First(x => x.GetInstanceID() >= 0), MTM101BaldiDevAPI.prefabTransform).gameObject.SwapComponent<Structure_SteamValves, Structure_SteamValvesEditor>();
             steamValveStructure.name = "SteamValvesEditor";
             LevelLoaderPlugin.Instance.structureAliases.Add("steamvalves", new LoaderStructureData(steamValveStructure));
+
+            // lockers
+            structureTypes.Add("lockers", typeof(RandomLockerLocation));
 
             // npcs
 

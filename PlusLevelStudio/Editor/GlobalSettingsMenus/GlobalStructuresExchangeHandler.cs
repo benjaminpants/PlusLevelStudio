@@ -23,6 +23,12 @@ namespace PlusLevelStudio.Editor.GlobalSettingsMenus
         public GlobalStructureUIHandler[] pages;
         MenuToggle toggle;
         int currentPage = 0;
+        protected List<GlobalStructurePage> globalPages;
+
+        public virtual List<GlobalStructurePage> GetPagesFromMode()
+        {
+            return EditorController.Instance.currentMode.globalStructures;
+        }
 
         public override bool GetStateBoolean(string key)
         {
@@ -33,10 +39,11 @@ namespace PlusLevelStudio.Editor.GlobalSettingsMenus
         {
             titleText = transform.Find("Title").GetComponent<TextMeshProUGUI>();
             noConfigSettings = transform.Find("NoConfigurableSettings");
-            pages = new GlobalStructureUIHandler[EditorController.Instance.currentMode.globalStructures.Count];
-            for (int i = 0; i < EditorController.Instance.currentMode.globalStructures.Count; i++)
+            globalPages = GetPagesFromMode();
+            pages = new GlobalStructureUIHandler[globalPages.Count];
+            for (int i = 0; i < globalPages.Count; i++)
             {
-                GlobalStructurePage globalStructure = EditorController.Instance.currentMode.globalStructures[i];
+                GlobalStructurePage globalStructure = globalPages[i];
                 if (globalStructure.settingsPageType == null)
                 {
                     pages[i] = null;
@@ -73,7 +80,7 @@ namespace PlusLevelStudio.Editor.GlobalSettingsMenus
                 pages[i].gameObject.SetActive(false);
             }
             currentPage = page;
-            GlobalStructurePage globalStructure = EditorController.Instance.currentMode.globalStructures[currentPage];
+            GlobalStructurePage globalStructure = globalPages[currentPage];
             titleText.text = LocalizationManager.Instance.GetLocalizedText(globalStructure.nameKey);
             // dont show the page if the structure isn't on the map
             if (EditorController.Instance.GetStructureData(globalStructure.structureToSpawn) == null)
@@ -107,12 +114,12 @@ namespace PlusLevelStudio.Editor.GlobalSettingsMenus
                     SwitchToPage(Mathf.Max(currentPage - 1, 0));
                     break;
                 case "nextPage":
-                    SwitchToPage(Mathf.Min(currentPage + 1, EditorController.Instance.currentMode.globalStructures.Count - 1));
+                    SwitchToPage(Mathf.Min(currentPage + 1, globalPages.Count - 1));
                     break;
                 case "toggleStructure":
                     if ((bool)data)
                     {
-                        StructureLocation structure = EditorController.Instance.AddOrGetStructureToData(EditorController.Instance.currentMode.globalStructures[currentPage].structureToSpawn, true);
+                        StructureLocation structure = EditorController.Instance.AddOrGetStructureToData(globalPages[currentPage].structureToSpawn, true);
                         if (pages[currentPage] != null)
                         {
                             pages[currentPage].StructureEnabled(structure);
@@ -120,7 +127,7 @@ namespace PlusLevelStudio.Editor.GlobalSettingsMenus
                     }
                     else
                     {
-                        StructureLocation structure = EditorController.Instance.GetStructureData(EditorController.Instance.currentMode.globalStructures[currentPage].structureToSpawn);
+                        StructureLocation structure = EditorController.Instance.GetStructureData(globalPages[currentPage].structureToSpawn);
                         structure.OnDelete(EditorController.Instance.levelData);
                         if (pages[currentPage] != null)
                         {

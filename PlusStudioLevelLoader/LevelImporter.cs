@@ -268,6 +268,7 @@ namespace PlusStudioLevelLoader
             asset.name = "LoadedLevelAsset_" + level.levelSize.x + "_" + level.levelSize.y + "_" + level.rooms.Count;
             asset.levelSize = level.levelSize.ToInt();
             asset.tile = new CellData[level.levelSize.x * level.levelSize.y];
+            asset.seed = level.seed;
             for (int x = 0; x < level.levelSize.x; x++)
             {
                 for (int y = 0; y < level.levelSize.y; y++)
@@ -403,6 +404,19 @@ namespace PlusStudioLevelLoader
                 }
                 asset.structures.Add(structureData);
             }
+            // handle random structures
+            for (int i = 0; i < level.randomStructures.Count; i++)
+            {
+                StructureWithParameters structureParamData = new StructureWithParameters();
+                LoaderStructureData converter = LevelLoaderPlugin.Instance.structureAliases[level.randomStructures[i].type];
+                structureParamData.prefab = converter.structure;
+                structureParamData.parameters = new StructureParameters();
+                structureParamData.parameters.chance = level.randomStructures[i].info.chance.ToArray();
+                structureParamData.parameters.minMax = level.randomStructures[i].info.minMax.Select(x => x.ToStandard()).ToArray();
+                structureParamData.parameters.prefab = level.randomStructures[i].info.prefab.Select(x => new WeightedGameObject() { selection = converter.prefabAliases[x.prefab], weight = x.weight }).ToArray();
+                asset.randomGenStructures.Add(structureParamData);
+            }
+
             for (int i = 0; i < level.posters.Count; i++)
             {
                 PosterObject po = LevelLoaderPlugin.PosterFromAlias(level.posters[i].poster);

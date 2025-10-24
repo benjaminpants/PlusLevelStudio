@@ -1,0 +1,142 @@
+{
+	"defines":{
+
+	},
+	"elements":[
+		{
+			"name":"SeedShuffle",
+			"type":"imageButton",
+			"graphic":"RandomButton",
+			"hoverGraphic":"RandomButtonGlow",
+			"anchoredPosition":[120, 48],
+			"size":[16,16],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"onPressed":"randomizeSeed"
+		},
+		{
+			"name":"SeedDesc",
+			"type":"text",
+			"anchoredPosition":[-67, 48],
+			"size":[70, 50],
+			"pivot":"#centerRight",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"font":"ComicSans24",
+			"color":[0,0,0],
+			"text":"Seed:",
+			"alignment":"Right",
+			"localized":false
+		},
+		{
+			"name":"SeedTextBox",
+			"type":"textbox",
+			"anchoredPosition":[16, 48],
+			"size":[168, 50],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"font":"ComicSans24",
+			"color":[0,0,0],
+			"text":"1234567890",
+			"alignment":"Left",
+			"localized":false,
+			"onFinish":"seedEnter",
+			"characterLimit":11,
+			"allowedCharacters":"0123456789-",
+			"upper":false
+		},
+		
+		{
+			"name":"PageLeft",
+			"type":"imageButton",
+			"graphic":"MenuArrowLeft",
+			"hoverGraphic":"MenuArrowLeftHigh",
+			"anchoredPosition":[-120, 8],
+			"size":[32,32],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"onPressed":"prevPage"
+		},
+		{
+			"name":"PageRight",
+			"type":"imageButton",
+			"graphic":"MenuArrowRight",
+			"hoverGraphic":"MenuArrowRightHigh",
+			"anchoredPosition":[120, 8],
+			"size":[32,32],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"onPressed":"nextPage"
+		},
+		{
+			"name":"Title",
+			"type":"text",
+			"anchoredPosition":[0, 0],
+			"size":[230, 50],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"font":"ComicSans24",
+			"color":[0,0,0],
+			"text":"Standard",
+			"alignment":"Top",
+			"localized":false
+		},
+		{
+			"name":"StructureEnabledText",
+			"type":"text",
+			"anchoredPosition":[-111, -32],
+			"size":[250, 50],
+			"pivot":"#centerLeft",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"font":"ComicSans24",
+			"color":[0,0,0],
+			"text":"Ed_Menu_StructureEnabled",
+			"alignment":"Left",
+			"localized":true
+		},
+		{
+			"name":"Checkbox",
+			"type":"checkbox",
+			"anchoredPosition":[-127, -32],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"onToggled":"toggleStructure",
+			"value":false
+		},
+		{
+			"name":"NoConfigurableSettings",
+			"type":"text",
+			"anchoredPosition":[0, -100],
+			"size":[300, 50],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"font":"ComicSans24",
+			"color":[77,77,77],
+			"text":"Ed_Menu_NoConfigSettings",
+			"alignment":"Center",
+			"localized":true
+		},
+		{
+			"name":"NoGlobalStructures",
+			"type":"text",
+			"anchoredPosition":[0, 0],
+			"size":[300, 80],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"font":"ComicSans24",
+			"color":[77,77,77],
+			"text":"Ed_Menu_NoRandomStructures",
+			"alignment":"Center",
+			"localized":true
+		},
+	]
+}

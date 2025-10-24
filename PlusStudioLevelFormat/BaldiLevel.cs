@@ -22,6 +22,7 @@ namespace PlusStudioLevelFormat
         public List<WindowInfo> windows = new List<WindowInfo>();
         public List<ExitInfo> exits = new List<ExitInfo>();
         public List<StructureInfo> structures = new List<StructureInfo>();
+        public List<RandomStructureInfo> randomStructures = new List<RandomStructureInfo>();
         public List<NPCInfo> npcs = new List<NPCInfo>();
         public List<PosterInfo> posters = new List<PosterInfo>();
         public UnityVector3 spawnPoint = new UnityVector3(5f,5f,5f);
@@ -35,7 +36,7 @@ namespace PlusStudioLevelFormat
             }
         }
         public PlusDirection spawnDirection = PlusDirection.North;
-        public static readonly byte version = 2;
+        public static readonly byte version = 3;
         public string levelTitle = "WIP";
         public float timeLimit = 0f;
 
@@ -48,6 +49,9 @@ namespace PlusStudioLevelFormat
         public float minRandomEventGap = 45f;
         public float maxRandomEventGap = 180f;
         public List<string> randomEvents = new List<string>();
+
+        // misc stuff
+        public int seed = 0;
 
         /// <summary>
         /// Creates a new level that is properly initialized with the specified width and height
@@ -100,6 +104,10 @@ namespace PlusStudioLevelFormat
             // metadata
             level.levelTitle = reader.ReadString();
             level.timeLimit = reader.ReadSingle();
+            if (version >= 3)
+            {
+                level.seed = reader.ReadInt32();
+            }
 
             level.skybox = reader.ReadString();
             level.minLightColor = reader.ReadUnityColor();
@@ -317,6 +325,29 @@ namespace PlusStudioLevelFormat
                     direction = (PlusDirection)reader.ReadByte(),
                 });
             }
+            if (version <= 2) return level;
+            int randomStructureCount = reader.ReadInt32();
+            for (int i = 0; i < randomStructureCount; i++)
+            {
+                RandomStructureInfo randomInfo = new RandomStructureInfo();
+                randomInfo.type = objectsCompressor.ReadStoredString(reader);
+                int chanceCount = reader.ReadInt32();
+                for (int j = 0; j < chanceCount; j++)
+                {
+                    randomInfo.info.chance.Add(reader.ReadSingle());
+                }
+                int minMaxCount = reader.ReadInt32();
+                for (int j = 0; j < minMaxCount; j++)
+                {
+                    randomInfo.info.minMax.Add(reader.ReadMystIntVector2());
+                }
+                int prefabCount = reader.ReadInt32();
+                for (int j = 0; j < prefabCount; j++)
+                {
+                    randomInfo.info.prefab.Add(new WeightedPrefab() { prefab = objectsCompressor.ReadStoredString(reader), weight = reader.ReadInt32() });
+                }
+                level.randomStructures.Add(randomInfo);
+            }
             return level;
         }
 
@@ -349,6 +380,8 @@ namespace PlusStudioLevelFormat
             objectsCompressor.AddStrings(npcs.Select(x => x.npc));
             objectsCompressor.AddStrings(posters.Select(x => x.poster));
             objectsCompressor.AddStrings(structures.Select(x => x.type));
+            objectsCompressor.AddStrings(randomStructures.Select(x => x.type));
+            objectsCompressor.AddStrings(randomStructures.SelectMany(x => x.info.prefab.Select(z => z.prefab)));
             foreach (var structure in structures)
             {
                 objectsCompressor.AddStrings(structure.data.Where(x => x.prefab != null).Select(x => x.prefab));
@@ -362,6 +395,7 @@ namespace PlusStudioLevelFormat
             // write spawn position or other metadata
             writer.Write(levelTitle);
             writer.Write(timeLimit);
+            writer.Write(seed);
 
             writer.Write(skybox);
             writer.Write(minLightColor);
@@ -535,6 +569,27 @@ namespace PlusStudioLevelFormat
                 objectsCompressor.WriteStoredString(writer, posters[i].poster);
                 writer.Write(posters[i].position);
                 writer.Write((byte)posters[i].direction);
+            }
+            writer.Write(randomStructures.Count);
+            for (int i = 0; i < randomStructures.Count; i++)
+            {
+                objectsCompressor.WriteStoredString(writer, randomStructures[i].type);
+                writer.Write(randomStructures[i].info.chance.Count);
+                for (int j = 0; j < randomStructures[i].info.chance.Count; j++)
+                {
+                    writer.Write(randomStructures[i].info.chance[j]);
+                }
+                writer.Write(randomStructures[i].info.minMax.Count);
+                for (int j = 0; j < randomStructures[i].info.minMax.Count; j++)
+                {
+                    writer.Write(randomStructures[i].info.minMax[j]);
+                }
+                writer.Write(randomStructures[i].info.prefab.Count);
+                for (int j = 0; j < randomStructures[i].info.prefab.Count; j++)
+                {
+                    objectsCompressor.WriteStoredString(writer, randomStructures[i].info.prefab[j].prefab);
+                    writer.Write(randomStructures[i].info.prefab[j].weight);
+                }
             }
         }
     }

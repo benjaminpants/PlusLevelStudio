@@ -48,6 +48,9 @@ namespace PlusLevelStudio.Editor
         public float maxRandomEventGap = 180f;
         public List<string> randomEvents = new List<string>();
 
+        // other stuff
+        public int seed = 0;
+
         public PlayableLevelMeta meta;
 
         public Vector3 PracticalSpawnPoint
@@ -640,6 +643,7 @@ namespace PlusLevelStudio.Editor
             compiled.initialRandomEventGap = initialRandomEventGap;
             compiled.minRandomEventGap = minRandomEventGap;
             compiled.maxRandomEventGap = maxRandomEventGap;
+            compiled.seed = seed;
             UpdateCells(false); // update our cells
             for (int x = 0; x < mapSize.x; x++)
             {
@@ -775,6 +779,11 @@ namespace PlusLevelStudio.Editor
             }
             for (int i = 0; i < structures.Count; i++)
             {
+                if (structures[i] is RandomStructureLocation)
+                {
+                    compiled.randomStructures.Add(((RandomStructureLocation)structures[i]).CompileIntoRandom(this, compiled));
+                    continue;
+                }
                 compiled.structures.Add(structures[i].Compile(this, compiled));
             }
             for (int i = 0; i < npcs.Count; i++)
@@ -797,7 +806,7 @@ namespace PlusLevelStudio.Editor
             return compiled;
         }
 
-        public const byte version = 9;
+        public const byte version = 10;
 
         public bool WallFree(IntVector2 pos, Direction dir, bool ignoreSelf)
         {
@@ -989,6 +998,7 @@ namespace PlusLevelStudio.Editor
             writer.Write(skybox);
             writer.Write(minLightColor.ToData());
             writer.Write((byte)lightMode);
+            writer.Write(seed);
             meta.Write(writer);
         }
 
@@ -1206,6 +1216,10 @@ namespace PlusLevelStudio.Editor
             levelData.minLightColor = reader.ReadUnityColor().ToStandard();
             levelData.lightMode = (LightMode)reader.ReadByte();
             if (version <= 6) return levelData;
+            if (version >= 10)
+            {
+                levelData.seed = reader.ReadInt32();
+            }
             levelData.meta = PlayableLevelMeta.Read(reader, true);
             return levelData;
         }
