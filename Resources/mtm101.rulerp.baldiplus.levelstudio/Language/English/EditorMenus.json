@@ -34,6 +34,8 @@
 {"key":"Ed_Menu_NoLevels","value":"No Levels Found..."},
 {"key":"Ed_Menu_LoadingLevels","value":"Loading Levels..."},
 
+{"key":"Ed_Menu_LevelBy","value":"By {0}"},
+
 {"key":"Ed_GlobalPage_LevelSettings","value":"Level\nSettings"},
 {"key":"Ed_GlobalPage_VisualSettings","value":"Visual &\nLights"},
 {"key":"Ed_GlobalPage_ModeSettings","value":"Mode\nSettings"},

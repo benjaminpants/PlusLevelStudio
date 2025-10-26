@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace PlusLevelStudio.Editor
 {
-    public class WallLocation : IEditorVisualizable, IEditorCellModifier, IEditorDeletable
+    public class WallLocation : IEditorVisualizable, IEditorCellModifier, IEditorDeletable, IEditorPositionVerifyable
     {
         public bool wallState;
         public IntVector2 position;

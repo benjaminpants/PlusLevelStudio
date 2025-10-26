@@ -63,6 +63,7 @@ namespace PlusLevelStudio
         public Dictionary<string, GameObject> genericStructureDisplays = new Dictionary<string, GameObject>();
         public Dictionary<string, GameObject> genericMarkerDisplays = new Dictionary<string, GameObject>();
         public Dictionary<string, GameObject> npcDisplays = new Dictionary<string, GameObject>();
+        public Dictionary<string, GameObject> tileBasedObjectDisplays = new Dictionary<string, GameObject>();
         public List<string> selectableTextures = new List<string>();
         public List<string> selectableSkyboxes = new List<string>();
         public Dictionary<string, Sprite> eventSprites = new Dictionary<string, Sprite>();

@@ -432,6 +432,10 @@ namespace PlusLevelStudio.Editor
                 {
                     AddVisual(item);
                 }
+                foreach (TileBasedObjectPlacement item in levelData.tileBasedObjects)
+                {
+                    AddVisual(item);
+                }
             }
             catch (Exception e)
             {

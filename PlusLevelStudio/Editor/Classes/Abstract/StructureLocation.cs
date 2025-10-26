@@ -12,7 +12,7 @@ namespace PlusLevelStudio.Editor
         CellChange,
         LightChange,
     }
-    public abstract class StructureLocation : IEditorDeletable, IEditorCellModifier, IEditorVisualizable
+    public abstract class StructureLocation : IEditorDeletable, IEditorCellModifier, IEditorVisualizable, IEditorPositionVerifyable
     {
         public string type;
         public abstract void CleanupVisual(GameObject visualObject);

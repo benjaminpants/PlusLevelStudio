@@ -410,7 +410,7 @@ namespace PlusLevelStudio.Menus
         public void UpdateDisplay(PlayableEditorLevel level)
         {
             titleText.text = level.meta.name;
-            authorText.text = "By " + level.meta.author;
+            authorText.text = string.Format(LocalizationManager.Instance.GetLocalizedText("Ed_Menu_LevelBy"), level.meta.author);
             modeText.text = LocalizationManager.Instance.GetLocalizedText(LevelStudioPlugin.Instance.gameModeAliases[level.meta.gameMode].nameKey);
             thumbnail.texture = (level.texture == null) ? LevelStudioPlugin.Instance.assetMan.Get<Texture2D>("IconMissing") : level.texture;
         }

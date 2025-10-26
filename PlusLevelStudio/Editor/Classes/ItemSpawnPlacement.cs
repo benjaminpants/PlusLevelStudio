@@ -7,7 +7,7 @@ using MTM101BaldAPI.Registers;
 
 namespace PlusLevelStudio.Editor
 {
-    public class ItemSpawnPlacement : IEditorDeletable, IEditorVisualizable, IEditorMovable
+    public class ItemSpawnPlacement : IEditorDeletable, IEditorVisualizable, IEditorMovable, IEditorPositionVerifyable
     {
         public Vector2 position;
         public int weight = 100;

@@ -6,7 +6,7 @@ using PlusStudioLevelLoader;
 
 namespace PlusLevelStudio.Editor
 {
-    public class ItemPlacement : IEditorDeletable, IEditorVisualizable, IEditorMovable
+    public class ItemPlacement : IEditorDeletable, IEditorVisualizable, IEditorMovable, IEditorPositionVerifyable
     {
         public Vector2 position;
         public string item;

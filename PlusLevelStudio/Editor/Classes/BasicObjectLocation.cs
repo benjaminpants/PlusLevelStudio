@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace PlusLevelStudio.Editor
 {
-    public class BasicObjectLocation : IEditorVisualizable, IEditorDeletable, IEditorMovable
+    public class BasicObjectLocation : IEditorVisualizable, IEditorDeletable, IEditorMovable, IEditorPositionVerifyable
     {
         public string prefab;
         public Vector3 position;

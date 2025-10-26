@@ -8,7 +8,7 @@ using UnityEngine.Assertions;
 
 namespace PlusLevelStudio.Editor
 {
-    public class ExitLocation : IEditorCellModifier, IEditorVisualizable
+    public class ExitLocation : IEditorCellModifier, IEditorVisualizable, IEditorPositionVerifyable
     {
         public string type;
         public IntVector2 position;

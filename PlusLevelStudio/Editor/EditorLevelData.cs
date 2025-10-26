@@ -27,6 +27,7 @@ namespace PlusLevelStudio.Editor
         public List<BasicObjectLocation> objects = new List<BasicObjectLocation>();
         public List<StructureLocation> structures = new List<StructureLocation>();
         public List<NPCPlacement> npcs = new List<NPCPlacement>();
+        public List<TileBasedObjectPlacement> tileBasedObjects = new List<TileBasedObjectPlacement>();
         public List<PosterPlacement> posters = new List<PosterPlacement>();
         public List<WallLocation> walls = new List<WallLocation>();
         public List<MarkerLocation> markers = new List<MarkerLocation>();
@@ -181,142 +182,39 @@ namespace PlusLevelStudio.Editor
             UpdateCells(true);
         }
 
-        // TODO: consider interface for ValidatePosition to avoid repeated code..?
+        public bool ValidatePlacementsFor<T>(List<T> verifyables, bool updateVisuals) where T : IEditorPositionVerifyable
+        {
+            bool changedSomething = false;
+            for (int i = verifyables.Count - 1; i >= 0; i--)
+            {
+                if (!verifyables[i].ValidatePosition(this))
+                {
+                    if (updateVisuals)
+                    {
+                        EditorController.Instance.RemoveVisual((IEditorVisualizable)verifyables[i]);
+                    }
+                    verifyables.RemoveAt(i);
+                    changedSomething = true;
+                }
+            }
+            return changedSomething;
+        }
+
         public bool ValidatePlacements(bool updateVisuals)
         {
             bool changedSomething = false;
-            for (int i = exits.Count - 1; i >= 0; i--)
-            {
-                if (!exits[i].ValidatePosition(this))
-                {
-                    if (updateVisuals)
-                    {
-                        EditorController.Instance.RemoveVisual(exits[i]);
-                    }
-                    exits.RemoveAt(i);
-                    changedSomething = true;
-                }
-            }
-            for (int i = lights.Count - 1; i >= 0; i--)
-            {
-                if (!lights[i].ValidatePosition(this))
-                {
-                    if (updateVisuals)
-                    {
-                        EditorController.Instance.RemoveVisual(lights[i]);
-                    }
-                    lights.RemoveAt(i);
-                    changedSomething = true;
-                }
-            }
-            for (int i = doors.Count - 1; i >= 0; i--)
-            {
-                if (!doors[i].ValidatePosition(this))
-                {
-                    if (updateVisuals)
-                    {
-                        EditorController.Instance.RemoveVisual(doors[i]);
-                    }
-                    doors.RemoveAt(i);
-                    changedSomething = true;
-                }
-            }
-            for (int i = windows.Count - 1; i >= 0; i--)
-            {
-                if (!windows[i].ValidatePosition(this))
-                {
-                    if (updateVisuals)
-                    {
-                        EditorController.Instance.RemoveVisual(windows[i]);
-                    }
-                    windows.RemoveAt(i);
-                    changedSomething = true;
-                }
-            }
-            for (int i = structures.Count - 1; i >= 0; i--)
-            {
-                if (!structures[i].ValidatePosition(this))
-                {
-                    if (updateVisuals)
-                    {
-                        EditorController.Instance.RemoveVisual(structures[i]);
-                    }
-                    structures.RemoveAt(i);
-                    changedSomething = true;
-                }
-            }
-            for (int i = posters.Count - 1; i >= 0; i--)
-            {
-                if (!posters[i].ValidatePosition(this))
-                {
-                    if (updateVisuals)
-                    {
-                        EditorController.Instance.RemoveVisual(posters[i]);
-                    }
-                    posters.RemoveAt(i);
-                    changedSomething = true;
-                }
-            }
-            for (int i = walls.Count - 1; i >= 0; i--)
-            {
-                if (!walls[i].ValidatePosition(this))
-                {
-                    if (updateVisuals)
-                    {
-                        EditorController.Instance.RemoveVisual(walls[i]);
-                    }
-                    walls.RemoveAt(i);
-                    changedSomething = true;
-                }
-            }
-            for (int i = objects.Count - 1; i >= 0; i--)
-            {
-                if (!objects[i].ValidatePosition(this))
-                {
-                    if (updateVisuals)
-                    {
-                        EditorController.Instance.RemoveVisual(objects[i]);
-                    }
-                    objects.RemoveAt(i);
-                    changedSomething = true;
-                }
-            }
-            for (int i = items.Count - 1; i >= 0; i--)
-            {
-                if (!items[i].ValidatePosition(this))
-                {
-                    if (updateVisuals)
-                    {
-                        EditorController.Instance.RemoveVisual(items[i]);
-                    }
-                    items.RemoveAt(i);
-                    changedSomething = true;
-                }
-            }
-            for (int i = itemSpawns.Count - 1; i >= 0; i--)
-            {
-                if (!itemSpawns[i].ValidatePosition(this))
-                {
-                    if (updateVisuals)
-                    {
-                        EditorController.Instance.RemoveVisual(itemSpawns[i]);
-                    }
-                    itemSpawns.RemoveAt(i);
-                    changedSomething = true;
-                }
-            }
-            for (int i = markers.Count - 1; i >= 0; i--)
-            {
-                if (!markers[i].ValidatePosition(this))
-                {
-                    if (updateVisuals)
-                    {
-                        EditorController.Instance.RemoveVisual(markers[i]);
-                    }
-                    markers.RemoveAt(i);
-                    changedSomething = true;
-                }
-            }
+            changedSomething |= ValidatePlacementsFor(exits, updateVisuals);
+            changedSomething |= ValidatePlacementsFor(lights, updateVisuals);
+            changedSomething |= ValidatePlacementsFor(doors, updateVisuals);
+            changedSomething |= ValidatePlacementsFor(windows, updateVisuals);
+            changedSomething |= ValidatePlacementsFor(structures, updateVisuals);
+            changedSomething |= ValidatePlacementsFor(posters, updateVisuals);
+            changedSomething |= ValidatePlacementsFor(walls, updateVisuals);
+            changedSomething |= ValidatePlacementsFor(objects, updateVisuals);
+            changedSomething |= ValidatePlacementsFor(items, updateVisuals);
+            changedSomething |= ValidatePlacementsFor(itemSpawns, updateVisuals);
+            changedSomething |= ValidatePlacementsFor(markers, updateVisuals);
+            changedSomething |= ValidatePlacementsFor(tileBasedObjects, updateVisuals);
             return changedSomething;
         }
 
@@ -803,10 +701,19 @@ namespace PlusLevelStudio.Editor
                     position = posters[i].position.ToByte()
                 });
             }
+            for (int i = 0; i < tileBasedObjects.Count; i++)
+            {
+                compiled.tileObjects.Add(new TileObjectInfo()
+                {
+                    prefab = tileBasedObjects[i].type,
+                    direction = (PlusDirection)tileBasedObjects[i].direction,
+                    position = tileBasedObjects[i].position.ToByte()
+                });
+            }
             return compiled;
         }
 
-        public const byte version = 10;
+        public const byte version = 11;
 
         public bool WallFree(IntVector2 pos, Direction dir, bool ignoreSelf)
         {
@@ -849,6 +756,7 @@ namespace PlusLevelStudio.Editor
             stringComp.AddStrings(items.Select(x => x.item));
             stringComp.AddStrings(objects.Select(x => x.prefab));
             stringComp.AddStrings(npcs.Select(x => x.npc));
+            stringComp.AddStrings(tileBasedObjects.Select(x => x.type));
             stringComp.AddStrings(posters.Select(x => x.type));
             stringComp.AddStrings(rooms.Select(x => x.roomType));
             stringComp.AddStrings(rooms.Select(x => x.textureContainer.floor));
@@ -981,6 +889,13 @@ namespace PlusLevelStudio.Editor
             {
                 stringComp.WriteStoredString(writer, markers[i].type);
                 markers[i].Write(this, writer, stringComp);
+            }
+            writer.Write(tileBasedObjects.Count);
+            for (int i = 0; i < tileBasedObjects.Count; i++)
+            {
+                stringComp.WriteStoredString(writer, tileBasedObjects[i].type);
+                writer.Write(tileBasedObjects[i].position.ToData());
+                writer.Write((byte)tileBasedObjects[i].direction);
             }
             writer.Write(spawnPoint.ToData());
             writer.Write((byte)spawnDirection);
@@ -1192,6 +1107,19 @@ namespace PlusLevelStudio.Editor
                     MarkerLocation marker = LevelStudioPlugin.Instance.ConstructMarkerOfType(type);
                     marker.ReadInto(levelData, reader, stringComp);
                     levelData.markers.Add(marker);
+                }
+            }
+            if (version >= 11)
+            {
+                int tileBasedObjects = reader.ReadInt32();
+                for (int i = 0; i < tileBasedObjects; i++)
+                {
+                    levelData.tileBasedObjects.Add(new TileBasedObjectPlacement()
+                    {
+                        type = stringComp.ReadStoredString(reader),
+                        position = reader.ReadMystIntVector2().ToStandard(),
+                        direction = (Direction)reader.ReadByte()
+                    });
                 }
             }
             levelData.spawnPoint = reader.ReadUnityVector3().ToUnity();

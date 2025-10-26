@@ -11,7 +11,7 @@ using PlusLevelStudio.Editor.SettingsUI;
 
 namespace PlusLevelStudio.Editor
 {
-    public class LightPlacement : IEditorVisualizable, IEditorDeletable, IEditorSettingsable
+    public class LightPlacement : IEditorVisualizable, IEditorDeletable, IEditorSettingsable, IEditorPositionVerifyable
     {
         public IntVector2 position;
         public ushort lightGroup;

@@ -6,7 +6,7 @@ using PlusStudioLevelFormat;
 
 namespace PlusLevelStudio.Editor
 {
-    public class DoorLocation : IEditorVisualizable, IEditorCellModifier, IEditorDeletable
+    public class DoorLocation : IEditorVisualizable, IEditorCellModifier, IEditorDeletable, IEditorPositionVerifyable
     {
         public string type;
         public IntVector2 position;

@@ -230,6 +230,24 @@ namespace PlusLevelStudio
         }
 
         /// <summary>
+        /// Generates a visual for the specified tile based object, and adds it to the tileBasedObjectDisplays dictionary.
+        /// </summary>
+        /// <param name="key">The key to use for the dictionary.</param>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static GameObject AddTileBasedObjectVisual(string key, GameObject obj)
+        {
+            GameObject clone = CloneToPrefabStripMonoBehaviors(obj);
+            clone.name = clone.name.Replace("_Stripped", "_TileBasedObject");
+            EditorRendererContainer container = clone.gameObject.AddComponent<EditorRendererContainer>();
+            container.AddRendererRange(clone.GetComponentsInChildren<Renderer>(), "none");
+            clone.gameObject.AddComponent<EditorDeletableObject>().renderContainer = container;
+            clone.layer = LevelStudioPlugin.editorInteractableLayer;
+            LevelStudioPlugin.Instance.tileBasedObjectDisplays.Add(key, clone);
+            return clone;
+        }
+
+        /// <summary>
         /// Generates a visual for the specified structure, and adds it to the genericStructureDisplays dictionary.
         /// </summary>
         /// <param name="key">The key to use for the dictionary.</param>
