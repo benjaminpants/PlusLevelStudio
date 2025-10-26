@@ -10,8 +10,7 @@ namespace PlusLevelStudio.Editor.GlobalSettingsMenus
     public abstract class GlobalStructureUIHandler : UIExchangeHandler
     {
         public StructureLocation structure;
-        public abstract void PageLoaded();
-        public virtual void StructureEnabled(StructureLocation structure)
+        public virtual void PageLoaded(StructureLocation structure)
         {
             this.structure = structure;
         }
@@ -97,7 +96,7 @@ namespace PlusLevelStudio.Editor.GlobalSettingsMenus
             else
             {
                 pages[currentPage].gameObject.SetActive(true);
-                pages[currentPage].PageLoaded();
+                pages[currentPage].PageLoaded(EditorController.Instance.GetStructureData(globalStructure.structureToSpawn));
             }
         }
 
@@ -122,7 +121,7 @@ namespace PlusLevelStudio.Editor.GlobalSettingsMenus
                         StructureLocation structure = EditorController.Instance.AddOrGetStructureToData(globalPages[currentPage].structureToSpawn, true);
                         if (pages[currentPage] != null)
                         {
-                            pages[currentPage].StructureEnabled(structure);
+                            pages[currentPage].PageLoaded(structure);
                         }
                     }
                     else

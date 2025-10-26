@@ -36,8 +36,8 @@ namespace PlusLevelStudio.Editor
                     },
                     minMax = new List<MystIntVector2>()
                     {
-                        minMaxLockerCount,
-                        minMaxHallCount
+                        minMaxHallCount,
+                        minMaxLockerCount
                     }
                 }
             };

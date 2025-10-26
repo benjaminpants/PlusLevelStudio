@@ -5,6 +5,8 @@
 
 {"key":"Ed_RandomStructure_Lockers_Title","value":"Lockers"},
 {"key":"Ed_RandomStructure_Lockers_Desc","value":"Randomly placed lockers around the map."},
-{"key":"Ed_RandomStructure_Lockers_HideLockerChance","value":"Hideable Locker Chance:"}
+{"key":"Ed_RandomStructure_Lockers_HideLockerChance","value":"Hideable Locker Chance:"},
+{"key":"Ed_RandomStructure_Lockers_MinMaxLockerCount","value":"Min-Max Locker Count:"},
+{"key":"Ed_RandomStructure_Lockers_MinMaxHallCount","value":"Min-Max Hall Count:"}
 
 ]}
