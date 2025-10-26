@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace PlusLevelStudio.Editor
 {
-    public class NPCPlacement : IEditorVisualizable, IEditorDeletable
+    public class NPCPlacement : IEditorVisualizable, IEditorDeletable, IEditorPositionVerifyable
     {
         public string npc;
         public IntVector2 position;
@@ -35,6 +35,11 @@ namespace PlusLevelStudio.Editor
         public void UpdateVisual(GameObject visualObject)
         {
             visualObject.transform.position = position.ToWorld() + (Vector3.up * 5f);
+        }
+
+        public bool ValidatePosition(EditorLevelData data)
+        {
+            return data.RoomIdFromPos(position, true) != 0;
         }
     }
 }

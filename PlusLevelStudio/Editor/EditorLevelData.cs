@@ -215,6 +215,7 @@ namespace PlusLevelStudio.Editor
             changedSomething |= ValidatePlacementsFor(itemSpawns, updateVisuals);
             changedSomething |= ValidatePlacementsFor(markers, updateVisuals);
             changedSomething |= ValidatePlacementsFor(tileBasedObjects, updateVisuals);
+            changedSomething |= ValidatePlacementsFor(npcs, updateVisuals);
             return changedSomething;
         }
 
