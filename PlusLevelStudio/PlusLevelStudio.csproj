@@ -85,5 +85,9 @@
       <HintPath>..\Dependencies\UnityEngine.UIModule.dll</HintPath>
     </Reference>
   </ItemGroup>
+  
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="copy /y &quot;$(OutputPath)\$(AssemblyName).dll&quot; &quot;C:\Program Files (x86)\Steam\steamapps\common\Baldi's Basics Plus\BepInEx\plugins\newEditor&quot;&#xD;&#xA;copy /y &quot;$(OutputPath)\$(AssemblyName).pdb&quot; &quot;C:\Program Files (x86)\Steam\steamapps\common\Baldi's Basics Plus\BepInEx\plugins\newEditor&quot;" />
+  </Target>
 
 </Project>
