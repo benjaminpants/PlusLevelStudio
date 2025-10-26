@@ -47,7 +47,7 @@ namespace PlusLevelStudio
         public const int editorInteractableLayer = 13; // CollidableEntities
         public const int editorInteractableLayerMask = 1 << editorInteractableLayer;
 
-        private Version expectedLoaderVersion = new Version("1.4.0.0");
+        private Version expectedLoaderVersion = new Version("1.5.0.0");
 
         public const int editorHandleLayer = 12; // ClickableEntities
         public const int editorHandleLayerMask = 1 << editorHandleLayer;
