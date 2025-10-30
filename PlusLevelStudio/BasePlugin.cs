@@ -70,6 +70,7 @@ namespace PlusLevelStudio
         public Dictionary<string, Sprite> skyboxSprites = new Dictionary<string, Sprite>();
         public Dictionary<string, EditorRoomVisualManager> roomVisuals = new Dictionary<string, EditorRoomVisualManager>();
         public Dictionary<string, EditorGameMode> gameModeAliases = new Dictionary<string, EditorGameMode>();
+        public Dictionary<string, TextureContainer> defaultRoomTextures = new Dictionary<string, TextureContainer>();
         public GameObject pickupVisual;
         public GameObject posterVisual;
         public GameObject wallVisual;
@@ -656,7 +657,7 @@ namespace PlusLevelStudio
         IEnumerator FindObjectsAndSetupEditor()
         {
             List<Direction> directions = Directions.All();
-            yield return 14;
+            yield return 15;
             yield return "Grabbing necessary resources...";
             assetMan.Add<Mesh>("Quad", Resources.FindObjectsOfTypeAll<Mesh>().First(x => x.GetInstanceID() >= 0 && x.name == "Quad"));
             Material[] materials = Resources.FindObjectsOfTypeAll<Material>().Where(x => x.GetInstanceID() >= 0).ToArray();
@@ -684,6 +685,30 @@ namespace PlusLevelStudio
             {
                 PowerLeverLocation.cableTex.Add((CableColor)Enum.Parse(typeof(CableColor), cableNames[i]), AssetLoader.TextureFromMod(this, "Editor", "CableTextures", cableNames[i] + ".png"));
             }
+
+            yield return "Setting up default textures...";
+            defaultRoomTextures.Add("hall", new TextureContainer("HallFloor", "Wall", "Ceiling"));
+            defaultRoomTextures.Add("class", new TextureContainer("BlueCarpet", "WallWithMolding", "Ceiling"));
+            defaultRoomTextures.Add("faculty", new TextureContainer("BlueCarpet", "SaloonWall", "Ceiling"));
+            defaultRoomTextures.Add("office", new TextureContainer("BlueCarpet", "WallWithMolding", "Ceiling"));
+            defaultRoomTextures.Add("closet", new TextureContainer("TileFloor", "Wall", "Ceiling"));
+            defaultRoomTextures.Add("reflex", new TextureContainer("HallFloor", "WallWithMolding", "ElevatorCeiling"));
+            defaultRoomTextures.Add("library", new TextureContainer("BlueCarpet", "WallWithMolding", "Ceiling"));
+            defaultRoomTextures.Add("cafeteria", new TextureContainer("HallFloor", "Wall", "Ceiling"));
+            defaultRoomTextures.Add("outside", new TextureContainer("Grass", "Fence", "None"));
+            defaultRoomTextures.Add("shop", new TextureContainer("HallFloor", "JohnnyWall", "Ceiling"));
+            defaultRoomTextures.Add("lightbulbtesting", new TextureContainer("MaintenanceFloor", "RedBrickWall", "ElevatorCeiling"));
+            defaultRoomTextures.Add("mystery", new TextureContainer("Black", "Black", "Black"));
+            defaultRoomTextures.Add("wormhole_room", new TextureContainer("Vent", "Vent", "Vent"));
+            defaultRoomTextures.Add("teleportroom_1", new TextureContainer("LabFloor", "LabWall", "LabCeiling"));
+            defaultRoomTextures.Add("teleportroom_2", new TextureContainer("LabFloor", "LabWall", "LabCeiling"));
+            defaultRoomTextures.Add("teleportroom_3", new TextureContainer("LabFloor", "LabWall", "LabCeiling"));
+            defaultRoomTextures.Add("teleportroom_4", new TextureContainer("LabFloor", "LabWall", "LabCeiling"));
+            defaultRoomTextures.Add("saferoom", new TextureContainer("ElevatorFloor", "ElevatorBack", "ElevatorCeiling"));
+
+            defaultRoomTextures.Add("class_mathmachine", new TextureContainer("BlueCarpet", "WallWithMolding", "Ceiling"));
+            defaultRoomTextures.Add("class_matchactivity", new TextureContainer("BlueCarpet", "WallWithMolding", "Ceiling"));
+            defaultRoomTextures.Add("class_balloonbuster", new TextureContainer("BlueCarpet", "WallWithMolding", "Ceiling"));
 
 
             yield return "Finding GameCamera...";

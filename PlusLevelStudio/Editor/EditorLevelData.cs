@@ -75,46 +75,13 @@ namespace PlusLevelStudio.Editor
         }
 
         public Dictionary<string, TextureContainer> defaultTextures = new Dictionary<string, TextureContainer>();
-        private static List<Action<Dictionary<string, TextureContainer>>> defaultTextureActions = new List<Action<Dictionary<string, TextureContainer>>>();
 
-        /// <summary>
-        /// Adds the specified action to be called whenever default textures need to be defined or redefined.
-        /// </summary>
-        /// <param name="action"></param>
-        public static void AddDefaultTextureAction(Action<Dictionary<string, TextureContainer>> action)
+        public void RedefineDefaultTextures()
         {
-            defaultTextureActions.Add(action);
-        }
-
-        // TODO: CHANGE THIS!
-        public void DefineDefaultTextures()
-        {
-            defaultTextures.Add("hall", new TextureContainer("HallFloor", "Wall", "Ceiling"));
-            defaultTextures.Add("class", new TextureContainer("BlueCarpet", "WallWithMolding", "Ceiling"));
-            defaultTextures.Add("faculty", new TextureContainer("BlueCarpet", "SaloonWall", "Ceiling"));
-            defaultTextures.Add("office", new TextureContainer("BlueCarpet", "WallWithMolding", "Ceiling"));
-            defaultTextures.Add("closet", new TextureContainer("TileFloor", "Wall", "Ceiling"));
-            defaultTextures.Add("reflex", new TextureContainer("HallFloor", "WallWithMolding", "ElevatorCeiling"));
-            defaultTextures.Add("library", new TextureContainer("BlueCarpet", "WallWithMolding", "Ceiling"));
-            defaultTextures.Add("cafeteria", new TextureContainer("HallFloor", "Wall", "Ceiling"));
-            defaultTextures.Add("outside", new TextureContainer("Grass", "Fence", "None"));
-            defaultTextures.Add("shop", new TextureContainer("HallFloor", "JohnnyWall", "Ceiling"));
-            defaultTextures.Add("lightbulbtesting", new TextureContainer("MaintenanceFloor", "RedBrickWall", "ElevatorCeiling"));
-            defaultTextures.Add("mystery", new TextureContainer("Black", "Black", "Black"));
-            defaultTextures.Add("wormhole_room", new TextureContainer("Vent", "Vent", "Vent"));
-            defaultTextures.Add("teleportroom_1", new TextureContainer("LabFloor", "LabWall", "LabCeiling"));
-            defaultTextures.Add("teleportroom_2", new TextureContainer("LabFloor", "LabWall", "LabCeiling"));
-            defaultTextures.Add("teleportroom_3", new TextureContainer("LabFloor", "LabWall", "LabCeiling"));
-            defaultTextures.Add("teleportroom_4", new TextureContainer("LabFloor", "LabWall", "LabCeiling"));
-            defaultTextures.Add("saferoom", new TextureContainer("ElevatorFloor", "ElevatorBack", "ElevatorCeiling"));
-
-            defaultTextures.Add("class_mathmachine", new TextureContainer("BlueCarpet", "WallWithMolding", "Ceiling"));
-            defaultTextures.Add("class_matchactivity", new TextureContainer("BlueCarpet", "WallWithMolding", "Ceiling"));
-            defaultTextures.Add("class_balloonbuster", new TextureContainer("BlueCarpet", "WallWithMolding", "Ceiling"));
-
-            for (int i = 0; i < defaultTextureActions.Count; i++)
+            defaultTextures.Clear();
+            foreach (var kvp in LevelStudioPlugin.Instance.defaultRoomTextures)
             {
-                defaultTextureActions[i].Invoke(defaultTextures);
+                defaultTextures.Add(kvp.Key, new TextureContainer(kvp.Value));
             }
         }
 
@@ -424,7 +391,7 @@ namespace PlusLevelStudio.Editor
                     cells[x, y] = new PlusStudioLevelFormat.Cell(new ByteVector2(x,y));
                 }
             }
-            DefineDefaultTextures();
+            RedefineDefaultTextures();
             rooms.Add(CreateRoomWithDefaultSettings("hall"));
         }
 
