@@ -1033,7 +1033,6 @@ namespace PlusLevelStudio
             EditorCoverRoomFunction editorWormholeCoverFunction = editorWormholeFunctionObject.AddComponent<EditorCoverRoomFunction>();
             editorWormholeCoverFunction.coverage = (CellCoverage)(-1);
             editorWormholeCoverFunction.hardCover = true;
-            editorWormholeCoverFunction.onInitialize = true;
             editorWormholeFunctionContainer.AddFunction(editorWormholeCoverFunction);
 
             StandardDoorMats baldiLabDoor = Resources.FindObjectsOfTypeAll<StandardDoorMats>().First(x => x.name == "BaldiLabDoorSet");
@@ -1072,7 +1071,6 @@ namespace PlusLevelStudio
             EditorCoverRoomFunction editorTeleporterRoomCoverFunction = editorTeleporterRoomFunction.gameObject.AddComponent<EditorCoverRoomFunction>();
             editorTeleporterRoomCoverFunction.coverage = (CellCoverage)(-1);
             editorTeleporterRoomCoverFunction.hardCover = true;
-            editorTeleporterRoomCoverFunction.onInitialize = true;
             editorTeleporterRoomFunction.gameObject.GetComponent<RoomFunctionContainer>().AddFunction(editorTeleporterRoomCoverFunction);
             editorTeleporterRoomFunction.gameObject.GetComponent<RoomFunctionContainer>().AddFunction(editorTeleporterRoomFunction);
             DestroyImmediate(editorTeleporterRoomFunction.transform.Find("TeleporterRoomFunctionObjectBase").gameObject);
@@ -1264,6 +1262,7 @@ namespace PlusLevelStudio
             EditorInterface.AddObjectVisual("examinationtable", LevelLoaderPlugin.Instance.basicObjects["examinationtable"], true);
             EditorInterface.AddObjectVisual("merrygoround", LevelLoaderPlugin.Instance.basicObjects["merrygoround"], true);
             EditorInterface.AddObjectVisual("tent", LevelLoaderPlugin.Instance.basicObjects["tent"], true);
+            EditorInterface.AddObjectVisual("packetomatic", LevelLoaderPlugin.Instance.basicObjects["packetomatic"], true);
 
             // the ones with no hitboxes
             EditorInterface.AddObjectVisualWithCustomSphereCollider("picnicbasket", LevelLoaderPlugin.Instance.basicObjects["picnicbasket"], 2f, Vector3.up);
@@ -1574,6 +1573,8 @@ namespace PlusLevelStudio
             selectableTextures.Add("BlueCarpet");
             selectableTextures.Add("WallWithMolding");
             selectableTextures.Add("TileFloor");
+            selectableTextures.Add("ElevatorFloor");
+            selectableTextures.Add("ElevatorBack");
             selectableTextures.Add("ElevatorCeiling");
             selectableTextures.Add("PlasticTable");
             selectableTextures.Add("Grass");

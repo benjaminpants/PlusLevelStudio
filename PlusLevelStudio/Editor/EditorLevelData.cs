@@ -106,6 +106,7 @@ namespace PlusLevelStudio.Editor
             defaultTextures.Add("teleportroom_2", new TextureContainer("LabFloor", "LabWall", "LabCeiling"));
             defaultTextures.Add("teleportroom_3", new TextureContainer("LabFloor", "LabWall", "LabCeiling"));
             defaultTextures.Add("teleportroom_4", new TextureContainer("LabFloor", "LabWall", "LabCeiling"));
+            defaultTextures.Add("saferoom", new TextureContainer("ElevatorFloor", "ElevatorBack", "ElevatorCeiling"));
 
             defaultTextures.Add("class_mathmachine", new TextureContainer("BlueCarpet", "WallWithMolding", "Ceiling"));
             defaultTextures.Add("class_matchactivity", new TextureContainer("BlueCarpet", "WallWithMolding", "Ceiling"));

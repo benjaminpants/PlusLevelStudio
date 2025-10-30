@@ -222,6 +222,69 @@ namespace PlusStudioLevelLoader
             // thanks mystman
             scene.forcedNpcs = new NPC[0];
             scene.potentialNPCs = new List<WeightedNPC>();
+            scene.potentialStickers = new WeightedSticker[]
+            {
+                new WeightedSticker()
+                {
+                    selection = Sticker.BaldiPraise,
+                    weight = 100,
+                },
+                new WeightedSticker()
+                {
+                    selection = Sticker.Stamina,
+                    weight = 100,
+                },
+                new WeightedSticker()
+                {
+                    selection = Sticker.InventorySlot,
+                    weight = 100,
+                },
+                new WeightedSticker()
+                {
+                    selection = Sticker.YtpMulitplier,
+                    weight = 100,
+                },
+                new WeightedSticker()
+                {
+                    selection = Sticker.Shadows,
+                    weight = 100,
+                },
+                new WeightedSticker()
+                {
+                    selection = Sticker.DoorStop,
+                    weight = 100,
+                },
+                new WeightedSticker()
+                {
+                    selection = Sticker.Silence,
+                    weight = 100,
+                },
+                new WeightedSticker()
+                {
+                    selection = Sticker.Reach,
+                    weight = 100,
+                },
+                new WeightedSticker()
+                {
+                    selection = Sticker.MapRange,
+                    weight = 100,
+                },
+                new WeightedSticker()
+                {
+                    selection = Sticker.Elevator,
+                    weight = 100,
+                },
+                new WeightedSticker()
+                {
+                    selection = Sticker.TimeExtension,
+                    weight = 100,
+                },
+                new WeightedSticker()
+                {
+                    selection = Sticker.Stealth,
+                    weight = 100,
+                }
+            };
 
             return scene;
         }

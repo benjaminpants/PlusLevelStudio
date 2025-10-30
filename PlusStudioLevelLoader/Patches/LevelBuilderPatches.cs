@@ -37,4 +37,25 @@ namespace PlusStudioLevelLoader.Patches
             }
         }
     }
+
+    [HarmonyPatch(typeof(LevelBuilder))]
+    [HarmonyPatch("CreateItem", new Type[] { typeof(RoomController), typeof(ItemObject), typeof(Vector2), typeof(bool), typeof(bool) })]
+    class CreateItemPatch
+    {
+        static void Prefix(LevelBuilder __instance, ItemObject item, out Pickup __state)
+        {
+            __state = null;
+            if (item.itemType == Items.StickerPack)
+            {
+                __state = __instance.pickupPre;
+                __instance.pickupPre = LevelLoaderPlugin.Instance.stickerPickupPre;
+            }
+        }
+
+        static void Postfix(LevelBuilder __instance, Pickup __state)
+        {
+            if (__state == null) return;
+            __instance.pickupPre = __state;
+        }
+    }
 }

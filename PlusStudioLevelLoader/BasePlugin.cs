@@ -37,6 +37,8 @@ namespace PlusStudioLevelLoader
         public Dictionary<string, RandomEvent> randomEventAliases = new Dictionary<string, RandomEvent>();
         public Dictionary<string, Cubemap> skyboxAliases = new Dictionary<string, Cubemap>();
 
+        public Pickup stickerPickupPre;
+
         public static Texture2D RoomTextureFromAlias(string alias)
         {
             if (!Instance.roomTextureAliases.ContainsKey(alias))
@@ -65,7 +67,9 @@ namespace PlusStudioLevelLoader
 
         IEnumerator LoadEnumerator()
         {
-            yield return 4;
+            yield return 5;
+            yield return "Fetching misc...";
+            stickerPickupPre = Resources.FindObjectsOfTypeAll<Pickup>().First(x => x.GetInstanceID() >= 0 && x.name == "StickerPickup" && x.transform.parent == null);
             yield return "Fetching textures...";
             Texture2D[] textures = Resources.FindObjectsOfTypeAll<Texture2D>().Where(x => x.GetInstanceID() >= 0 && x.isReadable).ToArray();
             roomTextureAliases.Add("HallFloor", textures.First(x => x.name == "TileFloor"));
@@ -96,6 +100,9 @@ namespace PlusStudioLevelLoader
             roomTextureAliases.Add("Black", textures.First(x => x.name == "BlackTexture"));
             roomTextureAliases.Add("Vent", textures.First(x => x.name == "Vent_Base"));
             roomTextureAliases.Add("PlasticTable", textures.First(x => x.name == "PlasticTable"));
+
+            roomTextureAliases.Add("ElevatorFloor", textures.First(x => x.name == "ElFloor"));
+            roomTextureAliases.Add("ElevatorBack", textures.First(x => x.name == "ElBack"));
             yield return "Fetching materials...";
             assetMan.AddFromResourcesNoClones<Material>();
             assetMan.AddFromResourcesNoClones<Cubemap>();
@@ -114,6 +121,7 @@ namespace PlusStudioLevelLoader
             roomSettings.Add("shop", new RoomSettings(RoomCategory.Store, RoomType.Room, new Color(1f, 1f, 1f), assetMan.Get<StandardDoorMats>("ClassDoorSet")));
             roomSettings.Add("lightbulbtesting", new RoomSettings(RoomCategory.Special, RoomType.Room, new Color(1f, 1f, 1f), assetMan.Get<StandardDoorMats>("ClassDoorSet")));
             roomSettings.Add("mystery", new RoomSettings(RoomCategory.Mystery, RoomType.Room, new Color(0f, 1f, 0f), assetMan.Get<StandardDoorMats>("MysteryDoorMats")));
+            roomSettings.Add("saferoom", new RoomSettings(RoomCategory.Special, RoomType.Room, new Color(1f, 1f, 1f), assetMan.Get<StandardDoorMats>("SafeRoomDoorSet")));
             roomSettings["faculty"].container = roomFunctions.Find(x => x.name == "FacultyRoomFunction");
             roomSettings["office"].container = roomFunctions.Find(x => x.name == "OfficeRoomFunction");
             roomSettings["class"].container = roomFunctions.Find(x => x.name == "ClassRoomFunction");
@@ -122,6 +130,7 @@ namespace PlusStudioLevelLoader
             roomSettings["outside"].container = roomFunctions.Find(x => x.name == "PlaygroundRoomFunction");
             roomSettings["shop"].container = roomFunctions.Find(x => x.name == "JohnnyStoreRoomFunction");
             roomSettings["lightbulbtesting"].container = roomFunctions.Find(x => x.name == "LightbulbTestRoomFunction");
+            roomSettings["saferoom"].container = roomFunctions.Find(x => x.name == "SafeRoomRoomFunction");
 
             // handle the extra class types for premade rooms
             roomSettings.Add("class_mathmachine", new RoomSettings(RoomCategory.Class, RoomType.Room, Color.green, assetMan.Get<StandardDoorMats>("ClassDoorSet"), assetMan.Get<Material>("MapTile_Classroom")));
@@ -192,6 +201,7 @@ namespace PlusStudioLevelLoader
             itemObjects.Add("shapekey_weird", ItemMetaStorage.Instance.FindByEnum(Items.WeirdKey).value);
             itemObjects.Add("shapekey_star", ItemMetaStorage.Instance.FindByEnum(Items.PentagonKey).value);
             itemObjects.Add("shapekey_heart", ItemMetaStorage.Instance.FindByEnum(Items.HexagonKey).value);
+            itemObjects.Add("stickerpack", ItemMetaStorage.Instance.FindByEnum(Items.StickerPack).value);
 
             // code ported from legacy editor because retyping all of these would be annoying
             GameObject[] objects = Resources.FindObjectsOfTypeAll<GameObject>().Where(x => (x.GetInstanceID() >= 0) && (x.transform.parent == null)).ToArray();
@@ -246,6 +256,7 @@ namespace PlusStudioLevelLoader
             basicObjects.Add("exitsign", objects.First(x => x.name == "Decor_ExitSign"));
             basicObjects.Add("johnnysign", objects.First(x => x.name == "JohnnySign"));
             basicObjects.Add("mysterymarks", objects.First(x => x.name == "MysteryRoomMarks"));
+            basicObjects.Add("packetomatic", objects.First(x => x.name == "Packet_O_Matic"));
 
             // activities
             Activity[] activites = Resources.FindObjectsOfTypeAll<Activity>().Where(x => x.GetInstanceID() >= 0).ToArray();

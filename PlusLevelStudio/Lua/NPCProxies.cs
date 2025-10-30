@@ -172,7 +172,12 @@ namespace PlusLevelStudio.Lua
 
         public void Praise(float time)
         {
-            baldi.Praise(time);
+            baldi.Praise(time, false);
+        }
+
+        public void Praise(float time, bool rewardSticker)
+        {
+            baldi.Praise(time, rewardSticker);
         }
     }
 }

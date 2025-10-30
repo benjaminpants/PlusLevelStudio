@@ -269,6 +269,7 @@ namespace PlusLevelStudio
                 new ItemTool("grapple"),
                 new ItemTool("apple"),
                 new ItemTool("buspass"),
+                new ItemTool("stickerpack"),
                 new ItemTool("shapekey_circle"),
                 new ItemTool("shapekey_triangle"),
                 new ItemTool("shapekey_square"),
@@ -301,7 +302,8 @@ namespace PlusLevelStudio
                     new RoomTool("cafeteria"),
                     new RoomTool("outside"),
                     new RoomTool("library"),
-                    new RoomTool("lightbulbtesting")
+                    new RoomTool("lightbulbtesting"),
+                    new RoomTool("saferoom")
             }, true);
             if (!includeNonVanillaComplaintTools) return;
             AddToolsToCategory(modeToModify, "rooms", new EditorTool[]
@@ -391,6 +393,7 @@ namespace PlusLevelStudio
                 new ObjectTool("rounddesk"),
                 new ObjectTool("bookshelf"),
                 new ObjectTool("bookshelf_hole"),
+                new ObjectTool("packetomatic"),
                 new ObjectTool("counter"),
                 new ObjectTool("examinationtable"),
                 new ObjectToolNoRotation("pedestal"),
