@@ -785,7 +785,9 @@ namespace PlusLevelStudio.Editor
         public void CompileAndPlay()
         {
             BaldiLevel level = Compile();
+            // TODO: figure out better solution
             AccessTools.Field(typeof(Singleton<CoreGameManager>), "m_Instance").SetValue(null, null); // so coregamemanager gets created properly
+            AccessTools.Field(typeof(Singleton<StickerManager>), "m_Instance").SetValue(null, null); // so coregamemanager gets created properly
             PlayableEditorLevel playableLevel = new PlayableEditorLevel();
             playableLevel.data = level;
             playableLevel.meta = levelData.meta; // we actually dont need to compile here i think
