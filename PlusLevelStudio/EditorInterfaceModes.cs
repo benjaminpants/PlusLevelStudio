@@ -134,7 +134,7 @@ namespace PlusLevelStudio
         /// <param name="modeToModify"></param>
         public static void AddVanillaPosters(EditorMode modeToModify)
         {
-            List<PosterObject> allPosters = LevelLoaderPlugin.Instance.posterAliases.Values.Where(x => x.GetInstanceID() >= 0).ToList();
+            List<PosterObject> allPosters = LevelLoaderPlugin.Instance.posterAliases.GetValues().Where(x => x.GetInstanceID() >= 0).ToList();
             allPosters.Remove(allPosters.Find(x => x.name == "TestTextPoster"));
             allPosters.Sort((a, b) =>
             {
@@ -145,7 +145,7 @@ namespace PlusLevelStudio
                 }
                 return a.name.CompareTo(b.name);
             });
-            AddToolsToCategory(modeToModify, "posters", allPosters.Select(z => new PosterTool(LevelLoaderPlugin.Instance.posterAliases.First(x => x.Value == z).Key)), true);
+            AddToolsToCategory(modeToModify, "posters", allPosters.Select(z => new PosterTool(LevelLoaderPlugin.Instance.posterAliases.GetPairs().First(x => x.Value == z).Key)), true);
         }
 
         /// <summary>

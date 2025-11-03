@@ -79,10 +79,10 @@ namespace PlusLevelStudio.Editor.SettingsUI
         {
             string id = "cstm_" + Path.GetFileNameWithoutExtension(path);
             string fileName = Path.GetFileName(path); // unfortunately Path.GetRelativePath doesn't exist in .net 2.0
-            if (!EditorController.Instance.customContent.textures.ContainsKey(id))
+            if (!EditorController.Instance.customContent.GetForEntryType("texture").Contains(id))
             {
                 Texture2D texture = AssetLoader.TextureFromFile(path);
-                EditorController.Instance.customContent.textures.Add(id, texture);
+                EditorController.Instance.customContent.GetForEntryType("texture").Add(id, texture);
                 EditorController.Instance.customContentPackage.entries.Add(new EditorCustomContentEntry("texture", id, fileName));
             }
             SelectTexture(id);

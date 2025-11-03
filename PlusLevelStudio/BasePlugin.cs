@@ -1895,7 +1895,8 @@ namespace PlusLevelStudio
 
         IEnumerator LoadAssets()
         {
-            yield return 4;
+            yield return 5;
+            yield return "Adding poster and texture loading modifiers...";
             yield return "Creating solid color lightmaps...";
             if (LevelLoaderPlugin.Instance.Info.Metadata.Version < expectedLoaderVersion)
             {

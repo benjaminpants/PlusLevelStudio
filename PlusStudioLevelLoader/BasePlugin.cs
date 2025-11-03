@@ -21,21 +21,21 @@ namespace PlusStudioLevelLoader
 
         public AssetManager assetMan = new AssetManager();
 
-        public Dictionary<string, RoomSettings> roomSettings = new Dictionary<string, RoomSettings>();
-        public Dictionary<string, Texture2D> roomTextureAliases = new Dictionary<string, Texture2D>();
-        public Dictionary<string, Transform> lightTransforms = new Dictionary<string, Transform>();
-        public Dictionary<string, Door> doorPrefabs = new Dictionary<string, Door>();
-        public Dictionary<string, WindowObject> windowObjects = new Dictionary<string, WindowObject>();
-        public Dictionary<string, TileBasedObject> tileBasedObjectPrefabs = new Dictionary<string, TileBasedObject>();
-        public Dictionary<string, LoaderExitData> exitDatas = new Dictionary<string, LoaderExitData>();
-        public Dictionary<string, ItemObject> itemObjects = new Dictionary<string, ItemObject>();
-        public Dictionary<string, GameObject> basicObjects = new Dictionary<string, GameObject>();
-        public Dictionary<string, Activity> activityAliases = new Dictionary<string, Activity>();
-        public Dictionary<string, LoaderStructureData> structureAliases = new Dictionary<string, LoaderStructureData>();
-        public Dictionary<string, NPC> npcAliases = new Dictionary<string, NPC>();
-        public Dictionary<string, PosterObject> posterAliases = new Dictionary<string, PosterObject>();
-        public Dictionary<string, RandomEvent> randomEventAliases = new Dictionary<string, RandomEvent>();
-        public Dictionary<string, Cubemap> skyboxAliases = new Dictionary<string, Cubemap>();
+        public AssetIdStorage<RoomSettings> roomSettings = new AssetIdStorage<RoomSettings>();
+        public AssetIdStorage<Texture2D> roomTextureAliases = new AssetIdStorage<Texture2D>();
+        public AssetIdStorage<Transform> lightTransforms = new AssetIdStorage<Transform>();
+        public AssetIdStorage<Door> doorPrefabs = new AssetIdStorage<Door>();
+        public AssetIdStorage<WindowObject> windowObjects = new AssetIdStorage<WindowObject>();
+        public AssetIdStorage<TileBasedObject> tileBasedObjectPrefabs = new AssetIdStorage<TileBasedObject>();
+        public AssetIdStorage<LoaderExitData> exitDatas = new AssetIdStorage<LoaderExitData>();
+        public AssetIdStorage<ItemObject> itemObjects = new AssetIdStorage<ItemObject>();
+        public AssetIdStorage<GameObject> basicObjects = new AssetIdStorage<GameObject>();
+        public AssetIdStorage<Activity> activityAliases = new AssetIdStorage<Activity>();
+        public AssetIdStorage<LoaderStructureData> structureAliases = new AssetIdStorage<LoaderStructureData>();
+        public AssetIdStorage<NPC> npcAliases = new AssetIdStorage<NPC>();
+        public AssetIdStorage<PosterObject> posterAliases = new AssetIdStorage<PosterObject>();
+        public AssetIdStorage<RandomEvent> randomEventAliases = new AssetIdStorage<RandomEvent>();
+        public AssetIdStorage<Cubemap> skyboxAliases = new AssetIdStorage<Cubemap>();
 
         public Pickup stickerPickupPre;
 

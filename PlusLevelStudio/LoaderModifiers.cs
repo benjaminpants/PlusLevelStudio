@@ -6,8 +6,42 @@ using PlusStudioLevelLoader;
 using UnityEngine;
 using PlusLevelStudio.Editor;
 
-namespace PlusLevelStudio.Patches
+namespace PlusLevelStudio
 {
+    public abstract class EditorLoaderModifier<T> : AssetIdStorageModifier<T> where T : class
+    {
+        public virtual EditorCustomContent GetCustomContent()
+        {
+            if (EditorPlayModeManager.Instance != null)
+            {
+                return EditorPlayModeManager.Instance.customContent;
+            }
+            if (EditorController.Instance == null) return null;
+            return EditorController.Instance.customContent;
+        }
+    }
+
+    public class LoaderTextureModifier : EditorLoaderModifier<Texture2D>
+    {
+        public override bool ContainsKey(string id)
+        {
+            if (GetCustomContent() == null) return false;
+            return GetCustomContent().GetForEntryType("texture").Contains(id);
+        }
+
+        public override Texture2D Get(string id)
+        {
+            if (GetCustomContent() == null) return null;
+            return (Texture2D)GetCustomContent().GetForEntryType("texture").Get(id);
+        }
+
+        public override List<KeyValuePair<string, Texture2D>> GetEntries()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    /*
     [HarmonyPatch(typeof(LevelLoaderPlugin))]
     [HarmonyPatch("RoomTextureFromAlias")]
     static class RoomTextureAliasPatch
@@ -54,5 +88,5 @@ namespace PlusLevelStudio.Patches
             }
             return true;
         }
-    }
+    }*/
 }

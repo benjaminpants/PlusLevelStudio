@@ -37,7 +37,7 @@ namespace PlusLevelStudio.Editor.Tools.Customs
                 return true;
             }
             EditorCustomContentEntry entry = new EditorCustomContentEntry(posterEntryType, currentId, Encoding.Unicode.GetBytes(text));
-            EditorController.Instance.customContent.posters.Add(entry.id, GeneratePoster(currentId, text));
+            EditorController.Instance.customContent.GetForEntryType(posterEntryType).Add(entry.id, GeneratePoster(currentId, text));
             EditorController.Instance.customContentPackage.entries.Add(entry);
             return true;
         }

@@ -10,38 +10,56 @@ using MTM101BaldAPI.UI;
 
 namespace PlusLevelStudio
 {
-    /// <summary>
-    /// A class containg all custom content for the specified floor.
-    /// </summary>
-    public class EditorCustomContent
+    public abstract class EditorCustomContentContainer
     {
-        public BaseGameManager gameManagerPre;
 
-        public Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
-        public Dictionary<string, PosterObject> posters = new Dictionary<string, PosterObject>();
-
-        public void CleanupContent()
+        public EditorCustomContentContainer(EditorCustomContent content)
         {
-            if (gameManagerPre != null)
-            {
-                UnityEngine.Object.Destroy(gameManagerPre.gameObject);
-            }
-            gameManagerPre = null;
+            myContent = content;
+        }
+
+        public EditorCustomContent myContent = null;
+
+        public HashSet<string> types = new HashSet<string>();
+
+        public abstract void CleanupContent();
+
+        public abstract void ClearEntriesNotInPackage(EditorCustomContentPackage package, List<EditorCustomContentEntry> entries);
+
+        public abstract void LoadFromPackage(EditorCustomContentPackage package);
+
+        public abstract bool Contains(string key);
+
+        public abstract void Add(string key, object value);
+
+        public abstract object Get(string key);
+    }
+
+    public class EditorCustomTextureContainer : EditorCustomContentContainer
+    {
+        public Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
+
+        public EditorCustomTextureContainer(EditorCustomContent content) : base(content)
+        {
+            types.Add("texture");
+        }
+
+        public override void Add(string key, object value)
+        {
+            textures.Add(key, (Texture2D)value);
+        }
+
+        public override void CleanupContent()
+        {
             foreach (var kvp in textures)
             {
                 UnityEngine.Object.Destroy(kvp.Value);
             }
-            foreach (var kvp in posters)
-            {
-                UnityEngine.Object.Destroy(kvp.Value);
-            }
             textures.Clear();
-            posters.Clear();
         }
 
-        public void ClearEntriesNotInPackage(EditorCustomContentPackage package)
+        public override void ClearEntriesNotInPackage(EditorCustomContentPackage package, List<EditorCustomContentEntry> textureEntries)
         {
-            List<EditorCustomContentEntry> textureEntries = package.GetAllOfType("texture");
             List<string> texturesKeyedForRemoval = new List<string>();
             foreach (KeyValuePair<string, Texture2D> kvp in textures)
             {
@@ -55,8 +73,54 @@ namespace PlusLevelStudio
                 UnityEngine.Object.Destroy(textures[texturesKeyedForRemoval[i]]);
                 textures.Remove(texturesKeyedForRemoval[i]);
             }
+        }
 
-            List<EditorCustomContentEntry> posterEntries = package.GetAllOfTypes("imageposter", "baldisaysposter", "chalkboardposter", "bulletinposter", "bulletinsmallposter");
+        public override bool Contains(string key)
+        {
+            return textures.ContainsKey(key);
+        }
+
+        public override object Get(string key)
+        {
+            return textures[key];
+        }
+
+        public override void LoadFromPackage(EditorCustomContentPackage package)
+        {
+            List<EditorCustomContentEntry> textureEntries = package.GetAllOfType("texture");
+            foreach (EditorCustomContentEntry entry in textureEntries)
+            {
+                if (textures.ContainsKey(entry.id)) continue; // the texture is already loaded
+                textures.Add(entry.id, EditorCustomContent.LoadTextureFromPathOrData(entry, LevelStudioPlugin.customTexturePath));
+            }
+        }
+    }
+
+    public class EditorCustomPosterContainer : EditorCustomContentContainer
+    {
+        public Dictionary<string, PosterObject> posters = new Dictionary<string, PosterObject>();
+
+        public EditorCustomPosterContainer(EditorCustomContent content) : base(content)
+        {
+            types.UnionWith(new string[] { "imageposter", "baldisaysposter", "chalkboardposter", "bulletinposter", "bulletinsmallposter" });
+        }
+
+        public override void Add(string key, object value)
+        {
+            posters.Add(key, (PosterObject)value);
+        }
+
+        public override void CleanupContent()
+        {
+            foreach (var kvp in posters)
+            {
+                UnityEngine.Object.Destroy(kvp.Value);
+            }
+            posters.Clear();
+        }
+
+        public override void ClearEntriesNotInPackage(EditorCustomContentPackage package, List<EditorCustomContentEntry> posterEntries)
+        {
             List<string> posterEntriesKeyedForRemoval = new List<string>();
             foreach (KeyValuePair<string, PosterObject> kvp in posters)
             {
@@ -72,37 +136,23 @@ namespace PlusLevelStudio
             }
         }
 
-        protected Texture2D LoadTextureFromPathOrData(EditorCustomContentEntry entry, string basePath)
+        public override bool Contains(string key)
         {
-            Texture2D returnVal;
-            if (entry.usingFilePath)
-            {
-                returnVal = AssetLoader.TextureFromFile(Path.Combine(basePath, entry.filePath));
-            }
-            else
-            {
-                returnVal = new Texture2D(128, 128, TextureFormat.ARGB32, false);
-                returnVal.filterMode = FilterMode.Point;
-                returnVal.LoadImage(entry.data);
-                returnVal.name = entry.id;
-            }
-            return returnVal;
+            return posters.ContainsKey(key);
         }
 
-        public void LoadFromPackage(EditorCustomContentPackage package)
+        public override object Get(string key)
         {
-            List<EditorCustomContentEntry> textureEntries = package.GetAllOfType("texture");
-            foreach (EditorCustomContentEntry entry in textureEntries)
-            {
-                if (textures.ContainsKey(entry.id)) continue; // the texture is already loaded
-                textures.Add(entry.id, LoadTextureFromPathOrData(entry, LevelStudioPlugin.customTexturePath));
-            }
+            return posters[key];
+        }
 
+        public override void LoadFromPackage(EditorCustomContentPackage package)
+        {
             List<EditorCustomContentEntry> imagePosterEntries = package.GetAllOfType("imageposter");
             foreach (EditorCustomContentEntry entry in imagePosterEntries)
             {
                 if (posters.ContainsKey(entry.id)) continue; // the texture is already loaded
-                PosterObject posterObj = ObjectCreators.CreatePosterObject(LoadTextureFromPathOrData(entry, LevelStudioPlugin.customPostersPath), new PosterTextData[0]);
+                PosterObject posterObj = ObjectCreators.CreatePosterObject(EditorCustomContent.LoadTextureFromPathOrData(entry, LevelStudioPlugin.customPostersPath), new PosterTextData[0]);
                 posterObj.name = entry.id;
                 posters.Add(entry.id, posterObj);
             }
@@ -138,7 +188,79 @@ namespace PlusLevelStudio
                 PosterObject posterObj = LevelStudioPlugin.Instance.GenerateBulletInPoster(entry.id, Encoding.Unicode.GetString(entry.GetData()), BaldiFonts.ComicSans12);
                 posters.Add(entry.id, posterObj);
             }
+        }
+    }
 
+    /// <summary>
+    /// A class containg all custom content for the specified floor.
+    /// </summary>
+    public class EditorCustomContent
+    {
+        public static Action<EditorCustomContent> onCreation = (ecc =>
+        {
+            ecc.customContent.Add(new EditorCustomTextureContainer(ecc));
+            ecc.customContent.Add(new EditorCustomPosterContainer(ecc));
+        });
+
+        public EditorCustomContent()
+        {
+            onCreation.Invoke(this);
+        }
+
+
+        public BaseGameManager gameManagerPre;
+
+        public List<EditorCustomContentContainer> customContent = new List<EditorCustomContentContainer>();
+
+        public EditorCustomContentContainer GetForEntryType(string type)
+        {
+            return customContent.FirstOrDefault(x => x.types.Contains(type));
+        }
+
+        public void CleanupContent()
+        {
+            if (gameManagerPre != null)
+            {
+                UnityEngine.Object.Destroy(gameManagerPre.gameObject);
+            }
+            gameManagerPre = null;
+            for (int i = 0; i < customContent.Count; i++)
+            {
+                customContent[i].CleanupContent();
+            }
+        }
+
+        public void ClearEntriesNotInPackage(EditorCustomContentPackage package)
+        {
+            for (int i = 0; i < customContent.Count; i++)
+            {
+                customContent[i].ClearEntriesNotInPackage(package, package.GetAllOfTypes(customContent[i].types.ToArray()));
+            }
+        }
+
+        public static Texture2D LoadTextureFromPathOrData(EditorCustomContentEntry entry, string basePath)
+        {
+            Texture2D returnVal;
+            if (entry.usingFilePath)
+            {
+                returnVal = AssetLoader.TextureFromFile(Path.Combine(basePath, entry.filePath));
+            }
+            else
+            {
+                returnVal = new Texture2D(128, 128, TextureFormat.ARGB32, false);
+                returnVal.filterMode = FilterMode.Point;
+                returnVal.LoadImage(entry.data);
+                returnVal.name = entry.id;
+            }
+            return returnVal;
+        }
+
+        public void LoadFromPackage(EditorCustomContentPackage package)
+        {
+            for (int i = 0; i < customContent.Count; i++)
+            {
+                customContent[i].LoadFromPackage(package);
+            }
         }
     }
 

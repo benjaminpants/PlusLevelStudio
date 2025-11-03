@@ -53,7 +53,7 @@ namespace PlusLevelStudio.Editor.Tools.Customs
             EditorCustomContentEntry entry = new EditorCustomContentEntry("imageposter", currentId, fileName);
             PosterObject posterObj = ObjectCreators.CreatePosterObject(texture, new PosterTextData[0]);
             posterObj.name = entry.id;
-            EditorController.Instance.customContent.posters.Add(entry.id, posterObj);
+            EditorController.Instance.customContent.GetForEntryType("imageposter").Add(entry.id, posterObj);
             EditorController.Instance.customContentPackage.entries.Add(entry);
             return true;
         }
