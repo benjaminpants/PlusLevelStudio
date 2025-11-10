@@ -192,6 +192,7 @@ namespace PlusStudioLevelLoader
             itemObjects.Add("points25", ItemMetaStorage.Instance.GetPointsObject(25, true));
             itemObjects.Add("points50", ItemMetaStorage.Instance.GetPointsObject(50, true));
             itemObjects.Add("points100", ItemMetaStorage.Instance.GetPointsObject(100, true));
+            itemObjects.Add("points250", ItemMetaStorage.Instance.GetPointsObject(250, true));
             itemObjects.Add("buspass", ItemMetaStorage.Instance.FindByEnum(Items.BusPass).value);
             itemObjects.Add("inviselixer", ItemMetaStorage.Instance.FindByEnum(Items.InvisibilityElixir).value);
             itemObjects.Add("reachextend", ItemMetaStorage.Instance.FindByEnum(Items.ReachExtender).value);
@@ -201,7 +202,15 @@ namespace PlusStudioLevelLoader
             itemObjects.Add("shapekey_weird", ItemMetaStorage.Instance.FindByEnum(Items.WeirdKey).value);
             itemObjects.Add("shapekey_star", ItemMetaStorage.Instance.FindByEnum(Items.PentagonKey).value);
             itemObjects.Add("shapekey_heart", ItemMetaStorage.Instance.FindByEnum(Items.HexagonKey).value);
-            itemObjects.Add("stickerpack", ItemMetaStorage.Instance.FindByEnum(Items.StickerPack).value);
+
+            //TBA
+            itemObjects.Add("stickerpack", ItemMetaStorage.Instance.Find(x => x.id == Items.StickerPack && x.value.name == "StickerPack_Normal").value);
+            itemObjects.Add("stickerpack_large", ItemMetaStorage.Instance.Find(x => x.id == Items.StickerPack && x.value.name == "StickerPack_Large").value);
+            itemObjects.Add("stickerpack_twin", ItemMetaStorage.Instance.Find(x => x.id == Items.StickerPack && x.value.name == "StickerPack_Twin").value);
+            itemObjects.Add("stickerpack_bonus", ItemMetaStorage.Instance.Find(x => x.id == Items.StickerPack && x.value.name == "StickerPack_Bonus").value);
+            itemObjects.Add("stickerpack_fresh", ItemMetaStorage.Instance.Find(x => x.id == Items.StickerPack && x.value.name == "StickerPack_Fresh").value);
+            //itemObjects.Add("stickerpack_sticky", ItemMetaStorage.Instance.Find(x => x.id == Items.StickerPack && x.value.name == "StickerPack_Sticky").value);
+            itemObjects.Add("gluestick", ItemMetaStorage.Instance.Find(x => x.id == Items.StickerPack && x.value.name == "GlueStick").value);
 
             // code ported from legacy editor because retyping all of these would be annoying
             GameObject[] objects = Resources.FindObjectsOfTypeAll<GameObject>().Where(x => (x.GetInstanceID() >= 0) && (x.transform.parent == null)).ToArray();

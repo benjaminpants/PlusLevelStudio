@@ -270,6 +270,11 @@ namespace PlusLevelStudio
                 new ItemTool("apple"),
                 new ItemTool("buspass"),
                 new ItemTool("stickerpack"),
+                new ItemTool("stickerpack_large"),
+                new ItemTool("stickerpack_twin"),
+                new ItemTool("stickerpack_bonus"),
+                new ItemTool("stickerpack_fresh"),
+                new ItemTool("gluestick"),
                 new ItemTool("shapekey_circle"),
                 new ItemTool("shapekey_triangle"),
                 new ItemTool("shapekey_square"),
@@ -279,6 +284,7 @@ namespace PlusLevelStudio
                 new ItemTool("points25", LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/items_points25")),
                 new ItemTool("points50", LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/items_points50")),
                 new ItemTool("points100", LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/items_points100")),
+                new ItemTool("points250", LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/items_points250")),
             }, true);
         }
 

@@ -116,12 +116,23 @@
 {"key":"Ed_Tool_item_points50_Desc","value":"Awards 50 YTPs upon collection."},
 {"key":"Itm_Points_100","value":"100 YTPs"},
 {"key":"Ed_Tool_item_points100_Desc","value":"Awards 100 YTPs upon collection."},
+{"key":"Itm_Points_250","value":"250 YTPs"},
+{"key":"Ed_Tool_item_points250_Desc","value":"Awards 250 YTPs upon collection."},
+
 {"key":"Ed_Tool_item_shapekey_triangle_Desc","value":"Used to open Triangle Shape Locks."},
 {"key":"Ed_Tool_item_shapekey_square_Desc","value":"Used to open Square Shape Locks."},
 {"key":"Ed_Tool_item_shapekey_circle_Desc","value":"Used to open Circle Shape Locks."},
 {"key":"Ed_Tool_item_shapekey_star_Desc","value":"Used to open Star Shape Locks."},
 {"key":"Ed_Tool_item_shapekey_heart_Desc","value":"Used to open Heart Shape Locks."},
 {"key":"Ed_Tool_item_shapekey_weird_Desc","value":"Used to open Weird Shape Locks."},
+
+{"key":"Ed_Tool_item_stickerpack_Desc","value":"Gives 3 random stickers when opened."},
+{"key":"Ed_Tool_item_stickerpack_large_Desc","value":"Gives 7 random stickers when opened."},
+{"key":"Ed_Tool_item_stickerpack_twin_Desc","value":"Gives 2 of a random sticker when opened."},
+{"key":"Ed_Tool_item_stickerpack_bonus_Desc","value":"Gives a random <i>bonus</i> sticker when opened."},
+{"key":"Ed_Tool_item_stickerpack_fresh_Desc","value":"Gives 2 random <i>fresh</i> stickers when opened."},
+{"key":"Ed_Tool_item_stickerpack_sticky_Desc","value":"Gives a random <i>sticky</i> sticker when opened."},
+{"key":"Ed_Tool_item_gluestick_Desc","value":"Can upgrade a normal sticker slot to be sticky."},
 
 {"key":"Ed_Tool_object_desk_Title","value":"Student Desk"},
 {"key":"Ed_Tool_object_desk_Desc","value":"Every good, functioning, limb owning student needs one of these!"},
@@ -241,6 +252,8 @@
 {"key":"Ed_Tool_object_qmark6_Desc","value":"Name the color of a certain faculty member's office door!"},
 {"key":"Ed_Tool_object_qmark7_Title","value":"Green Question Mark"},
 {"key":"Ed_Tool_object_qmark7_Desc","value":"Grass is this color due to ___________!"},
+{"key":"Ed_Tool_object_packetomatic_Title","value":"Packet-o-Matic"},
+{"key":"Ed_Tool_object_packetomatic_Desc","value":"Allows you to apply or replace stickers!"},
 
 {"key":"Ed_Tool_scatter_trees_Title","value":"Trees Scatter Tool"},
 {"key":"Ed_Tool_scatter_trees_Desc","value":"Drag across an area to randomly place trees!"},

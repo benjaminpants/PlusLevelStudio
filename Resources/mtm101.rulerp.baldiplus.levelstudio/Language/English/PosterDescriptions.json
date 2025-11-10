@@ -108,6 +108,8 @@
 {"key":"Ed_Poster_Desc_HNT_Scissors","value":"Reminding everyone that scissors are sharp!"},
 {"key":"Ed_Poster_Title_HNT_YTPs","value":"YTPs Hint"},
 {"key":"Ed_Poster_Desc_HNT_YTPs","value":"Get REWARDED for THINKING"},
+{"key":"Ed_Poster_Title_HNT_PacketOMatic","value":"Packet-o-Matic Hint"},
+{"key":"Ed_Poster_Desc_HNT_PacketOMatic","value":"Reminder to use the <b>PACKET-O-MATIC</b> for applying stickers!"},
 {"key":"Ed_Poster_Title_Kick1","value":"Girl"},
 {"key":"Ed_Poster_Desc_Kick1","value":"Girl"},
 {"key":"Ed_Poster_Title_Kick2","value":"Giovy's Hobby Poster"},
@@ -152,6 +154,8 @@
 {"key":"Ed_Poster_Desc_StoreNeon_3","value":""},
 {"key":"Ed_Poster_Title_StoreNeon_4","value":"Store Neon 4"},
 {"key":"Ed_Poster_Desc_StoreNeon_4","value":""},
+{"key":"Ed_Poster_Title_NoBaldi","value":"\"No Baldi\" Sign"},
+{"key":"Ed_Poster_Desc_NoBaldi","value":"*BUZZ* OFF, *BUZZ* YOU! *BUZZ* OFF... GET OUTTA HERE!!"},
 
 {"key":"Ed_Poster_Title_Chk_Act_BalloonBuster","value":"Balloon Buster Activity Hint"},
 {"key":"Ed_Poster_Desc_Chk_Act_BalloonBuster","value":"A nice reminder on how the Balloon Buster activity works!"},

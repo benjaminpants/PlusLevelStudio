@@ -45,7 +45,7 @@ namespace PlusStudioLevelLoader.Patches
         static void Prefix(LevelBuilder __instance, ItemObject item, out Pickup __state)
         {
             __state = null;
-            if (item.itemType == Items.StickerPack)
+            if (item.itemType == Items.StickerPack && item.item is ITM_StickerPack)
             {
                 __state = __instance.pickupPre;
                 __instance.pickupPre = LevelLoaderPlugin.Instance.stickerPickupPre;
