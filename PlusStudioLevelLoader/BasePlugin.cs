@@ -131,6 +131,9 @@ namespace PlusStudioLevelLoader
             roomSettings["shop"].container = roomFunctions.Find(x => x.name == "JohnnyStoreRoomFunction");
             roomSettings["lightbulbtesting"].container = roomFunctions.Find(x => x.name == "LightbulbTestRoomFunction");
             roomSettings["saferoom"].container = roomFunctions.Find(x => x.name == "SafeRoomRoomFunction");
+            CoverInGameRoomFunction saferoom_fix = roomSettings["saferoom"].container.gameObject.AddComponent<CoverInGameRoomFunction>();
+            saferoom_fix.hardCover = true;
+            roomSettings["saferoom"].container.AddFunction(saferoom_fix); // fix the saferoom from not being covered as intended
 
             // handle the extra class types for premade rooms
             roomSettings.Add("class_mathmachine", new RoomSettings(RoomCategory.Class, RoomType.Room, Color.green, assetMan.Get<StandardDoorMats>("ClassDoorSet"), assetMan.Get<Material>("MapTile_Classroom")));
@@ -204,13 +207,14 @@ namespace PlusStudioLevelLoader
             itemObjects.Add("shapekey_heart", ItemMetaStorage.Instance.FindByEnum(Items.HexagonKey).value);
 
             //TBA
-            itemObjects.Add("stickerpack", ItemMetaStorage.Instance.Find(x => x.id == Items.StickerPack && x.value.name == "StickerPack_Normal").value);
-            itemObjects.Add("stickerpack_large", ItemMetaStorage.Instance.Find(x => x.id == Items.StickerPack && x.value.name == "StickerPack_Large").value);
-            itemObjects.Add("stickerpack_twin", ItemMetaStorage.Instance.Find(x => x.id == Items.StickerPack && x.value.name == "StickerPack_Twin").value);
-            itemObjects.Add("stickerpack_bonus", ItemMetaStorage.Instance.Find(x => x.id == Items.StickerPack && x.value.name == "StickerPack_Bonus").value);
-            itemObjects.Add("stickerpack_fresh", ItemMetaStorage.Instance.Find(x => x.id == Items.StickerPack && x.value.name == "StickerPack_Fresh").value);
+            ItemMetaData stickerMeta = ItemMetaStorage.Instance.FindByEnum(Items.StickerPack);
+            itemObjects.Add("stickerpack", stickerMeta.itemObjects.First(x => x.name == "StickerPack_Normal"));
+            itemObjects.Add("stickerpack_large", stickerMeta.itemObjects.First(x => x.name == "StickerPack_Large"));
+            itemObjects.Add("stickerpack_twin", stickerMeta.itemObjects.First(x => x.name == "StickerPack_Twin"));
+            itemObjects.Add("stickerpack_bonus", stickerMeta.itemObjects.First(x => x.name == "StickerPack_Bonus"));
+            itemObjects.Add("stickerpack_fresh", stickerMeta.itemObjects.First(x => x.name == "StickerPack_Fresh"));
             //itemObjects.Add("stickerpack_sticky", ItemMetaStorage.Instance.Find(x => x.id == Items.StickerPack && x.value.name == "StickerPack_Sticky").value);
-            itemObjects.Add("gluestick", ItemMetaStorage.Instance.Find(x => x.id == Items.StickerPack && x.value.name == "GlueStick").value);
+            itemObjects.Add("gluestick", stickerMeta.itemObjects.First(x => x.name == "GlueStick"));
 
             // code ported from legacy editor because retyping all of these would be annoying
             GameObject[] objects = Resources.FindObjectsOfTypeAll<GameObject>().Where(x => (x.GetInstanceID() >= 0) && (x.transform.parent == null)).ToArray();

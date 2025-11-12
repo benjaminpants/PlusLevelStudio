@@ -7,18 +7,31 @@ namespace PlusLevelStudio.Editor.Tools
 {
     public class ItemTool : PointTool
     {
+        public bool useItemName;
         public string item;
         public override string id => "item_" + item;
 
-        public override string titleKey => PlusStudioLevelLoader.LevelLoaderPlugin.Instance.itemObjects[item].nameKey;
+        public override string titleKey => useItemName ? PlusStudioLevelLoader.LevelLoaderPlugin.Instance.itemObjects[item].nameKey : base.titleKey;
 
-        public ItemTool(string item) : this(item, PlusStudioLevelLoader.LevelLoaderPlugin.Instance.itemObjects[item].itemSpriteSmall)
+        public ItemTool(string item) : this(item, PlusStudioLevelLoader.LevelLoaderPlugin.Instance.itemObjects[item].itemSpriteSmall, true)
         {
             this.item = item;
         }
 
-        public ItemTool(string item, Sprite sprite)
+        public ItemTool(string item, bool useItemNameAsToolName) : this(item, PlusStudioLevelLoader.LevelLoaderPlugin.Instance.itemObjects[item].itemSpriteSmall, useItemNameAsToolName)
         {
+            this.item = item;
+        }
+
+        public ItemTool(string item, Sprite sprite) : this(item, sprite, true)
+        {
+            this.item = item;
+            this.sprite = sprite;
+        }
+
+        public ItemTool(string item, Sprite sprite, bool useItemNameAsToolName)
+        {
+            useItemName = useItemNameAsToolName;
             this.item = item;
             this.sprite = sprite;
         }

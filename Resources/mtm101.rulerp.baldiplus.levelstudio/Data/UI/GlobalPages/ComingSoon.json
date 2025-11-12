@@ -1,0 +1,21 @@
+{
+	"defines":{
+
+	},
+	"elements":[
+		{
+			"name":"NoConfigurableSettings",
+			"type":"text",
+			"anchoredPosition":[0, 0],
+			"size":[300, 50],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"font":"ComicSans24",
+			"color":[77,77,77],
+			"text":"Ed_Menu_ComingSoon",
+			"alignment":"Center",
+			"localized":true
+		}
+	]
+}

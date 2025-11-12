@@ -444,11 +444,18 @@ namespace PlusLevelStudio
                     },
                     new EditorGlobalPage()
                     {
+                        filePath = Path.Combine(editorModePath, "ComingSoon.json"),
+                        managerType = typeof(DummyGlobalSettingsHandler),
+                        pageName = "StickerConfig",
+                        pageKey = "Ed_GlobalPage_StickerConfiguration"
+                    },
+                    new EditorGlobalPage()
+                    {
                         filePath = Path.Combine(editorModePath, "ModeSettings.json"),
                         managerType = typeof(ModeSettingsUIExchangeHandler),
                         pageName = "ModeSettings",
                         pageKey = "Ed_GlobalPage_ModeSettings"
-                    }
+                    },
                 },
                 globalStructures = new List<GlobalStructurePage>()
                 {
@@ -538,6 +545,13 @@ namespace PlusLevelStudio
                         managerType = typeof(GlobalRandomStructuresExchangeHandler),
                         pageName = "RandomStructures",
                         pageKey = "Ed_GlobalPage_RandomStructures"
+                    },
+                    new EditorGlobalPage()
+                    {
+                        filePath = Path.Combine(editorModePath, "ComingSoon.json"),
+                        managerType = typeof(DummyGlobalSettingsHandler),
+                        pageName = "StickerConfig",
+                        pageKey = "Ed_GlobalPage_StickerConfiguration"
                     },
                 },
                 globalStructures = new List<GlobalStructurePage>()
