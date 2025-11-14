@@ -51,6 +51,7 @@ namespace PlusLevelStudio.Editor
 
         // other stuff
         public int seed = 0;
+        public List<WeightedID> potentialStickers = new List<WeightedID>();
 
         public PlayableLevelMeta meta;
 
@@ -393,6 +394,14 @@ namespace PlusLevelStudio.Editor
             }
             RedefineDefaultTextures();
             rooms.Add(CreateRoomWithDefaultSettings("hall"));
+            for (int i = 0; i < PlayableEditorLevel.defaultStickers.Length; i++)
+            {
+                potentialStickers.Add(new WeightedID()
+                {
+                    id = PlayableEditorLevel.defaultStickers[i],
+                    weight = 100
+                });
+            }
         }
 
         public bool AreaValid(CellArea area)
@@ -679,10 +688,18 @@ namespace PlusLevelStudio.Editor
                     position = tileBasedObjects[i].position.ToByte()
                 });
             }
+            for (int i = 0; i < potentialStickers.Count; i++)
+            {
+                compiled.potentialStickers.Add(new WeightedID()
+                {
+                    weight = potentialStickers[i].weight,
+                    id = potentialStickers[i].id,
+                });
+            }
             return compiled;
         }
 
-        public const byte version = 11;
+        public const byte version = 12;
 
         public bool WallFree(IntVector2 pos, Direction dir, bool ignoreSelf)
         {
@@ -883,6 +900,12 @@ namespace PlusLevelStudio.Editor
             writer.Write(minLightColor.ToData());
             writer.Write((byte)lightMode);
             writer.Write(seed);
+            writer.Write(potentialStickers.Count);
+            for (int i = 0; i < potentialStickers.Count; i++)
+            {
+                writer.Write(potentialStickers[i].id);
+                writer.Write(potentialStickers[i].weight);
+            }
             meta.Write(writer);
         }
 
@@ -1116,6 +1139,20 @@ namespace PlusLevelStudio.Editor
             if (version >= 10)
             {
                 levelData.seed = reader.ReadInt32();
+            }
+            if (version >= 12)
+            {
+                // this level actually has sticker data, lets read it!
+                levelData.potentialStickers.Clear();
+                int stickerCount = reader.ReadInt32();
+                for (int i = 0; i < stickerCount; i++)
+                {
+                    levelData.potentialStickers.Add(new WeightedID()
+                    {
+                        id=reader.ReadString(),
+                        weight=reader.ReadInt32()
+                    });
+                }
             }
             levelData.meta = PlayableLevelMeta.Read(reader, true);
             return levelData;

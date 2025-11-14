@@ -222,7 +222,7 @@ namespace PlusStudioLevelLoader
             // thanks mystman
             scene.forcedNpcs = new NPC[0];
             scene.potentialNPCs = new List<WeightedNPC>();
-            scene.potentialStickers = new WeightedSticker[]
+            /*scene.potentialStickers = new WeightedSticker[]
             {
                 new WeightedSticker(Sticker.BaldiPraise, 100),
                 new WeightedSticker(Sticker.Stamina, 100),
@@ -236,7 +236,7 @@ namespace PlusStudioLevelLoader
                 new WeightedSticker(Sticker.Elevator, 100),
                 new WeightedSticker(Sticker.TimeExtension, 100),
                 new WeightedSticker(Sticker.Stealth, 100)
-            };
+            };*/
 
             return scene;
         }
@@ -269,6 +269,12 @@ namespace PlusStudioLevelLoader
             extendedAsset.minLightColor = level.minLightColor.ToStandard();
             scene.skybox = LevelLoaderPlugin.Instance.skyboxAliases[level.skybox];
             scene.levelTitle = level.levelTitle;
+            List<WeightedSticker> potentialStickerList = new List<WeightedSticker>();
+            for (int i = 0; i < level.potentialStickers.Count; i++)
+            {
+                potentialStickerList.Add(new WeightedSticker(LevelLoaderPlugin.Instance.stickerAliases[level.potentialStickers[i].id], level.potentialStickers[i].weight));
+            }
+            scene.potentialStickers = potentialStickerList.ToArray();
             return scene;
         }
 

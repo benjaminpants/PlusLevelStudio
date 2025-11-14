@@ -36,7 +36,7 @@ namespace PlusStudioLevelFormat
             }
         }
         public PlusDirection spawnDirection = PlusDirection.North;
-        public static readonly byte version = 3;
+        public static readonly byte version = 4;
         public string levelTitle = "WIP";
         public float timeLimit = 0f;
 
@@ -52,6 +52,7 @@ namespace PlusStudioLevelFormat
 
         // misc stuff
         public int seed = 0;
+        public List<WeightedID> potentialStickers = new List<WeightedID>();
 
         /// <summary>
         /// Creates a new level that is properly initialized with the specified width and height
@@ -348,6 +349,16 @@ namespace PlusStudioLevelFormat
                 }
                 level.randomStructures.Add(randomInfo);
             }
+            if (version <= 3) return level;
+            int stickerCount = reader.ReadInt32();
+            for (int i = 0; i < stickerCount; i++)
+            {
+                level.potentialStickers.Add(new WeightedID()
+                {
+                    id = reader.ReadString(),
+                    weight = reader.ReadInt32()
+                });
+            }
             return level;
         }
 
@@ -590,6 +601,12 @@ namespace PlusStudioLevelFormat
                     objectsCompressor.WriteStoredString(writer, randomStructures[i].info.prefab[j].prefab);
                     writer.Write(randomStructures[i].info.prefab[j].weight);
                 }
+            }
+            writer.Write(potentialStickers.Count);
+            for (int i = 0; i < potentialStickers.Count; i++)
+            {
+                writer.Write(potentialStickers[i].id);
+                writer.Write(potentialStickers[i].weight);
             }
         }
     }

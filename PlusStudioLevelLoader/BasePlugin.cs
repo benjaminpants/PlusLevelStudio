@@ -36,6 +36,7 @@ namespace PlusStudioLevelLoader
         public Dictionary<string, PosterObject> posterAliases = new Dictionary<string, PosterObject>();
         public Dictionary<string, RandomEvent> randomEventAliases = new Dictionary<string, RandomEvent>();
         public Dictionary<string, Cubemap> skyboxAliases = new Dictionary<string, Cubemap>();
+        public Dictionary<string, Sticker> stickerAliases = new Dictionary<string, Sticker>();
 
         public Pickup stickerPickupPre;
 
@@ -67,7 +68,7 @@ namespace PlusStudioLevelLoader
 
         IEnumerator LoadEnumerator()
         {
-            yield return 5;
+            yield return 6;
             yield return "Fetching misc...";
             stickerPickupPre = Resources.FindObjectsOfTypeAll<Pickup>().First(x => x.GetInstanceID() >= 0 && x.name == "StickerPickup" && x.transform.parent == null);
             yield return "Fetching textures...";
@@ -352,6 +353,21 @@ namespace PlusStudioLevelLoader
             skyboxAliases.Add("daystandard", skyboxes.First(x => x.name == "Cubemap_DayStandard"));
             skyboxAliases.Add("twilight", skyboxes.First(x => x.name == "Cubemap_Twilight"));
             skyboxAliases.Add("void", skyboxes.First(x => x.name == "Cubemap_Void"));
+
+            yield return "Defining misc aliases...";
+            stickerAliases.Add("lingering_hiding", Sticker.LingeringHiding);
+            stickerAliases.Add("baldi_praise", Sticker.BaldiPraise);
+            stickerAliases.Add("stamina", Sticker.Stamina);
+            stickerAliases.Add("elevator", Sticker.Elevator);
+            stickerAliases.Add("time_extension", Sticker.TimeExtension);
+            stickerAliases.Add("stealth", Sticker.Stealth);
+            stickerAliases.Add("inventory_slot", Sticker.InventorySlot);
+            stickerAliases.Add("silence", Sticker.Silence);
+            stickerAliases.Add("reach", Sticker.Reach);
+            stickerAliases.Add("map_range", Sticker.MapRange);
+            stickerAliases.Add("door_stop", Sticker.DoorStop);
+            stickerAliases.Add("ytp_multiplier", Sticker.YtpMulitplier);
+            stickerAliases.Add("gluestick", Sticker.GlueStick);
         }
     }
 }

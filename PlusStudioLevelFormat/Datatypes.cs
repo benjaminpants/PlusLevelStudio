@@ -5,6 +5,13 @@ using System.Text;
 
 namespace PlusStudioLevelFormat
 {
+    public class WeightedID
+    {
+        public int weight;
+        public string id;
+    }
+
+
     public struct ByteVector2
     {
         private byte _x;
@@ -101,7 +108,6 @@ namespace PlusStudioLevelFormat
         }
     }
 
-    // TODO: Write Nybble array writer and Nybble array reader for BinaryReader and BinaryWriter
     public static class NybbleExtensions
     {
         public static byte MergeWith(this Nybble left, Nybble right)

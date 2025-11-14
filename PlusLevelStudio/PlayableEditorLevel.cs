@@ -16,7 +16,7 @@ namespace PlusLevelStudio
         public string filePath;
         public BaldiLevel data;
 
-        public const byte version = 1;
+        public const byte version = 2;
 
         public void Write(BinaryWriter writer)
         {
@@ -61,8 +61,32 @@ namespace PlusLevelStudio
             }
             playable.meta = PlayableLevelMeta.Read(reader, false);
             playable.data = BaldiLevel.Read(reader);
+            if (version <= 1)
+            {
+                for (int i = 0; i < defaultStickers.Length; i++)
+                {
+                    playable.data.potentialStickers.Add(new WeightedID() { id = defaultStickers[i], weight = 100 });
+                }
+            }
             return playable;
         }
+
+        // default stickers for older levels
+        internal static string[] defaultStickers = new string[]
+        {
+            "lingering_hiding",
+            "baldi_praise",
+            "stamina",
+            "elevator",
+            "time_extension",
+            "stealth",
+            "inventory_slot",
+            "silence",
+            "reach",
+            "map_range",
+            "door_stop",
+            "ytp_multiplier"
+        };
     }
 
     public class PlayableLevelMeta
