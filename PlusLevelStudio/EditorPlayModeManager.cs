@@ -26,6 +26,12 @@ namespace PlusLevelStudio
             {
                 customContent.CleanupContent();
             }
+            for (int i = 0; i < sceneObjectsToCleanUp.Count; i++)
+            {
+                GameObject.Destroy(sceneObjectsToCleanUp[i].extraAsset);
+                GameObject.Destroy(sceneObjectsToCleanUp[i].levelAsset);
+                GameObject.Destroy(sceneObjectsToCleanUp[i]);
+            }
             if (!returnToEditor)
             {
                 Destroy(gameObject);
@@ -48,12 +54,6 @@ namespace PlusLevelStudio
         {
             Singleton<MusicManager>.Instance.StopMidi();
             LevelStudioPlugin.Instance.StartCoroutine(LevelStudioPlugin.Instance.LoadEditorScene(editorModeToLoad, editorLevelToLoad == null ? null : Path.Combine(LevelStudioPlugin.levelFilePath, editorLevelToLoad + ".ebpl"), editorLevelToLoad));
-            for (int i = 0; i < sceneObjectsToCleanUp.Count; i++)
-            {
-                GameObject.Destroy(sceneObjectsToCleanUp[i].extraAsset);
-                GameObject.Destroy(sceneObjectsToCleanUp[i].levelAsset);
-                GameObject.Destroy(sceneObjectsToCleanUp[i]);
-            }
             Destroy(gameObject);
         }
 
