@@ -61,8 +61,7 @@ namespace PlusLevelStudio
         {
             // we must establish the PlayModeManager first so we can load custom content BEFORE the SceneObject is created.
             EditorPlayModeManager pmm = GameObject.Instantiate<EditorPlayModeManager>(LevelStudioPlugin.Instance.assetMan.Get<EditorPlayModeManager>("playModeManager"));
-            pmm.customContent = new EditorCustomContent();
-            pmm.customContent.LoadFromPackage(level.meta.contentPackage);
+            pmm.customContent = new EditorCustomContent(level.meta.contentPackage);
             SceneObject sceneObj = LevelImporter.CreateSceneObject(level.data);
             sceneObj.manager = LevelStudioPlugin.Instance.gameModeAliases[level.meta.gameMode].prefab;
             GameLoader loader = GameObject.Instantiate<GameLoader>(LevelStudioPlugin.Instance.assetMan.Get<GameLoader>("gameLoaderPrefab"));

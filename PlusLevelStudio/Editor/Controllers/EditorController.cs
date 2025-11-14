@@ -307,6 +307,7 @@ namespace PlusLevelStudio.Editor
             }
             catch (Exception e)
             {
+                reader.Close(); // prevent file handler problems
                 Debug.LogError(e);
                 TriggerError(string.Format(LocalizationManager.Instance.GetLocalizedText("Ed_Exception_FileLoad"), e.Message), true);
                 return false;

@@ -15,6 +15,17 @@ namespace PlusLevelStudio
     /// </summary>
     public class EditorCustomContent
     {
+        public EditorCustomContent()
+        {
+
+        }
+
+        public EditorCustomContent(EditorCustomContentPackage package)
+        {
+            LoadFromPackage(package);
+        }
+
+
         public BaseGameManager gameManagerPre;
 
         public Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
