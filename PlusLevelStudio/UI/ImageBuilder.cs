@@ -27,6 +27,10 @@ namespace PlusLevelStudio.UI
                 img.color = ConvertToColor(data["color"]);
             }
             img.rectTransform.anchoredPosition = ConvertToVector2(data["anchoredPosition"]);
+            if (data.ContainsKey("rotation"))
+            {
+                img.rectTransform.localRotation = Quaternion.Euler(0f, 0f, data["rotation"].Value<float>());
+            }
             return baseObject;
         }
     }

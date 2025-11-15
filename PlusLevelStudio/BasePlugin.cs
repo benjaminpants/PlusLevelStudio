@@ -66,8 +66,10 @@ namespace PlusLevelStudio
         public Dictionary<string, GameObject> tileBasedObjectDisplays = new Dictionary<string, GameObject>();
         public List<string> selectableTextures = new List<string>();
         public List<string> selectableSkyboxes = new List<string>();
+        public List<string> selectableStickers = new List<string>();
         public Dictionary<string, Sprite> eventSprites = new Dictionary<string, Sprite>();
         public Dictionary<string, Sprite> skyboxSprites = new Dictionary<string, Sprite>();
+        public Dictionary<string, Sprite> stickerSprites = new Dictionary<string, Sprite>();
         public Dictionary<string, EditorRoomVisualManager> roomVisuals = new Dictionary<string, EditorRoomVisualManager>();
         public Dictionary<string, EditorGameMode> gameModeAliases = new Dictionary<string, EditorGameMode>();
         public Dictionary<string, TextureContainer> defaultRoomTextures = new Dictionary<string, TextureContainer>();
@@ -444,8 +446,8 @@ namespace PlusLevelStudio
                     },
                     new EditorGlobalPage()
                     {
-                        filePath = Path.Combine(editorModePath, "ComingSoon.json"),
-                        managerType = typeof(DummyGlobalSettingsHandler),
+                        filePath = Path.Combine(editorModePath, "StickerList.json"),
+                        managerType = typeof(StickerListExchangeHandler),
                         pageName = "StickerConfig",
                         pageKey = "Ed_GlobalPage_StickerConfiguration"
                     },
@@ -548,8 +550,8 @@ namespace PlusLevelStudio
                     },
                     new EditorGlobalPage()
                     {
-                        filePath = Path.Combine(editorModePath, "ComingSoon.json"),
-                        managerType = typeof(DummyGlobalSettingsHandler),
+                        filePath = Path.Combine(editorModePath, "StickerList.json"),
+                        managerType = typeof(StickerListExchangeHandler),
                         pageName = "StickerConfig",
                         pageKey = "Ed_GlobalPage_StickerConfiguration"
                     },
@@ -1637,6 +1639,20 @@ namespace PlusLevelStudio
             selectableTextures.Add("Corn");
             selectableTextures.Add("Black");
 
+            selectableStickers.Add("lingering_hiding");
+            selectableStickers.Add("baldi_praise");
+            selectableStickers.Add("stamina");
+            selectableStickers.Add("elevator");
+            selectableStickers.Add("time_extension");
+            selectableStickers.Add("stealth");
+            selectableStickers.Add("inventory_slot");
+            selectableStickers.Add("silence");
+            selectableStickers.Add("reach");
+            selectableStickers.Add("map_range");
+            selectableStickers.Add("door_stop");
+            selectableStickers.Add("ytp_multiplier");
+            selectableStickers.Add("baldi_countdown");
+
             yield return "Setting up GameManagers...";
 
             SoundObject balAllBooks = ObjectCreators.CreateSoundObject(AssetLoader.AudioClipFromMod(this, "Sounds", "Ingame", "BAL_AllNotebooks_Generic.wav"), "Vfx_BAL_Tutorial_AllNotebooks_0", SoundType.Voice, Color.green);
@@ -1852,7 +1868,7 @@ namespace PlusLevelStudio
             UIBuilder.elementBuilders.Add("checkbox", new CheckboxBuilder());
             SpritesFromPath(Path.Combine(AssetLoader.GetModPath(this), "UI", "Editor"), "");
 
-            List<string> eventSpritesToPrepare = new List<string>
+            string[] eventSpritesToPrepare = new string[]
             {
                 "fog",
                 "flood",
@@ -1865,9 +1881,31 @@ namespace PlusLevelStudio
                 "balderdash"
             };
 
-            for (int i = 0; i < eventSpritesToPrepare.Count; i++)
+            for (int i = 0; i < eventSpritesToPrepare.Length; i++)
             {
                 eventSprites.Add(eventSpritesToPrepare[i], uiAssetMan.Get<Sprite>("RandomEvents/" + eventSpritesToPrepare[i]));
+            }
+
+            string[] stickerSpritesToPrepare = new string[]
+            {
+                "lingering_hiding",
+                "baldi_praise",
+                "stamina",
+                "elevator",
+                "time_extension",
+                "stealth",
+                "inventory_slot",
+                "silence",
+                "reach",
+                "map_range",
+                "door_stop",
+                "ytp_multiplier",
+                "baldi_countdown"
+            };
+
+            for (int i = 0; i < stickerSpritesToPrepare.Length; i++)
+            {
+                stickerSprites.Add(stickerSpritesToPrepare[i], uiAssetMan.Get<Sprite>("Stickers/" + stickerSpritesToPrepare[i]));
             }
 
             skyboxSprites.Add("default", uiAssetMan.Get<Sprite>("Skyboxes/default"));

@@ -367,6 +367,7 @@ namespace PlusStudioLevelLoader
             stickerAliases.Add("map_range", Sticker.MapRange);
             stickerAliases.Add("door_stop", Sticker.DoorStop);
             stickerAliases.Add("ytp_multiplier", Sticker.YtpMulitplier);
+            stickerAliases.Add("baldi_countdown", Sticker.BaldiCountdown);
             stickerAliases.Add("gluestick", Sticker.GlueStick);
         }
     }

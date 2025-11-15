@@ -47,7 +47,6 @@
 			"allowedCharacters":"0123456789-",
 			"upper":false
 		},
-		
 		{
 			"name":"PageLeft",
 			"type":"imageButton",

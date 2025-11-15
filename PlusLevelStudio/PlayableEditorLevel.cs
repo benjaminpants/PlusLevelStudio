@@ -85,7 +85,8 @@ namespace PlusLevelStudio
             "reach",
             "map_range",
             "door_stop",
-            "ytp_multiplier"
+            "ytp_multiplier",
+            "baldi_countdown"
         };
     }
 
