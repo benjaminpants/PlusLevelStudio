@@ -47,7 +47,7 @@ namespace PlusLevelStudio
         public const int editorInteractableLayer = 13; // CollidableEntities
         public const int editorInteractableLayerMask = 1 << editorInteractableLayer;
 
-        private Version expectedLoaderVersion = new Version("1.6.0.0");
+        private Version expectedLoaderVersion = new Version("1.7.0.0");
 
         public const int editorHandleLayer = 12; // ClickableEntities
         public const int editorHandleLayerMask = 1 << editorHandleLayer;
@@ -1652,6 +1652,10 @@ namespace PlusLevelStudio
             selectableStickers.Add("door_stop");
             selectableStickers.Add("ytp_multiplier");
             selectableStickers.Add("baldi_countdown");
+            selectableStickers.Add("distance_bonus");
+            selectableStickers.Add("sticker_bonus");
+            selectableStickers.Add("time_bonus");
+            selectableStickers.Add("exploration_bonus");
 
             yield return "Setting up GameManagers...";
 
@@ -1900,7 +1904,11 @@ namespace PlusLevelStudio
                 "map_range",
                 "door_stop",
                 "ytp_multiplier",
-                "baldi_countdown"
+                "baldi_countdown",
+                "distance_bonus",
+                "sticker_bonus",
+                "exploration_bonus",
+                "time_bonus"
             };
 
             for (int i = 0; i < stickerSpritesToPrepare.Length; i++)

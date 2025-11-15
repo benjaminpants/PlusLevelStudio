@@ -13,7 +13,7 @@ using System.IO;
 
 namespace PlusStudioLevelLoader
 {
-    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudioloader", "Plus Level Loader", "1.6.0.0")]
+    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudioloader", "Plus Level Loader", "1.7.0.0")]
     [BepInDependency("mtm101.rulerp.bbplus.baldidevapi")]
     public class LevelLoaderPlugin : BaseUnityPlugin
     {
@@ -369,6 +369,10 @@ namespace PlusStudioLevelLoader
             stickerAliases.Add("ytp_multiplier", Sticker.YtpMulitplier);
             stickerAliases.Add("baldi_countdown", Sticker.BaldiCountdown);
             stickerAliases.Add("gluestick", Sticker.GlueStick);
+            stickerAliases.Add("distance_bonus", Sticker.DistanceBonus);
+            stickerAliases.Add("sticker_bonus", Sticker.StickerBonus);
+            stickerAliases.Add("exploration_bonus", Sticker.ExplorationBonus);
+            stickerAliases.Add("time_bonus", Sticker.TimeBonus);
         }
     }
 }
