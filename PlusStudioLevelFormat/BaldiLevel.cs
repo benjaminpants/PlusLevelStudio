@@ -36,7 +36,7 @@ namespace PlusStudioLevelFormat
             }
         }
         public PlusDirection spawnDirection = PlusDirection.North;
-        public static readonly byte version = 4;
+        public static readonly byte version = 5;
         public string levelTitle = "WIP";
         public float timeLimit = 0f;
 
@@ -53,6 +53,7 @@ namespace PlusStudioLevelFormat
         // misc stuff
         public int seed = 0;
         public List<WeightedID> potentialStickers = new List<WeightedID>();
+        public bool usesMap = true;
 
         /// <summary>
         /// Creates a new level that is properly initialized with the specified width and height
@@ -108,6 +109,10 @@ namespace PlusStudioLevelFormat
             if (version >= 3)
             {
                 level.seed = reader.ReadInt32();
+            }
+            if (version >= 5)
+            {
+                level.usesMap = reader.ReadBoolean();
             }
 
             level.skybox = reader.ReadString();
@@ -407,6 +412,7 @@ namespace PlusStudioLevelFormat
             writer.Write(levelTitle);
             writer.Write(timeLimit);
             writer.Write(seed);
+            writer.Write(usesMap);
 
             writer.Write(skybox);
             writer.Write(minLightColor);

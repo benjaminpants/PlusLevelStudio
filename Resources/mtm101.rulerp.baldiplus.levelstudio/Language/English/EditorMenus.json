@@ -32,6 +32,12 @@
 {"key":"Ed_Menu_ShowMarkdown","value":"Show Markdown?"},
 {"key":"Ed_Menu_ComingSoon","value":"Coming Soon!"},
 
+{"key":"Ed_Menu_ElevatorTitle","value":"Elevator Title:"},
+{"key":"Ed_Menu_InitialEventGap","value":"Initial Event Gap:"},
+{"key":"Ed_Menu_MinEventGap","value":"Minimum Event Gap:"},
+{"key":"Ed_Menu_MaxEventGap","value":"Maximum Event Gap:"},
+{"key":"Ed_Menu_MapEnabled","value":"Map Enabled"},
+
 {"key":"Ed_Menu_NoLevels","value":"No Levels Found..."},
 {"key":"Ed_Menu_LoadingLevels","value":"Loading Levels..."},
 

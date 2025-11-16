@@ -15,6 +15,7 @@ namespace PlusLevelStudio.Editor.GlobalSettingsMenus
         TextMeshProUGUI maxEventText;
         StandardMenuButton[] randomEventButtons;
         DigitalNumberDisplay[] displays;
+        MenuToggle toggle;
         int randomEventViewOffset = 0;
         public override bool GetStateBoolean(string key)
         {
@@ -45,6 +46,8 @@ namespace PlusLevelStudio.Editor.GlobalSettingsMenus
                 transform.Find("LevelTimeSeg3").GetComponent<DigitalNumberDisplay>(),
             };
 
+            toggle = transform.Find("Checkbox").GetComponent<MenuToggle>();
+
             for (int i = 0; i < randomEventButtons.Length; i++)
             {
                 int index = i; // why must i do this
@@ -66,6 +69,7 @@ namespace PlusLevelStudio.Editor.GlobalSettingsMenus
             initEventText.text = EditorController.Instance.levelData.initialRandomEventGap.ToString();
             minEventText.text = EditorController.Instance.levelData.minRandomEventGap.ToString();
             maxEventText.text = EditorController.Instance.levelData.maxRandomEventGap.ToString();
+            toggle.Set(EditorController.Instance.levelData.usesMap);
             int time = Mathf.RoundToInt(EditorController.Instance.levelData.timeLimit);
             string displayTime = string.Format("{0}{1}", Mathf.Floor((float)(time / 60)).ToString("00"), (time % 60).ToString("00"));
             for (int i = 0; i < displays.Length; i++)
@@ -171,6 +175,11 @@ namespace PlusLevelStudio.Editor.GlobalSettingsMenus
                         handler.somethingChanged = true;
                         EditorController.Instance.levelData.maxRandomEventGap = Mathf.Abs(maxResult);
                     }
+                    Refresh();
+                    break;
+                case "toggleMap":
+                    handler.somethingChanged = true;
+                    EditorController.Instance.levelData.usesMap = (bool)data;
                     Refresh();
                     break;
             }

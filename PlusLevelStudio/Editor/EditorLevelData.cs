@@ -52,6 +52,7 @@ namespace PlusLevelStudio.Editor
         // other stuff
         public int seed = 0;
         public List<WeightedID> potentialStickers = new List<WeightedID>();
+        public bool usesMap = true;
 
         public PlayableLevelMeta meta;
 
@@ -519,6 +520,7 @@ namespace PlusLevelStudio.Editor
             compiled.minRandomEventGap = minRandomEventGap;
             compiled.maxRandomEventGap = maxRandomEventGap;
             compiled.seed = seed;
+            compiled.usesMap = usesMap;
             UpdateCells(false); // update our cells
             for (int x = 0; x < mapSize.x; x++)
             {
@@ -698,7 +700,7 @@ namespace PlusLevelStudio.Editor
             return compiled;
         }
 
-        public const byte version = 12;
+        public const byte version = 13;
 
         public bool WallFree(IntVector2 pos, Direction dir, bool ignoreSelf)
         {
@@ -905,6 +907,7 @@ namespace PlusLevelStudio.Editor
                 writer.Write(potentialStickers[i].id);
                 writer.Write(potentialStickers[i].weight);
             }
+            writer.Write(usesMap);
             meta.Write(writer);
         }
 
@@ -1152,6 +1155,10 @@ namespace PlusLevelStudio.Editor
                         weight=reader.ReadInt32()
                     });
                 }
+            }
+            if (version >= 13)
+            {
+                levelData.usesMap = reader.ReadBoolean();
             }
             levelData.meta = PlayableLevelMeta.Read(reader, true);
             return levelData;

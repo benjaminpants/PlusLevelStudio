@@ -3,9 +3,33 @@
 	},
 	"elements":[
 		{
+			"name":"Checkbox",
+			"type":"checkbox",
+			"anchoredPosition":[-156, -6],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"onToggled":"toggleMap",
+			"value":true
+		},
+		{
+			"name":"UseMapText",
+			"type":"text",
+			"anchoredPosition":[-50, -6],
+			"size":[170, 50],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"font":"ComicSans24",
+			"color":[0,0,0],
+			"text":"Ed_Menu_MapEnabled",
+			"alignment":"Left",
+			"localized":true
+		},
+		{
 			"name":"ElevatorTitle",
 			"type":"textbox",
-			"anchoredPosition":[25, 0],
+			"anchoredPosition":[25, 32],
 			"size":[55, 24],
 			"pivot":"#center",
 			"anchorMin":"#center",
@@ -21,15 +45,16 @@
 		{
 			"name":"ElevatorText",
 			"type":"text",
-			"anchoredPosition":[-86, 0],
+			"anchoredPosition":[-86, 32],
 			"size":[170, 50],
 			"pivot":"#center",
 			"anchorMin":"#center",
 			"anchorMax":"#center",
 			"font":"ComicSans24",
 			"color":[0,0,0],
-			"text":"Elevator Title:",
+			"text":"Ed_Menu_ElevatorTitle",
 			"alignment":"Left",
+			"localized":true
 		},
 		{
 			"name":"RandomEventLeft",
@@ -142,8 +167,9 @@
 			"anchorMax":"#center",
 			"font":"ComicSans12",
 			"color":[0,0,0],
-			"text":"Initial Event Gap:",
+			"text":"Ed_Menu_InitialEventGap",
 			"alignment":"Right",
+			"localized":true
 		},
 		{
 			"name":"InitialEventTime",
@@ -173,8 +199,9 @@
 			"anchorMax":"#center",
 			"font":"ComicSans12",
 			"color":[0,0,0],
-			"text":"Minimum Event Gap:",
+			"text":"Ed_Menu_MinEventGap",
 			"alignment":"Right",
+			"localized":true
 		},
 		{
 			"name":"MinEventTime",
@@ -204,8 +231,9 @@
 			"anchorMax":"#center",
 			"font":"ComicSans12",
 			"color":[0,0,0],
-			"text":"Maximum Event Gap:",
+			"text":"Ed_Menu_MaxEventGap",
 			"alignment":"Right",
+			"localized":true
 		},
 		{
 			"name":"MaxEventTime",
