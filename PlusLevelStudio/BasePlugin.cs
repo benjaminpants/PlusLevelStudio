@@ -30,7 +30,7 @@ using UnityEngine.UI;
 
 namespace PlusLevelStudio
 {
-    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudio", "Plus Level Studio", "1.4.2.0")]
+    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudio", "Plus Level Studio", "1.4.2.1")]
     [BepInDependency("mtm101.rulerp.bbplus.baldidevapi")]
     [BepInDependency("mtm101.rulerp.baldiplus.levelstudioloader")]
     public class LevelStudioPlugin : BaseUnityPlugin
@@ -1356,7 +1356,7 @@ namespace PlusLevelStudio
             mathMachineVisual.gameObject.layer = LevelStudioPlugin.editorInteractableLayer;
             mathMachineCollider.gameObject.layer = LevelStudioPlugin.editorInteractableLayer;
             EditorInterface.AddActivityVisual("balloonbuster", LevelLoaderPlugin.Instance.activityAliases["balloonbuster"].gameObject);
-            EditorInterface.AddActivityVisual("matchmachine", LevelLoaderPlugin.Instance.activityAliases["matchmachine"].gameObject);
+            GameObject.Destroy(EditorInterface.AddActivityVisual("matchmachine", LevelLoaderPlugin.Instance.activityAliases["matchmachine"].gameObject).transform.Find("Buffer")); // destroy the buffer
 
             GameObject mathMachineCornerVisual = EditorInterface.CloneToPrefabStripMonoBehaviors(LevelLoaderPlugin.Instance.activityAliases["mathmachine_corner"].gameObject, new Type[] { typeof(TMP_Text) });
             mathMachineCornerVisual.name = mathMachineCornerVisual.name.Replace("_Stripped", "_Visual");
