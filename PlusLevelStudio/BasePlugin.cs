@@ -1356,7 +1356,7 @@ namespace PlusLevelStudio
             mathMachineVisual.gameObject.layer = LevelStudioPlugin.editorInteractableLayer;
             mathMachineCollider.gameObject.layer = LevelStudioPlugin.editorInteractableLayer;
             EditorInterface.AddActivityVisual("balloonbuster", LevelLoaderPlugin.Instance.activityAliases["balloonbuster"].gameObject);
-            GameObject.Destroy(EditorInterface.AddActivityVisual("matchmachine", LevelLoaderPlugin.Instance.activityAliases["matchmachine"].gameObject).transform.Find("Buffer")); // destroy the buffer
+            GameObject.Destroy(EditorInterface.AddActivityVisual("matchmachine", LevelLoaderPlugin.Instance.activityAliases["matchmachine"].gameObject).transform.Find("Buffer").gameObject); // destroy the buffer
 
             GameObject mathMachineCornerVisual = EditorInterface.CloneToPrefabStripMonoBehaviors(LevelLoaderPlugin.Instance.activityAliases["mathmachine_corner"].gameObject, new Type[] { typeof(TMP_Text) });
             mathMachineCornerVisual.name = mathMachineCornerVisual.name.Replace("_Stripped", "_Visual");
