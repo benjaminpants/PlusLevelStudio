@@ -175,6 +175,7 @@ namespace PlusLevelStudio.Editor
             {
                 if (!rotohalls[i].ValidatePosition(data, true))
                 {
+                    EditorController.Instance.RemoveVisual(rotohalls[i]);
                     rotohalls.RemoveAt(i);
                 }
             }
