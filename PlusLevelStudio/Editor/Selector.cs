@@ -39,6 +39,14 @@ namespace PlusLevelStudio.Editor
     {
         public Selector selector;
         public Direction direction;
+        private bool clickable = true;
+        public Renderer renderer;
+
+        public void SetClickable(bool clickable)
+        {
+            this.clickable = clickable;
+            renderer.material.SetTexture("_LightMap", LevelStudioPlugin.Instance.lightmaps[clickable ? "white" : "gray"]);
+        }
 
         public bool InteractableByTool(EditorTool tool)
         {
@@ -47,6 +55,7 @@ namespace PlusLevelStudio.Editor
 
         public bool OnClicked()
         {
+            if (!clickable) return false;
             return selector.TileArrowClicked(direction);
         }
 
@@ -64,7 +73,7 @@ namespace PlusLevelStudio.Editor
     public class Selector : MonoBehaviour
     {
         public GameObject tileSelector;
-        public GameObject[] tileArrows = new GameObject[4];
+        public SelectorArrow[] tileArrows = new SelectorArrow[4];
         public SettingsWorldButton gearButton;
         public MoveHandles moveHandles;
         const float baseUpwardsOffset = 0.02f;
@@ -82,6 +91,19 @@ namespace PlusLevelStudio.Editor
         protected Action<IntVector2, IntVector2> resizeAction;
         protected Action<Direction> directionAction;
         public IEditorMovable selectedMovable { get; private set; }
+
+        public void SetArrowClickable(Direction arrow, bool clickable)
+        {
+            tileArrows[(int)arrow].SetClickable(clickable);
+        }
+
+        public void ResetAllArrowClickableStatus()
+        {
+            for (int i = 0; i < tileArrows.Length; i++)
+            {
+                tileArrows[i].SetClickable(true);
+            }
+        }
 
 
         void Awake()
@@ -291,7 +313,7 @@ namespace PlusLevelStudio.Editor
             tileSelector.SetActive(false);
             for (int i = 0; i < tileArrows.Length; i++)
             {
-                tileArrows[i].SetActive(false);
+                tileArrows[i].gameObject.SetActive(false);
             }
             moveHandles.gameObject.SetActive(false);
             gearButton.gameObject.SetActive(showSettings);
@@ -305,14 +327,14 @@ namespace PlusLevelStudio.Editor
                 case SelectorState.Area:
                     for (int i = 0; i < tileArrows.Length; i++)
                     {
-                        tileArrows[i].SetActive(true);
+                        tileArrows[i].gameObject.SetActive(true);
                     }
                     break;
                 case SelectorState.Direction:
                     tileSelector.SetActive(true);
                     for (int i = 0; i < tileArrows.Length; i++)
                     {
-                        tileArrows[i].SetActive(true);
+                        tileArrows[i].gameObject.SetActive(true);
                     }
                     break;
                 case SelectorState.Settings:

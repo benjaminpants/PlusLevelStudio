@@ -36,7 +36,7 @@ namespace PlusLevelStudio.Editor
         public string prefab;
         public IntVector2 position;
         public Direction direction;
-        public void CleanupVisual(GameObject visualObject)
+        public virtual void CleanupVisual(GameObject visualObject)
         {
 
         }

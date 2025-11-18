@@ -844,7 +844,8 @@ namespace PlusLevelStudio
                 SelectorArrow arrow = dirQuad.AddComponent<SelectorArrow>();
                 arrow.direction = directions[i];
                 arrow.selector = selector;
-                selector.tileArrows[i] = dirQuad;
+                arrow.renderer = dirQuad.GetComponent<MeshRenderer>();
+                selector.tileArrows[i] = arrow;
             }
 
             GameObject settingsObject = new GameObject("SettingsGear");
@@ -1518,6 +1519,38 @@ namespace PlusLevelStudio
             // lockers
             structureTypes.Add("lockers", typeof(RandomLockerLocation));
 
+            // rotohalls
+            Structure_Rotohalls rotohallsBuilder = Resources.FindObjectsOfTypeAll<Structure_Rotohalls>().First(x => x.GetInstanceID() >= 0 && x.name == "Rotohall_Structure");
+            GameObject rotoHallStraightVisualObject = EditorInterface.AddStructureGenericVisual("rotohall_straight", ((RotoHall)(rotohallsBuilder.ReflectionGetVariable("rotoHallPre"))).gameObject);
+            RotohallVisual rotoHallStraightVisual = rotoHallStraightVisualObject.AddComponent<RotohallVisual>();
+            rotoHallStraightVisual.cylinder = GameObject.Instantiate<MeshRenderer>((MeshRenderer)rotohallsBuilder.ReflectionGetVariable("straightCylinderPre"), rotoHallStraightVisualObject.transform);
+            rotoHallStraightVisualObject.GetComponent<EditorRendererContainer>().AddRenderer(rotoHallStraightVisual.cylinder, "none");
+
+            GameObject rotoHallCornerVisualObject = EditorInterface.AddStructureGenericVisual("rotohall_corner", ((RotoHall)(rotohallsBuilder.ReflectionGetVariable("rotoHallPre"))).gameObject);
+            RotohallVisual rotoHallCornerVisual = rotoHallCornerVisualObject.AddComponent<RotohallVisual>();
+            rotoHallCornerVisual.cylinder = GameObject.Instantiate<MeshRenderer>((MeshRenderer)rotohallsBuilder.ReflectionGetVariable("cornerCylinderPre"), rotoHallCornerVisualObject.transform);
+            rotoHallCornerVisualObject.GetComponent<EditorRendererContainer>().AddRenderer(rotoHallCornerVisual.cylinder, "none");
+
+            // todo for future me: set up Structure_RotohallEditor's prefab
+            // finish the compilation code for Structure_RotohallEditor
+            // AND REMEMBER: CLOCKWISE IS 0
+
+            Structure_RotohallEditor rotohallEditorPre = new GameObject("Structure_RotohallEditor").AddComponent<Structure_RotohallEditor>();
+            rotohallEditorPre.gameObject.ConvertToPrefab(true);
+            rotohallEditorPre.cylinderShapes.Add("StraightCylinder_Model", CylinderShape.Straight);
+            rotohallEditorPre.cylinderShapes.Add("CornerCylinder_Model", CylinderShape.Corner);
+            rotohallEditorPre.rotohallSprites.Add("StraightCylinder_Model", (Sprite)rotohallsBuilder.ReflectionGetVariable("straightCylinderSprite"));
+            rotohallEditorPre.rotohallSprites.Add("CornerCylinder_Model", (Sprite)rotohallsBuilder.ReflectionGetVariable("cornerCylinderSprite"));
+            rotohallEditorPre.buttonPre = (GameButton)rotohallsBuilder.ReflectionGetVariable("buttonPre");
+            rotohallEditorPre.rotoHallPre = (RotoHall)rotohallsBuilder.ReflectionGetVariable("rotoHallPre");
+
+            structureTypes.Add("rotohall", typeof(RotohallStructureLocation));
+            LevelLoaderPlugin.Instance.structureAliases.Add("rotohall", new LoaderStructureData(rotohallEditorPre, new Dictionary<string, GameObject>()
+            {
+                { "rotohall_straight", ((MeshRenderer)rotohallsBuilder.ReflectionGetVariable("straightCylinderPre")).gameObject },
+                { "rotohall_corner", ((MeshRenderer)rotohallsBuilder.ReflectionGetVariable("cornerCylinderPre")).gameObject }
+            }));
+
             // npcs
 
             EditorInterface.AddNPCVisual("baldi", LevelLoaderPlugin.Instance.npcAliases["baldi"]);
@@ -1965,6 +1998,7 @@ namespace PlusLevelStudio
             }
             lightmaps.Add("none", Resources.FindObjectsOfTypeAll<Texture2D>().First(x => x.GetInstanceID() >= 0 && x.name == "LightMap"));
             AddSolidColorLightmap("white", Color.white);
+            AddSolidColorLightmap("gray", Color.white / 3f);
             AddSolidColorLightmap("yellow", Color.yellow);
             AddSolidColorLightmap("red", Color.red);
             AddSolidColorLightmap("green", Color.green);

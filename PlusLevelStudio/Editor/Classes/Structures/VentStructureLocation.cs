@@ -189,6 +189,7 @@ namespace PlusLevelStudio.Editor
             }
         }
 
+        // shouldn't be called
         public void ModifyLightsForEditor(EnvironmentController workerEc)
         {
             throw new NotImplementedException();

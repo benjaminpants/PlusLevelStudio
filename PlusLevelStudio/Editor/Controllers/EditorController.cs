@@ -492,6 +492,11 @@ namespace PlusLevelStudio.Editor
             return foundStructure;
         }
 
+        public T GetStructureData<T>(string type) where T : StructureLocation
+        {
+            return (T)GetStructureData(type);
+        }
+
         public StructureLocation AddOrGetStructureToData(string type, bool onlyOne)
         {
             if (onlyOne)

@@ -212,6 +212,7 @@ namespace PlusLevelStudio
             if (!includeNonVanillaComplaintTools) return;
             AddToolsToCategory(modeToModify, "structures", new EditorTool[]
             {
+                new RotohallTool(),
                 new ShapeLockTool("shapelock_circle"),
                 new ShapeLockTool("shapelock_triangle"),
                 new ShapeLockTool("shapelock_square"),
