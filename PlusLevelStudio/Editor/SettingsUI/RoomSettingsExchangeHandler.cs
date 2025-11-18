@@ -120,6 +120,7 @@ namespace PlusLevelStudio.Editor.SettingsUI
         public RawImage floorImage;
         public RawImage wallImage;
         public RawImage ceilingImage;
+        TextMeshProUGUI roomText;
         bool somethingChanged = false;
         EditorRoom myRoom;
         int changingFor = 0;
@@ -127,6 +128,7 @@ namespace PlusLevelStudio.Editor.SettingsUI
         {
             myRoom = room;
             UpdateTextures();
+            roomText.text = room.name;
         }
 
         public void ApplyToAllRooms(bool confirm)
@@ -181,6 +183,7 @@ namespace PlusLevelStudio.Editor.SettingsUI
             floorImage = transform.Find("FloorTex").GetComponent<RawImage>();
             wallImage = transform.Find("WallTex").GetComponent<RawImage>();
             ceilingImage = transform.Find("CeilTex").GetComponent<RawImage>();
+            roomText = transform.Find("RoomNameBox").GetComponent<TextMeshProUGUI>();
             EditorController.Instance.HoldUndo();
         }
 
@@ -232,6 +235,10 @@ namespace PlusLevelStudio.Editor.SettingsUI
                     break;
                 case "changeToMatch":
                     ApplyToAllRooms(false);
+                    break;
+                case "setName":
+                    myRoom.name = (string)data;
+                    somethingChanged = true;
                     break;
             }
             base.SendInteractionMessage(message, data);

@@ -36,7 +36,7 @@ namespace PlusStudioLevelFormat
             }
         }
         public PlusDirection spawnDirection = PlusDirection.North;
-        public static readonly byte version = 5;
+        public static readonly byte version = 6;
         public string levelTitle = "WIP";
         public float timeLimit = 0f;
 
@@ -183,7 +183,15 @@ namespace PlusStudioLevelFormat
             int roomCount = reader.ReadInt32();
             for (int i = 0; i < roomCount; i++)
             {
-                RoomInfo room = new RoomInfo(roomCompressor.ReadStoredString(reader), new TextureContainer(roomCompressor.ReadStoredString(reader), roomCompressor.ReadStoredString(reader), roomCompressor.ReadStoredString(reader)));
+                RoomInfo room;
+                if (version < 6)
+                {
+                    room = new RoomInfo(roomCompressor.ReadStoredString(reader), new TextureContainer(roomCompressor.ReadStoredString(reader), roomCompressor.ReadStoredString(reader), roomCompressor.ReadStoredString(reader)));
+                }
+                else
+                {
+                    room = new RoomInfo(roomCompressor.ReadStoredString(reader), reader.ReadString(), new TextureContainer(roomCompressor.ReadStoredString(reader), roomCompressor.ReadStoredString(reader), roomCompressor.ReadStoredString(reader)));
+                }
                 int itemCount = reader.ReadInt32();
                 for (int j = 0; j < itemCount; j++)
                 {
@@ -489,6 +497,7 @@ namespace PlusStudioLevelFormat
                 // write the type
                 // then the floor, wall, and ceiling textures
                 roomCompressor.WriteStoredString(writer, rooms[i].type);
+                writer.Write(rooms[i].name);
                 roomCompressor.WriteStoredString(writer, rooms[i].textureContainer.floor);
                 roomCompressor.WriteStoredString(writer, rooms[i].textureContainer.wall);
                 roomCompressor.WriteStoredString(writer, rooms[i].textureContainer.ceiling);

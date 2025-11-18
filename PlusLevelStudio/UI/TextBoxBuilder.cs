@@ -49,6 +49,15 @@ namespace PlusLevelStudio.UI
                 box.OnHighlight.AddListener(() => EditorController.Instance.tooltipController.UpdateTooltip(key));
                 box.OffHighlight.AddListener(() => EditorController.Instance.tooltipController.CloseTooltip());
             }
+            if (data.ContainsKey("defaultText"))
+            {
+                GameObject emptyText = base.Build(parent, handler, data);
+                emptyText.name += "_Default";
+                TextMeshProUGUI gui = emptyText.GetComponent<TextMeshProUGUI>();
+                box.showWhenEmpty = gui;
+                gui.color = new Color(gui.color.r / 2f, gui.color.g / 2f, gui.color.b / 2f);
+                gui.text = data["defaultText"].Value<string>();
+            }
             return b;
         }
     }
@@ -68,6 +77,7 @@ namespace PlusLevelStudio.UI
         public UnityEvent OnHighlight = new UnityEvent();
         public UnityEvent OffHighlight = new UnityEvent();
         public bool eventOnHigh = false;
+        public TextMeshProUGUI showWhenEmpty;
         public override void Press()
         {
             //base.Press();
@@ -88,6 +98,10 @@ namespace PlusLevelStudio.UI
 
         void Update()
         {
+            if (showWhenEmpty != null)
+            {
+                showWhenEmpty.enabled = (text.text == string.Empty);
+            }
             if (!highlighted && wasHighlighted)
             {
                 text.fontStyle = FontStyles.Normal;

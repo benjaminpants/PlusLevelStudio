@@ -355,6 +355,7 @@ namespace PlusStudioLevelLoader
             skyboxAliases.Add("void", skyboxes.First(x => x.name == "Cubemap_Void"));
 
             yield return "Defining misc aliases...";
+            stickerAliases.Add("nothing", Sticker.Nothing);
             stickerAliases.Add("lingering_hiding", Sticker.LingeringHiding);
             stickerAliases.Add("baldi_praise", Sticker.BaldiPraise);
             stickerAliases.Add("stamina", Sticker.Stamina);

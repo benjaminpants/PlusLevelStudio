@@ -3,6 +3,7 @@ using PlusStudioLevelFormat;
 using PlusStudioLevelLoader;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using TMPro;
 using UnityEngine;
@@ -144,6 +145,31 @@ namespace PlusLevelStudio.Editor.GlobalSettingsMenus
         public abstract Sprite GetSpriteFor(string key);
         public abstract string GetNameFor(string key);
 
+    }
+
+    public class StoreItemListExchangeHandler : WeightedListExchangeHandler
+    {
+        public override string GetNameFor(string key)
+        {
+            return LocalizationManager.Instance.GetLocalizedText(LevelLoaderPlugin.Instance.itemObjects[key].nameKey);
+        }
+
+        public override Sprite GetSpriteFor(string key)
+        {
+            return LevelLoaderPlugin.Instance.itemObjects[key].itemSpriteSmall;
+        }
+
+        public override void UpdateList()
+        {
+            weightedIDs.Clear();
+            weightedIDs.AddRange(LevelStudioPlugin.Instance.selectableShopItems.Select(x => new WeightedID() { id = x, weight = 100}));
+            SortList();
+        }
+
+        public override void UpdateValues()
+        {
+            // do nothing yet
+        }
     }
 
     public class StickerListExchangeHandler : WeightedListExchangeHandler

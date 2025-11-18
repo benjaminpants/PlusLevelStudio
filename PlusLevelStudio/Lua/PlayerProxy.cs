@@ -6,6 +6,7 @@ using System.Text;
 using UnityEngine;
 using MTM101BaldAPI;
 using MTM101BaldAPI.PlusExtensions;
+using MTM101BaldAPI.Registers;
 
 namespace PlusLevelStudio.Lua
 {
@@ -254,6 +255,65 @@ namespace PlusLevelStudio.Lua
         public void MakeGuilty(string rule, float time)
         {
             pm.RuleBreak(rule, time);
+        }
+
+        public string GetGuilt()
+        {
+            return pm.ruleBreak;
+        }
+
+        public void AddStickerToInventory(string stickerId, bool animation)
+        {
+            if (!LevelLoaderPlugin.Instance.stickerAliases.ContainsKey(stickerId)) return;
+            Singleton<StickerManager>.Instance.AddSticker(LevelLoaderPlugin.Instance.stickerAliases[stickerId], true, false, animation);
+        }
+
+        public string[] StickerInventory()
+        {
+            string[] stickerInv = new string[Singleton<StickerManager>.Instance.stickerInventory.Count];
+            for (int i = 0; i < Singleton<StickerManager>.Instance.stickerInventory.Count; i++)
+            {
+                stickerInv[i] = LuaHelpers.GetIDFromSticker(Singleton<StickerManager>.Instance.stickerInventory[i].sticker);
+            }
+            return stickerInv;
+        }
+
+        public string GetInventorySticker(int slot)
+        {
+            slot -= 1;
+            if (slot < 0) return "nothing";
+            if (slot >= Singleton<StickerManager>.Instance.stickerInventory.Count) return "nothing";
+            return LuaHelpers.GetIDFromSticker(Singleton<StickerManager>.Instance.stickerInventory[slot].sticker);
+        }
+
+        public string[] GetActiveStickers()
+        {
+            string[] stickerInv = new string[Singleton<StickerManager>.Instance.activeStickerData.Length];
+            for (int i = 0; i < Singleton<StickerManager>.Instance.activeStickerData.Length; i++)
+            {
+                stickerInv[i] = LuaHelpers.GetIDFromSticker(Singleton<StickerManager>.Instance.activeStickerData[i].sticker);
+            }
+            return stickerInv;
+        }
+
+        public string GetActiveSticker(int slot)
+        {
+            slot -= 1;
+            if (slot < 0) return "nothing";
+            if (slot >= Singleton<StickerManager>.Instance.activeStickerData.Length) return "nothing";
+            return LuaHelpers.GetIDFromSticker(Singleton<StickerManager>.Instance.activeStickerData[slot].sticker);
+        }
+
+        public int GetStickerValue(string stickerId)
+        {
+            if (!LevelLoaderPlugin.Instance.stickerAliases.ContainsKey(stickerId)) return 0;
+            return Singleton<StickerManager>.Instance.StickerValue(LevelLoaderPlugin.Instance.stickerAliases[stickerId]);
+        }
+
+        public void ApplySticker(int slot, string stickerId)
+        {
+            if (!LevelLoaderPlugin.Instance.stickerAliases.ContainsKey(stickerId)) return;
+            Singleton<StickerManager>.Instance.ApplySticker(StickerMetaStorage.Instance.Get(LevelLoaderPlugin.Instance.stickerAliases[stickerId]).value.CreateStateData(0, true, false), Mathf.Clamp(slot - 1, 0, Singleton<StickerManager>.Instance.activeStickerData.Length - 1));
         }
 
         public void SetItem(string itemId, int slot)

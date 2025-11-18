@@ -333,6 +333,8 @@
 {"key":"Ed_Tool_structure_regionlockdowndoor_4_Desc","value":"This lockdown door only opens once all notebooks in zone 4 are collected!\nAppears as a regular lockdown door ingame."},
 {"key":"Ed_Tool_structure_teleporter_Title","value":"Teleporter"},
 {"key":"Ed_Tool_structure_teleporter_Desc","value":"Teleport from any placed teleporters in the map. Can only be placed in Baldi's Lab."},
+{"key":"Ed_Tool_structure_rotohall_Title","value":"Rotohall"},
+{"key":"Ed_Tool_structure_rotohall_Desc","value":"Can either be a corner or straight, rotates at the press of a button!"},
 
 {"key":"Ed_Tool_structure_powerlever_alarm_Title","value":"Power Alarm"},
 {"key":"Ed_Tool_structure_powerlever_alarm_Desc","value":"This light will turn on when the power goes out due to a breaker. Without a breaker placed, this does nothing."},

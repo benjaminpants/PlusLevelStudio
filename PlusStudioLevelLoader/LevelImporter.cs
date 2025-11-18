@@ -309,7 +309,7 @@ namespace PlusStudioLevelLoader
                 RoomSettings settings = LevelLoaderPlugin.Instance.roomSettings[level.rooms[i].type];
                 ExtendedRoomData data = new ExtendedRoomData()
                 {
-                    name = level.rooms[i].type + "_" + i,
+                    name = string.IsNullOrEmpty(level.rooms[i].name) ? level.rooms[i].type + "_" + i : level.rooms[i].name,
                     florTex = LevelLoaderPlugin.RoomTextureFromAlias(level.rooms[i].textureContainer.floor),
                     wallTex = LevelLoaderPlugin.RoomTextureFromAlias(level.rooms[i].textureContainer.wall),
                     ceilTex = LevelLoaderPlugin.RoomTextureFromAlias(level.rooms[i].textureContainer.ceiling),

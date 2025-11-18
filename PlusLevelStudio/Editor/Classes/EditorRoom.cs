@@ -9,6 +9,7 @@ namespace PlusLevelStudio.Editor
 {
     public class EditorRoom
     {
+        public string name = "";
         public string roomType;
         public TextureContainer textureContainer;
         public ActivityLocation activity;
@@ -21,6 +22,13 @@ namespace PlusLevelStudio.Editor
         public EditorRoom(string roomType, TextureContainer container)
         {
             this.roomType = roomType;
+            textureContainer = new TextureContainer(container);
+        }
+
+        public EditorRoom(string roomType, string name, TextureContainer container)
+        {
+            this.roomType = roomType;
+            this.name = name;
             textureContainer = new TextureContainer(container);
         }
 

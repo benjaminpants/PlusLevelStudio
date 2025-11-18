@@ -532,6 +532,7 @@ namespace PlusLevelStudio.Editor
             for (int i = 0; i < rooms.Count; i++)
             {
                 RoomInfo room = new RoomInfo(rooms[i].roomType, new TextureContainer(rooms[i].textureContainer));
+                room.name = rooms[i].name;
                 if (rooms[i].activity != null)
                 {
                     room.activity = new ActivityInfo()
@@ -700,7 +701,7 @@ namespace PlusLevelStudio.Editor
             return compiled;
         }
 
-        public const byte version = 13;
+        public const byte version = 14;
 
         public bool WallFree(IntVector2 pos, Direction dir, bool ignoreSelf)
         {
@@ -768,6 +769,7 @@ namespace PlusLevelStudio.Editor
             for (int i = 0; i < rooms.Count; i++)
             {
                 stringComp.WriteStoredString(writer, rooms[i].roomType);
+                writer.Write(rooms[i].name);
                 stringComp.WriteStoredString(writer, rooms[i].textureContainer.floor);
                 stringComp.WriteStoredString(writer, rooms[i].textureContainer.wall);
                 stringComp.WriteStoredString(writer, rooms[i].textureContainer.ceiling);
@@ -935,7 +937,15 @@ namespace PlusLevelStudio.Editor
             int roomCount = reader.ReadInt32();
             for (int i = 0; i < roomCount; i++)
             {
-                EditorRoom room = new EditorRoom(stringComp.ReadStoredString(reader), new TextureContainer(stringComp.ReadStoredString(reader), stringComp.ReadStoredString(reader), stringComp.ReadStoredString(reader)));
+                EditorRoom room;
+                if (version < 14)
+                {
+                    room = new EditorRoom(stringComp.ReadStoredString(reader), new TextureContainer(stringComp.ReadStoredString(reader), stringComp.ReadStoredString(reader), stringComp.ReadStoredString(reader)));
+                }
+                else
+                {
+                    room = new EditorRoom(stringComp.ReadStoredString(reader), reader.ReadString(), new TextureContainer(stringComp.ReadStoredString(reader), stringComp.ReadStoredString(reader), stringComp.ReadStoredString(reader)));
+                }
                 string activityName = stringComp.ReadStoredString(reader);
                 if (activityName != "null")
                 {

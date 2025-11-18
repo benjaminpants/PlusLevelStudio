@@ -117,6 +117,7 @@ namespace PlusLevelStudio.Editor.Tools
 
         public void ButtonDirectionClicked(Direction dir)
         {
+            if (!EditorController.Instance.levelData.WallFree(buttonPositionChosen.Value, dir, false)) return;
             EditorController.Instance.AddUndo();
             RotohallStructureLocation rotohallStr = (RotohallStructureLocation)EditorController.Instance.AddOrGetStructureToData("rotohall", true);
             rotohallStr.rotohalls.Add(rotohall);
@@ -132,12 +133,14 @@ namespace PlusLevelStudio.Editor.Tools
             {
                 if (!buttonPositionChosen.HasValue)
                 {
+                    if ((EditorController.Instance.levelData.RoomIdFromPos(EditorController.Instance.mouseGridPosition, true) == 0)) return false;
                     buttonPositionChosen = EditorController.Instance.mouseGridPosition;
                     EditorController.Instance.selector.SelectRotation(buttonPositionChosen.Value, ButtonDirectionClicked);
                 }
             }
             if (!positionChosen.HasValue)
             {
+                if ((EditorController.Instance.levelData.RoomIdFromPos(EditorController.Instance.mouseGridPosition, true) == 0)) return false;
                 positionChosen = EditorController.Instance.mouseGridPosition;
                 EditorController.Instance.selector.SelectRotation(positionChosen.Value, RotoDirectionClicked);
                 return false;

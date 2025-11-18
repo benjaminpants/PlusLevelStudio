@@ -26,6 +26,18 @@ namespace PlusLevelStudio.Lua
             return "unknown";
         }
 
+        public static string GetIDFromSticker(Sticker sticker)
+        {
+            foreach (KeyValuePair<string, Sticker> kvp in LevelLoaderPlugin.Instance.stickerAliases)
+            {
+                if (kvp.Value == sticker)
+                {
+                    return kvp.Key;
+                }
+            }
+            return "unknown";
+        }
+
         public static string GetIDFromNPC(NPC npc)
         {
             foreach (KeyValuePair<string, NPC> kvp in LevelLoaderPlugin.Instance.npcAliases)

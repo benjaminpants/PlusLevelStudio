@@ -67,6 +67,7 @@ namespace PlusLevelStudio
         public List<string> selectableTextures = new List<string>();
         public List<string> selectableSkyboxes = new List<string>();
         public List<string> selectableStickers = new List<string>();
+        public List<string> selectableShopItems = new List<string>();
         public Dictionary<string, Sprite> eventSprites = new Dictionary<string, Sprite>();
         public Dictionary<string, Sprite> skyboxSprites = new Dictionary<string, Sprite>();
         public Dictionary<string, Sprite> stickerSprites = new Dictionary<string, Sprite>();
@@ -453,11 +454,18 @@ namespace PlusLevelStudio
                     },
                     new EditorGlobalPage()
                     {
+                        filePath = Path.Combine(editorModePath, "StickerList.json"),
+                        managerType = typeof(StoreItemListExchangeHandler),
+                        pageName = "StoreConfig",
+                        pageKey = "Ed_GlobalPage_StoreConfiguration"
+                    },
+                    /*new EditorGlobalPage()
+                    {
                         filePath = Path.Combine(editorModePath, "ModeSettings.json"),
                         managerType = typeof(ModeSettingsUIExchangeHandler),
                         pageName = "ModeSettings",
                         pageKey = "Ed_GlobalPage_ModeSettings"
-                    },
+                    },*/
                 },
                 globalStructures = new List<GlobalStructurePage>()
                 {
@@ -1689,6 +1697,28 @@ namespace PlusLevelStudio
             selectableStickers.Add("sticker_bonus");
             selectableStickers.Add("time_bonus");
             selectableStickers.Add("exploration_bonus");
+
+            selectableShopItems.Add("quarter");
+            selectableShopItems.Add("keys");
+            selectableShopItems.Add("zesty");
+            selectableShopItems.Add("whistle");
+            selectableShopItems.Add("teleporter");
+            selectableShopItems.Add("dietbsoda");
+            selectableShopItems.Add("bsoda");
+            selectableShopItems.Add("boots");
+            selectableShopItems.Add("clock");
+            selectableShopItems.Add("dirtychalk");
+            selectableShopItems.Add("grapple");
+            selectableShopItems.Add("nosquee");
+            selectableShopItems.Add("nametag");
+            selectableShopItems.Add("tape");
+            selectableShopItems.Add("scissors");
+            selectableShopItems.Add("apple");
+            selectableShopItems.Add("swinglock");
+            selectableShopItems.Add("portalposter");
+            selectableShopItems.Add("banana");
+            selectableShopItems.Add("inviselixer");
+            selectableShopItems.Add("reachextend");
 
             yield return "Setting up GameManagers...";
 

@@ -62,7 +62,7 @@ namespace PlusLevelStudio.Editor
                 RoomInfo room = baseLevel.rooms[i];
                 if (i == 0) continue; // first room is always the regular hallway which is not available.
                 BaldiRoomAsset roomAsset = new BaldiRoomAsset();
-                roomAsset.name = room.type;
+                roomAsset.name = room.name;
                 roomAsset.type = room.type;
                 roomAsset.textureContainer = new TextureContainer(room.textureContainer);
                 roomAsset.windowType = "standard";
@@ -201,7 +201,10 @@ namespace PlusLevelStudio.Editor
                         markers[j].CompileIntoRoom(levelData, baseLevel, offset, roomAsset);
                     }
                 }
-                roomAsset.name += "_" + i + "_" + roomAsset.cells.Count + "_" + (roomAsset.activity == null ? "null" : roomAsset.activity.type);
+                if (string.IsNullOrEmpty(room.name))
+                {
+                    roomAsset.name = room.type + "_" + i + "_" + roomAsset.cells.Count + "_" + (roomAsset.activity == null ? "null" : roomAsset.activity.type);
+                }
                 roomAssets.Add(roomAsset);
             }
 

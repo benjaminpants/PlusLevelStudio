@@ -34,6 +34,7 @@ namespace PlusStudioLevelFormat
     public class RoomInfo
     {
         public string type;
+        public string name = "";
         public TextureContainer textureContainer;
         public List<ItemInfo> items = new List<ItemInfo>();
         public List<ItemSpawnInfo> itemSpawns = new List<ItemSpawnInfo>();
@@ -43,6 +44,13 @@ namespace PlusStudioLevelFormat
         public RoomInfo(string roomType, TextureContainer container)
         {
             type = roomType;
+            textureContainer = new TextureContainer(container);
+        }
+
+        public RoomInfo(string roomType, string roomName, TextureContainer container)
+        {
+            type = roomType;
+            name = roomName;
             textureContainer = new TextureContainer(container);
         }
 
