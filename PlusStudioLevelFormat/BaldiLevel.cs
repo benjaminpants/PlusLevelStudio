@@ -406,6 +406,7 @@ namespace PlusStudioLevelFormat
                 {
                     info.textureOverride = new TextureContainer(roomCompressor.ReadStoredString(reader), roomCompressor.ReadStoredString(reader), roomCompressor.ReadStoredString(reader));
                 }
+                level.premadeRoomPlacements.Add(info);
             }
             return level;
         }
