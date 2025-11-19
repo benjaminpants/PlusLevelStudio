@@ -40,6 +40,18 @@ namespace PlusLevelStudio.Lua
             }
         }
 
+        public string name
+        {
+            get
+            {
+                return roomController.name;
+            }
+            set
+            {
+                roomController.name = value;
+            }
+        }
+
         public bool powered
         {
             get
