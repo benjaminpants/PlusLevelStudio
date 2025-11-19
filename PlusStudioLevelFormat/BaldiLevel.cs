@@ -25,6 +25,8 @@ namespace PlusStudioLevelFormat
         public List<RandomStructureInfo> randomStructures = new List<RandomStructureInfo>();
         public List<NPCInfo> npcs = new List<NPCInfo>();
         public List<PosterInfo> posters = new List<PosterInfo>();
+        public List<RoomPlacementInfo> premadeRoomPlacements = new List<RoomPlacementInfo>();
+
         public UnityVector3 spawnPoint = new UnityVector3(5f,5f,5f);
         public UnityVector3 UnitySpawnPoint
         {
@@ -36,7 +38,7 @@ namespace PlusStudioLevelFormat
             }
         }
         public PlusDirection spawnDirection = PlusDirection.North;
-        public static readonly byte version = 6;
+        public static readonly byte version = 8;
         public string levelTitle = "WIP";
         public float timeLimit = 0f;
 
@@ -53,6 +55,10 @@ namespace PlusStudioLevelFormat
         // misc stuff
         public int seed = 0;
         public List<WeightedID> potentialStickers = new List<WeightedID>();
+
+        public List<WeightedID> potentialStoreItems = new List<WeightedID>();
+        public int storeItemCount = 0;
+
         public bool usesMap = true;
 
         /// <summary>
@@ -372,6 +378,35 @@ namespace PlusStudioLevelFormat
                     weight = reader.ReadInt32()
                 });
             }
+            if (version >= 8)
+            {
+                level.storeItemCount = reader.ReadInt32();
+                int storeCount = reader.ReadInt32();
+                for (int i = 0; i < storeCount; i++)
+                {
+                    level.potentialStoreItems.Add(new WeightedID()
+                    {
+                        id = reader.ReadString(),
+                        weight = reader.ReadInt32()
+                    });
+                }
+            }
+            if (version <= 7) return level;
+            int premadeRoomCount = reader.ReadInt32();
+            for (int i = 0; i < premadeRoomCount; i++)
+            {
+                RoomPlacementInfo info = new RoomPlacementInfo()
+                {
+                    room = roomCompressor.ReadStoredString(reader),
+                    position = reader.ReadByteVector2(),
+                    direction = (PlusDirection)reader.ReadByte(),
+                    doorSpawnId = reader.ReadInt32(),
+                };
+                if (reader.ReadBoolean())
+                {
+                    info.textureOverride = new TextureContainer(roomCompressor.ReadStoredString(reader), roomCompressor.ReadStoredString(reader), roomCompressor.ReadStoredString(reader));
+                }
+            }
             return level;
         }
 
@@ -382,6 +417,16 @@ namespace PlusStudioLevelFormat
             roomCompressor.AddStrings(rooms.Select(x => x.textureContainer.floor));
             roomCompressor.AddStrings(rooms.Select(x => x.textureContainer.wall));
             roomCompressor.AddStrings(rooms.Select(x => x.textureContainer.ceiling));
+            roomCompressor.AddStrings(premadeRoomPlacements.Select(x => x.room));
+            for (int i = 0; i < premadeRoomPlacements.Count; i++)
+            {
+                if (premadeRoomPlacements[i].textureOverride != null)
+                {
+                    roomCompressor.AddString(premadeRoomPlacements[i].textureOverride.floor);
+                    roomCompressor.AddString(premadeRoomPlacements[i].textureOverride.wall);
+                    roomCompressor.AddString(premadeRoomPlacements[i].textureOverride.ceiling);
+                }
+            }
             StringCompressor objectsCompressor = new StringCompressor();
             foreach (var room in rooms)
             {
@@ -622,6 +667,28 @@ namespace PlusStudioLevelFormat
             {
                 writer.Write(potentialStickers[i].id);
                 writer.Write(potentialStickers[i].weight);
+            }
+            writer.Write(storeItemCount);
+            writer.Write(potentialStoreItems.Count);
+            for (int i = 0; i < potentialStoreItems.Count; i++)
+            {
+                writer.Write(potentialStoreItems[i].id);
+                writer.Write(potentialStoreItems[i].weight);
+            }
+            writer.Write(premadeRoomPlacements.Count);
+            for (int i = 0; i < premadeRoomPlacements.Count; i++)
+            {
+                roomCompressor.WriteStoredString(writer, premadeRoomPlacements[i].room);
+                writer.Write(premadeRoomPlacements[i].position);
+                writer.Write((byte)premadeRoomPlacements[i].direction);
+                writer.Write(premadeRoomPlacements[i].doorSpawnId);
+                writer.Write(premadeRoomPlacements[i].textureOverride != null);
+                if (premadeRoomPlacements[i].textureOverride != null)
+                {
+                    roomCompressor.WriteStoredString(writer, premadeRoomPlacements[i].textureOverride.floor);
+                    roomCompressor.WriteStoredString(writer, premadeRoomPlacements[i].textureOverride.wall);
+                    roomCompressor.WriteStoredString(writer, premadeRoomPlacements[i].textureOverride.ceiling);
+                }
             }
         }
     }

@@ -149,6 +149,37 @@ namespace PlusLevelStudio.Editor.GlobalSettingsMenus
 
     public class StoreItemListExchangeHandler : WeightedListExchangeHandler
     {
+        TextMeshProUGUI storeCountText;
+
+
+        public override void SendInteractionMessage(string message, object data = null)
+        {
+            if (message == "setStoreItemCount")
+            {
+                if (int.TryParse((string)data, out int count))
+                {
+                    count = Mathf.Clamp(count, 0, 12);
+                    EditorController.Instance.levelData.storeItemCount = count;
+                    handler.somethingChanged = true;
+                }
+                Refresh();
+                return;
+            }
+            base.SendInteractionMessage(message, data);
+        }
+
+        public override void OnElementsCreated()
+        {
+            base.OnElementsCreated();
+            storeCountText = transform.Find("StoreCountBox").GetComponent<TextMeshProUGUI>();
+        }
+
+        public override void Refresh()
+        {
+            base.Refresh();
+            storeCountText.text = EditorController.Instance.levelData.storeItemCount.ToString();
+        }
+
         public override string GetNameFor(string key)
         {
             return LocalizationManager.Instance.GetLocalizedText(LevelLoaderPlugin.Instance.itemObjects[key].nameKey);
@@ -162,13 +193,45 @@ namespace PlusLevelStudio.Editor.GlobalSettingsMenus
         public override void UpdateList()
         {
             weightedIDs.Clear();
-            weightedIDs.AddRange(LevelStudioPlugin.Instance.selectableShopItems.Select(x => new WeightedID() { id = x, weight = 100}));
+            for (int i = 0; i < LevelStudioPlugin.Instance.selectableShopItems.Count; i++)
+            {
+                WeightedID existingId = EditorController.Instance.levelData.potentialStoreItems.Find(x => x.id == LevelStudioPlugin.Instance.selectableShopItems[i]);
+                weightedIDs.Add(new WeightedID()
+                {
+                    id = LevelStudioPlugin.Instance.selectableShopItems[i],
+                    weight = existingId == null ? 0 : existingId.weight,
+                });
+            }
             SortList();
         }
 
         public override void UpdateValues()
         {
-            // do nothing yet
+            for (int i = 0; i < weightedIDs.Count; i++)
+            {
+                WeightedID existingId = EditorController.Instance.levelData.potentialStoreItems.Find(x => x.id == weightedIDs[i].id);
+                if (existingId != null)
+                {
+                    if (weightedIDs[i].weight == 0)
+                    {
+                        EditorController.Instance.levelData.potentialStoreItems.Remove(existingId);
+                    }
+                    else
+                    {
+                        existingId.weight = weightedIDs[i].weight;
+                    }
+                }
+                else
+                {
+                    if (weightedIDs[i].weight == 0) continue;
+                    EditorController.Instance.levelData.potentialStoreItems.Add(new WeightedID()
+                    {
+                        id = weightedIDs[i].id,
+                        weight = weightedIDs[i].weight
+                    });
+                }
+            }
+            handler.somethingChanged = true;
         }
     }
 

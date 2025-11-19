@@ -60,6 +60,15 @@ namespace PlusStudioLevelFormat
         }
     }
 
+    public class RoomPlacementInfo
+    {
+        public string room = "";
+        public ByteVector2 position;
+        public PlusDirection direction;
+        public int doorSpawnId = 0;
+        public TextureContainer textureOverride = null;
+    }
+
     public class StructureInfo
     {
         public string type;

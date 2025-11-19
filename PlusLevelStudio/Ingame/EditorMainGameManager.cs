@@ -47,6 +47,19 @@ namespace PlusLevelStudio.Ingame
             Singleton<CoreGameManager>.Instance.currentMode = originalMode;
         }
 
+        public override void GiveRandomSticker(StickerPackType packType, int total)
+        {
+            if (packType == StickerPackType.Bonus)
+            {
+                if (Singleton<CoreGameManager>.Instance.sceneObject.potentialStickers.Where(x => StickerMetaStorage.Instance.Get(x.selection).flags.HasFlag(StickerFlags.IsBonus)).Count() == 0)
+                {
+                    base.GiveRandomSticker(StickerPackType.Normal, 1);
+                    return;
+                }
+            }
+            base.GiveRandomSticker(packType, total);
+        }
+
         public override void LoadNextLevel()
         {
             Singleton<EditorPlayModeManager>.Instance.Win();

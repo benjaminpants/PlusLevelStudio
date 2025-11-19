@@ -237,6 +237,9 @@ namespace PlusStudioLevelLoader
                 new WeightedSticker(Sticker.TimeExtension, 100),
                 new WeightedSticker(Sticker.Stealth, 100)
             };*/
+            scene.shopItems = new WeightedItemObject[0];
+            scene.totalShopItems = 0;
+            scene.storeUsesNextLevelData = false;
 
             return scene;
         }
@@ -276,6 +279,17 @@ namespace PlusStudioLevelLoader
                 potentialStickerList.Add(new WeightedSticker(LevelLoaderPlugin.Instance.stickerAliases[level.potentialStickers[i].id], level.potentialStickers[i].weight));
             }
             scene.potentialStickers = potentialStickerList.ToArray();
+            List<WeightedItemObject> storeItemList = new List<WeightedItemObject>();
+            for (int i = 0; i < level.potentialStoreItems.Count; i++)
+            {
+                storeItemList.Add(new WeightedItemObject()
+                {
+                    selection = LevelLoaderPlugin.Instance.itemObjects[level.potentialStoreItems[i].id],
+                    weight = level.potentialStoreItems[i].weight,
+                });
+            }
+            scene.shopItems = storeItemList.ToArray();
+            scene.totalShopItems = level.storeItemCount;
             return scene;
         }
 
@@ -457,6 +471,22 @@ namespace PlusStudioLevelLoader
             for (int i = 0; i < level.randomEvents.Count; i++)
             {
                 asset.events.Add(LevelLoaderPlugin.Instance.randomEventAliases[level.randomEvents[i]]);
+            }
+
+            for (int i = 0; i < level.premadeRoomPlacements.Count; i++)
+            {
+                RoomAssetPlacementData data = new RoomAssetPlacementData();
+                data.room = LevelLoaderPlugin.Instance.roomAssetAliases[level.premadeRoomPlacements[i].room];
+                data.position = level.premadeRoomPlacements[i].position.ToInt();
+                data.direction = (Direction)level.premadeRoomPlacements[i].direction;
+                if (level.premadeRoomPlacements[i].textureOverride != null)
+                {
+                    data.florTexOverride = LevelLoaderPlugin.RoomTextureFromAlias(level.premadeRoomPlacements[i].textureOverride.floor);
+                    data.wallTexOverride = LevelLoaderPlugin.RoomTextureFromAlias(level.premadeRoomPlacements[i].textureOverride.wall);
+                    data.ceilTexOverride = LevelLoaderPlugin.RoomTextureFromAlias(level.premadeRoomPlacements[i].textureOverride.ceiling);
+                }
+                data.doorSpawnId = level.premadeRoomPlacements[i].doorSpawnId;
+                asset.roomAssetPlacements.Add(data);
             }
             return asset;
         }

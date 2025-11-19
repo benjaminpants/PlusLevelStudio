@@ -2,6 +2,7 @@
 using MTM101BaldAPI.Registers;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -18,6 +19,19 @@ namespace PlusLevelStudio.Ingame
         {
             base.ExitedSpawn();
             ec.StartEventTimers();
+        }
+
+        public override void GiveRandomSticker(StickerPackType packType, int total)
+        {
+            if (packType == StickerPackType.Bonus)
+            {
+                if (Singleton<CoreGameManager>.Instance.sceneObject.potentialStickers.Where(x => StickerMetaStorage.Instance.Get(x.selection).flags.HasFlag(StickerFlags.IsBonus)).Count() == 0)
+                {
+                    base.GiveRandomSticker(StickerPackType.Normal, 1);
+                    return;
+                }
+            }
+            base.GiveRandomSticker(packType, total);
         }
     }
 
@@ -74,6 +88,19 @@ namespace PlusLevelStudio.Ingame
             }
             base.Initialize();
         }
+
+        public override void GiveRandomSticker(StickerPackType packType, int total)
+        {
+            if (packType == StickerPackType.Bonus)
+            {
+                if (Singleton<CoreGameManager>.Instance.sceneObject.potentialStickers.Where(x => StickerMetaStorage.Instance.Get(x.selection).flags.HasFlag(StickerFlags.IsBonus)).Count() == 0)
+                {
+                    base.GiveRandomSticker(StickerPackType.Normal, 1);
+                    return;
+                }
+            }
+            base.GiveRandomSticker(packType, total);
+        }
     }
 
     public class EditorSpeedyChallengeManager : SpeedyChallengeManager
@@ -94,6 +121,19 @@ namespace PlusLevelStudio.Ingame
         public override void LoadNextLevel()
         {
             Singleton<EditorPlayModeManager>.Instance.Win();
+        }
+
+        public override void GiveRandomSticker(StickerPackType packType, int total)
+        {
+            if (packType == StickerPackType.Bonus)
+            {
+                if (Singleton<CoreGameManager>.Instance.sceneObject.potentialStickers.Where(x => StickerMetaStorage.Instance.Get(x.selection).flags.HasFlag(StickerFlags.IsBonus)).Count() == 0)
+                {
+                    base.GiveRandomSticker(StickerPackType.Normal, 1);
+                    return;
+                }
+            }
+            base.GiveRandomSticker(packType, total);
         }
     }
 }

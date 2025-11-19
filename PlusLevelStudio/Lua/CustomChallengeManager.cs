@@ -13,6 +13,7 @@ using PlusStudioLevelLoader;
 using UnityEngine;
 using System.IO.Compression;
 using PlusStudioLevelFormat;
+using MTM101BaldAPI.Registers;
 
 namespace PlusLevelStudio.Lua
 {
@@ -307,6 +308,20 @@ namespace PlusLevelStudio.Lua
                 }
             }
         }
+
+        public override void GiveRandomSticker(StickerPackType packType, int total)
+        {
+            if (packType == StickerPackType.Bonus)
+            {
+                if (Singleton<CoreGameManager>.Instance.sceneObject.potentialStickers.Where(x => StickerMetaStorage.Instance.Get(x.selection).flags.HasFlag(StickerFlags.IsBonus)).Count() == 0)
+                {
+                    base.GiveRandomSticker(StickerPackType.Normal, 1);
+                    return;
+                }
+            }
+            base.GiveRandomSticker(packType, total);
+        }
+
         void Update()
         {
             if (!globalsDefined) return;

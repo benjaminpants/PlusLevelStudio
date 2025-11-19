@@ -566,6 +566,7 @@ namespace PlusLevelStudio.Editor
             HandleLightChanges(levelData.exits);
             HandleLightChanges(levelData.structures);
             HandleLightChanges(levelData.markers);
+            HandleLightChanges(levelData.premadeRooms);
             roomVisuals.ForEach(x => x.ModifyLightsForEditor(workerEc));
             UpdateStructuresWithReason(PotentialStructureUpdateReason.LightChange);
             workerEc.UpdateQueuedLightChanges();
@@ -1444,6 +1445,10 @@ namespace PlusLevelStudio.Editor
                         workerEc.cells[x, y].Initialize();
                     }
                 }
+            }
+            for (int i = 0; i < levelData.premadeRooms.Count; i++)
+            {
+                levelData.premadeRooms[i].ModifyCellDisplay(this);
             }
             UnhighlightAllCells();
             UpdateStructuresWithReason(PotentialStructureUpdateReason.CellChange);

@@ -30,7 +30,7 @@ using UnityEngine.UI;
 
 namespace PlusLevelStudio
 {
-    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudio", "Plus Level Studio", "1.4.2.1")]
+    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudio", "Plus Level Studio", "1.5.0.0")]
     [BepInDependency("mtm101.rulerp.bbplus.baldidevapi")]
     [BepInDependency("mtm101.rulerp.baldiplus.levelstudioloader")]
     public class LevelStudioPlugin : BaseUnityPlugin
@@ -47,7 +47,7 @@ namespace PlusLevelStudio
         public const int editorInteractableLayer = 13; // CollidableEntities
         public const int editorInteractableLayerMask = 1 << editorInteractableLayer;
 
-        private Version expectedLoaderVersion = new Version("1.7.0.0");
+        private Version expectedLoaderVersion = new Version("1.8.0.0");
 
         public const int editorHandleLayer = 12; // ClickableEntities
         public const int editorHandleLayerMask = 1 << editorHandleLayer;
@@ -64,6 +64,8 @@ namespace PlusLevelStudio
         public Dictionary<string, GameObject> genericMarkerDisplays = new Dictionary<string, GameObject>();
         public Dictionary<string, GameObject> npcDisplays = new Dictionary<string, GameObject>();
         public Dictionary<string, GameObject> tileBasedObjectDisplays = new Dictionary<string, GameObject>();
+        public Dictionary<string, string> premadeRoomDoors = new Dictionary<string, string>();
+
         public List<string> selectableTextures = new List<string>();
         public List<string> selectableSkyboxes = new List<string>();
         public List<string> selectableStickers = new List<string>();
@@ -454,18 +456,18 @@ namespace PlusLevelStudio
                     },
                     new EditorGlobalPage()
                     {
-                        filePath = Path.Combine(editorModePath, "StickerList.json"),
+                        filePath = Path.Combine(editorModePath, "StoreList.json"),
                         managerType = typeof(StoreItemListExchangeHandler),
                         pageName = "StoreConfig",
                         pageKey = "Ed_GlobalPage_StoreConfiguration"
                     },
-                    /*new EditorGlobalPage()
+                    new EditorGlobalPage()
                     {
                         filePath = Path.Combine(editorModePath, "ModeSettings.json"),
                         managerType = typeof(ModeSettingsUIExchangeHandler),
                         pageName = "ModeSettings",
                         pageKey = "Ed_GlobalPage_ModeSettings"
-                    },*/
+                    },
                 },
                 globalStructures = new List<GlobalStructurePage>()
                 {
@@ -562,6 +564,13 @@ namespace PlusLevelStudio
                         managerType = typeof(StickerListExchangeHandler),
                         pageName = "StickerConfig",
                         pageKey = "Ed_GlobalPage_StickerConfiguration"
+                    },
+                    new EditorGlobalPage()
+                    {
+                        filePath = Path.Combine(editorModePath, "StoreList.json"),
+                        managerType = typeof(StoreItemListExchangeHandler),
+                        pageName = "StoreConfig",
+                        pageKey = "Ed_GlobalPage_StoreConfiguration"
                     },
                 },
                 globalStructures = new List<GlobalStructurePage>()
@@ -1720,6 +1729,8 @@ namespace PlusLevelStudio
             selectableShopItems.Add("inviselixer");
             selectableShopItems.Add("reachextend");
 
+            premadeRoomDoors.Add("johnny_store", "autodoor");
+
             yield return "Setting up GameManagers...";
 
             SoundObject balAllBooks = ObjectCreators.CreateSoundObject(AssetLoader.AudioClipFromMod(this, "Sounds", "Ingame", "BAL_AllNotebooks_Generic.wav"), "Vfx_BAL_Tutorial_AllNotebooks_0", SoundType.Voice, Color.green);
@@ -2046,6 +2057,7 @@ namespace PlusLevelStudio
             assetMan.Add<Sprite>("OpenFolderIcon", AssetLoader.SpriteFromMod(this, Vector2.one / 2f, 1f, "UI", "TitleScreen", "OpenFolderIcon.png"));
             assetMan.Add<Sprite>("OpenFolderIconHover", AssetLoader.SpriteFromMod(this, Vector2.one / 2f, 1f, "UI", "TitleScreen", "OpenFolderIconHover.png"));
             assetMan.Add<Texture2D>("IconMissing", AssetLoader.TextureFromMod(this, "UI", "TitleScreen", "IconMissing.png"));
+            assetMan.Add<Texture2D>("Premade_Wall", AssetLoader.TextureFromMod(this, "Editor", "Premade_Wall.png"));
             Sprite[] baseSprites = Resources.FindObjectsOfTypeAll<Sprite>().Where(x => x.GetInstanceID() >= 0).ToArray();
 
             assetMan.Add<Sprite>("BackArrow", baseSprites.First(x => x.name == "BackArrow_0"));

@@ -5,6 +5,7 @@ using System.Linq;
 using PlusStudioLevelFormat;
 using PlusStudioLevelLoader;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace PlusLevelStudio.Editor
 {
@@ -31,6 +32,7 @@ namespace PlusLevelStudio.Editor
         public List<PosterPlacement> posters = new List<PosterPlacement>();
         public List<WallLocation> walls = new List<WallLocation>();
         public List<MarkerLocation> markers = new List<MarkerLocation>();
+        public List<PremadeRoomLocation> premadeRooms = new List<PremadeRoomLocation>();
         public string elevatorTitle = "WIP";
 
         public string skybox = "daystandard";
@@ -53,6 +55,10 @@ namespace PlusLevelStudio.Editor
         public int seed = 0;
         public List<WeightedID> potentialStickers = new List<WeightedID>();
         public bool usesMap = true;
+
+        // store stuff
+        public List<WeightedID> potentialStoreItems = new List<WeightedID>();
+        public int storeItemCount = 0;
 
         public PlayableLevelMeta meta;
 
@@ -185,6 +191,7 @@ namespace PlusLevelStudio.Editor
             changedSomething |= ValidatePlacementsFor(markers, updateVisuals);
             changedSomething |= ValidatePlacementsFor(tileBasedObjects, updateVisuals);
             changedSomething |= ValidatePlacementsFor(npcs, updateVisuals);
+            changedSomething |= ValidatePlacementsFor(premadeRooms, false);
             return changedSomething;
         }
 
@@ -275,6 +282,7 @@ namespace PlusLevelStudio.Editor
             ApplyCellModifiers(exits, forEditor);
             ApplyCellModifiers(walls, forEditor);
             ApplyCellModifiers(structures, forEditor);
+            ApplyCellModifiers(premadeRooms, forEditor);
             ValidatePlacements(forEditor);
         }
 
@@ -375,6 +383,10 @@ namespace PlusLevelStudio.Editor
             for (int i = 0; i < markers.Count; i++)
             {
                 markers[i].ShiftBy(new Vector3(posDif.x * 10f, 0f, posDif.z * 10f), posDif, sizeDif);
+            }
+            for (int i = 0; i < premadeRooms.Count; i++)
+            {
+                premadeRooms[i].position -= posDif;
             }
             spawnPoint -= new Vector3(posDif.x * 10f, 0f, posDif.z * 10f);
             ValidatePlacements(true);
@@ -555,6 +567,18 @@ namespace PlusLevelStudio.Editor
                     strength = (byte)group.strength
                 });
             }
+            // temp add doors
+            for (int i = 0; i < premadeRooms.Count; i++)
+            {
+                compiled.tileObjects.Add(new TileObjectInfo()
+                {
+                    prefab = LevelStudioPlugin.Instance.premadeRoomDoors[premadeRooms[i].room],
+                    position = premadeRooms[i].GetDoorPos().ToByte(),
+                    direction = (PlusDirection)(premadeRooms[i].direction.GetOpposite()),
+                });
+                IntVector2 cellOff = premadeRooms[i].direction.GetOpposite().ToIntVector2();
+                //compiled.cells[premadeRooms[i].position.x + cellOff.x, premadeRooms[i].position.z + cellOff.z].walls &= (Nybble)~(premadeRooms[i].direction.ToBinary());
+            }
             for (int i = 0; i < doors.Count; i++)
             {
                 string typeToCompileAs = doors[i].type;
@@ -698,10 +722,34 @@ namespace PlusLevelStudio.Editor
                     id = potentialStickers[i].id,
                 });
             }
+            for (int i = 0; i < premadeRooms.Count; i++)
+            {
+                compiled.premadeRoomPlacements.Add(new RoomPlacementInfo()
+                {
+                    room = premadeRooms[i].room,
+                    position = premadeRooms[i].position.ToByte(),
+                    direction = (PlusDirection)premadeRooms[i].direction,
+                    doorSpawnId = premadeRooms[i].doorId,
+                    textureOverride = null
+                });
+            }
+            compiled.storeItemCount = storeItemCount;
+            for (int i = 0; i < potentialStoreItems.Count; i++)
+            {
+                compiled.potentialStoreItems.Add(new WeightedID()
+                {
+                    weight = potentialStoreItems[i].weight,
+                    id = potentialStoreItems[i].id,
+                });
+            }
+            if (compiled.potentialStoreItems.Count == 0)
+            {
+                compiled.storeItemCount = 0;
+            }
             return compiled;
         }
 
-        public const byte version = 14;
+        public const byte version = 16;
 
         public bool WallFree(IntVector2 pos, Direction dir, bool ignoreSelf)
         {
@@ -753,6 +801,7 @@ namespace PlusLevelStudio.Editor
             stringComp.AddStrings(rooms.Where(x => x.activity != null).Select(x => x.activity.type));
             stringComp.AddStrings(structures.Select(x => x.type));
             stringComp.AddStrings(markers.Select(x => x.type));
+            stringComp.AddStrings(premadeRooms.Select(x => x.room));
             structures.ForEach(x => x.AddStringsToCompressor(stringComp));
             markers.ForEach(x => x.AddStringsToCompressor(stringComp));
             stringComp.AddString("null");
@@ -883,7 +932,7 @@ namespace PlusLevelStudio.Editor
             for (int i = 0; i < tileBasedObjects.Count; i++)
             {
                 stringComp.WriteStoredString(writer, tileBasedObjects[i].type);
-                writer.Write(tileBasedObjects[i].position.ToData());
+                writer.Write(tileBasedObjects[i].position.ToData()); // todo: pretty sure this should be ToByte not ToData
                 writer.Write((byte)tileBasedObjects[i].direction);
             }
             writer.Write(spawnPoint.ToData());
@@ -910,6 +959,21 @@ namespace PlusLevelStudio.Editor
                 writer.Write(potentialStickers[i].weight);
             }
             writer.Write(usesMap);
+            writer.Write(premadeRooms.Count);
+            for (int i = 0; i < premadeRooms.Count; i++)
+            {
+                stringComp.WriteStoredString(writer, premadeRooms[i].room);
+                writer.Write(premadeRooms[i].position.ToByte());
+                writer.Write((byte)premadeRooms[i].direction);
+                writer.Write(premadeRooms[i].doorId);
+            }
+            writer.Write(storeItemCount);
+            writer.Write(potentialStoreItems.Count);
+            for (int i = 0; i < potentialStoreItems.Count; i++)
+            {
+                writer.Write(potentialStoreItems[i].id);
+                writer.Write(potentialStoreItems[i].weight);
+            }
             meta.Write(writer);
         }
 
@@ -1169,6 +1233,32 @@ namespace PlusLevelStudio.Editor
             if (version >= 13)
             {
                 levelData.usesMap = reader.ReadBoolean();
+            }
+            if (version >= 15)
+            {
+                int premadeRoomCount = reader.ReadInt32();
+                for (int i = 0; i < premadeRoomCount; i++)
+                {
+                    PremadeRoomLocation local = new PremadeRoomLocation();
+                    local.room = stringComp.ReadStoredString(reader);
+                    local.position = reader.ReadByteVector2().ToInt();
+                    local.direction = (Direction)reader.ReadByte();
+                    local.doorId = reader.ReadInt32();
+                    levelData.premadeRooms.Add(local);
+                }
+            }
+            if (version >= 16)
+            {
+                levelData.storeItemCount = reader.ReadInt32();
+                int storeCount = reader.ReadInt32();
+                for (int i = 0; i < storeCount; i++)
+                {
+                    levelData.potentialStoreItems.Add(new WeightedID()
+                    {
+                        id = reader.ReadString(),
+                        weight = reader.ReadInt32()
+                    });
+                }
             }
             levelData.meta = PlayableLevelMeta.Read(reader, true);
             return levelData;

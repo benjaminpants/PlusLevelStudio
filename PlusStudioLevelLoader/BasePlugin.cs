@@ -13,7 +13,7 @@ using System.IO;
 
 namespace PlusStudioLevelLoader
 {
-    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudioloader", "Plus Level Loader", "1.7.0.0")]
+    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudioloader", "Plus Level Loader", "1.8.0.0")]
     [BepInDependency("mtm101.rulerp.bbplus.baldidevapi")]
     public class LevelLoaderPlugin : BaseUnityPlugin
     {
@@ -37,6 +37,7 @@ namespace PlusStudioLevelLoader
         public Dictionary<string, RandomEvent> randomEventAliases = new Dictionary<string, RandomEvent>();
         public Dictionary<string, Cubemap> skyboxAliases = new Dictionary<string, Cubemap>();
         public Dictionary<string, Sticker> stickerAliases = new Dictionary<string, Sticker>();
+        public Dictionary<string, RoomAsset> roomAssetAliases = new Dictionary<string, RoomAsset>();
 
         public Pickup stickerPickupPre;
 
@@ -101,6 +102,7 @@ namespace PlusStudioLevelLoader
             roomTextureAliases.Add("Black", textures.First(x => x.name == "BlackTexture"));
             roomTextureAliases.Add("Vent", textures.First(x => x.name == "Vent_Base"));
             roomTextureAliases.Add("PlasticTable", textures.First(x => x.name == "PlasticTable"));
+            roomTextureAliases.Add(string.Empty, null); // lol
 
             roomTextureAliases.Add("ElevatorFloor", textures.First(x => x.name == "ElFloor"));
             roomTextureAliases.Add("ElevatorBack", textures.First(x => x.name == "ElBack"));
@@ -160,6 +162,7 @@ namespace PlusStudioLevelLoader
             tileBasedObjectPrefabs.Add("swinging_silent", doors.First(x => x.name == "SilentDoor_Swinging")); // swinging doors aren't "doors" and don't belong to any room.
             tileBasedObjectPrefabs.Add("coinswinging", doors.First(x => x.name == "Door_SwingingCoin")); // swinging doors aren't "doors" and don't belong to any room.
             tileBasedObjectPrefabs.Add("flaps", doors.First(x => x.name == "Door_FlapDoor")); // swinging doors aren't "doors" and don't belong to any room.
+            tileBasedObjectPrefabs.Add("autodoor", doors.First(x => x.name == "Door_Auto"));
             doorPrefabs.Add("autodoor", doors.First(x => x.name == "Door_Auto"));
             doorPrefabs.Add("swinging", doors.First(x => x.name == "Door_Swinging")); // swinging doors are smart and may be a regular door somethings
             doorPrefabs.Add("swinging_silent", doors.First(x => x.name == "SilentDoor_Swinging")); // swinging doors are smart and may be a regular door somethings
@@ -353,6 +356,9 @@ namespace PlusStudioLevelLoader
             skyboxAliases.Add("daystandard", skyboxes.First(x => x.name == "Cubemap_DayStandard"));
             skyboxAliases.Add("twilight", skyboxes.First(x => x.name == "Cubemap_Twilight"));
             skyboxAliases.Add("void", skyboxes.First(x => x.name == "Cubemap_Void"));
+
+            RoomAsset[] allRoomAssets = Resources.FindObjectsOfTypeAll<RoomAsset>().Where(x => x.GetInstanceID() >= 0).ToArray();
+            roomAssetAliases.Add("johnny_store", allRoomAssets.First(x => ((ScriptableObject)x).name == "Room_JohnnysStore"));
 
             yield return "Defining misc aliases...";
             stickerAliases.Add("nothing", Sticker.Nothing);

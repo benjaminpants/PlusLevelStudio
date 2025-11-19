@@ -310,7 +310,8 @@ namespace PlusLevelStudio
                     new RoomTool("outside"),
                     new RoomTool("library"),
                     new RoomTool("lightbulbtesting"),
-                    new RoomTool("saferoom")
+                    new RoomTool("saferoom"),
+                    new PremadeRoomTool("johnny_store")
             }, true);
             if (!includeNonVanillaComplaintTools) return;
             AddToolsToCategory(modeToModify, "rooms", new EditorTool[]

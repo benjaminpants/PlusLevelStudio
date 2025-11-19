@@ -7,8 +7,10 @@ using UnityEngine;
 
 namespace PlusLevelStudio.Editor.Tools
 {
+    // todo: rewrite this thing. the code is horrible.
     public class DeleteTool : EditorTool
     {
+        PremadeRoomLocation lastFoundRoom = null;
         CellArea lastFoundArea = null;
         ExitLocation lastFoundExit = null;
         EditorDeletableObject lastFoundDeletable = null;
@@ -31,6 +33,10 @@ namespace PlusLevelStudio.Editor.Tools
 
         public override void Exit()
         {
+            if (lastFoundRoom != null)
+            {
+                EditorController.Instance.HighlightCells(lastFoundRoom.CalculateOwnedCells(), "none");
+            }
             if (lastFoundArea != null)
             {
                 EditorController.Instance.HighlightCells(lastFoundArea.CalculateOwnedCells(), "none");
@@ -50,6 +56,11 @@ namespace PlusLevelStudio.Editor.Tools
 
         public override bool MousePressed()
         {
+            if (lastFoundRoom != null)
+            {
+                EditorController.Instance.AddUndo();
+                return lastFoundRoom.OnDelete(EditorController.Instance.levelData);
+            }
             if (lastFoundDeletable != null)
             {
                 EditorController.Instance.AddUndo();
@@ -62,6 +73,7 @@ namespace PlusLevelStudio.Editor.Tools
                 EditorController.Instance.RemoveVisual(lastFoundExit);
                 EditorController.Instance.RefreshCells();
                 EditorController.Instance.UpdateSpawnVisual();
+                return true;
             }
             if (lastFoundArea != null)
             {
@@ -99,6 +111,10 @@ namespace PlusLevelStudio.Editor.Tools
                         }
                     }
                     lastFoundDeletable.Highlight("red");
+                    if (lastFoundRoom != null)
+                    {
+                        EditorController.Instance.HighlightCells(lastFoundRoom.CalculateOwnedCells(), "none");
+                    }
                     if (lastFoundArea != null)
                     {
                         EditorController.Instance.HighlightCells(lastFoundArea.CalculateOwnedCells(), "none");
@@ -107,6 +123,7 @@ namespace PlusLevelStudio.Editor.Tools
                     {
                         EditorController.Instance.HighlightCells(lastFoundExit.GetOwnedCells(), "none");
                     }
+                    lastFoundRoom = null;
                     lastFoundExit = null;
                     lastFoundArea = null;
                     return;
@@ -117,6 +134,10 @@ namespace PlusLevelStudio.Editor.Tools
                 lastFoundDeletable.Highlight("none");
             }
             lastFoundDeletable = null;
+            if (lastFoundRoom != null)
+            {
+                EditorController.Instance.HighlightCells(lastFoundRoom.CalculateOwnedCells(), "none");
+            }
             if (lastFoundArea != null)
             {
                 EditorController.Instance.HighlightCells(lastFoundArea.CalculateOwnedCells(), "none");
@@ -124,6 +145,17 @@ namespace PlusLevelStudio.Editor.Tools
             if (lastFoundExit != null)
             {
                 EditorController.Instance.HighlightCells(lastFoundExit.GetOwnedCells(), "none");
+            }
+
+            PremadeRoomLocation foundRoom = null;
+            foreach (PremadeRoomLocation room in EditorController.Instance.levelData.premadeRooms)
+            {
+                if (room.OwnsPosition(EditorController.Instance.mouseGridPosition))
+                {
+                    foundRoom = room;
+                    EditorController.Instance.HighlightCells(foundRoom.CalculateOwnedCells(), "red");
+                    break;
+                }
             }
             ExitLocation foundExit = null;
             foreach (ExitLocation exit in EditorController.Instance.levelData.exits)
@@ -136,6 +168,7 @@ namespace PlusLevelStudio.Editor.Tools
                 }
             }
             lastFoundExit = foundExit;
+            lastFoundRoom = foundRoom;
             CellArea foundArea = EditorController.Instance.levelData.AreaFromPos(EditorController.Instance.mouseGridPosition, true);
             if (foundArea != null)
             {
