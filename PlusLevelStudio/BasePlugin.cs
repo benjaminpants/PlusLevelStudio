@@ -1222,8 +1222,33 @@ namespace PlusLevelStudio
                 LevelLoaderPlugin.Instance.basicObjects.Add("qmark" + i, qMark.gameObject);
             }
 
-            structureTypes.Add("studentspawner", typeof(StudentSpawnerStructureLocation));
+            // roto halls
+            Structure_Rotohalls rotohallsBuilder = Resources.FindObjectsOfTypeAll<Structure_Rotohalls>().First(x => x.GetInstanceID() >= 0 && x.name == "Rotohall_Structure");
+            Structure_RotohallEditor rotohallEditorPre = new GameObject("Structure_RotohallEditor").AddComponent<Structure_RotohallEditor>();
+            rotohallEditorPre.gameObject.ConvertToPrefab(true);
+            rotohallEditorPre.cylinderShapes.Add("StraightCylinder_Model", CylinderShape.Straight);
+            rotohallEditorPre.cylinderShapes.Add("CornerCylinder_Model", CylinderShape.Corner);
+            rotohallEditorPre.rotohallSprites.Add("StraightCylinder_Model", (Sprite)rotohallsBuilder.ReflectionGetVariable("straightCylinderSprite"));
+            rotohallEditorPre.rotohallSprites.Add("CornerCylinder_Model", (Sprite)rotohallsBuilder.ReflectionGetVariable("cornerCylinderSprite"));
+            rotohallEditorPre.buttonPre = (GameButton)rotohallsBuilder.ReflectionGetVariable("buttonPre");
+            rotohallEditorPre.rotoHallPre = (RotoHall)rotohallsBuilder.ReflectionGetVariable("rotoHallPre");
 
+            LevelLoaderPlugin.Instance.structureAliases.Add("rotohall", new LoaderStructureData(rotohallEditorPre, new Dictionary<string, GameObject>()
+            {
+                { "rotohall_straight", ((MeshRenderer)rotohallsBuilder.ReflectionGetVariable("straightCylinderPre")).gameObject },
+                { "rotohall_corner", ((MeshRenderer)rotohallsBuilder.ReflectionGetVariable("cornerCylinderPre")).gameObject }
+            }));
+
+
+            // lockdown event doors
+            Structure_LockdownEventDoors lockDoors = new GameObject("EditorLockdownEventDoorBuilder").AddComponent<Structure_LockdownEventDoors>();
+            lockDoors.gameObject.ConvertToPrefab(true);
+            LevelLoaderPlugin.Instance.structureAliases.Add("random_lockdown_event_doors", new LoaderStructureData(lockDoors));
+
+            // preplaced lockdown event doors
+            PlacedLockdownEventDoor placedEventDoorPre = GameObject.Instantiate<LockdownDoor>(Resources.FindObjectsOfTypeAll<LockdownDoor>().First(x => x.GetInstanceID() >= 0 && x.name == "LockdownDoor"), MTM101BaldiDevAPI.prefabTransform).gameObject.SwapComponent<LockdownDoor, PlacedLockdownEventDoor>();
+            placedEventDoorPre.name = "EditorPreplacedLockdownEventDoor";
+            LevelLoaderPlugin.Instance.structureAliases.Add("preplaced_lockdown_door", new LoaderStructureData(LevelLoaderPlugin.Instance.structureAliases["lockdowndoor"].structure, new Dictionary<string, GameObject>() { { "preplaced_lockdown_door", placedEventDoorPre.gameObject } }));
 
             yield return "Creating editor prefab visuals...";
 
@@ -1560,8 +1585,10 @@ namespace PlusLevelStudio
             // lockers
             structureTypes.Add("lockers", typeof(RandomLockerLocation));
 
+            // student spawner
+            structureTypes.Add("studentspawner", typeof(StudentSpawnerStructureLocation));
+
             // rotohalls
-            Structure_Rotohalls rotohallsBuilder = Resources.FindObjectsOfTypeAll<Structure_Rotohalls>().First(x => x.GetInstanceID() >= 0 && x.name == "Rotohall_Structure");
             GameObject rotoHallStraightVisualObject = EditorInterface.AddStructureGenericVisual("rotohall_straight", ((RotoHall)(rotohallsBuilder.ReflectionGetVariable("rotoHallPre"))).gameObject);
             RotohallVisual rotoHallStraightVisual = rotoHallStraightVisualObject.AddComponent<RotohallVisual>();
             rotoHallStraightVisual.cylinder = GameObject.Instantiate<MeshRenderer>((MeshRenderer)rotohallsBuilder.ReflectionGetVariable("straightCylinderPre"), rotoHallStraightVisualObject.transform);
@@ -1572,43 +1599,16 @@ namespace PlusLevelStudio
             rotoHallCornerVisual.cylinder = GameObject.Instantiate<MeshRenderer>((MeshRenderer)rotohallsBuilder.ReflectionGetVariable("cornerCylinderPre"), rotoHallCornerVisualObject.transform);
             rotoHallCornerVisualObject.GetComponent<EditorRendererContainer>().AddRenderer(rotoHallCornerVisual.cylinder, "none");
 
-            Structure_RotohallEditor rotohallEditorPre = new GameObject("Structure_RotohallEditor").AddComponent<Structure_RotohallEditor>();
-            rotohallEditorPre.gameObject.ConvertToPrefab(true);
-            rotohallEditorPre.cylinderShapes.Add("StraightCylinder_Model", CylinderShape.Straight);
-            rotohallEditorPre.cylinderShapes.Add("CornerCylinder_Model", CylinderShape.Corner);
-            rotohallEditorPre.rotohallSprites.Add("StraightCylinder_Model", (Sprite)rotohallsBuilder.ReflectionGetVariable("straightCylinderSprite"));
-            rotohallEditorPre.rotohallSprites.Add("CornerCylinder_Model", (Sprite)rotohallsBuilder.ReflectionGetVariable("cornerCylinderSprite"));
-            rotohallEditorPre.buttonPre = (GameButton)rotohallsBuilder.ReflectionGetVariable("buttonPre");
-            rotohallEditorPre.rotoHallPre = (RotoHall)rotohallsBuilder.ReflectionGetVariable("rotoHallPre");
-
             structureTypes.Add("rotohall", typeof(RotohallStructureLocation));
-            LevelLoaderPlugin.Instance.structureAliases.Add("rotohall", new LoaderStructureData(rotohallEditorPre, new Dictionary<string, GameObject>()
-            {
-                { "rotohall_straight", ((MeshRenderer)rotohallsBuilder.ReflectionGetVariable("straightCylinderPre")).gameObject },
-                { "rotohall_corner", ((MeshRenderer)rotohallsBuilder.ReflectionGetVariable("cornerCylinderPre")).gameObject }
-            }));
-
+            
             // lockdown event doors
-            Structure_LockdownEventDoors lockDoors = new GameObject("EditorLockdownEventDoorBuilder").AddComponent<Structure_LockdownEventDoors>();
-            lockDoors.gameObject.ConvertToPrefab(true);
-            LevelLoaderPlugin.Instance.structureAliases.Add("random_lockdown_event_doors", new LoaderStructureData(lockDoors));
             structureTypes.Add("random_lockdown_event_doors", typeof(DummyRandomStructureLocation));
-
-            PlacedLockdownEventDoor placedEventDoorPre = GameObject.Instantiate<LockdownDoor>(Resources.FindObjectsOfTypeAll<LockdownDoor>().First(x => x.GetInstanceID() >= 0 && x.name == "LockdownDoor"), MTM101BaldiDevAPI.prefabTransform).gameObject.SwapComponent<LockdownDoor, PlacedLockdownEventDoor>();
-            placedEventDoorPre.name = "EditorPreplacedLockdownEventDoor";
-
-            //LevelLoaderPlugin.Instance.structureAliases["lockdowndoor"].prefabAliases.Add();
-            LevelLoaderPlugin.Instance.structureAliases.Add("preplaced_lockdown_door", new LoaderStructureData(LevelLoaderPlugin.Instance.structureAliases["lockdowndoor"].structure, new Dictionary<string, GameObject>() { { "preplaced_lockdown_door", placedEventDoorPre.gameObject } }));
             structureTypes.Add("preplaced_lockdown_door", typeof(HallDoorStructureLocation));
 
             GameObject lockdownEventDoorVisual = EditorInterface.AddStructureGenericVisual("preplaced_lockdown_door", Resources.FindObjectsOfTypeAll<LockdownDoor>().First(x => x.GetInstanceID() >= 0 && x.name == "LockdownDoor").gameObject);
             lockdownEventDoorVisual.GetComponent<BoxCollider>().center += Vector3.up * 10f; // fix the collision
             Material[] lockdownEventDoorVisualMats = lockdownEventDoorVisual.GetComponentInChildren<MeshRenderer>().materials;
             lockdownEventDoorVisualMats[2].SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "EventLockdownTexture.png")); // do this here as we only want to change the in-editor appearence
-
-            // visual
-            /*GameObject lockdownDoorVisual = EditorInterface.AddStructureGenericVisual("lockdowndoor", Resources.FindObjectsOfTypeAll<LockdownDoor>().First(x => x.GetInstanceID() >= 0 && x.name == "LockdownDoor").gameObject);
-            lockdownDoorVisual.GetComponent<BoxCollider>().center += Vector3.up * 10f; // fix the collision*/
 
             // npcs
 

@@ -388,7 +388,7 @@
 {"key":"Ed_Tool_itemspawn_25_Title","value":"Potential Item Spawn (25)"},
 {"key":"Ed_Tool_itemspawn_25_Desc","value":"A potential item spawn with the weight of 25."},
 {"key":"Ed_Tool_itemspawn_Title","value":"Potential Item Spawn"},
-{"key":"Ed_Tool_itemspawn_Desc","value":"A potential item spawn."},
+{"key":"Ed_Tool_itemspawn_Desc","value":"A potential item spawn.\nUsed by anything that needs an item spawn point."},
 
 {"key":"Ed_Tool_custom_imageposter_Title","value":"Custom Image Poster"},
 {"key":"Ed_Tool_custom_imageposter_Desc","value":"Import a custom image to use as a poster!"},
