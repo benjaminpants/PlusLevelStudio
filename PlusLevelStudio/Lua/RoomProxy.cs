@@ -40,15 +40,36 @@ namespace PlusLevelStudio.Lua
             }
         }
 
+        // we have to do some fancy things here to preserve and silently remove the Room0_ that BB+'s level loader adds to room names
         public string name
         {
             get
             {
-                return roomController.name;
+                string result = roomController.name;
+                // remove characters until we reach the first underscore
+                while (true)
+                {
+                    if (result[0] == '_')
+                    {
+                        result = result.Remove(0, 1);
+                        break;
+                    }
+                    result = result.Remove(0,1);
+                }
+                return result;
             }
             set
             {
-                roomController.name = value;
+                string firstHalf = "";
+                int index = 0;
+                // keep adding characters to first half until we reach the first underscore
+                while (true)
+                {
+                    if (roomController.name[index] == '_') break;
+                    firstHalf += roomController.name[index];
+                    index++;
+                }
+                roomController.name = firstHalf + value;
             }
         }
 
