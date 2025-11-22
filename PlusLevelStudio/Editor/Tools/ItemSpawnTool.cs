@@ -32,4 +32,25 @@ namespace PlusLevelStudio.Editor.Tools
             return true;
         }
     }
+
+    public class WeightlessItemSpawnTool : PointTool
+    {
+        public override string id => "itemspawn";
+
+        public WeightlessItemSpawnTool()
+        {
+            sprite = LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/itemspawn");
+        }
+
+        protected override bool TryPlace(IntVector2 position)
+        {
+            EditorController.Instance.AddUndo();
+            ItemSpawnPlacement itemPlace = new ItemSpawnPlacement();
+            itemPlace.weight = 100;
+            itemPlace.position = new Vector2(EditorController.Instance.mouseGridPosition.x * 10f + 5f, EditorController.Instance.mouseGridPosition.z * 10f + 5f);
+            EditorController.Instance.AddVisual(itemPlace);
+            EditorController.Instance.levelData.itemSpawns.Add(itemPlace);
+            return true;
+        }
+    }
 }

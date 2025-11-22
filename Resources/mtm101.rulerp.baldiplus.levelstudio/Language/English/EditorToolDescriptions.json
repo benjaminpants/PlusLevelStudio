@@ -56,6 +56,9 @@
 {"key":"Ed_Tool_room_saferoom_Title","value":"Safe Room"},
 {"key":"Ed_Tool_room_saferoom_Desc","value":"Baldi (and other NPCs) can't naturally wander into this room! It is also impossible to portal poster into this room."},
 
+{"key":"Ed_Tool_premaderoom_johnny_store_Title","value":"(Premade) Johnny's Store"},
+{"key":"Ed_Tool_premaderoom_johnny_store_Desc","value":"Buy items and stickers from this store!"},
+
 {"key":"Ed_Tool_door_standard_Title","value":"Standard Door"},
 {"key":"Ed_Tool_door_standard_Desc","value":"It's textures automatically adapt to the room its placed in or by."},
 {"key":"Ed_Tool_door_swinging_Title","value":"Swinging Door"},
@@ -334,7 +337,9 @@
 {"key":"Ed_Tool_structure_teleporter_Title","value":"Teleporter"},
 {"key":"Ed_Tool_structure_teleporter_Desc","value":"Teleport from any placed teleporters in the map. Can only be placed in Baldi's Lab."},
 {"key":"Ed_Tool_structure_rotohall_Title","value":"Rotohall"},
-{"key":"Ed_Tool_structure_rotohall_Desc","value":"Can either be a corner or straight, rotates at the press of a button!"},
+{"key":"Ed_Tool_structure_rotohall_Desc","value":"A hallway that can rotate at the press of a button.\nSelect two directions to determine the shape!"},
+{"key":"Ed_Tool_structure_preplaced_lockdown_door_Title","value":"Test Procedure Door"},
+{"key":"Ed_Tool_structure_preplaced_lockdown_door_Desc","value":"This door is used for the Test Procedure event, and will automatically shut when that event begins."},
 
 {"key":"Ed_Tool_structure_powerlever_alarm_Title","value":"Power Alarm"},
 {"key":"Ed_Tool_structure_powerlever_alarm_Desc","value":"This light will turn on when the power goes out due to a breaker. Without a breaker placed, this does nothing."},
@@ -358,9 +363,8 @@
 {"key":"Ed_RandomEvent_brokenruler","value":"Broken Ruler\nBaldi's ruler snaps, making him silent and unable to end the game."},
 {"key":"Ed_RandomEvent_party","value":"Party\nA party is declared at the Principal's Office!\nA random high value item will be waiting inside."},
 {"key":"Ed_RandomEvent_mysteryroom","value":"Mystery Room\nThe mystery room appears!\nPlace whatever you want inside!"},
-{"key":"Ed_RandomEvent_testprocedure","value":"Currently non-functional, do not use."},
+{"key":"Ed_RandomEvent_testprocedure","value":"Test Procedure\nAll Test Procedure lockdown doors will close!\n(Requires either Global Random Structure, or specially placed doors.)"},
 {"key":"Ed_RandomEvent_gravitychaos","value":"Gravity Chaos\nShapes appear all around the school, flipping gravity!\nNPCs on different gravities can't interact."},
-{"key":"Ed_RandomEvent_testprocedure","value":"Currently non-functional, do not use."},
 {"key":"Ed_RandomEvent_studentshuffle","value":"Student Shuffle\nA massive crowd of students barges into the school through the elevators,\n pushing anything in their way!"},
 {"key":"Ed_RandomEvent_balderdash","value":"Balder Dash\nBalders (Boulders) will appear at the elevators, and squish whatever gets in the way!"},
 
@@ -383,6 +387,8 @@
 {"key":"Ed_Tool_itemspawn_50_Desc","value":"A potential item spawn with the weight of 50."},
 {"key":"Ed_Tool_itemspawn_25_Title","value":"Potential Item Spawn (25)"},
 {"key":"Ed_Tool_itemspawn_25_Desc","value":"A potential item spawn with the weight of 25."},
+{"key":"Ed_Tool_itemspawn_Title","value":"Potential Item Spawn"},
+{"key":"Ed_Tool_itemspawn_Desc","value":"A potential item spawn."},
 
 {"key":"Ed_Tool_custom_imageposter_Title","value":"Custom Image Poster"},
 {"key":"Ed_Tool_custom_imageposter_Desc","value":"Import a custom image to use as a poster!"},

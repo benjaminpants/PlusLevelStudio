@@ -297,6 +297,8 @@ namespace PlusStudioLevelLoader
             // the factory box doesn't work outside of randomly generated levels
             //structureAliases.Add("factorybox", new LoaderStructureData(builders.First(x => x.name == "FactoryBoxConstructor")));
 
+            structureAliases.Add("studentspawner", new LoaderStructureData(builders.First(x => x.name == "StudentSpawnerConstructor")));
+
             // npcs
             npcAliases.Add("baldi", MTM101BaldiDevAPI.npcMetadata.Get(Character.Baldi).value);
             npcAliases.Add("principal", MTM101BaldiDevAPI.npcMetadata.Get(Character.Principal).value);

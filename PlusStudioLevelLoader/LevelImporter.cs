@@ -317,7 +317,6 @@ namespace PlusStudioLevelLoader
                     };
                 }
             }
-            // NOTE: the code below is copy and pasted for creating RoomAssets. Keep that in mind when modifying this.
             for (int i = 0; i < level.rooms.Count; i++)
             {
                 RoomSettings settings = LevelLoaderPlugin.Instance.roomSettings[level.rooms[i].type];
@@ -350,7 +349,7 @@ namespace PlusStudioLevelLoader
                         position = x.position.ToUnity(),
                         rotation = x.rotation.ToUnity(),
                         prefab = LevelLoaderPlugin.Instance.basicObjects[x.prefab].transform
-                    }).ToList()
+                    }).ToList(),
                 };
                 if (data.hasActivity)
                 {

@@ -7,6 +7,12 @@
 {"key":"Ed_RandomStructure_Lockers_Desc","value":"Randomly placed lockers around the map."},
 {"key":"Ed_RandomStructure_Lockers_HideLockerChance","value":"Hideable Locker Chance:"},
 {"key":"Ed_RandomStructure_Lockers_MinMaxLockerCount","value":"Min-Max Locker Count:"},
-{"key":"Ed_RandomStructure_Lockers_MinMaxHallCount","value":"Min-Max Hall Count:"}
+{"key":"Ed_RandomStructure_Lockers_MinMaxHallCount","value":"Min-Max Hall Count:"},
+{"key":"Ed_RandomStructure_LockdownEventDoors_Title","value":"Test Proc. Doors"},
+{"key":"Ed_RandomStructure_LockdownEventDoors_Desc","value":"Places the doors for the test procedure."},
+{"key":"Ed_RandomStructure_StudentSpawner_Title","value":"Student Spawner"},
+{"key":"Ed_RandomStructure_StudentSpawner_Desc","value":"Spawns students and lost items in classrooms."},
+{"key":"Ed_RandomStructure_StudentSpawner_MinStudents","value":"Minimum Students:"},
+{"key":"Ed_RandomStructure_StudentSpawner_MaxStudents","value":"Maximum Students:"}
 
 ]}

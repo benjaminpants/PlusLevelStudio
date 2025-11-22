@@ -51,6 +51,7 @@
 {"key":"Ed_GlobalPage_GlobalStructures","value":"Global\nStructures"},
 {"key":"Ed_GlobalPage_RandomStructures","value":"Random\nStructures"},
 {"key":"Ed_GlobalPage_StickerConfiguration","value":"Sticker\nConfiguration"},
+{"key":"Ed_GlobalPage_StoreConfiguration","value":"Store\nConfiguration"},
 
 {"key":"Ed_LightMode_Cumulative","value":"Cumulative"},
 {"key":"Ed_LightMode_Greatest","value":"Greatest"},

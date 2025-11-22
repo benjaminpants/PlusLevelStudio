@@ -10,6 +10,7 @@ namespace PlusLevelStudio.Editor.GlobalSettingsMenus
     public abstract class GlobalStructureUIHandler : UIExchangeHandler
     {
         public StructureLocation structure;
+        //public EditorUIGlobalSettingsHandler handler;
         public virtual void PageLoaded(StructureLocation structure)
         {
             this.structure = structure;

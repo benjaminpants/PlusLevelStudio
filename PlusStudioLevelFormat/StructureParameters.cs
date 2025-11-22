@@ -8,6 +8,16 @@ namespace PlusStudioLevelFormat
     {
         public string type;
         public StructureParameterInfo info = new StructureParameterInfo();
+
+        public RandomStructureInfo()
+        {
+
+        }
+
+        public RandomStructureInfo(string type)
+        {
+            this.type = type;
+        }
     }
 
     public class StructureParameterInfo

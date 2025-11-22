@@ -11,7 +11,7 @@ namespace PlusLevelStudio.Editor.Tools
         public string room;
         public int doorId = 0;
 
-        internal PremadeRoomTool(string room) : this(room, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/premaderoom__" + room))
+        internal PremadeRoomTool(string room) : this(room, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/premaderoom_" + room))
         {
 
         }

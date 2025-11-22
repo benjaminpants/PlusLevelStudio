@@ -212,6 +212,7 @@ namespace PlusLevelStudio
             if (!includeNonVanillaComplaintTools) return;
             AddToolsToCategory(modeToModify, "structures", new EditorTool[]
             {
+                new HallDoorStructureTool("preplaced_lockdown_door"),
                 new RotohallTool(),
                 new ShapeLockTool("shapelock_circle"),
                 new ShapeLockTool("shapelock_triangle"),
@@ -311,7 +312,6 @@ namespace PlusLevelStudio
                     new RoomTool("library"),
                     new RoomTool("lightbulbtesting"),
                     new RoomTool("saferoom"),
-                    new PremadeRoomTool("johnny_store")
             }, true);
             if (!includeNonVanillaComplaintTools) return;
             AddToolsToCategory(modeToModify, "rooms", new EditorTool[]
@@ -322,6 +322,14 @@ namespace PlusLevelStudio
                 new OnlyOneRoomTool("teleportroom_3"),
                 new OnlyOneRoomTool("teleportroom_4")
             });
+        }
+
+        public static void AddVanillaPremadeRooms(EditorMode modeToModify, bool includeNonVanillaComplaintTools)
+        {
+            AddToolsToCategory(modeToModify, "rooms", new EditorTool[]
+            {
+                new PremadeRoomTool("johnny_store")
+            }, true);
         }
 
         /// <summary>

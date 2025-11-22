@@ -26,7 +26,8 @@ namespace PlusStudioLevelLoader.Patches
             { "Level loader setting up events.", "AddTimeOut" },
             { "Level loader letting EnvironmentObjects know level generation has complete.", "InformStructureBuildersDone" },
             { "Level loader blocking tiles marked to be blocked.", "ApplyCellCoverages" },
-            { "Tile data loaded.", "ApplyCellSecrets" }
+            { "Tile data loaded.", "ApplyCellSecrets" },
+            { "Level loader loading tile based objects.", "PoolItemSpawns" } // this runs after "Level loader placing items"
         };
 
         public static void ApplyCellSecrets(LevelLoader loader, LevelData data)
@@ -68,6 +69,16 @@ namespace PlusStudioLevelLoader.Patches
                 {
                     builders[i].ReflectionInvoke("OnLoadingFinished", new object[] { loader });
                 }
+            }
+        }
+
+        static MethodInfo _FillRoomWithPooledPickups = AccessTools.Method(typeof(LevelBuilder), "FillRoomWithPooledPickups");
+        public static void PoolItemSpawns(LevelLoader loader, LevelData data)
+        {
+            Debug.Log("Level loader filling item spawns with empty... (Loader Extension)");
+            foreach (RoomController room in loader.Ec.rooms)
+            {
+                _FillRoomWithPooledPickups.Invoke(loader, new object[] { room, false });
             }
         }
 

@@ -388,6 +388,15 @@ namespace PlusLevelStudio
                 settingsPagePath = Path.Combine(AssetLoader.GetModPath(this), "Data", "UI", "GlobalStructures", "Lockers.json")
             };
 
+            GlobalStructurePage studentSpawnerStructurePage = new GlobalStructurePage()
+            {
+                nameKey = "Ed_RandomStructure_StudentSpawner_Title",
+                descKey = "Ed_RandomStructure_StudentSpawner_Desc",
+                structureToSpawn = "studentspawner",
+                settingsPageType = typeof(StudentSpawnerUIHandler),
+                settingsPagePath = Path.Combine(AssetLoader.GetModPath(this), "Data", "UI", "GlobalStructures", "StudentSpawner.json")
+            };
+
             string editorModePath = Path.Combine(AssetLoader.GetModPath(this), "Data", "UI", "GlobalPages");
 
             // full mode
@@ -475,7 +484,14 @@ namespace PlusLevelStudio
                 },
                 globalRandomStructures = new List<GlobalStructurePage>()
                 {
-                    randomLockersStructurePage
+                    randomLockersStructurePage,
+                    studentSpawnerStructurePage,
+                    new GlobalStructurePage()
+                    {
+                        nameKey = "Ed_RandomStructure_LockdownEventDoors_Title",
+                        descKey = "Ed_RandomStructure_LockdownEventDoors_Desc",
+                        structureToSpawn = "random_lockdown_event_doors"
+                    }
                 },
                 availableGameModes = new List<string>()
                 {
@@ -488,8 +504,10 @@ namespace PlusLevelStudio
             };
 
             EditorInterfaceModes.AddVanillaRooms(fullMode, true);
+            EditorInterfaceModes.AddVanillaPremadeRooms(fullMode, true);
             EditorInterfaceModes.AddVanillaDoors(fullMode);
             EditorInterfaceModes.AddVanillaNPCs(fullMode);
+            EditorInterfaceModes.AddToolToCategory(fullMode, "items", new WeightlessItemSpawnTool(), true);
             EditorInterfaceModes.AddVanillaItems(fullMode);
             EditorInterfaceModes.AddVanillaActivities(fullMode, true);
             EditorInterfaceModes.AddVanillaObjects(fullMode, true);
@@ -579,7 +597,8 @@ namespace PlusLevelStudio
                 },
                 globalRandomStructures = new List<GlobalStructurePage>()
                 {
-                    randomLockersStructurePage
+                    randomLockersStructurePage,
+                    studentSpawnerStructurePage
                 },
                 defaultTools = new string[] { "room_hall", "room_class", "room_faculty", "room_office", "light_fluorescent", "door_swinging", "door_standard", "merge", "delete" },
                 vanillaComplaint = true,
@@ -591,8 +610,10 @@ namespace PlusLevelStudio
             };
 
             EditorInterfaceModes.AddVanillaRooms(complaintMode, false);
+            EditorInterfaceModes.AddVanillaPremadeRooms(complaintMode, false);
             EditorInterfaceModes.AddVanillaDoors(complaintMode);
             EditorInterfaceModes.AddVanillaNPCs(complaintMode);
+            EditorInterfaceModes.AddToolToCategory(complaintMode, "items", new WeightlessItemSpawnTool(), true);
             EditorInterfaceModes.AddVanillaItems(complaintMode);
             EditorInterfaceModes.AddVanillaActivities(complaintMode, false);
             EditorInterfaceModes.AddVanillaObjects(complaintMode, false);
@@ -601,6 +622,7 @@ namespace PlusLevelStudio
             EditorInterfaceModes.AddVanillaPosters(complaintMode);
             EditorInterfaceModes.AddVanillaToolTools(complaintMode, false);
             EditorInterfaceModes.AddVanillaEvents(complaintMode, false);
+            //complaintMode.availableRandomEvents.Remove("testprocedure");
 
             modes.Add("compliant", complaintMode);
 
@@ -1200,6 +1222,8 @@ namespace PlusLevelStudio
                 LevelLoaderPlugin.Instance.basicObjects.Add("qmark" + i, qMark.gameObject);
             }
 
+            structureTypes.Add("studentspawner", typeof(StudentSpawnerStructureLocation));
+
 
             yield return "Creating editor prefab visuals...";
 
@@ -1548,10 +1572,6 @@ namespace PlusLevelStudio
             rotoHallCornerVisual.cylinder = GameObject.Instantiate<MeshRenderer>((MeshRenderer)rotohallsBuilder.ReflectionGetVariable("cornerCylinderPre"), rotoHallCornerVisualObject.transform);
             rotoHallCornerVisualObject.GetComponent<EditorRendererContainer>().AddRenderer(rotoHallCornerVisual.cylinder, "none");
 
-            // todo for future me: set up Structure_RotohallEditor's prefab
-            // finish the compilation code for Structure_RotohallEditor
-            // AND REMEMBER: CLOCKWISE IS 0
-
             Structure_RotohallEditor rotohallEditorPre = new GameObject("Structure_RotohallEditor").AddComponent<Structure_RotohallEditor>();
             rotohallEditorPre.gameObject.ConvertToPrefab(true);
             rotohallEditorPre.cylinderShapes.Add("StraightCylinder_Model", CylinderShape.Straight);
@@ -1567,6 +1587,28 @@ namespace PlusLevelStudio
                 { "rotohall_straight", ((MeshRenderer)rotohallsBuilder.ReflectionGetVariable("straightCylinderPre")).gameObject },
                 { "rotohall_corner", ((MeshRenderer)rotohallsBuilder.ReflectionGetVariable("cornerCylinderPre")).gameObject }
             }));
+
+            // lockdown event doors
+            Structure_LockdownEventDoors lockDoors = new GameObject("EditorLockdownEventDoorBuilder").AddComponent<Structure_LockdownEventDoors>();
+            lockDoors.gameObject.ConvertToPrefab(true);
+            LevelLoaderPlugin.Instance.structureAliases.Add("random_lockdown_event_doors", new LoaderStructureData(lockDoors));
+            structureTypes.Add("random_lockdown_event_doors", typeof(DummyRandomStructureLocation));
+
+            PlacedLockdownEventDoor placedEventDoorPre = GameObject.Instantiate<LockdownDoor>(Resources.FindObjectsOfTypeAll<LockdownDoor>().First(x => x.GetInstanceID() >= 0 && x.name == "LockdownDoor"), MTM101BaldiDevAPI.prefabTransform).gameObject.SwapComponent<LockdownDoor, PlacedLockdownEventDoor>();
+            placedEventDoorPre.name = "EditorPreplacedLockdownEventDoor";
+
+            //LevelLoaderPlugin.Instance.structureAliases["lockdowndoor"].prefabAliases.Add();
+            LevelLoaderPlugin.Instance.structureAliases.Add("preplaced_lockdown_door", new LoaderStructureData(LevelLoaderPlugin.Instance.structureAliases["lockdowndoor"].structure, new Dictionary<string, GameObject>() { { "preplaced_lockdown_door", placedEventDoorPre.gameObject } }));
+            structureTypes.Add("preplaced_lockdown_door", typeof(HallDoorStructureLocation));
+
+            GameObject lockdownEventDoorVisual = EditorInterface.AddStructureGenericVisual("preplaced_lockdown_door", Resources.FindObjectsOfTypeAll<LockdownDoor>().First(x => x.GetInstanceID() >= 0 && x.name == "LockdownDoor").gameObject);
+            lockdownEventDoorVisual.GetComponent<BoxCollider>().center += Vector3.up * 10f; // fix the collision
+            Material[] lockdownEventDoorVisualMats = lockdownEventDoorVisual.GetComponentInChildren<MeshRenderer>().materials;
+            lockdownEventDoorVisualMats[2].SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "EventLockdownTexture.png")); // do this here as we only want to change the in-editor appearence
+
+            // visual
+            /*GameObject lockdownDoorVisual = EditorInterface.AddStructureGenericVisual("lockdowndoor", Resources.FindObjectsOfTypeAll<LockdownDoor>().First(x => x.GetInstanceID() >= 0 && x.name == "LockdownDoor").gameObject);
+            lockdownDoorVisual.GetComponent<BoxCollider>().center += Vector3.up * 10f; // fix the collision*/
 
             // npcs
 
