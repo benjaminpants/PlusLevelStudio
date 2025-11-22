@@ -58,7 +58,7 @@ namespace PlusLevelStudio.Editor
 
         // store stuff
         public List<WeightedID> potentialStoreItems = new List<WeightedID>();
-        public int storeItemCount = 0;
+        public int storeItemCount = 6;
 
         public PlayableLevelMeta meta;
 

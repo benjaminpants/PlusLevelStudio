@@ -14,6 +14,7 @@ using UnityEngine;
 using System.IO.Compression;
 using PlusStudioLevelFormat;
 using MTM101BaldAPI.Registers;
+using MTM101BaldAPI;
 
 namespace PlusLevelStudio.Lua
 {
@@ -311,6 +312,16 @@ namespace PlusLevelStudio.Lua
 
         public override void GiveRandomSticker(StickerPackType packType, int total)
         {
+            if (!globalsDefined) return;
+            if (script.Globals.Get("GiveRandomSticker").Type != DataType.Function) return;
+            DynValue result = script.Call(script.Globals["GiveRandomSticker"], packType.ToStringExtended(), total);
+            if (result.Type != DataType.Boolean) return;
+            if (!result.Boolean) return;
+            GiveRandomStickerSafer(packType, total);
+        }
+
+        private void GiveRandomStickerSafer(StickerPackType packType, int total)
+        {
             if (packType == StickerPackType.Bonus)
             {
                 if (Singleton<CoreGameManager>.Instance.sceneObject.potentialStickers.Where(x => StickerMetaStorage.Instance.Get(x.selection).flags.HasFlag(StickerFlags.IsBonus)).Count() == 0)
@@ -320,6 +331,14 @@ namespace PlusLevelStudio.Lua
                 }
             }
             base.GiveRandomSticker(packType, total);
+        }
+
+        public void GiveRandomStickerLua(string packTypeString, int total)
+        {
+            if (string.IsNullOrEmpty(packTypeString)) return;
+            EnumExtensions.GetFromExtendedNameSafe(packTypeString, out StickerPackType? pack);
+            if (!pack.HasValue) return;
+            GiveRandomStickerSafer(pack.Value, total);
         }
 
         void Update()

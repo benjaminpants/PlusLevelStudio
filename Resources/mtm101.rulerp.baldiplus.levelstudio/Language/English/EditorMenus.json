@@ -31,6 +31,7 @@
 {"key":"Ed_Error_FileNoExist","value":"The specified file doesn't exist!"},
 {"key":"Ed_Menu_ShowMarkdown","value":"Show Markdown?"},
 {"key":"Ed_Menu_ComingSoon","value":"Coming Soon!"},
+{"key":"Ed_Menu_StoreItemCount","value":"Store Item Count:"},
 
 {"key":"Ed_Menu_ElevatorTitle","value":"Elevator Title:"},
 {"key":"Ed_Menu_InitialEventGap","value":"Initial Event Gap:"},
