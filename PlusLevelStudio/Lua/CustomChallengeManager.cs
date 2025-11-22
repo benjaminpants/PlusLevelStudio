@@ -15,6 +15,7 @@ using System.IO.Compression;
 using PlusStudioLevelFormat;
 using MTM101BaldAPI.Registers;
 using MTM101BaldAPI;
+using UnityEngine.Rendering;
 
 namespace PlusLevelStudio.Lua
 {
@@ -88,12 +89,12 @@ namespace PlusLevelStudio.Lua
 
         Vector3Proxy CreateVector(float x, float y, float z)
         {
-            return new Vector3Proxy(x,y,z);
+            return new Vector3Proxy(x, y, z);
         }
 
         IntVector2Proxy CreateIntVector(int x, int z)
         {
-            return new IntVector2Proxy(x,z);
+            return new IntVector2Proxy(x, z);
         }
 
         ColorProxy CreateColor(int r, int g, int b)
@@ -115,7 +116,7 @@ namespace PlusLevelStudio.Lua
             script.Globals["Vector3"] = (Func<float, float, float, Vector3Proxy>)CreateVector;
             script.Globals["IntVector2"] = (Func<int, int, IntVector2Proxy>)CreateIntVector;
             script.Globals["Color"] = (Func<int, int, int, ColorProxy>)CreateColor;
-            script.Globals["RandomDecimalNumber"] = (Func<double,double,double>)RandomNumber;
+            script.Globals["RandomDecimalNumber"] = (Func<double, double, double>)RandomNumber;
             globalsDefined = true;
         }
 
@@ -260,6 +261,14 @@ namespace PlusLevelStudio.Lua
             script.Call(script.Globals["AllNotebooks"]);
         }
 
+        public override void NoiseMade(EnvironmentController ec, Vector3 position, int value)
+        {
+            base.NoiseMade(ec, position, value);
+            if (!globalsDefined) return;
+            if (script.Globals.Get("NoiseMade").Type != DataType.Function) return;
+            script.Call(script.Globals["NoiseMade"], new Vector3Proxy(position), value);
+        }
+
         bool finalExitsTriggered = false;
 
         public void ActivateExits(bool performEscape)
@@ -310,17 +319,26 @@ namespace PlusLevelStudio.Lua
             }
         }
 
-        public override void GiveRandomSticker(StickerPackType packType, int total)
+        // returns if the original should run
+        private bool GiveRandomStickerLua(StickerPackType packType, int total)
         {
-            if (!globalsDefined) return;
-            if (script.Globals.Get("GiveRandomSticker").Type != DataType.Function) return;
+            if (!globalsDefined) return true;
+            if (script.Globals.Get("GiveRandomSticker").Type != DataType.Function) return true;
             DynValue result = script.Call(script.Globals["GiveRandomSticker"], packType.ToStringExtended(), total);
-            if (result.Type != DataType.Boolean) return;
-            if (!result.Boolean) return;
-            GiveRandomStickerSafer(packType, total);
+            if (result.Type != DataType.Boolean) return false;
+            if (!result.Boolean) return false;
+            return true;
         }
 
-        private void GiveRandomStickerSafer(StickerPackType packType, int total)
+        public override void GiveRandomSticker(StickerPackType packType, int total)
+        {
+            if (GiveRandomStickerLua(packType, total))
+            {
+                GiveRandomStickerSafer(packType, total);
+            }
+        }
+
+        public void GiveRandomStickerSafer(StickerPackType packType, int total)
         {
             if (packType == StickerPackType.Bonus)
             {
@@ -331,14 +349,6 @@ namespace PlusLevelStudio.Lua
                 }
             }
             base.GiveRandomSticker(packType, total);
-        }
-
-        public void GiveRandomStickerLua(string packTypeString, int total)
-        {
-            if (string.IsNullOrEmpty(packTypeString)) return;
-            EnumExtensions.GetFromExtendedNameSafe(packTypeString, out StickerPackType? pack);
-            if (!pack.HasValue) return;
-            GiveRandomStickerSafer(pack.Value, total);
         }
 
         void Update()
@@ -446,6 +456,14 @@ namespace PlusLevelStudio.Lua
             {
                 Singleton<EditorPlayModeManager>.Instance.Win(text);
             }
+        }
+
+        public void GiveRandomStickerLua(string packTypeString, int total)
+        {
+            if (string.IsNullOrEmpty(packTypeString)) return;
+            EnumExtensions.GetFromExtendedNameSafe(packTypeString, out StickerPackType? pack);
+            if (!pack.HasValue) return;
+            myManager.GiveRandomStickerSafer(pack.Value, total);
         }
 
         public CellProxy GetRandomEntitySafeCell()

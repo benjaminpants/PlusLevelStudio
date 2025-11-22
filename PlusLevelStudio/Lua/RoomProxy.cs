@@ -80,6 +80,31 @@ namespace PlusLevelStudio.Lua
             }
         }
 
+        public void LockAllDoors(bool lockDoors)
+        {
+            for (int i = 0; i < roomController.doors.Count; i++)
+            {
+                if (lockDoors)
+                {
+                    roomController.doors[i].Shut();
+                    roomController.doors[i].Lock(false);
+                }
+                else
+                {
+                    roomController.doors[i].Unlock();
+                }
+            }
+        }
+
+        public void LockAllDoorsTimed(float time)
+        {
+            for (int i = 0; i < roomController.doors.Count; i++)
+            {
+                roomController.doors[i].Shut();
+                roomController.doors[i].LockTimed(time);
+            }
+        }
+
         public List<CellProxy> GetCells()
         {
             return roomController.cells.Select(x => new CellProxy(x)).ToList();

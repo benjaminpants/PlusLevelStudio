@@ -1,4 +1,5 @@
-﻿using MoonSharp.Interpreter;
+﻿using HarmonyLib;
+using MoonSharp.Interpreter;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -86,6 +87,15 @@ namespace PlusLevelStudio.Lua
             }
             BaseGameManager.Instance.Ec.GenerateLight(cell, color.ToColor(), strength);
             return GetLight();
+        }
+
+        public void PressAllButtons()
+        {
+            GameButtonBase[] buttons = cell.ObjectBase.GetComponentsInChildren<GameButtonBase>();
+            for (int i = 0; i < buttons.Length; i++)
+            {
+                buttons[i].Clicked(0);
+            }
         }
 
         public IntVector2Proxy position
