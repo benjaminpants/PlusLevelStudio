@@ -323,8 +323,8 @@ namespace PlusLevelStudio.Lua
         private bool GiveRandomStickerLua(StickerPackType packType, int total)
         {
             if (!globalsDefined) return true;
-            if (script.Globals.Get("GiveRandomSticker").Type != DataType.Function) return true;
-            DynValue result = script.Call(script.Globals["GiveRandomSticker"], packType.ToStringExtended(), total);
+            if (script.Globals.Get("OnGiveRandomSticker").Type != DataType.Function) return true;
+            DynValue result = script.Call(script.Globals["OnGiveRandomSticker"], packType.ToStringExtended(), total);
             if (result.Type != DataType.Boolean) return false;
             if (!result.Boolean) return false;
             return true;
@@ -458,7 +458,7 @@ namespace PlusLevelStudio.Lua
             }
         }
 
-        public void GiveRandomStickerLua(string packTypeString, int total)
+        public void GiveRandomSticker(string packTypeString, int total)
         {
             if (string.IsNullOrEmpty(packTypeString)) return;
             EnumExtensions.GetFromExtendedNameSafe(packTypeString, out StickerPackType? pack);

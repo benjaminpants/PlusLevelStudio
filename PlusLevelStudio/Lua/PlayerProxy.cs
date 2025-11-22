@@ -268,7 +268,7 @@ namespace PlusLevelStudio.Lua
             Singleton<StickerManager>.Instance.AddSticker(LevelLoaderPlugin.Instance.stickerAliases[stickerId], true, false, animation);
         }
 
-        public string[] StickerInventory()
+        public string[] GetInventoryStickers()
         {
             string[] stickerInv = new string[Singleton<StickerManager>.Instance.stickerInventory.Count];
             for (int i = 0; i < Singleton<StickerManager>.Instance.stickerInventory.Count; i++)
