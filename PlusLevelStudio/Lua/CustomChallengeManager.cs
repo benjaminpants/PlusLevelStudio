@@ -591,6 +591,12 @@ namespace PlusLevelStudio.Lua
             return null;
         }
 
+        public void SpawnItemPickup(Vector3Proxy position, string itemId)
+        {
+            ItemObject obj = LevelLoaderPlugin.Instance.itemObjects[itemId];
+            myManager.Ec.CreateItem(myManager.Ec.CellFromPosition(position.ToVector()).room, obj, position.ToVector());
+        }
+
         public CellProxy CellFromPosition(Vector3Proxy proxy)
         {
             Cell cell = myManager.Ec.CellFromPosition(proxy.ToVector());

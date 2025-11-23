@@ -5,6 +5,7 @@ using System.Text;
 using MoonSharp.Interpreter;
 using MTM101BaldAPI;
 using PlusLevelStudio.Ingame;
+using PlusStudioLevelLoader;
 
 namespace PlusLevelStudio.Lua
 {
@@ -145,6 +146,22 @@ namespace PlusLevelStudio.Lua
         public List<LightProxy> GetLights()
         {
             return roomController.lights.Select(x => new LightProxy(x)).ToList();
+        }
+
+        public bool RespawnItem(string itemId)
+        {
+            bool respawnAvailable = false;
+            foreach (Pickup pickup in roomController.pickups)
+            {
+                if (!pickup.gameObject.activeSelf)
+                {
+                    respawnAvailable = true;
+                    break;
+                }
+            }
+            if (!respawnAvailable) return false;
+            roomController.ec.RespawnItemInRoom(LevelLoaderPlugin.Instance.itemObjects[itemId], roomController);
+            return true;
         }
 
         public override bool Equals(object obj)
