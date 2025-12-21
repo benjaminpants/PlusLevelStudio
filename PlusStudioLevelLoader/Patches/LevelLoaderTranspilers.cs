@@ -43,7 +43,7 @@ namespace PlusStudioLevelLoader.Patches
         public static void ApplyCellCoverages(LevelLoader loader, LevelData data)
         {
             Debug.Log("Level loader applying cell coverages... (Loader Extension)");
-            loader.levelAsset.rooms.ForEach(x =>
+            data.rooms.ForEach(x =>
             {
                 if (!(x is ExtendedRoomData)) return;
                 ExtendedRoomData exData = (ExtendedRoomData)x;
