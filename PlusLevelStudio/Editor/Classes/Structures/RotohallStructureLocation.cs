@@ -158,6 +158,7 @@ namespace PlusLevelStudio.Editor
             for (int i = 0; i < rotohalls.Count; i++)
             {
                 rotohalls[i].position -= cellOffset;
+                rotohalls[i].button.position -= cellOffset;
             }
         }
 
