@@ -93,6 +93,7 @@ namespace PlusLevelStudio
         public static string customContentPath => Path.Combine(basePath, "User Content");
         public static string customTexturePath => Path.Combine(customContentPath, "Textures");
         public static string customPostersPath => Path.Combine(customContentPath, "Posters");
+        public static string customThumbnailsPath => Path.Combine(customContentPath, "Thumbnails");
 
         private Dictionary<Texture2D, Sprite> smallIconsFromTextures = new Dictionary<Texture2D, Sprite>();
 
@@ -216,6 +217,7 @@ namespace PlusLevelStudio
             Directory.CreateDirectory(luaPath);
             Directory.CreateDirectory(customTexturePath); // this will also create the custom content path
             Directory.CreateDirectory(customPostersPath);
+            Directory.CreateDirectory(customThumbnailsPath);
 
             EditorController.maxUndos = Config.Bind("General",
                 "Max Undos",

@@ -185,6 +185,7 @@ namespace PlusLevelStudio.Menus
     public class EditorPlayScreenManager : MonoBehaviour
     {
         public List<PlayableEditorLevel> playableLevels = new List<PlayableEditorLevel>();
+        public Dictionary<PlayableEditorLevel, Texture2D> playableLevelThumbnails = new Dictionary<PlayableEditorLevel, Texture2D>();
         public Dictionary<PlayableEditorLevel, string> playableToPath = new Dictionary<PlayableEditorLevel, string>();
         public EditorPlayLevelButton[] buttons = new EditorPlayLevelButton[3];
         public TextMeshProUGUI pageDisplay;
@@ -326,6 +327,23 @@ namespace PlusLevelStudio.Menus
             {
                 playableLevels.Insert(index, level);
             }
+            if (level.meta.contentPackage.thumbnailEntry != null)
+            {
+                Texture2D thumbTex = new Texture2D(2, 2, TextureFormat.RGBA4444, false);
+                try
+                {
+                    ImageConversion.LoadImage(thumbTex, level.meta.contentPackage.thumbnailEntry.data);
+                    thumbTex.filterMode = FilterMode.Point;
+                }
+                catch (Exception e)
+                {
+                    UnityEngine.Debug.LogError("Invalid thumbnail data " + e.ToString());
+                    UnityEngine.Object.Destroy(thumbTex);
+                    thumbTex = null;
+                }
+                thumbTex.name = Path.GetFileNameWithoutExtension(path) + "_Thumb";
+                playableLevelThumbnails.Add(level, thumbTex);
+            }
             playableToPath.Add(level, path);
             reader.Close();
         }
@@ -338,13 +356,11 @@ namespace PlusLevelStudio.Menus
                 buttons[i].gameObject.SetActive(false);
             }
             bigText.text = LocalizationManager.Instance.GetLocalizedText("Ed_Menu_LoadingLevels");
-            for (int i = 0; i < playableLevels.Count; i++)
+            foreach (KeyValuePair<PlayableEditorLevel, Texture2D> item in playableLevelThumbnails)
             {
-                if (playableLevels[i].texture != null)
-                {
-                    Destroy(playableLevels[i].texture);
-                }
+                Destroy(item.Value);
             }
+            playableLevelThumbnails.Clear();
             playableLevels.Clear();
             playableToPath.Clear();
             Directory.CreateDirectory(LevelStudioPlugin.playableLevelPath);
@@ -393,7 +409,7 @@ namespace PlusLevelStudio.Menus
             {
                 int index = i - startIndex;
                 buttons[index].gameObject.SetActive(true);
-                buttons[index].UpdateDisplay(playableLevels[i]);
+                buttons[index].UpdateDisplay(playableLevels[i], playableLevelThumbnails[playableLevels[i]]);
             }
         }
     }
@@ -407,12 +423,16 @@ namespace PlusLevelStudio.Menus
         public StandardMenuButton playButton;
         public StandardMenuButton discardButton;
 
-        public void UpdateDisplay(PlayableEditorLevel level)
+        public void UpdateDisplay(PlayableEditorLevel level, Texture2D thumb)
         {
             titleText.text = level.meta.name;
             authorText.text = string.Format(LocalizationManager.Instance.GetLocalizedText("Ed_Menu_LevelBy"), level.meta.author);
             modeText.text = LocalizationManager.Instance.GetLocalizedText(LevelStudioPlugin.Instance.gameModeAliases[level.meta.gameMode].nameKey);
-            thumbnail.texture = (level.texture == null) ? LevelStudioPlugin.Instance.assetMan.Get<Texture2D>("IconMissing") : level.texture;
+            if (thumb == null)
+            {
+                thumb = LevelStudioPlugin.Instance.assetMan.Get<Texture2D>("IconMissing");
+            }
+            thumbnail.texture = thumb;
         }
     }
 }

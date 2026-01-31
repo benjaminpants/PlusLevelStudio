@@ -185,6 +185,52 @@ namespace PlusLevelStudio
 
         public List<EditorCustomContentEntry> entries = new List<EditorCustomContentEntry>();
 
+        public EditorCustomContentEntry thumbnailEntry
+        {
+            get
+            {
+                return entries.Find(x => x.contentType == "thumbnail");
+            }
+            set
+            {
+                EditorCustomContentEntry currentThumb = thumbnailEntry;
+                if (currentThumb != null)
+                {
+                    entries.Remove(currentThumb);
+                }
+                if (value == null) return;
+                entries.Add(value);
+            }
+        }
+
+        public Texture2D GenerateThumbnailTexture()
+        {
+            EditorCustomContentEntry entry = thumbnailEntry;
+            if (entry == null) return null;
+            Texture2D returnVal;
+            if (entry.usingFilePath)
+            {
+                returnVal = AssetLoader.TextureFromFile(Path.Combine(LevelStudioPlugin.customThumbnailsPath, entry.filePath));
+            }
+            else
+            {
+                returnVal = new Texture2D(128, 128, TextureFormat.ARGB32, false);
+                returnVal.filterMode = FilterMode.Point;
+                try
+                {
+                    returnVal.LoadImage(entry.data);
+                    returnVal.name = entry.id;
+                }
+                catch (Exception E)
+                {
+                    Debug.LogWarning(E);
+                    GameObject.Destroy(returnVal);
+                    return null;
+                }
+            }
+            return returnVal;
+        }
+
         public List<EditorCustomContentEntry> GetAllOfType(string type)
         {
             return entries.FindAll(x => x.contentType == type);
@@ -283,6 +329,8 @@ namespace PlusLevelStudio
         {
             switch (contentType)
             {
+                case "thumbnail":
+                    return File.ReadAllBytes(Path.Combine(LevelStudioPlugin.customThumbnailsPath, filePath));
                 case "texture":
                     return File.ReadAllBytes(Path.Combine(LevelStudioPlugin.customTexturePath, filePath));
                 case "imageposter":

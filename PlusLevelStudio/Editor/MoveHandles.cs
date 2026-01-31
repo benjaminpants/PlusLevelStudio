@@ -193,7 +193,6 @@ namespace PlusLevelStudio.Editor
                 return;
             }
 
-            //mySelector.UpdateObjectPosition(transform.position + (pos.Value - lattice.transform.position).SnapToGrid(gridSnap));
             mySelector.UpdateObjectPosition((transform.position + pos.Value - lattice.transform.position).SnapToGrid(gridSnap));
         }
 
@@ -204,7 +203,6 @@ namespace PlusLevelStudio.Editor
             {
                 return;
             }
-            //mySelector.UpdateObjectPosition(transform.position + (LockPositionOntoForward(arrow.transform, pos.Value) - (arrow.transform.position - currentHandleMouseStart)).SnapToGrid(gridSnap));
             mySelector.UpdateObjectPosition((transform.position + LockPositionOntoForward(arrow.transform, pos.Value) - (arrow.transform.position - currentHandleMouseStart)).SnapToGrid(gridSnap));
         }
 
@@ -252,14 +250,12 @@ namespace PlusLevelStudio.Editor
         public bool OnClicked()
         {
             return true;
-            //throw new NotImplementedException();
         }
 
         public bool OnHeld()
         {
             myHandles.LatticeClickUpdate(transform);
             return true;
-            //throw new NotImplementedException();
         }
 
         public void OnReleased()

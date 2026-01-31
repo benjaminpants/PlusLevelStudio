@@ -64,6 +64,10 @@ namespace PlusLevelStudio.Editor
                         EditorController.Instance.CancelHeldUndo();
                     }
                     EditorController.Instance.SetChannelsMuted(false);
+                    for (int i = 0; i < pages.Length; i++)
+                    {
+                        pages[i].Cleanup();
+                    }
                     gameObject.SetActive(false);
                     break;
             }
@@ -427,6 +431,10 @@ namespace PlusLevelStudio.Editor
 
     public abstract class GlobalSettingsUIExchangeHandler : UIExchangeHandler
     {
+        public virtual void Cleanup()
+        {
+
+        }
         public abstract void Refresh();
         public EditorUIGlobalSettingsHandler handler;
     }

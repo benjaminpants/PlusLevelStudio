@@ -756,14 +756,29 @@ namespace PlusLevelStudio.Editor
             PlayableEditorLevel playableLevel = new PlayableEditorLevel();
             playableLevel.data = level;
             playableLevel.meta = levelData.meta.CompileContent();
-            playableLevel.texture = GenerateThumbnail();
+            if (playableLevel.meta.contentPackage.thumbnailEntry == null)
+            {
+                playableLevel.meta.contentPackage.thumbnailEntry = new EditorCustomContentEntry()
+                {
+                    contentType = "thumbnail",
+                    id = "thumbnail",
+                    data = GenerateThumbnailIntoByteArray()
+                };
+            }
             Directory.CreateDirectory(LevelStudioPlugin.levelExportPath);
 
             BinaryWriter writer = new BinaryWriter(new FileStream(Path.Combine(LevelStudioPlugin.levelExportPath, currentFileName + ".pbpl"), FileMode.Create, FileAccess.Write));
             playableLevel.Write(writer);
             writer.Close();
-            Destroy(playableLevel.texture); // we've now written it to file, discard it to free up memory.
             Application.OpenURL("file://" + LevelStudioPlugin.levelExportPath);
+        }
+        
+        public byte[] GenerateThumbnailIntoByteArray()
+        {
+            Texture2D generatedThumb = GenerateThumbnail();
+            byte[] stream = ImageConversion.EncodeToPNG(generatedThumb);
+            Destroy(generatedThumb);
+            return stream;
         }
 
         public BaldiLevel Compile()

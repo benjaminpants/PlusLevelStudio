@@ -32,7 +32,6 @@
 			"text":"Name:",
 			"alignment":"Left",
 		},
-		
 		{
 			"name":"AuthorName",
 			"type":"textbox",
@@ -62,6 +61,58 @@
 			"color":[0,0,0],
 			"text":"Author:",
 			"alignment":"Left",
+		},
+		{
+			"name":"ThumbnailText",
+			"type":"text",
+			"anchoredPosition":[-110, -56],
+			"size":[120, 50],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"font":"ComicSans24",
+			"color":[0,0,0],
+			"text":"Thumbnail:",
+			"alignment":"Left",
+		},
+		{
+			"name":"Thumbnail",
+			"type":"rawimage",
+			"anchoredPosition":[-134,-100],
+			"size":[64,64],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center"
+		},
+		{
+			"name":"ChangeThumbnail",
+			"type":"textbutton",
+			"anchoredPosition":[-45,-80],
+			"size":[100,32],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"font":"ComicSans12",
+			"color":[0,0,0],
+			"text":"Change Thumbnail",
+			"alignment":"Left",
+			"onPressed":"changeThumb",
+			"localized":false
+		},
+		{
+			"name":"ClearThumbnail",
+			"type":"textbutton",
+			"anchoredPosition":[-45,-114],
+			"size":[100,32],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"font":"ComicSans12",
+			"color":[0,0,0],
+			"text":"Clear Thumbnail",
+			"alignment":"Left",
+			"onPressed":"clearThumb",
+			"localized":false
 		},
 	]
 }

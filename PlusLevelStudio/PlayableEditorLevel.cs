@@ -12,25 +12,14 @@ namespace PlusLevelStudio
     public class PlayableEditorLevel
     {
         public PlayableLevelMeta meta;
-        public Texture2D texture; // TODO: consider moving to PlayableLevelMeta to allow for custom icons.
         public string filePath;
         public BaldiLevel data;
 
-        public const byte version = 2;
+        public const byte version = 3;
 
         public void Write(BinaryWriter writer)
         {
             writer.Write(version);
-            if (texture == null)
-            {
-                writer.Write(0);
-            }
-            else
-            {
-                byte[] pngData = ImageConversion.EncodeToPNG(texture);
-                writer.Write(pngData.Length);
-                writer.Write(pngData);
-            }
             meta.Write(writer);
             data.Write(writer);
         }
@@ -39,27 +28,25 @@ namespace PlusLevelStudio
         {
             PlayableEditorLevel playable = new PlayableEditorLevel();
             byte version = reader.ReadByte();
-            if (version >= 1)
+            byte[] oldThumb = null;
+            if ((version >= 1) && (version < 3)) // version 0 had no thumbnails, versions 1 and 2 had the thumbnail in PlayableEditorLevel, format 3 and above have it in the custom content.
             {
                 int fileSize = reader.ReadInt32();
                 if (fileSize > 0)
                 {
-                    byte[] textureData = reader.ReadBytes(fileSize);
-                    playable.texture = new Texture2D(2, 2, TextureFormat.RGBA4444, false);
-                    try
-                    {
-                        ImageConversion.LoadImage(playable.texture, textureData);
-                        playable.texture.filterMode = FilterMode.Point;
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.LogError("Invalid thumbnail data " + e.ToString());
-                        UnityEngine.Object.Destroy(playable.texture);
-                        playable.texture = null;
-                    }
+                    oldThumb = reader.ReadBytes(fileSize);
                 }
             }
             playable.meta = PlayableLevelMeta.Read(reader, false);
+            if (oldThumb != null)
+            {
+                playable.meta.contentPackage.thumbnailEntry = new EditorCustomContentEntry()
+                {
+                    data = oldThumb,
+                    contentType = "thumbnail",
+                    id = "thumbnail",
+                };
+            }
             playable.data = BaldiLevel.Read(reader);
             if (version <= 1)
             {
