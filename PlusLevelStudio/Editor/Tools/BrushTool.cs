@@ -47,12 +47,13 @@ namespace PlusLevelStudio.Editor.Tools
             {
                 targetRoom = EditorController.Instance.levelData.hall;
             }
-            EditorController.Instance.HighlightCells(EditorController.Instance.levelData.GetCellsOwnedByRoom(targetRoom), "light_green");
+            EditorController.Instance.HighlightCells(EditorController.Instance.levelData.GetCellsOwnedByRoom(targetRoom), "light_yellow");
             return false;
         }
 
         public override bool MouseReleased()
         {
+            if (currentCells.Count == 0) return true;
             EditorController.Instance.AddUndo();
             List<List<RectInt>> potRects = new List<List<RectInt>>();
             for (int i = 0; i < 16; i++)
