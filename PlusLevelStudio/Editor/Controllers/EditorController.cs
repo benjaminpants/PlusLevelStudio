@@ -1199,6 +1199,20 @@ namespace PlusLevelStudio.Editor
             {
                 uiObjects[0].GetComponent<EditorUIMainHandler>().SendInteractionMessage("hideTranslateSettings", null);
             }
+            for (int i = 1; i <= 9; i++)
+            {
+                if (Singleton<InputManager>.Instance.GetDigitalInput("Item" + i, true))
+                {
+                    if (hotSlots[i - 1].currentTool == _currentTool)
+                    {
+                        SwitchToTool(null);
+                    }
+                    else
+                    {
+                        SwitchToTool(hotSlots[i - 1].currentTool);
+                    }
+                }
+            }
             if (((List<RaycastResult>)_results.GetValue(CursorController.Instance)).Count == 0)
             {
                 HandleClicking();
