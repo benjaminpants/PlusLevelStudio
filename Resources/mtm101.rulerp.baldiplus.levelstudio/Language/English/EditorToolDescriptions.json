@@ -10,6 +10,8 @@
 {"key":"Ed_Tool_wallplacer_Desc","value":"Click anywhere with any rotation to add a wall there!"},
 {"key":"Ed_Tool_wallremover_Title","value":"Wall Remover Tool"},
 {"key":"Ed_Tool_wallremover_Desc","value":"Click anywhere with any rotation to remove a wall!"},
+{"key":"Ed_Tool_paintbrush_Title","value":"Paintbrush"},
+{"key":"Ed_Tool_paintbrush_Desc","value":"Draw hallways super easily with this tool. Click on a tile of an existing room to add onto that room instead of the halls!"},
 
 {"key":"Ed_Tool_room_hall_Title","value":"Main Hallway"},
 {"key":"Ed_Tool_room_hall_Desc","value":"The main building block of any level, required for some NPCs to behave properly."},

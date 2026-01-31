@@ -2087,6 +2087,7 @@ namespace PlusLevelStudio
             AddSolidColorLightmap("yellow", Color.yellow);
             AddSolidColorLightmap("red", Color.red);
             AddSolidColorLightmap("green", Color.green);
+            AddSolidColorLightmap("light_green", Color.Lerp(Color.green,Color.white,0.5f));
             AddSolidColorLightmap("blue", Color.blue);
             yield return "Loading title assets...";
             assetMan.Add<Sprite>("EditorButton", AssetLoader.SpriteFromTexture2D(AssetLoader.TextureFromMod(this, "UI", "TitleScreen", "EditorButton.png"), 1f));

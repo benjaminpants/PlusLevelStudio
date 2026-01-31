@@ -61,6 +61,7 @@ namespace PlusLevelStudio
             {
                 new MergeTool(),
                 new DeleteTool(),
+                new BrushTool(),
             });
             if (!includeNonVanillaCompliant) return;
             AddToolsToCategory(modeToModify, "tools", new EditorTool[]
