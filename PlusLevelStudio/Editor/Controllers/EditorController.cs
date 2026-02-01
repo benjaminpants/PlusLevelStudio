@@ -80,7 +80,7 @@ namespace PlusLevelStudio.Editor
         public SpawnpointMoverAndVisualizerScript spawnpointVisualPrefab;
         public SpawnpointMoverAndVisualizerScript spawnpointVisual;
 
-        protected Dictionary<PosterObject, Texture2D> generatedTextures = new Dictionary<PosterObject, Texture2D>();
+        protected Dictionary<PosterObject, Texture2D> generatedPosterTextures = new Dictionary<PosterObject, Texture2D>();
 
         public bool toolboxOnNullTool;
         public GameCamera cameraPrefab;
@@ -251,12 +251,12 @@ namespace PlusLevelStudio.Editor
             {
                 return p.baseTexture;
             }
-            if (generatedTextures.ContainsKey(p))
+            if (generatedPosterTextures.ContainsKey(p))
             {
-                return generatedTextures[p];
+                return generatedPosterTextures[p];
             }
             Texture2D tex = ((TextTextureGenerator)_TextTextureGenerator.GetValue(workerEc)).GenerateTextTexture(p);
-            generatedTextures.Add(p, tex);
+            generatedPosterTextures.Add(p, tex);
             return tex;
         }
 
