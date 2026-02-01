@@ -359,8 +359,22 @@ namespace PlusLevelStudio.Lua
 
         public override void LoadNextLevel()
         {
-            Singleton<EditorPlayModeManager>.Instance.Win();
+            if (!globalsDefined)
+            {
+                Singleton<EditorPlayModeManager>.Instance.Win();
+                return;
+            }
+            if (script.Globals.Get("OnLevelCompleted").Type != DataType.Function) return;
+            DynValue returnV = script.Call(script.Globals["OnLevelCompleted"]);
+            if (returnV.Type != DataType.String)
+            {
+                Singleton<EditorPlayModeManager>.Instance.Win();
+                return;
+            }
+            Singleton<EditorPlayModeManager>.Instance.Win(returnV.String);
         }
+
+
     }
 
     [MoonSharpUserData]

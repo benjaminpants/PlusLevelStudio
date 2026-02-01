@@ -29,6 +29,7 @@ end
 
 function AllNotebooks()
 	self:OpenExits(true)
+	self:ActivateBonusProblems(false)
 end
 
 function NotebookCollected(notebookPosition)
@@ -44,4 +45,8 @@ function AngerBaldi(value)
 end
 
 function AllNPCsSpawned()
+end
+
+function OnLevelCompleted()
+	return nil -- return a different value to change the message
 end

@@ -29,4 +29,5 @@ end
 
 function AllNotebooks()
 	self:OpenExits(true)
+	self:ActivateBonusProblems(false)
 end

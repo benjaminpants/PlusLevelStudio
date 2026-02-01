@@ -103,12 +103,9 @@ namespace PlusLevelStudio.Editor
         public bool hasUnsavedChanges = false;
         public static string lastPlayedLevel = null;
 
-        public bool MovementEnabled
+        public bool MovementAndToolsAllowed()
         {
-            get
-            {
-                return (uiOverlays.Count == 0 && (uiObjects[1] == null || !uiObjects[1].activeSelf) && (CursorController.Instance != null && CursorController.Instance.cursorTransform.gameObject.activeSelf));
-            }
+            return (uiOverlays.Count == 0 && (uiObjects[1] == null || !uiObjects[1].activeSelf) && (!uiObjects[2].activeSelf) && (CursorController.Instance != null && CursorController.Instance.cursorTransform.gameObject.activeSelf));
         }
 
         public List<EditorRoomVisualManager> roomVisuals = new List<EditorRoomVisualManager>();
@@ -1201,7 +1198,7 @@ namespace PlusLevelStudio.Editor
             }
             for (int i = 1; i <= 9; i++)
             {
-                if (Singleton<InputManager>.Instance.GetDigitalInput("Item" + i, true))
+                if (MovementAndToolsAllowed() && Singleton<InputManager>.Instance.GetDigitalInput("Item" + i, true))
                 {
                     if (hotSlots[i - 1].currentTool == _currentTool)
                     {
@@ -1420,7 +1417,7 @@ namespace PlusLevelStudio.Editor
 
         protected virtual void UpdateCamera()
         {
-            if (!MovementEnabled) return;
+            if (!MovementAndToolsAllowed()) return;
             if (Singleton<InputManager>.Instance.GetDigitalInput("UseItem", false))
             {
                 Vector2 analog = CursorController.Movement;
