@@ -52,10 +52,15 @@ namespace PlusLevelStudio.Editor.Tools
             if (ValidLocation(EditorController.Instance.mouseGridPosition))
             {
                 pos = EditorController.Instance.mouseGridPosition;
-                EditorController.Instance.selector.SelectRotation(pos.Value, Place);
+                ValidLocationClicked();
                 return false;
             }
             return false;
+        }
+
+        protected virtual void ValidLocationClicked()
+        {
+            EditorController.Instance.selector.SelectRotation(pos.Value, Place);
         }
 
         public virtual bool ValidLocation(IntVector2 position)

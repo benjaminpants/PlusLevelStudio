@@ -21,6 +21,12 @@ namespace PlusLevelStudio.Editor.Tools
             this.sprite = sprite;
         }
 
+        protected override void ValidLocationClicked()
+        {
+            SoundPlayOneshot("Doors_StandardOpen");
+            base.ValidLocationClicked();
+        }
+
         protected override bool TryPlace(IntVector2 position, Direction dir)
         {
             DoorLocation doorPos = new DoorLocation();
@@ -28,6 +34,7 @@ namespace PlusLevelStudio.Editor.Tools
             doorPos.type = type;
             doorPos.direction = dir;
             if (!doorPos.ValidatePosition(EditorController.Instance.levelData)) return false;
+            SoundPlayOneshot("Doors_StandardShut");
             EditorController.Instance.AddUndo();
             EditorController.Instance.levelData.doors.Add(doorPos);
             EditorController.Instance.AddVisual(doorPos);

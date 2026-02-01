@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PlusStudioLevelLoader;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
@@ -44,6 +45,14 @@ namespace PlusLevelStudio.Editor.Tools
             itemPlace.position = new Vector2(EditorController.Instance.mouseGridPosition.x * 10f + 5f, EditorController.Instance.mouseGridPosition.z * 10f + 5f);
             EditorController.Instance.AddVisual(itemPlace);
             EditorController.Instance.levelData.items.Add(itemPlace);
+            if (LevelLoaderPlugin.Instance.itemObjects[item].audPickupOverride != null)
+            {
+                SoundPlayOneshot(LevelLoaderPlugin.Instance.itemObjects[item].audPickupOverride);
+            }
+            else
+            {
+                SoundPlayOneshot("ItemPickup");
+            }
             return true;
         }
     }

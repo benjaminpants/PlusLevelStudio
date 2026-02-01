@@ -43,6 +43,7 @@ namespace PlusLevelStudio.Editor.Tools
             EditorController.Instance.AddHeldUndo();
             activity.Setup(EditorController.Instance.levelData);
             EditorController.Instance.AddVisual(activity);
+            SoundPlayOneshot("NotebookCollect");
             return true;
         }
     }

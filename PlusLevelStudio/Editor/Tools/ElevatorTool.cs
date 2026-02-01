@@ -35,6 +35,12 @@ namespace PlusLevelStudio.Editor.Tools
             return EditorController.Instance.levelData.RoomIdFromPos(EditorController.Instance.mouseGridPosition, true) == 0;
         }
 
+        protected override void ValidLocationClicked()
+        {
+            SoundPlayOneshot("Elv_Open_Real");
+            base.ValidLocationClicked();
+        }
+
         protected override bool TryPlace(IntVector2 position, Direction dir)
         {
             ExitLocation exitLocal = new ExitLocation();
@@ -48,7 +54,7 @@ namespace PlusLevelStudio.Editor.Tools
             EditorController.Instance.AddVisual(exitLocal);
             EditorController.Instance.RefreshCells();
             EditorController.Instance.RefreshLights();
-            EditorController.Instance.SwitchToTool(null);
+            SoundPlayOneshot("Elv_Close_Real");
             return true;
         }
     }

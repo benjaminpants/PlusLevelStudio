@@ -67,6 +67,7 @@ namespace PlusLevelStudio.Editor.Tools
             {
                 EditorController.Instance.levelData.areas.Add(new RectCellArea(rects[i].position.ToMystVector(), rects[i].size.ToMystVector(), roomId));
             }
+            SoundPlayOneshot("Ben_Splat");
             return true;
         }
 
@@ -104,6 +105,7 @@ namespace PlusLevelStudio.Editor.Tools
             {
                 if ((!currentCells.Contains(gridPos)) && (EditorController.Instance.levelData.RoomIdFromPos(gridPos, true) == 0))
                 {
+                    SoundPlayOneshot("Nana_Sput");
                     currentCells.Add(gridPos);
                     // room shouldn't be null here, because if we've reached this point roomId wasn't zero
                     Cell cell = EditorController.Instance.workerEc.cells[gridPos.x, gridPos.z];

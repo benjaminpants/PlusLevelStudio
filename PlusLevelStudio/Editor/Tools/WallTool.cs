@@ -26,7 +26,7 @@ namespace PlusLevelStudio.Editor.Tools
             EditorController.Instance.levelData.walls.Add(wall);
             EditorController.Instance.AddVisual(wall);
             EditorController.Instance.RefreshCells();
-            EditorController.Instance.SwitchToTool(null);
+            SoundPlayOneshot("Slap");
             return true;
         }
     }

@@ -55,5 +55,47 @@ namespace PlusLevelStudio.Editor
         /// Called when the controller does its standard update
         /// </summary>
         public abstract void Update();
+
+        protected void SoundPlayOneshot(SoundObject obj, float volume = 1f)
+        {
+            EditorController.Instance.audMan.PlaySingle(obj, volume);
+        }
+
+        protected void SoundStopOneshot()
+        {
+            EditorController.Instance.audMan.FlushQueue(true);
+        }
+
+        protected void SoundPlayOneshot(string sound, float volume = 1f)
+        {
+            SoundPlayOneshot(LevelStudioPlugin.Instance.sounds[sound], volume);
+        }
+
+        protected void SoundPlayLooping(SoundObject obj)
+        {
+            EditorController.Instance.loopingAudMan.QueueAudio(obj, true);
+            EditorController.Instance.loopingAudMan.SetLoop(true);
+        }
+
+        protected void SoundPitch(float pitch)
+        {
+            EditorController.Instance.audMan.pitchModifier = pitch;
+        }
+
+        protected void SoundPitchLooping(float pitch)
+        {
+            EditorController.Instance.loopingAudMan.pitchModifier = pitch;
+        }
+
+        protected void SoundStopLooping()
+        {
+            EditorController.Instance.loopingAudMan.pitchModifier = 1f;
+            EditorController.Instance.loopingAudMan.FlushQueue(true);
+        }
+
+        protected void SoundPlayLooping(string sound)
+        {
+            SoundPlayLooping(LevelStudioPlugin.Instance.sounds[sound]);
+        }
     }
 }

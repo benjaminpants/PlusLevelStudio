@@ -52,6 +52,8 @@ namespace PlusLevelStudio
         public const int editorHandleLayer = 12; // ClickableEntities
         public const int editorHandleLayerMask = 1 << editorHandleLayer;
 
+        public Dictionary<string, SoundObject> sounds = new Dictionary<string, SoundObject>();
+
         public Dictionary<string, DoorDisplay> doorDisplays = new Dictionary<string, DoorDisplay>();
         public Dictionary<string, DoorIngameStatus> doorIngameStatus = new Dictionary<string, DoorIngameStatus>();
         public Dictionary<string, DoorDisplay> windowDisplays = new Dictionary<string, DoorDisplay>();
@@ -736,6 +738,8 @@ namespace PlusLevelStudio
             baldiSaysTexture = allTextures.First(x => x.name == "BaldiSpeaksPoster");
             chalkTexture = allTextures.First(x => x.name == "chk_blank");
             bulletinTexture = allTextures.First(x => x.name == "BulletinBoard_Blank");
+
+            Resources.FindObjectsOfTypeAll<SoundObject>().Where(x => x.GetInstanceID() >= 0).Do(x => sounds.Add(x.name, x));
 
             string[] cableNames = Enum.GetNames(typeof(CableColor));
             for (int i = 0; i < cableNames.Length; i++)
@@ -1867,6 +1871,18 @@ namespace PlusLevelStudio
             standardEditorController.tooltipController = toolTipController;
             standardEditorController.tooltipBase = editorTooltip;
             standardEditorController.baseGameManagerPrefab = emg;
+            // TODO: for tutorial, add another audMan with captions enabled so we can do Baldi dialogue as captions already work!
+            standardEditorController.audMan = standardEditorController.gameObject.AddComponent<AudioManager>();
+            standardEditorController.audMan.positional = false;
+            standardEditorController.audMan.ReflectionSetVariable("disableSubtitles", true);
+            standardEditorController.audMan.audioDevice = standardEditorController.gameObject.AddComponent<AudioSource>();
+
+            standardEditorController.loopingAudMan = standardEditorController.gameObject.AddComponent<AudioManager>();
+            standardEditorController.loopingAudMan.positional = false;
+            standardEditorController.loopingAudMan.ReflectionSetVariable("disableSubtitles", true);
+            standardEditorController.loopingAudMan.audioDevice = standardEditorController.gameObject.AddComponent<AudioSource>();
+            standardEditorController.loopingAudMan.maintainLoop = true;
+            standardEditorController.loopingAudMan.loop = true;
             // quick pause to create the gameloader prefab
             GameObject gameLoaderPreObject = new GameObject("EditorGameLoader");
             gameLoaderPreObject.ConvertToPrefab(true);

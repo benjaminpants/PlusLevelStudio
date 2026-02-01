@@ -33,6 +33,7 @@ namespace PlusLevelStudio.Editor.Tools
         {
             if (inScaleMode)
             {
+                SoundStopLooping();
                 inScaleMode = false;
                 return false;
             }
@@ -43,12 +44,14 @@ namespace PlusLevelStudio.Editor.Tools
         {
             inScaleMode = false;
             EditorController.Instance.selector.DisableSelection();
+            SoundStopLooping();
         }
 
         public override bool MousePressed()
         {
             startVector = EditorController.Instance.mouseGridPosition;
             inScaleMode = true;
+            SoundPlayLooping("LockdownDoor_Move");
             return false;
         }
 
@@ -56,6 +59,7 @@ namespace PlusLevelStudio.Editor.Tools
         {
             if (inScaleMode)
             {
+                SoundStopLooping();
                 RectInt rect = startVector.Value.ToUnityVector().ToRect(EditorController.Instance.mouseGridPosition.ToUnityVector());
                 CellArea areaToAdd;
                 EditorRoom edRoomData = null;
@@ -71,6 +75,7 @@ namespace PlusLevelStudio.Editor.Tools
                     }
                     EditorController.Instance.levelData.areas.Add(areaToAdd);
                     EditorController.Instance.RefreshCells();
+                    SoundPlayOneshot("GrappleClang",0.5f);
                     return true;
                 }
                 Cancelled(); // go back
@@ -84,7 +89,9 @@ namespace PlusLevelStudio.Editor.Tools
             if (inScaleMode)
             {
                 if (startVector == null) throw new InvalidOperationException();
-                EditorController.Instance.selector.SelectArea(startVector.Value.ToUnityVector().ToRect(EditorController.Instance.mouseGridPosition.ToUnityVector()),null);
+                RectInt rect = startVector.Value.ToUnityVector().ToRect(EditorController.Instance.mouseGridPosition.ToUnityVector());
+                SoundPitchLooping((rect.width + rect.height) / 12f);
+                EditorController.Instance.selector.SelectArea(rect, null);
             }
             else
             {

@@ -67,9 +67,11 @@ namespace PlusLevelStudio.Editor.Tools
                 EditorController.Instance.RefreshCells();
                 HighlightAllAreasBelongingToRoom(currentRoomId, "yellow");
                 currentHoveredArea = null;
+                SoundPlayOneshot("Doors_StandardLock");
                 return false;
             }
             currentRoom = lastHoveredRoom; // this does nothing if we are hovering over empty space
+            SoundPlayOneshot("Doors_StandardUnlock");
             HighlightAllAreasBelongingToRoom(currentRoomId, "yellow");
             return false;
         }

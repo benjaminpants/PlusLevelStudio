@@ -54,16 +54,24 @@ namespace PlusLevelStudio.Editor.Tools
             lastFoundExit = null;
         }
 
+        void PlaySound()
+        {
+            SoundStopOneshot();
+            SoundPlayOneshot("Explosion");
+        }
+
         public override bool MousePressed()
         {
             if (lastFoundRoom != null)
             {
                 EditorController.Instance.AddUndo();
+                PlaySound();
                 return lastFoundRoom.OnDelete(EditorController.Instance.levelData);
             }
             if (lastFoundDeletable != null)
             {
                 EditorController.Instance.AddUndo();
+                PlaySound();
                 return lastFoundDeletable.OnDelete(EditorController.Instance.levelData);
             }
             if (lastFoundExit != null)
@@ -73,6 +81,7 @@ namespace PlusLevelStudio.Editor.Tools
                 EditorController.Instance.RemoveVisual(lastFoundExit);
                 EditorController.Instance.RefreshCells();
                 EditorController.Instance.UpdateSpawnVisual();
+                PlaySound();
                 return true;
             }
             if (lastFoundArea != null)
@@ -85,6 +94,7 @@ namespace PlusLevelStudio.Editor.Tools
                 // ACK HACK
                 EditorController.Instance.levelData.UpdateCells(true);
                 EditorController.Instance.RefreshCells();
+                PlaySound();
                 return true;
             }
             return false;

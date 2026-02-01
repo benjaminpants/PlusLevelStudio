@@ -103,6 +103,10 @@ namespace PlusLevelStudio.Editor
         public bool hasUnsavedChanges = false;
         public static string lastPlayedLevel = null;
 
+        // audio
+        public AudioManager audMan;
+        public AudioManager loopingAudMan;
+
         public bool MovementAndToolsAllowed()
         {
             return (uiOverlays.Count == 0 && (uiObjects[1] == null || !uiObjects[1].activeSelf) && (!uiObjects[2].activeSelf) && (CursorController.Instance != null && CursorController.Instance.cursorTransform.gameObject.activeSelf));

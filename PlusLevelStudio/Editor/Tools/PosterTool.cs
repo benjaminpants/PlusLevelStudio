@@ -35,6 +35,7 @@ namespace PlusLevelStudio.Editor.Tools
                 poster.type = type;
                 EditorController.Instance.levelData.posters.Add(poster);
                 EditorController.Instance.AddVisual(poster);
+                SoundPlayOneshot("Slap");
                 return true;
             }
             return false;

@@ -41,6 +41,7 @@ namespace PlusLevelStudio.Editor.Tools
             EditorController.Instance.AddUndo();
             EditorController.Instance.levelData.premadeRooms.Add(prl);
             EditorController.Instance.RefreshCells();
+            SoundPlayOneshot("GrappleClang",0.5f);
             return true;
         }
 

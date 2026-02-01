@@ -15,5 +15,15 @@ namespace PlusLevelStudio.Editor.Tools
         {
             return new MatchBalloonMarker() { type = "matchballoon" };
         }
+
+        protected override bool TryPlace(IntVector2 position)
+        {
+            bool ret = base.TryPlace(position);
+            if (ret)
+            {
+                SoundPlayOneshot("MatchBalloon_Revealed");
+            }
+            return ret;
+        }
     }
 }
