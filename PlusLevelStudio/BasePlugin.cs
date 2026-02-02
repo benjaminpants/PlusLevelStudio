@@ -30,7 +30,7 @@ using UnityEngine.UI;
 
 namespace PlusLevelStudio
 {
-    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudio", "Plus Level Studio", "1.5.0.1")]
+    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudio", "Plus Level Studio", "1.6.0.0")]
     [BepInDependency("mtm101.rulerp.bbplus.baldidevapi")]
     [BepInDependency("mtm101.rulerp.baldiplus.levelstudioloader")]
     public class LevelStudioPlugin : BaseUnityPlugin
@@ -47,7 +47,7 @@ namespace PlusLevelStudio
         public const int editorInteractableLayer = 13; // CollidableEntities
         public const int editorInteractableLayerMask = 1 << editorInteractableLayer;
 
-        private Version expectedLoaderVersion = new Version("1.8.0.1");
+        private Version expectedLoaderVersion = new Version("1.9.0.0");
 
         public const int editorHandleLayer = 12; // ClickableEntities
         public const int editorHandleLayerMask = 1 << editorHandleLayer;

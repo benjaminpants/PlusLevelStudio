@@ -12,6 +12,8 @@
 {"key":"Ed_Tool_wallremover_Desc","value":"Click anywhere with any rotation to remove a wall!"},
 {"key":"Ed_Tool_paintbrush_Title","value":"Paintbrush"},
 {"key":"Ed_Tool_paintbrush_Desc","value":"Draw hallways super easily with this tool. Click on a tile of an existing room to add onto that room instead of the halls!"},
+{"key":"Ed_Tool_eraser_Title","value":"Eraser"},
+{"key":"Ed_Tool_eraser_Desc","value":"Erase parts of areas with this tool. Seperated areas are not turned into seperate rooms."},
 
 {"key":"Ed_Tool_room_hall_Title","value":"Main Hallway"},
 {"key":"Ed_Tool_room_hall_Desc","value":"The main building block of any level, required for some NPCs to behave properly."},
@@ -254,7 +256,7 @@
 {"key":"Ed_Tool_object_qmark1_Title","value":"Purple Question Mark"},
 {"key":"Ed_Tool_object_qmark1_Desc","value":"Pop Quiz!\nWhat color was commonly associated with royalty?"},
 {"key":"Ed_Tool_object_qmark2_Title","value":"Pink Question Mark"},
-{"key":"Ed_Tool_object_qmark2_Desc","value":"What color was Baldi's magical elixer?"},
+{"key":"Ed_Tool_object_qmark2_Desc","value":"What color are safety scissors?"},
 {"key":"Ed_Tool_object_qmark3_Title","value":"Blue Question Mark"},
 {"key":"Ed_Tool_object_qmark3_Desc","value":"What is the color are the classroom doors?"},
 {"key":"Ed_Tool_object_qmark4_Title","value":"Red Question Mark"},
@@ -264,7 +266,7 @@
 {"key":"Ed_Tool_object_qmark6_Title","value":"Yellow Question Mark"},
 {"key":"Ed_Tool_object_qmark6_Desc","value":"Name the color of a certain faculty member's office door!"},
 {"key":"Ed_Tool_object_qmark7_Title","value":"Green Question Mark"},
-{"key":"Ed_Tool_object_qmark7_Desc","value":"Grass is this color due to ___________!"},
+{"key":"Ed_Tool_object_qmark7_Desc","value":"What color was Baldi's magical elixer?"},
 {"key":"Ed_Tool_object_packetomatic_Title","value":"Packet-o-Matic"},
 {"key":"Ed_Tool_object_packetomatic_Desc","value":"Allows you to apply or replace stickers!"},
 
@@ -390,7 +392,7 @@
 {"key":"Ed_Tool_itemspawn_25_Title","value":"Potential Item Spawn (25)"},
 {"key":"Ed_Tool_itemspawn_25_Desc","value":"A potential item spawn with the weight of 25."},
 {"key":"Ed_Tool_itemspawn_Title","value":"Potential Item Spawn"},
-{"key":"Ed_Tool_itemspawn_Desc","value":"A potential item spawn.\nUsed by anything that needs an item spawn point."},
+{"key":"Ed_Tool_itemspawn_Desc","value":"A potential item spawn.\nUsed by any structure that needs an item spawn point."},
 
 {"key":"Ed_Tool_custom_imageposter_Title","value":"Custom Image Poster"},
 {"key":"Ed_Tool_custom_imageposter_Desc","value":"Import a custom image to use as a poster!"},

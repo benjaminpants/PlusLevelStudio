@@ -13,7 +13,7 @@ using System.IO;
 
 namespace PlusStudioLevelLoader
 {
-    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudioloader", "Plus Level Loader", "1.8.0.1")]
+    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudioloader", "Plus Level Loader", "1.9.0.0")]
     [BepInDependency("mtm101.rulerp.bbplus.baldidevapi")]
     public class LevelLoaderPlugin : BaseUnityPlugin
     {
@@ -157,6 +157,7 @@ namespace PlusStudioLevelLoader
 
             Door[] doors = Resources.FindObjectsOfTypeAll<Door>().Where(x => x.GetInstanceID() >= 0 && x.transform.parent == null).ToArray();
             doorPrefabs.Add("standard", doors.First(x => x.name == "ClassDoor_Standard"));
+            tileBasedObjectPrefabs.Add("standard", doors.First(x => x.name == "ClassDoor_Standard")); // for premade rooms
             tileBasedObjectPrefabs.Add("swinging", doors.First(x => x.name == "Door_Swinging")); // swinging doors aren't "doors" and don't belong to any room.
             tileBasedObjectPrefabs.Add("oneway", doors.First(x => x.name == "Door_SwingingOneWay")); // swinging doors aren't "doors" and don't belong to any room.
             tileBasedObjectPrefabs.Add("swinging_silent", doors.First(x => x.name == "SilentDoor_Swinging")); // swinging doors aren't "doors" and don't belong to any room.
