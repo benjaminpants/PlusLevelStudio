@@ -65,6 +65,8 @@ namespace PlusLevelStudio.Editor.Tools
             successfulyPlaced = true;
             valveLocation.deleteAction = structure.OnDeleteValve;
             EditorController.Instance.SwitchToTool(null);
+            SoundStopOneshot();
+            SoundPlayOneshot("Valve");
         }
 
         public override bool MousePressed()
@@ -80,6 +82,7 @@ namespace PlusLevelStudio.Editor.Tools
             valveLocation = new SteamValveLocation();
             valveLocation.position = EditorController.Instance.mouseGridPosition;
             EditorController.Instance.AddVisual(valveLocation);
+            SoundPlayOneshot("ValveLeak");
             return false;
         }
 

@@ -32,6 +32,7 @@ namespace PlusLevelStudio.Editor.Tools
             placement.position = EditorController.Instance.mouseGridPosition;
             EditorController.Instance.levelData.npcs.Add(placement);
             EditorController.Instance.AddVisual(placement);
+            SoundPlayOneshot("Slap");
             return true;
         }
     }

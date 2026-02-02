@@ -135,6 +135,7 @@ namespace PlusLevelStudio.Editor.Tools
                     EditorController.Instance.levelData.objects.Add(locations[i]);
                     EditorController.Instance.AddVisual(locations[i]);
                 }
+                SoundPlayOneshot("NoteRespawn");
                 return true;
             }
             return false;

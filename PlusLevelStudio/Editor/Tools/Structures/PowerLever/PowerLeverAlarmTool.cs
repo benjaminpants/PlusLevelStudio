@@ -39,6 +39,7 @@ namespace PlusLevelStudio.Editor.Tools
                 light.position = EditorController.Instance.mouseGridPosition;
                 EditorController.Instance.AddVisual(light);
                 structure.alarmLights.Add(light);
+                SoundPlayOneshot("PlateDrop");
                 return true;
             }
             return false;

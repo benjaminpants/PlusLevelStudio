@@ -107,6 +107,8 @@ namespace PlusLevelStudio.Editor.Tools
                 };
                 EditorController.Instance.AddVisual(rotohall);
 
+                SoundPlayOneshot("ShrinkMachine_Door");
+
                 // rotohalls literally do not care about clockwise vs counter clockwise apparently. did not notice
                 /*Direction theoreticalClockwise = chosenDirections[0].RotatedRelativeToNorth(Direction.West);
                 rotohall.clockwise = chosenDirections[2] == theoreticalClockwise;*/ // if the next direction clicked matches what the next direction would be clockwise, then we are indeed rotating clockwise. otherwise, counter clockwise.
@@ -125,6 +127,7 @@ namespace PlusLevelStudio.Editor.Tools
             EditorController.Instance.AddVisual(rotohall.SetButton(buttonPositionChosen.Value, dir));
             rotohall = null;
             EditorController.Instance.SwitchToTool(null);
+            SoundPlayOneshot("Sfx_Button_Press");
         }
 
         public override bool MousePressed()

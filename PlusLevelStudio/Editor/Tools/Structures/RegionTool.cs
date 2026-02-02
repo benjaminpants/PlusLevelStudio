@@ -60,6 +60,7 @@ namespace PlusLevelStudio.Editor.Tools
                     room=foundRoom,
                 });
                 EditorController.Instance.UpdateVisual(structure);
+                SoundPlayOneshot("Slap");
                 return true;
             }
             return false;

@@ -73,6 +73,7 @@ namespace PlusLevelStudio.Editor.Tools
             machine.direction = dir.GetOpposite().ToRotation().eulerAngles.y;
             EditorController.Instance.AddVisual(machine);
             currentRoom = EditorController.Instance.levelData.RoomFromPos(currentMachinePos.Value, true);
+            SoundPlayOneshot("ShrinkMachine_Door");
         }
 
         void ButtonsDirectionClicked(Direction dir)
@@ -90,6 +91,7 @@ namespace PlusLevelStudio.Editor.Tools
             EditorController.Instance.AddVisual(location);
             successfullyPlaced = true;
             EditorController.Instance.SwitchToTool(null);
+            SoundPlayOneshot("Sfx_Button_Unpress");
         }
 
         bool PositionValid(IntVector2 position)

@@ -39,6 +39,7 @@ namespace PlusLevelStudio.Editor.Tools
             local.position += Vector3.up * verticalOffset;
             EditorController.Instance.levelData.objects.Add(local);
             EditorController.Instance.AddVisual(local);
+            SoundPlayOneshot("Slap");
             return true;
         }
     }

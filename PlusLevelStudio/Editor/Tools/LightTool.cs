@@ -29,7 +29,7 @@ namespace PlusLevelStudio.Editor.Tools
             EditorController.Instance.AddVisual(lightPlace);
             EditorController.Instance.levelData.lights.Add(lightPlace);
             EditorController.Instance.RefreshLights();
-            SoundPlayOneshot("ComputerHum");
+            SoundPlayOneshot("PlateDrop");
             return true;
         }
     }

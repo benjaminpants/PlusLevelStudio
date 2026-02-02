@@ -32,6 +32,7 @@ namespace PlusLevelStudio.Editor.Tools
             };
             EditorController.Instance.levelData.tileBasedObjects.Add(tileOb);
             EditorController.Instance.AddVisual(tileOb);
+            SoundPlayOneshot("Slap");
             return true;
         }
     }

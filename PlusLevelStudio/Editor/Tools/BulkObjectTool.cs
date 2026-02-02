@@ -66,6 +66,7 @@ namespace PlusLevelStudio.Editor.Tools
                 EditorController.Instance.levelData.objects.Add(bob);
                 EditorController.Instance.AddVisual(bob);
             }
+            SoundPlayOneshot("Slap");
             return true;
         }
     }

@@ -29,6 +29,7 @@ namespace PlusLevelStudio.Editor.Tools
             EditorController.Instance.AddVisual(point);
             EditorController.Instance.UpdateVisual(point);
             EditorController.Instance.RefreshLights();
+            SoundPlayOneshot("Slap");
             return true;
         }
     }

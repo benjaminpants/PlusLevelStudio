@@ -84,6 +84,7 @@ namespace PlusLevelStudio.Editor.Tools
             currentLever.color = color;
             EditorController.Instance.AddVisual(currentLever);
             EditorController.Instance.selector.DisableSelection();
+            SoundPlayOneshot("Sfx_Button_Press");
         }
 
         public override bool MousePressed()
@@ -102,6 +103,7 @@ namespace PlusLevelStudio.Editor.Tools
                 holdingUndo = false;
                 EditorController.Instance.AddHeldUndo();
                 currentLever = null;
+                SoundPlayOneshot("Sfx_Button_Unpress");
                 return true;
             }
             if (pos != null) return false;

@@ -35,6 +35,11 @@ namespace PlusLevelStudio.Editor.Tools
         {
         }
 
+        protected virtual void PlayPlaceSound()
+        {
+            SoundPlayOneshot("LockDoorStop");
+        }
+
         protected override bool TryPlace(IntVector2 position, Direction dir)
         {
             PlusStudioLevelFormat.Cell cell = EditorController.Instance.levelData.GetCellSafe(position);
@@ -48,6 +53,7 @@ namespace PlusLevelStudio.Editor.Tools
             local.prefab = doorType;
             structure.myChildren.Add(local);
             EditorController.Instance.UpdateVisual(structure);
+            PlayPlaceSound();
             return true;
         }
     }

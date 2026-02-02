@@ -94,6 +94,12 @@ namespace PlusLevelStudio.Editor.Tools
             first = local;
             firstPlaced = true;
             EditorController.Instance.selector.DisableSelection();
+            PlayPlaceSound();
+        }
+
+        protected virtual void PlayPlaceSound()
+        {
+            SoundPlayOneshot("LockDoorStop");
         }
 
         public virtual void ModifyChild(SimpleLocation local)
@@ -121,6 +127,12 @@ namespace PlusLevelStudio.Editor.Tools
             EditorController.Instance.UpdateVisual(structure);
             first = null; // so we dont accidentally destroy the visual our first object
             EditorController.Instance.SwitchToTool(null);
+            PlayButtonSound();
+        }
+
+        protected virtual void PlayButtonSound()
+        {
+            SoundPlayOneshot("Sfx_Button_Press");
         }
 
         public override bool MousePressed()

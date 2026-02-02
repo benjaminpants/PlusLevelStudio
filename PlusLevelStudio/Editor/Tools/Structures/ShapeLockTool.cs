@@ -52,6 +52,7 @@ namespace PlusLevelStudio.Editor.Tools
                 EditorController.Instance.AddHeldUndo();
                 structure.CreateAndAddRoom(type, foundRoom);
                 EditorController.Instance.UpdateVisual(structure);
+                SoundPlayOneshot("SwingDoorLock");
                 return true;
             }
             return false;

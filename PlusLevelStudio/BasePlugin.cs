@@ -740,6 +740,7 @@ namespace PlusLevelStudio
             bulletinTexture = allTextures.First(x => x.name == "BulletinBoard_Blank");
 
             Resources.FindObjectsOfTypeAll<SoundObject>().Where(x => x.GetInstanceID() >= 0).Do(x => sounds.Add(x.name, x));
+            sounds.Add("GrappleLoop", ObjectCreators.CreateSoundObject(Resources.FindObjectsOfTypeAll<AudioClip>().First(x => x.name == "GrappleLoop" && x.GetInstanceID() >= 0), "GrappleLoop", SoundType.Effect, Color.white));
 
             string[] cableNames = Enum.GetNames(typeof(CableColor));
             for (int i = 0; i < cableNames.Length; i++)

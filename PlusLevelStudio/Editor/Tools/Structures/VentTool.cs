@@ -78,6 +78,7 @@ namespace PlusLevelStudio.Editor.Tools
             EditorController.Instance.RefreshCells(true,false);
             EditorController.Instance.gridManager.Height = VentVisualManager.height - 5f;
             GetCurrentVentVisual().BuildModel(currentVent.positions, currentVent.direction);
+            SoundPlayOneshot("Vent_Vacuum");
         }
 
         protected VentVisualManager GetCurrentVentVisual()
@@ -122,11 +123,19 @@ namespace PlusLevelStudio.Editor.Tools
                     EditorController.Instance.RefreshCells();
                     EditorController.Instance.UpdateVisual(ventStructure);
                     currentVent = null;
+                    SoundPlayOneshot("Doors_Locker");
                     return true;
                 }
                 else
                 {
-                    AttemptToAddPosition(EditorController.Instance.mouseGridPosition); // TODO: when adding sound, make it so that if this returns false we play an error sound
+                    if (AttemptToAddPosition(EditorController.Instance.mouseGridPosition))
+                    {
+                        SoundPlayOneshot("VentHit_" + UnityEngine.Random.Range(0, 4));
+                    }
+                    else
+                    {
+                        SoundPlayOneshot("Activity_Incorrect");
+                    }
                     GetCurrentVentVisual().BuildModel(currentVent.positions, currentVent.direction);
                 }
                 return false;

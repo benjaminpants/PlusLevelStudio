@@ -97,6 +97,7 @@ namespace PlusLevelStudio.Editor.Tools.Customs
                 EditorController.Instance.levelData.posters.Add(poster);
                 EditorController.Instance.AddVisual(poster);
                 EditorController.Instance.CleanupUnusedContentFromData();
+                SoundPlayOneshot("Slap");
                 return true;
             }
             return false;

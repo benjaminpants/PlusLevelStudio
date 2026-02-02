@@ -38,6 +38,7 @@ namespace PlusLevelStudio.Editor.Tools
 
         public override void Exit()
         {
+            SoundStopLooping();
             startingPos = null;
             if ((currentBelt != null) && !successfullyPlaced)
             {
@@ -74,6 +75,7 @@ namespace PlusLevelStudio.Editor.Tools
             }
             if (holdingBelt)
             {
+                SoundStopLooping();
                 holdingBelt = false;
                 EditorController.Instance.RemoveVisual(currentBelt);
                 currentBelt = null;
@@ -108,6 +110,7 @@ namespace PlusLevelStudio.Editor.Tools
             EditorController.Instance.AddHeldUndo();
             successfullyPlaced = true;
             EditorController.Instance.SwitchToTool(null);
+            SoundPlayOneshot("Sfx_Button_Press");
         }
 
         public override bool MousePressed()
@@ -120,6 +123,7 @@ namespace PlusLevelStudio.Editor.Tools
             }
             if (currentBelt == null)
             {
+                SoundPlayLooping("ConveyorBeltLoop");
                 EditorController.Instance.HoldUndo();
                 startingPos = EditorController.Instance.mouseGridPosition;
                 currentStructure = (ConveyorBeltStructureLocation)EditorController.Instance.AddOrGetStructureToData("conveyorbelt", false);
@@ -144,6 +148,7 @@ namespace PlusLevelStudio.Editor.Tools
                     return false; // nope
                 }
                 holdingBelt = false;
+                SoundStopLooping();
                 if (!placesButton)
                 {
                     currentStructure.belts.Add(currentBelt);
@@ -188,6 +193,7 @@ namespace PlusLevelStudio.Editor.Tools
                 currentBelt.direction = targetDirection;
                 byte distance = (byte)(Mathf.Abs(finalOff.x + finalOff.z) + 1);
                 currentBelt.distance = distance;
+                SoundPitchLooping(distance / 10f);
                 EditorController.Instance.UpdateVisual(currentBelt);
             }
         }

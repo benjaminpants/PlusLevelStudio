@@ -40,6 +40,7 @@ namespace PlusLevelStudio.Editor.Tools
             local.rotation = dir.ToRotation();
             EditorController.Instance.levelData.objects.Add(local);
             EditorController.Instance.AddVisual(local);
+            SoundPlayOneshot("Slap");
             return true;
         }
     }

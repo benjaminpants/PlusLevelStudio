@@ -50,6 +50,7 @@ namespace PlusLevelStudio.Editor.Tools
             itemPlace.position = new Vector2(EditorController.Instance.mouseGridPosition.x * 10f + 5f, EditorController.Instance.mouseGridPosition.z * 10f + 5f);
             EditorController.Instance.AddVisual(itemPlace);
             EditorController.Instance.levelData.itemSpawns.Add(itemPlace);
+            SoundPlayOneshot("ItemPickup");
             return true;
         }
     }

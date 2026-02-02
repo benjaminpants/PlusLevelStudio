@@ -51,7 +51,7 @@ namespace PlusLevelStudio.Editor.Tools
         {
             startVector = EditorController.Instance.mouseGridPosition;
             inScaleMode = true;
-            SoundPlayLooping("LockdownDoor_Move");
+            SoundPlayLooping("GrappleLoop");
             return false;
         }
 
@@ -90,7 +90,7 @@ namespace PlusLevelStudio.Editor.Tools
             {
                 if (startVector == null) throw new InvalidOperationException();
                 RectInt rect = startVector.Value.ToUnityVector().ToRect(EditorController.Instance.mouseGridPosition.ToUnityVector());
-                SoundPitchLooping((rect.width + rect.height) / 12f);
+                SoundPitchLooping((rect.width + rect.height) / 8f);
                 EditorController.Instance.selector.SelectArea(rect, null);
             }
             else

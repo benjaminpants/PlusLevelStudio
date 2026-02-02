@@ -30,7 +30,7 @@ namespace PlusLevelStudio.Editor.Tools
             EditorController.Instance.AddVisual(doorPos);
             EditorController.Instance.RefreshCells();
             EditorController.Instance.RefreshLights();
-            EditorController.Instance.SwitchToTool(null);
+            SoundPlayOneshot("Slap");
             return true;
         }
     }

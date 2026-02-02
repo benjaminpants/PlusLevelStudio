@@ -23,7 +23,7 @@ namespace PlusLevelStudio.Editor.Tools
             structure.breakers.Add(breaker);
             EditorController.Instance.AddVisual(breaker);
             EditorController.Instance.UpdateVisual(structure);
-            EditorController.Instance.SwitchToTool(null);
+            SoundPlayOneshot("Sfx_Button_Press");
             return true;
         }
     }
