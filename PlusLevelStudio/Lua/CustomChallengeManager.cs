@@ -363,7 +363,11 @@ namespace PlusLevelStudio.Lua
                 Singleton<EditorPlayModeManager>.Instance.Win();
                 return;
             }
-            if (script.Globals.Get("OnLevelCompleted").Type != DataType.Function) return;
+            if (script.Globals.Get("OnLevelCompleted").Type != DataType.Function)
+            {
+                Singleton<EditorPlayModeManager>.Instance.Win();
+                return;
+            }
             DynValue returnV = script.Call(script.Globals["OnLevelCompleted"]);
             if (returnV.Type != DataType.String)
             {
