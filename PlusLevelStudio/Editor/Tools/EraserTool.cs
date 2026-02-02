@@ -8,17 +8,16 @@ using UnityEngine;
 
 namespace PlusLevelStudio.Editor.Tools
 {
-    public class BrushTool : EditorTool
+    public class EraserTool : EditorTool
     {
-        public override string id => "paintbrush";
+        public override string id => "eraser";
 
         List<IntVector2> currentCells = new List<IntVector2>();
-        bool painting = false;
-        EditorRoom targetRoom = null;
+        bool erasing = false;
 
-        public BrushTool()
+        public EraserTool()
         {
-            sprite = LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/paintbrush");
+            sprite = LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/eraser");
         }
 
         public override void Begin()
@@ -34,20 +33,14 @@ namespace PlusLevelStudio.Editor.Tools
         public override void Exit()
         {
             currentCells.Clear();
-            painting = false;
+            erasing = false;
             EditorController.Instance.RefreshCells();
             EditorController.Instance.UnhighlightAllCells();
         }
 
         public override bool MousePressed()
         {
-            painting = true;
-            targetRoom = EditorController.Instance.levelData.RoomFromPos(EditorController.Instance.mouseGridPosition, true);
-            if (targetRoom == null)
-            {
-                targetRoom = EditorController.Instance.levelData.hall;
-            }
-            EditorController.Instance.HighlightCells(EditorController.Instance.levelData.GetCellsOwnedByRoom(targetRoom), "light_yellow");
+            erasing = true;
             return false;
         }
 
@@ -55,20 +48,45 @@ namespace PlusLevelStudio.Editor.Tools
         {
             if (currentCells.Count == 0) return true;
             EditorController.Instance.AddUndo();
+
+            // now, find all areas we overlapped and get their cells, using a hashset to avoid duplicates
+            HashSet<CellArea> overlappedAreas = new HashSet<CellArea>();
+            for (int i = 0; i < currentCells.Count; i++)
+            {
+                CellArea foundArea = EditorController.Instance.levelData.AreaFromPos(currentCells[i], false);
+                if (foundArea != null)
+                {
+                    overlappedAreas.Add(foundArea);
+                }
+            }
+            foreach (var item in overlappedAreas)
+            {
+                // get all cells except the ones we cut
+                List<IntVector2> cells = item.CalculateOwnedCells().ToList();
+                currentCells.Do(x => cells.RemoveMatchingIntVector2s(x));
+                EditorController.Instance.levelData.areas.Remove(item);
+                ProcessRoom(item.roomId, cells);
+                EditorController.Instance.levelData.RemoveUnusedRoom(item.roomId);
+            }
+            EditorController.Instance.RefreshCells(true);
+            SoundPlayOneshot("Explosion");
+            return true;
+        }
+
+        public void ProcessRoom(ushort roomId, List<IntVector2> cells)
+        {
+            if (cells.Count == 0) return;
             List<List<RectInt>> potRects = new List<List<RectInt>>();
             for (int i = 0; i < 16; i++)
             {
-                potRects.Add(EditorHelpers.GenerateIdealRects(currentCells));
+                potRects.Add(EditorHelpers.GenerateIdealRects(cells));
             }
             potRects.Sort(CompareRectLists);
             List<RectInt> rects = potRects[0];
-            ushort roomId = EditorController.Instance.levelData.IdFromRoom(targetRoom);
             for (int i = 0; i < rects.Count; i++)
             {
                 EditorController.Instance.levelData.areas.Add(new RectCellArea(rects[i].position.ToMystVector(), rects[i].size.ToMystVector(), roomId));
             }
-            SoundPlayOneshot("Nana_Sput");
-            return true;
         }
 
         /// <summary>
@@ -101,19 +119,14 @@ namespace PlusLevelStudio.Editor.Tools
                 return;
             }
             EditorController.Instance.selector.SelectTile(gridPos);
-            if (painting)
+            if (erasing)
             {
-                if ((!currentCells.Contains(gridPos)) && (EditorController.Instance.levelData.RoomIdFromPos(gridPos, true) == 0))
+                if ((!currentCells.Contains(gridPos)) && (EditorController.Instance.levelData.RoomIdFromPos(gridPos, true) != 0))
                 {
-                    SoundPlayOneshot("Nana_Sput");
+                    SoundPlayOneshot("Nana_Slip");
                     currentCells.Add(gridPos);
-                    // room shouldn't be null here, because if we've reached this point roomId wasn't zero
                     Cell cell = EditorController.Instance.workerEc.cells[gridPos.x, gridPos.z];
-                    cell.Tile.gameObject.SetActive(true);
-                    cell.Tile.MeshRenderer.material.SetMainTexture(EditorController.Instance.GenerateTextureAtlas(targetRoom.floorTex, targetRoom.wallTex, targetRoom.ceilTex));
-                    cell.SetShape(0, TileShapeMask.None);
-                    cell.Tile.MeshRenderer.material.SetTexture("_LightMap", LevelStudioPlugin.Instance.lightmaps["yellow"]);
-                    //EditorController.Instance.RefreshCells();
+                    cell.Tile.gameObject.SetActive(false);
                 }
             }
         }
