@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -554,7 +553,7 @@ namespace PlusLevelStudio.Lua
             }
             if (doJingle)
             {
-                IEnumerator numberator = (IEnumerator)_EventTimer.Invoke(myManager.Ec, new object[] { newEvent, 3f });
+                IEnumerator numberator = (IEnumerator)_EventTimer.Invoke(myManager.Ec, new object[] { newEvent, 3f, newEvent.Type == RandomEventType.TimeOut });
                 myManager.Ec.StartCoroutine(numberator);
             }
             else
@@ -605,10 +604,16 @@ namespace PlusLevelStudio.Lua
             return null;
         }
 
+        public void PlaySoundObject(string sound)
+        {
+            Singleton<CoreGameManager>.Instance.audMan.PlaySingle(LevelStudioPlugin.Instance.sounds[sound]);
+        }
+
         public void SpawnItemPickup(Vector3Proxy position, string itemId)
         {
             ItemObject obj = LevelLoaderPlugin.Instance.itemObjects[itemId];
-            myManager.Ec.CreateItem(myManager.Ec.CellFromPosition(position.ToVector()).room, obj, position.ToVector());
+            Pickup pickup = myManager.Ec.CreateItem(myManager.Ec.CellFromPosition(position.ToVector()).room, obj, position.ToVector2YAsZ());
+            pickup.icon = myManager.Ec.map.AddIcon(pickup.iconPre, pickup.transform, Color.white);
         }
 
         public CellProxy CellFromPosition(Vector3Proxy proxy)

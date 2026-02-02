@@ -86,6 +86,12 @@ namespace PlusLevelStudio.Lua
             return new Vector3(x, y, z);
         }
 
+        [MoonSharpHidden]
+        public Vector2 ToVector2YAsZ()
+        {
+            return new Vector2(x, z);
+        }
+
         public float DistanceFrom(Vector3Proxy other)
         {
             return Vector3.Distance(ToVector(),other.ToVector());
