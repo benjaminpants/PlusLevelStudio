@@ -5,10 +5,11 @@ using UnityEngine;
 
 namespace PlusLevelStudio.Editor
 {
-    public class NPCPlacement : IEditorVisualizable, IEditorDeletable, IEditorPositionVerifyable
+    public class NPCPlacement : IEditorVisualizable, IEditorDeletable, IEditorPositionVerifyable, IEditorSettingsable
     {
         public string npc;
         public IntVector2 position;
+        public NPCProperties properties;
         public void CleanupVisual(GameObject visualObject)
         {
             
@@ -22,6 +23,7 @@ namespace PlusLevelStudio.Editor
         public void InitializeVisual(GameObject visualObject)
         {
             visualObject.GetComponent<EditorDeletableObject>().toDelete = this;
+            visualObject.GetComponent<SettingsComponent>().activateSettingsOn = this;
             UpdateVisual(visualObject);
         }
 
@@ -30,6 +32,14 @@ namespace PlusLevelStudio.Editor
             data.npcs.Remove(this);
             EditorController.Instance.RemoveVisual(this);
             return true;
+        }
+
+        public void SettingsClicked()
+        {
+            if (properties == null) return;
+            NPCPropertyExchangeHandler handler = (NPCPropertyExchangeHandler)EditorController.Instance.CreateUI(LevelStudioPlugin.Instance.npcPropertyTypes[npc].pageType, npc + "_Properties", LevelStudioPlugin.Instance.npcPropertyTypes[npc].pagePath);
+            handler.properties = properties;
+            handler.OnPropertiesAssigned();
         }
 
         public void UpdateVisual(GameObject visualObject)

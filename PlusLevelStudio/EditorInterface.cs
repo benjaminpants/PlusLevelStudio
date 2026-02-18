@@ -225,6 +225,7 @@ namespace PlusLevelStudio
             EditorRendererContainer container = clone.gameObject.AddComponent<EditorRendererContainer>();
             container.AddRendererRange(clone.GetComponentsInChildren<Renderer>(), "none");
             clone.gameObject.AddComponent<EditorDeletableObject>().renderContainer = container;
+            clone.gameObject.AddComponent<SettingsComponent>();
             LevelStudioPlugin.Instance.npcDisplays.Add(key, clone);
             return clone;
         }

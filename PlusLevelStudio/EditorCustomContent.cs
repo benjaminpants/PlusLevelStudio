@@ -1,12 +1,15 @@
 ﻿using MTM101BaldAPI;
 using MTM101BaldAPI.AssetTools;
+using MTM101BaldAPI.Registers;
+using MTM101BaldAPI.UI;
+using PlusLevelStudio.Editor;
+using PlusStudioLevelLoader;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using UnityEngine;
-using MTM101BaldAPI.UI;
 
 namespace PlusLevelStudio
 {
@@ -30,6 +33,9 @@ namespace PlusLevelStudio
 
         public Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
         public Dictionary<string, PosterObject> posters = new Dictionary<string, PosterObject>();
+        public Dictionary<string, NPC> npcs = new Dictionary<string, NPC>();
+
+        public List<GameObject> gameObjects = new List<GameObject>();
 
         public void CleanupContent()
         {
@@ -46,6 +52,19 @@ namespace PlusLevelStudio
             {
                 UnityEngine.Object.Destroy(kvp.Value);
             }
+            // clear NPCMetadata before we do anything
+            /*
+            foreach (var item in npcs)
+            {
+                NPCMetadata meta = item.Value.GetMeta();
+                meta.prefabs.Remove(meta.prefabs.First(x => x.Value == item.Value).Key);
+            }*/
+            foreach (var gm in gameObjects)
+            {
+                UnityEngine.Object.Destroy(gm);
+            }
+            npcs.Clear();
+            gameObjects.Clear();
             textures.Clear();
             posters.Clear();
         }
@@ -148,6 +167,23 @@ namespace PlusLevelStudio
                 if (posters.ContainsKey(entry.id)) continue; // the texture is already loaded
                 PosterObject posterObj = LevelStudioPlugin.Instance.GenerateBulletInPoster(entry.id, Encoding.Unicode.GetString(entry.GetData()), BaldiFonts.ComicSans12);
                 posters.Add(entry.id, posterObj);
+            }
+
+            List<EditorCustomContentEntry> npcEntries = package.GetAllOfType("npc");
+            foreach (EditorCustomContentEntry entry in npcEntries)
+            {
+                MemoryStream stream = new MemoryStream(entry.GetData());
+                BinaryReader reader = new BinaryReader(stream);
+                byte version = reader.ReadByte(); // just incase
+                string characterBase = reader.ReadString();
+                NPCProperties properties = LevelStudioPlugin.Instance.ConstructNPCPropertiesOfType(characterBase);
+                properties.ReadInto(reader);
+                GameObject[] createdObjects = properties.GeneratePrefabs(LevelLoaderPlugin.Instance.npcAliases[characterBase]);
+                gameObjects.AddRange(createdObjects);
+                npcs.Add(entry.id, createdObjects[0].GetComponent<NPC>());
+                reader.Close();
+                // handle metadata
+                //createdObjects[0].GetComponent<NPC>().AddMetaPrefab();
             }
 
         }
@@ -338,6 +374,8 @@ namespace PlusLevelStudio
                 case "chalkboardposter":
                 case "baldisaysposter":
                     throw new Exception("Attempted to get text poster from filePath even though that shouldn't happen?!");
+                case "npc":
+                    throw new Exception("Attempted to get NPC data from filepath?!");
             }
             return null;
         }

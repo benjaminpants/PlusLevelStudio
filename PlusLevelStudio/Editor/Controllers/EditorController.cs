@@ -750,6 +750,34 @@ namespace PlusLevelStudio.Editor
             Export();
         }
 
+        public virtual void HandleNPCProperties(BaldiLevel compiledLevel, EditorCustomContentPackage content)
+        {
+            // id stuff is placeholder
+            int suffix = 0;
+            for (int i = 0; i < compiledLevel.npcs.Count; i++)
+            {
+                NPCInfo compNPC = compiledLevel.npcs[i];
+                NPCPlacement placement = levelData.npcs[i];
+                if (placement.properties == null) continue;
+                if (placement.properties.IsAtDefaultSettings()) continue;
+                suffix++;
+                string generatedId = compNPC.npc + "_" + suffix;
+                MemoryStream memStream = new MemoryStream();
+                BinaryWriter writer = new BinaryWriter(memStream);
+                writer.Write((byte)0); // i dont think i'll need a version byte but im paranoid.
+                writer.Write(compNPC.npc); // base npc
+                placement.properties.Write(writer);
+                writer.Close();
+                content.entries.Add(new EditorCustomContentEntry()
+                {
+                    id= generatedId,
+                    contentType="npc",
+                    data=memStream.ToArray()
+                });
+                compNPC.npc = generatedId;
+            }
+        }
+
         public virtual void Export()
         {
             CleanupUnusedContentFromData();
@@ -765,6 +793,10 @@ namespace PlusLevelStudio.Editor
                     id = "thumbnail",
                     data = GenerateThumbnailIntoByteArray()
                 };
+            }
+            if (!currentMode.vanillaComplaint)
+            {
+                HandleNPCProperties(level, playableLevel.meta.contentPackage);
             }
             Directory.CreateDirectory(LevelStudioPlugin.levelExportPath);
 
@@ -813,7 +845,11 @@ namespace PlusLevelStudio.Editor
             AccessTools.Field(typeof(Singleton<StickerManager>), "m_Instance").SetValue(null, null); // so coregamemanager gets created properly
             PlayableEditorLevel playableLevel = new PlayableEditorLevel();
             playableLevel.data = level;
-            playableLevel.meta = levelData.meta; // we actually dont need to compile here i think
+            playableLevel.meta = levelData.meta.CompileContent(); // okay nevermind lets compile
+            if (!currentMode.vanillaComplaint)
+            {
+                HandleNPCProperties(level, playableLevel.meta.contentPackage);
+            }
             EditorPlayModeManager.LoadLevel(playableLevel, 0, true, lastPlayedLevel, currentMode.id);
             DestroySelf();
         }
@@ -907,12 +943,12 @@ namespace PlusLevelStudio.Editor
 
         public T CreateUI<T>(string name, string path) where T : UIExchangeHandler
         {
-            T obj = UIBuilder.BuildUIFromFile<T>(canvas.GetComponent<RectTransform>(), name, path);
-            /*obj.transform.SetAsFirstSibling();
-            for (int i = 0; i < uiObjects.Length; i++)
-            {
-                uiObjects[i].transform.SetAsFirstSibling();
-            }*/
+            return (T)CreateUI(typeof(T), name, path);
+        }
+
+        public UIExchangeHandler CreateUI(Type type, string name, string path)
+        {
+            UIExchangeHandler obj = UIBuilder.BuildUIFromFile(type, canvas.GetComponent<RectTransform>(), name, path);
             CursorController.Instance.transform.SetAsLastSibling();
             tooltipBase.transform.SetAsLastSibling();
             uiOverlays.Add(obj.gameObject);

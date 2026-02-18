@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using BepInEx;
+﻿using BepInEx;
 using HarmonyLib;
 using MoonSharp.Interpreter;
 using MTM101BaldAPI;
@@ -23,6 +18,11 @@ using PlusLevelStudio.Lua;
 using PlusLevelStudio.UI;
 using PlusStudioLevelFormat;
 using PlusStudioLevelLoader;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -78,6 +78,7 @@ namespace PlusLevelStudio
         public Dictionary<string, EditorRoomVisualManager> roomVisuals = new Dictionary<string, EditorRoomVisualManager>();
         public Dictionary<string, EditorGameMode> gameModeAliases = new Dictionary<string, EditorGameMode>();
         public Dictionary<string, TextureContainer> defaultRoomTextures = new Dictionary<string, TextureContainer>();
+        public Dictionary<string, NPCPropertyPage> npcPropertyTypes = new Dictionary<string, NPCPropertyPage>();
         public GameObject pickupVisual;
         public GameObject posterVisual;
         public GameObject wallVisual;
@@ -257,6 +258,13 @@ namespace PlusLevelStudio
             MarkerLocation marker = (MarkerLocation)LevelStudioPlugin.Instance.markerTypes[type].GetConstructor(new Type[0]).Invoke(new object[0]);
             marker.type = type;
             return marker;
+        }
+
+        public NPCProperties ConstructNPCPropertiesOfType(string type)
+        {
+            if (!LevelStudioPlugin.Instance.npcPropertyTypes.ContainsKey(type)) return null;
+            NPCProperties structure = (NPCProperties)LevelStudioPlugin.Instance.npcPropertyTypes[type].npcPropertiesType.GetConstructor(new Type[0]).Invoke(new object[0]);
+            return structure;
         }
 
         public IEnumerator LoadEditorScene(string modeToLoad, string pathToLoad = null, string loadedLevel = null)
@@ -1779,6 +1787,13 @@ namespace PlusLevelStudio
             selectableShopItems.Add("reachextend");
 
             premadeRoomDoors.Add("johnny_store", "autodoor");
+
+            npcPropertyTypes.Add("playtime", new NPCPropertyPage()
+            {
+                pageType = typeof(PlaytimePropExchangeHandler),
+                npcPropertiesType = typeof(PlaytimeProperties),
+                pagePath = Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "NPCSettings", "Playtime.json")
+            });
 
             yield return "Setting up GameManagers...";
 

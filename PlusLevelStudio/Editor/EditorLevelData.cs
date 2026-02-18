@@ -749,7 +749,7 @@ namespace PlusLevelStudio.Editor
             return compiled;
         }
 
-        public const byte version = 16;
+        public const byte version = 17;
 
         public bool WallFree(IntVector2 pos, Direction dir, bool ignoreSelf)
         {
@@ -900,6 +900,19 @@ namespace PlusLevelStudio.Editor
             {
                 stringComp.WriteStoredString(writer, npcs[i].npc);
                 writer.Write(npcs[i].position.ToByte());
+                if (npcs[i].properties == null)
+                {
+                    writer.Write(true);
+                }
+                else
+                {
+                    bool isAtDefault = npcs[i].properties.IsAtDefaultSettings();
+                    writer.Write(isAtDefault);
+                    if (!isAtDefault)
+                    {
+                        npcs[i].properties.Write(writer);
+                    }
+                }
             }
             writer.Write(posters.Count);
             for (int i = 0; i < posters.Count; i++)
@@ -1114,11 +1127,21 @@ namespace PlusLevelStudio.Editor
             int npcCount = reader.ReadInt32();
             for (int i = 0; i < npcCount; i++)
             {
-                levelData.npcs.Add(new NPCPlacement()
+                NPCPlacement npc = new NPCPlacement()
                 {
-                    npc=stringComp.ReadStoredString(reader),
-                    position=reader.ReadByteVector2().ToInt()
-                });
+                    npc = stringComp.ReadStoredString(reader),
+                    position = reader.ReadByteVector2().ToInt()
+                };
+                npc.properties = LevelStudioPlugin.Instance.ConstructNPCPropertiesOfType(npc.npc);
+                if (version >= 17)
+                {
+                    bool atDefault = reader.ReadBoolean();
+                    if (!atDefault)
+                    {
+                        npc.properties.ReadInto(reader);
+                    }
+                }
+                levelData.npcs.Add(npc);
             }
             int posterCount = reader.ReadInt32();
             for (int i = 0; i < posterCount; i++)

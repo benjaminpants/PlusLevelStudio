@@ -305,6 +305,14 @@ namespace PlusLevelStudio.Lua
             script.Call(script.Globals["NotebookCollected"], new Vector3Proxy(notebook.transform.position));
         }
 
+        public override void BaldiSlapped(Baldi baldi)
+        {
+            base.BaldiSlapped(baldi);
+            if (!globalsDefined) return;
+            if (script.Globals.Get("BaldiSlapped").Type != DataType.Function) return;
+            script.Call(script.Globals["BaldiSlapped"], myProxy.GetProxyForNPC(baldi));
+        }
+
 
         public void ActivateBonusProblems(bool includeLast)
         {
@@ -568,7 +576,8 @@ namespace PlusLevelStudio.Lua
 
         private Dictionary<NPC, NPCProxy> proxies = new Dictionary<NPC, NPCProxy>();
 
-        private NPCProxy GetProxyForNPC(NPC npc)
+        [MoonSharpHidden]
+        public NPCProxy GetProxyForNPC(NPC npc)
         {
             if (proxies.ContainsKey(npc))
             {

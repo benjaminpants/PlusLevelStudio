@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using HarmonyLib;
 using MoonSharp.Interpreter;
 using PlusStudioLevelLoader;
 using UnityEngine;
@@ -163,6 +165,16 @@ namespace PlusLevelStudio.Lua
         public void AddAnger(float amount)
         {
             baldi.GetAngry(amount);
+        }
+
+        static MethodInfo _ActivateSlapAnimation = AccessTools.Method(typeof(Baldi_StateBase), "ActivateSlapAnimation");
+        public void Slap()
+        {
+            baldi.Slap();
+            if (baldi.behaviorStateMachine.CurrentState is Baldi_StateBase)
+            {
+                _ActivateSlapAnimation.Invoke(baldi.behaviorStateMachine.CurrentState, null);
+            }
         }
 
         public void SetAnger(float amount)

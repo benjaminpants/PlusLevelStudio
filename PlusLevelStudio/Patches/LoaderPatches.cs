@@ -55,4 +55,28 @@ namespace PlusLevelStudio.Patches
             return true;
         }
     }
+
+    [HarmonyPatch(typeof(LevelLoaderPlugin))]
+    [HarmonyPatch("NPCFromAlias")]
+    static class NPCAliasPatch
+    {
+        static bool Prefix(string alias, ref NPC __result)
+        {
+            if (EditorPlayModeManager.Instance != null)
+            {
+                if (EditorPlayModeManager.Instance.customContent.npcs.ContainsKey(alias))
+                {
+                    __result = EditorPlayModeManager.Instance.customContent.npcs[alias];
+                    return false;
+                }
+            }
+            if (EditorController.Instance == null) return true;
+            if (EditorController.Instance.customContent.npcs.ContainsKey(alias))
+            {
+                __result = EditorController.Instance.customContent.npcs[alias];
+                return false;
+            }
+            return true;
+        }
+    }
 }
