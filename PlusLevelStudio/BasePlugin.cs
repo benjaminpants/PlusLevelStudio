@@ -1794,6 +1794,12 @@ namespace PlusLevelStudio
                 npcPropertiesType = typeof(PlaytimeProperties),
                 pagePath = Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "NPCSettings", "Playtime.json")
             });
+            npcPropertyTypes.Add("pomp", new NPCPropertyPage()
+            {
+                pageType = typeof(PompPropExchangeHandler),
+                npcPropertiesType = typeof(PompProperties),
+                pagePath = Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "NPCSettings", "Pomp.json")
+            });
 
             yield return "Setting up GameManagers...";
 
