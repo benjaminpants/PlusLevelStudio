@@ -52,13 +52,6 @@ namespace PlusLevelStudio
             {
                 UnityEngine.Object.Destroy(kvp.Value);
             }
-            // clear NPCMetadata before we do anything
-            /*
-            foreach (var item in npcs)
-            {
-                NPCMetadata meta = item.Value.GetMeta();
-                meta.prefabs.Remove(meta.prefabs.First(x => x.Value == item.Value).Key);
-            }*/
             foreach (var gm in gameObjects)
             {
                 UnityEngine.Object.Destroy(gm);
@@ -182,8 +175,6 @@ namespace PlusLevelStudio
                 gameObjects.AddRange(createdObjects);
                 npcs.Add(entry.id, createdObjects[0].GetComponent<NPC>());
                 reader.Close();
-                // handle metadata
-                //createdObjects[0].GetComponent<NPC>().AddMetaPrefab();
             }
 
         }

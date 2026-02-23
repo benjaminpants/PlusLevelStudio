@@ -37,6 +37,7 @@ namespace PlusLevelStudio.Editor
         public void SettingsClicked()
         {
             if (properties == null) return;
+            if (EditorController.Instance.currentMode.vanillaComplaint) return; // vanilla complaint can't use the ContentPackage system.
             NPCPropertyExchangeHandler handler = (NPCPropertyExchangeHandler)EditorController.Instance.CreateUI(LevelStudioPlugin.Instance.npcPropertyTypes[npc].pageType, npc + "_Properties", LevelStudioPlugin.Instance.npcPropertyTypes[npc].pagePath);
             handler.properties = properties;
             handler.OnPropertiesAssigned();
