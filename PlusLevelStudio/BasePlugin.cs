@@ -1800,6 +1800,12 @@ namespace PlusLevelStudio
                 npcPropertiesType = typeof(PompProperties),
                 pagePath = Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "NPCSettings", "Pomp.json")
             });
+            npcPropertyTypes.Add("sweep", new NPCPropertyPage()
+            {
+                pageType = typeof(GottaSweepPropExchangeHandler),
+                npcPropertiesType = typeof(GottaSweepProperties),
+                pagePath = Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "NPCSettings", "GottaSweep.json")
+            });
 
             yield return "Setting up GameManagers...";
 
