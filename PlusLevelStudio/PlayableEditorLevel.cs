@@ -11,15 +11,17 @@ namespace PlusLevelStudio
 {
     public class PlayableEditorLevel
     {
+        public ulong uniqueId = 0; // zero is reserved for "never had a uuid"
         public PlayableLevelMeta meta;
         public string filePath;
         public BaldiLevel data;
 
-        public const byte version = 3;
+        public const byte version = 4;
 
         public void Write(BinaryWriter writer)
         {
             writer.Write(version);
+            writer.Write(uniqueId);
             meta.Write(writer);
             data.Write(writer);
         }
@@ -28,6 +30,10 @@ namespace PlusLevelStudio
         {
             PlayableEditorLevel playable = new PlayableEditorLevel();
             byte version = reader.ReadByte();
+            if (version >= 4)
+            {
+                playable.uniqueId = reader.ReadUInt64();
+            }
             byte[] oldThumb = null;
             if ((version >= 1) && (version < 3)) // version 0 had no thumbnails, versions 1 and 2 had the thumbnail in PlayableEditorLevel, format 3 and above have it in the custom content.
             {

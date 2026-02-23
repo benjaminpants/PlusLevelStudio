@@ -778,11 +778,28 @@ namespace PlusLevelStudio.Editor
             }
         }
 
+        // Source - https://stackoverflow.com/a/6651661
+        // Posted by Dyppl, modified by community. See post 'Timeline' for change history
+        // Retrieved 2026-02-23, License - CC BY-SA 3.0
+        protected ulong RandomUUID(System.Random rand)
+        {
+            byte[] buf = new byte[8];
+            rand.NextBytes(buf);
+            ulong longRand = BitConverter.ToUInt64(buf, 0);
+            if (longRand == 0)
+            {
+                longRand = 1;
+            }
+            return longRand;
+        }
+
+
         public virtual void Export()
         {
             CleanupUnusedContentFromData();
             BaldiLevel level = Compile();
             PlayableEditorLevel playableLevel = new PlayableEditorLevel();
+            playableLevel.uniqueId = RandomUUID(new System.Random());
             playableLevel.data = level;
             playableLevel.meta = levelData.meta.CompileContent();
             if (playableLevel.meta.contentPackage.thumbnailEntry == null)
@@ -844,6 +861,7 @@ namespace PlusLevelStudio.Editor
             AccessTools.Field(typeof(Singleton<CoreGameManager>), "m_Instance").SetValue(null, null); // so coregamemanager gets created properly
             AccessTools.Field(typeof(Singleton<StickerManager>), "m_Instance").SetValue(null, null); // so coregamemanager gets created properly
             PlayableEditorLevel playableLevel = new PlayableEditorLevel();
+            playableLevel.uniqueId = 0;
             playableLevel.data = level;
             playableLevel.meta = levelData.meta.CompileContent(); // okay nevermind lets compile
             if (!currentMode.vanillaComplaint)
