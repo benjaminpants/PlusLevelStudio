@@ -32,4 +32,27 @@ namespace PlusLevelStudio.Editor
 
         public abstract void Write(BinaryWriter writer);
     }
+
+    public class DummyNPCProperties : NPCProperties
+    {
+        public override GameObject[] GeneratePrefabs(NPC baseNpc)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool IsAtDefaultSettings()
+        {
+            return true;
+        }
+
+        public override void ReadInto(BinaryReader reader)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Write(BinaryWriter writer)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

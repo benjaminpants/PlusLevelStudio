@@ -230,6 +230,11 @@ namespace PlusLevelStudio
             return clone;
         }
 
+        public static void AddNPCExtraVisual(string extraKey, string originalKey)
+        {
+            LevelStudioPlugin.Instance.npcDisplays.Add(extraKey, LevelStudioPlugin.Instance.npcDisplays[originalKey]);
+        }
+
         /// <summary>
         /// Generates a visual for the specified tile based object, and adds it to the tileBasedObjectDisplays dictionary.
         /// </summary>

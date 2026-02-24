@@ -12,7 +12,7 @@ namespace PlusLevelStudio.Editor
     /// <summary>
     /// The level data class used by the editor itself.
     /// </summary>
-    public class EditorLevelData
+    public class EditorLevelData : IStudioLegacyKnowledgable
     {
         public IntVector2 mapSize = new IntVector2(50,50);
         public PlusStudioLevelFormat.Cell[,] cells;
@@ -81,6 +81,8 @@ namespace PlusLevelStudio.Editor
                 return exit.direction;
             }
         }
+
+        public StudioLevelLegacyFlags legacyFlags { get; set; }
 
         public Dictionary<string, TextureContainer> defaultTextures = new Dictionary<string, TextureContainer>();
 
@@ -395,6 +397,7 @@ namespace PlusLevelStudio.Editor
 
         public EditorLevelData(IntVector2 mapSize)
         {
+            legacyFlags = StudioLevelLegacyFlags.None;
             this.mapSize = mapSize;
             cells = new PlusStudioLevelFormat.Cell[mapSize.x, mapSize.z];
             for (int x = 0; x < mapSize.x; x++)
@@ -1004,6 +1007,10 @@ namespace PlusLevelStudio.Editor
             levelData.elevatorTitle = title;
             levelData.lightGroups.Clear();
             levelData.rooms.Clear();
+            if (version < 17)
+            {
+                levelData.legacyFlags |= StudioLevelLegacyFlags.BeforeNPCCustom;
+            }
             int areaCount = reader.ReadInt32();
             for (int i = 0; i < areaCount; i++)
             {

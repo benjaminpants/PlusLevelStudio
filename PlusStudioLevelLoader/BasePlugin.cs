@@ -325,6 +325,9 @@ namespace PlusStudioLevelLoader
             npcAliases.Add("cloudy", MTM101BaldiDevAPI.npcMetadata.Get(Character.Cumulo).value);
             npcAliases.Add("reflex", MTM101BaldiDevAPI.npcMetadata.Get(Character.DrReflex).value);
 
+            // add npc variants
+            npcAliases.Add("baldi_tutor", MTM101BaldiDevAPI.npcMetadata.Get(Character.Baldi).prefabs["Baldi_Tutor"]);
+
             // auto add all posters i cant be bothered
             List<PosterObject> allBasePosters = Resources.FindObjectsOfTypeAll<PosterObject>().Where(x => x.GetInstanceID() >= 0).ToList();
             List<PosterObject> toRemove = new List<PosterObject>();

@@ -12,8 +12,7 @@ namespace PlusLevelStudio.Editor
         public string pagePath;
     }
 
-    public abstract class 
-        NPCPropertyExchangeHandler : EditorOverlayUIExchangeHandler
+    public abstract class NPCPropertyExchangeHandler : EditorOverlayUIExchangeHandler
     {
         public NPCProperties properties;
         public bool propertiesChanged = false;
@@ -37,6 +36,14 @@ namespace PlusLevelStudio.Editor
                 EditorController.Instance.CancelHeldUndo();
             }
             return base.OnExit();
+        }
+    }
+
+    public class DummyNPCPropExchangeHandler : NPCPropertyExchangeHandler
+    {
+        public override void OnPropertiesAssigned()
+        {
+            // do nothing
         }
     }
 }

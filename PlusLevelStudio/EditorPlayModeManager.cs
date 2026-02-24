@@ -20,6 +20,7 @@ namespace PlusLevelStudio
         public bool returnToEditor = true;
         public string editorLevelToLoad;
         public string editorModeToLoad;
+        public bool waitingForCreation = false;
         public void OnExit()
         {
             if (customContent != null)
@@ -57,10 +58,26 @@ namespace PlusLevelStudio
             Destroy(gameObject);
         }
 
+        void Update()
+        {
+            if (waitingForCreation)
+            {
+                if (Singleton<BaseGameManager>.Instance != null)
+                {
+                    waitingForCreation = false;
+                    if (Singleton<BaseGameManager>.Instance is IStudioLegacyKnowledgable)
+                    {
+                        ((IStudioLegacyKnowledgable)Singleton<BaseGameManager>.Instance).legacyFlags |= this.customContent.legacyFlags;
+                    }
+                }
+            }
+        }
+
         public static void LoadLevel(PlayableEditorLevel level, int lives, bool returnToEditor, string levelToLoad = null, string modeToLoad = "full")
         {
             // we must establish the PlayModeManager first so we can load custom content BEFORE the SceneObject is created.
             EditorPlayModeManager pmm = GameObject.Instantiate<EditorPlayModeManager>(LevelStudioPlugin.Instance.assetMan.Get<EditorPlayModeManager>("playModeManager"));
+            pmm.waitingForCreation = true;
             pmm.customContent = new EditorCustomContent(level.meta.contentPackage);
             SceneObject sceneObj = LevelImporter.CreateSceneObject(level.data);
             sceneObj.manager = LevelStudioPlugin.Instance.gameModeAliases[level.meta.gameMode].prefab;

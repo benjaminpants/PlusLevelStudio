@@ -103,16 +103,21 @@ namespace PlusLevelStudio.Ingame
         }
     }
 
-    public class EditorSpeedyChallengeManager : SpeedyChallengeManager
+    public class EditorSpeedyChallengeManager : SpeedyChallengeManager, IStudioLegacyKnowledgable
     {
+        public StudioLevelLegacyFlags legacyFlags { get; set; } = StudioLevelLegacyFlags.None;
+
         public override void ExitedSpawn()
         {
-            // hack until customizable baldi speeds are implemented
-            for (int i = 0; i < ec.npcsToSpawn.Count; i++)
+            if (legacyFlags.HasFlag(StudioLevelLegacyFlags.BeforeNPCCustom))
             {
-                if (ec.npcsToSpawn[i].Character == Character.Baldi)
+                // hack for old levels that were made before customizable baldi speed was implemented
+                for (int i = 0; i < ec.npcsToSpawn.Count; i++)
                 {
-                    ec.npcsToSpawn[i] = NPCMetaStorage.Instance.Get(Character.Baldi).prefabs["FastBaldi"];
+                    if (ec.npcsToSpawn[i].Character == Character.Baldi)
+                    {
+                        ec.npcsToSpawn[i] = NPCMetaStorage.Instance.Get(Character.Baldi).prefabs["FastBaldi"];
+                    }
                 }
             }
             base.ExitedSpawn();

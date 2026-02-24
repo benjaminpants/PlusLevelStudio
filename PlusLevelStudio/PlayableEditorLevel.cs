@@ -9,8 +9,10 @@ using UnityEngine;
 
 namespace PlusLevelStudio
 {
-    public class PlayableEditorLevel
+    public class PlayableEditorLevel : IStudioLegacyKnowledgable
     {
+        public StudioLevelLegacyFlags legacyFlags { get; set; } = StudioLevelLegacyFlags.None;
+
         public ulong uniqueId = 0; // zero is reserved for "never had a uuid"
         public PlayableLevelMeta meta;
         public string filePath;

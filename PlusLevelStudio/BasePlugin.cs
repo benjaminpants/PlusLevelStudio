@@ -84,6 +84,9 @@ namespace PlusLevelStudio
         public GameObject wallVisual;
         public GameObject wallRemoveVisual;
 
+        // listen to the fucking variable name modders and DO NOT ADD TO THIS! This system is PLACEHOLDER and if you add things then it wont work as its stored as an index and not as a name or anything that could be properly handled!
+        internal List<Baldi> animCurvesBaldiPrefabsDoNotAddToThis = new List<Baldi>();
+
         public Dictionary<string, EditorMode> modes = new Dictionary<string, EditorMode>();
 
         public static string playableLevelPath => Path.Combine(basePath, "Playables");
@@ -356,7 +359,7 @@ namespace PlusLevelStudio
                 settingsPageType = typeof(StealthyChallengeSettingsPageUIExchangeHandler),
             });
 
-            gameModeAliases.Add("speedy", new EditorGameMode()
+            gameModeAliases.Add("speedy", new SpeedyChallengeGameMode()
             {
                 prefab = editorSpeedyChallenge,
                 nameKey = "Ed_GameMode_Speedy",
@@ -634,6 +637,10 @@ namespace PlusLevelStudio
             EditorInterfaceModes.AddVanillaPosters(complaintMode);
             EditorInterfaceModes.AddVanillaToolTools(complaintMode, false);
             EditorInterfaceModes.AddVanillaEvents(complaintMode, false);
+            EditorInterfaceModes.InsertToolsInCategory(complaintMode, "npcs", "npc_baldi", new EditorTool[]
+            {
+                new NPCExtraTool("baldi_tutor", "baldi")
+            });
             //complaintMode.availableRandomEvents.Remove("testprocedure");
 
             modes.Add("compliant", complaintMode);
@@ -749,6 +756,15 @@ namespace PlusLevelStudio
 
             Resources.FindObjectsOfTypeAll<SoundObject>().Where(x => x.GetInstanceID() >= 0).Do(x => sounds.Add(x.name, x));
             sounds.Add("GrappleLoop", ObjectCreators.CreateSoundObject(Resources.FindObjectsOfTypeAll<AudioClip>().First(x => x.name == "GrappleLoop" && x.GetInstanceID() >= 0), "GrappleLoop", SoundType.Effect, Color.white));
+
+            // get baldis
+            animCurvesBaldiPrefabsDoNotAddToThis.Add((Baldi)NPCMetaStorage.Instance.Get(Character.Baldi).prefabs["Baldi"]);
+            animCurvesBaldiPrefabsDoNotAddToThis.Add((Baldi)NPCMetaStorage.Instance.Get(Character.Baldi).prefabs["FastBaldi"]);
+            animCurvesBaldiPrefabsDoNotAddToThis.Add((Baldi)NPCMetaStorage.Instance.Get(Character.Baldi).prefabs["Baldi_Main1"]);
+            animCurvesBaldiPrefabsDoNotAddToThis.Add((Baldi)NPCMetaStorage.Instance.Get(Character.Baldi).prefabs["Baldi_Main2"]);
+            animCurvesBaldiPrefabsDoNotAddToThis.Add((Baldi)NPCMetaStorage.Instance.Get(Character.Baldi).prefabs["Baldi_Main3"]);
+            animCurvesBaldiPrefabsDoNotAddToThis.Add((Baldi)NPCMetaStorage.Instance.Get(Character.Baldi).prefabs["Baldi_Main4"]);
+            animCurvesBaldiPrefabsDoNotAddToThis.Add((Baldi)NPCMetaStorage.Instance.Get(Character.Baldi).prefabs["Baldi_Main5"]);
 
             string[] cableNames = Enum.GetNames(typeof(CableColor));
             for (int i = 0; i < cableNames.Length; i++)
@@ -1653,6 +1669,8 @@ namespace PlusLevelStudio
             EditorInterface.AddNPCVisual("cloudy", LevelLoaderPlugin.Instance.npcAliases["cloudy"]);
             EditorInterface.AddNPCVisual("reflex", LevelLoaderPlugin.Instance.npcAliases["reflex"]);
 
+            EditorInterface.AddNPCExtraVisual("baldi_tutor", "baldi");
+
             // regions stuff
 
             // frankly i need to move this to its own thing and store it in asset manager or something as a template
@@ -1815,6 +1833,13 @@ namespace PlusLevelStudio
                 pageType = typeof(GottaSweepPropExchangeHandler),
                 npcPropertiesType = typeof(GottaSweepProperties),
                 pagePath = Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "NPCSettings", "GottaSweep.json")
+            });
+
+            npcPropertyTypes.Add("baldi", new NPCPropertyPage()
+            {
+                pageType = typeof(BaldiPropExchangeHandler),
+                npcPropertiesType = typeof(BaldiProperties),
+                pagePath = Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "NPCSettings", "Baldi.json")
             });
 
             yield return "Setting up GameManagers...";

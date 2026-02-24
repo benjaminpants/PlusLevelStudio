@@ -16,7 +16,7 @@ namespace PlusLevelStudio
     /// <summary>
     /// A class containg all custom content for the specified floor.
     /// </summary>
-    public class EditorCustomContent
+    public class EditorCustomContent : IStudioLegacyKnowledgable
     {
         public EditorCustomContent()
         {
@@ -26,6 +26,7 @@ namespace PlusLevelStudio
         public EditorCustomContent(EditorCustomContentPackage package)
         {
             LoadFromPackage(package);
+            legacyFlags |= package.legacyFlags;
         }
 
 
@@ -36,6 +37,8 @@ namespace PlusLevelStudio
         public Dictionary<string, NPC> npcs = new Dictionary<string, NPC>();
 
         public List<GameObject> gameObjects = new List<GameObject>();
+
+        public StudioLevelLegacyFlags legacyFlags { get; set; } = StudioLevelLegacyFlags.None;
 
         public void CleanupContent()
         {
@@ -180,9 +183,10 @@ namespace PlusLevelStudio
         }
     }
 
-    public class EditorCustomContentPackage
+    public class EditorCustomContentPackage : IStudioLegacyKnowledgable
     {
         public bool allowingFilePaths { get; private set; }
+        public StudioLevelLegacyFlags legacyFlags { get; set; } = StudioLevelLegacyFlags.None;
 
         public EditorCustomContentPackage(bool filePaths)
         {
@@ -268,7 +272,7 @@ namespace PlusLevelStudio
             return entries.FindAll(x => types.Contains(x.contentType));
         }
 
-        public const byte version = 1;
+        public const byte version = 2;
 
         public void Write(BinaryWriter writer)
         {
@@ -291,6 +295,10 @@ namespace PlusLevelStudio
             byte version = reader.ReadByte();
             byte entryVersion = reader.ReadByte();
             EditorCustomContentPackage package = new EditorCustomContentPackage(reader.ReadBoolean());
+            if (version < 2)
+            {
+                package.legacyFlags |= StudioLevelLegacyFlags.BeforeNPCCustom;
+            }
             int streamCount = reader.ReadInt32();
             for (int i = 0; i < streamCount; i++)
             {

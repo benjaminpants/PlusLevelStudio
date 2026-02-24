@@ -29,6 +29,18 @@ namespace PlusLevelStudio.Editor
         {
             return null;
         }
+
+        /// <summary>
+        /// Called when an old level made in this mode attempts to load in editor. flagsToHandle is the levelData's LegacyFlags.
+        /// 
+        /// </summary>
+        /// <param name="controller"></param>
+        /// <param name="flagsToHandle"></param>
+        /// <returns></returns>
+        public virtual void AttemptToUpdateLegacyLevel(EditorController controller, StudioLevelLegacyFlags flagsToHandle)
+        {
+            
+        }
     }
 
     public abstract class EditorGameModeSettings

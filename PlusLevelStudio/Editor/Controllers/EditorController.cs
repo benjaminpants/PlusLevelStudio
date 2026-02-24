@@ -279,6 +279,14 @@ namespace PlusLevelStudio.Editor
         /// </summary>
         public virtual void PreFileLoad()
         {
+            // uh oh, this levels old, we have to attempt to update it!
+            if (levelData.legacyFlags != StudioLevelLegacyFlags.None)
+            {
+                LevelStudioPlugin.Instance.gameModeAliases[currentFile.data.meta.gameMode].AttemptToUpdateLegacyLevel(this, levelData.legacyFlags);
+                Debug.Log("Old level detected, fixes may have been attempted, cleaning up Legacy flags as we (should) be up to date!");
+                levelData.legacyFlags = StudioLevelLegacyFlags.None;
+                currentFile.data.meta.contentPackage.legacyFlags = StudioLevelLegacyFlags.None;
+            }
             PreFileLoadMods(levelData);
         }
 
