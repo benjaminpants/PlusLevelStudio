@@ -30,7 +30,7 @@ using UnityEngine.UI;
 
 namespace PlusLevelStudio
 {
-    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudio", "Plus Level Studio", "1.6.1.2")]
+    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudio", "Plus Level Studio", "1.7.0.0")]
     [BepInDependency("mtm101.rulerp.bbplus.baldidevapi")]
     [BepInDependency("mtm101.rulerp.baldiplus.levelstudioloader")]
     public class LevelStudioPlugin : BaseUnityPlugin
@@ -47,7 +47,7 @@ namespace PlusLevelStudio
         public const int editorInteractableLayer = 13; // CollidableEntities
         public const int editorInteractableLayerMask = 1 << editorInteractableLayer;
 
-        private Version expectedLoaderVersion = new Version("1.9.0.0");
+        private Version expectedLoaderVersion = new Version("1.10.0.0");
 
         public const int editorHandleLayer = 12; // ClickableEntities
         public const int editorHandleLayerMask = 1 << editorHandleLayer;
@@ -1297,7 +1297,7 @@ namespace PlusLevelStudio
             EditorInterface.AddDoor<DoorDisplay>("autodoor", DoorIngameStatus.AlwaysDoor, assetMan.Get<Material>("AutoDoorMask"), new Material[] { assetMan.Get<Material>("AutoDoorMat"), assetMan.Get<Material>("AutoDoorMat") });
             EditorInterface.AddDoor<DoorDisplay>("flaps", DoorIngameStatus.AlwaysObject, assetMan.Get<Material>("FlapDoorMask"), new Material[] { assetMan.Get<Material>("FlapDoorMat"), assetMan.Get<Material>("FlapDoorMat") });
 
-            WindowObject standardWindowObject = Resources.FindObjectsOfTypeAll<WindowObject>().First(x => x.name == "WoodWindow" && x.GetInstanceID() >= 0);
+            WindowObject standardWindowObject = Resources.FindObjectsOfTypeAll<WindowObject>().First(x => x.name == "GreenWindow" && x.GetInstanceID() >= 0);
             EditorInterface.AddWindow<DoorDisplay>("standard", standardWindowObject.mask, standardWindowObject.overlay);
 
             // elevators
@@ -1553,6 +1553,16 @@ namespace PlusLevelStudio
             powerLeverLineRenderer.material = new Material(Resources.FindObjectsOfTypeAll<Shader>().First(x => x.name == "Shader Graphs/Standard"));
             powerLeverLineRenderer.material.name = "Power Lever Line Renderer";
             powerLeverLineRenderer.widthMultiplier = 0.5f;
+
+            // power reset button
+            GameObject powerResetButtonVisual = EditorInterface.AddStructureGenericVisual("power_reset_button", Resources.FindObjectsOfTypeAll<GameButton>().First(x => x.GetInstanceID() >= 0 && x.name == "GameButton" && x.transform.parent == null).gameObject);
+            GameObject powerButtonGaugeVisual = EditorInterface.CloneToPrefabStripMonoBehaviors(Resources.FindObjectsOfTypeAll<PowerLeverGauge>().First(x => x.name == "PowerLeverGauge" && x.GetInstanceID() >= 0).gameObject);
+            powerButtonGaugeVisual.transform.Find("Box").gameObject.SetActive(true);
+            powerButtonGaugeVisual.transform.Find("Indicator").gameObject.SetActive(true);
+            powerButtonGaugeVisual.transform.SetParent(powerResetButtonVisual.transform);
+            powerButtonGaugeVisual.name = "PowerButtonGauge";
+            powerResetButtonVisual.GetComponent<EditorRendererContainer>().AddRendererRange(powerButtonGaugeVisual.GetComponentsInChildren<Renderer>(), "none");
+
 
             // power lever breaker visual stuff
             GameObject breakerVisual = EditorInterface.AddStructureGenericVisual("powerlever_breaker", Resources.FindObjectsOfTypeAll<BreakerController>().First(x => x.name == "PowerBreaker" && x.GetInstanceID() >= 0).gameObject);

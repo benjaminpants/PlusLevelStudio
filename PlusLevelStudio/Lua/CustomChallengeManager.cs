@@ -76,7 +76,7 @@ namespace PlusLevelStudio.Lua
         }
     }
 
-    public class CustomChallengeManager : BaseGameManager
+    public class CustomChallengeManager : BaseChallengeGameManager
     {
         public string luaScript;
         public Script script;
@@ -171,7 +171,7 @@ namespace PlusLevelStudio.Lua
             script.Call(script.Globals["Initialize"]);
         }
 
-        protected override void ExitedSpawn()
+        public override void ExitedSpawn()
         {
             base.ExitedSpawn();
             script.Call(script.Globals["ExitedSpawn"]);
@@ -274,27 +274,8 @@ namespace PlusLevelStudio.Lua
         {
             if (finalExitsTriggered) return;
             finalExitsTriggered = true;
-            ec.SetElevators(true);
-            if (!performEscape)
-            {
-                foreach (Elevator elevator in ec.elevators)
-                {
-                    elevator.PrepareForExit();
-                    elevator.InsideCollider.Enable(true);
-                    StartCoroutine(EnterExit(elevator));
-                }
-                return;
-            }
-            elevatorsToClose = ec.elevators.Count - 1;
-            foreach (Elevator elevator in ec.elevators)
-            {
-                if (ec.elevators.Count > 1)
-                {
-                    elevator.PrepareToClose();
-                }
-
-                StartCoroutine(ReturnSpawnFinal(elevator));
-            }
+            ec.ElevatorManager.SetTotalOutOfOrderElevators(performEscape ? ec.Elevators.Count - 1 : 0);
+            ec.ElevatorManager.SetAllElevators(ElevatorState.OpenForExit);
         }
 
         public override void CollectNotebook(Notebook notebook)

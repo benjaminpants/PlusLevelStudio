@@ -27,8 +27,18 @@ namespace PlusStudioLevelLoader.Patches
             { "Level loader letting EnvironmentObjects know level generation has complete.", "InformStructureBuildersDone" },
             { "Level loader blocking tiles marked to be blocked.", "ApplyCellCoverages" },
             { "Tile data loaded.", "ApplyCellSecrets" },
-            { "Level loader loading tile based objects.", "PoolItemSpawns" } // this runs after "Level loader placing items"
+            { "Level loader loading tile based objects.", "PoolItemSpawns" }, // this runs after "Level loader placing items"
+            { "Level loader setting NPC spawn points.", "InitializeActivities" }
         };
+
+        public static void InitializeActivities(LevelLoader loader, LevelData data)
+        {
+            Debug.Log("Level loader initializing activities... (Loader Extension)");
+            foreach (Activity activity in loader.Ec.activities)
+            {
+                activity.Initialize();
+            }
+        }
 
         public static void ApplyCellSecrets(LevelLoader loader, LevelData data)
         {

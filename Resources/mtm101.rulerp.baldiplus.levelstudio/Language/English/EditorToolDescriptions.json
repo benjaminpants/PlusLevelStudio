@@ -78,7 +78,7 @@
 {"key":"Ed_Tool_door_autodoor_Title","value":"Auto Door"},
 {"key":"Ed_Tool_door_autodoor_Desc","value":"Beloved by all store-goers and store-owners everywhere."},
 
-{"key":"Ed_Tool_window_standard_Title","value":"Wooden Window"},
+{"key":"Ed_Tool_window_standard_Title","value":"Green Window"},
 {"key":"Ed_Tool_window_standard_Desc","value":"Although not a door at first glance, this 'door' can be opened by First-Prize slamming into it!"},
 
 {"key":"Ed_Tool_light_fluorescent_Title","value":"Fluorescent Light"},
@@ -359,6 +359,8 @@
 {"key":"Ed_Tool_structure_powerlever_lever_gray_Title","value":"Power Lever (Gray Wire)"},
 {"key":"Ed_Tool_structure_powerlever_lever_black_Title","value":"Power Lever (Black Wire)"},
 {"key":"Ed_Tool_structure_powerlever_lever_Desc","value":"Connect this to a room to make it so the player has to turn this lever on in order to perform any activities inside."},
+{"key":"Ed_Tool_structure_powerlever_resetbutton_Title","value":"Breaker Reset Button"},
+{"key":"Ed_Tool_structure_powerlever_resetbutton_Desc","value":"Resets the power of all lever connected rooms when pressed.\nRequires a Breaker to function."},
 {"key":"Ed_Tool_structure_steamvalves_Title","value":"Steam Valve"},
 {"key":"Ed_Tool_structure_steamvalves_Desc","value":"Creates a cloud of smoke of a configurable radius that can be hidden in."},
 

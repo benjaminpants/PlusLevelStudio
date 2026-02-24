@@ -20,14 +20,14 @@ namespace PlusLevelStudio.Editor.Tools
             this.isSpawn = isSpawn;
         }
 
-        public override void Update()
+        public override void Begin()
         {
-            // ACK HACK!
             if ((EditorController.Instance.levelData.exits.Find(x => x.isSpawn) != null) && isSpawn)
             {
                 EditorController.Instance.SwitchToTool(null);
+                return;
             }
-            base.Update();
+            base.Begin();
         }
 
         public override bool ValidLocation(IntVector2 position)

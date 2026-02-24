@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -22,6 +23,7 @@ namespace PlusLevelStudio.Ingame
         static FieldInfo _emergencyLightColor = AccessTools.Field(typeof(Structure_PowerLever), "emergencyLightColor");
         static FieldInfo _emergencyLightStrength = AccessTools.Field(typeof(Structure_PowerLever), "emergencyLightStrength");
         static FieldInfo _generatedEmergencyLights = AccessTools.Field(typeof(Structure_PowerLever), "generatedEmergencyLights");
+        static FieldInfo _generatedResetButtons = AccessTools.Field(typeof(Structure_PowerLever), "generatedResetButtons");
         static FieldInfo _generatedGauges = AccessTools.Field(typeof(Structure_PowerLever), "generatedGauges");
         static FieldInfo _generatedPowerLevers = AccessTools.Field(typeof(Structure_PowerLever), "generatedPowerLevers");
         static FieldInfo _emergencyLightPrefab = AccessTools.Field(typeof(Structure_PowerLever), "emergencyLightPrefab");
@@ -30,6 +32,8 @@ namespace PlusLevelStudio.Ingame
         static FieldInfo _breakerPrefab = AccessTools.Field(typeof(Structure_PowerLever), "breakerPrefab");
         static FieldInfo _maxPowerLevel = AccessTools.Field(typeof(Structure_PowerLever), "maxPowerLevel");
         static MethodInfo _BuildModel = AccessTools.Method(typeof(Structure_PowerLever), "BuildModel");
+        static FieldInfo _resetButtonPrefab = AccessTools.Field(typeof(Structure_PowerLever), "resetButtonPrefab");
+        static FieldInfo _gaugePrefab = AccessTools.Field(typeof(Structure_PowerLever), "gaugePrefab");
 
         float chanceForPoweredRoom = 0f;
         bool generatedBreaker = false;
@@ -37,7 +41,7 @@ namespace PlusLevelStudio.Ingame
         public void GenerateBreaker(Cell cell, Direction direction)
         {
             BreakerController breakerController = Instantiate<BreakerController>((BreakerController)_breakerPrefab.GetValue(this), cell.room.transform);
-            breakerController.Initialize(ec, (List<PowerLeverController>)_generatedPowerLevers.GetValue(this), (List<PowerLeverGauge>)_generatedGauges.GetValue(this), (List<Cell>)_generatedEmergencyLights.GetValue(this), cell.position, (int)_maxPowerLevel.GetValue(this));
+            breakerController.Initialize(ec, (List<PowerLeverController>)_generatedPowerLevers.GetValue(this), (List<PowerLeverGauge>)_generatedGauges.GetValue(this), (List<GameButton>)_generatedResetButtons.GetValue(this), (List<Cell>)_generatedEmergencyLights.GetValue(this), cell.position, (int)_maxPowerLevel.GetValue(this));
             breakerController.transform.position = cell.FloorWorldPosition;
             breakerController.transform.rotation = direction.ToRotation();
             cell.HardCover(breakerController.coverage.Rotated(direction));
@@ -84,6 +88,15 @@ namespace PlusLevelStudio.Ingame
             _BuildModel.Invoke(this, new object[] { chosenRoom, color, path, leverDirection });
         }
 
+        public void GenerateResetButton(IntVector2 position, Direction direction)
+        {
+            GameButton button = (GameButton)GameButton.Build((GameButton)_resetButtonPrefab.GetValue(this), ec, position, direction);
+            List<GameButton> generatedResetButtons = (List<GameButton>)_generatedResetButtons.GetValue(this);
+            generatedResetButtons.Add(button);
+            PowerLeverGauge item = GameObject.Instantiate<PowerLeverGauge>((PowerLeverGauge)_gaugePrefab.GetValue(this), button.transform);
+            ((List<PowerLeverGauge>)_generatedGauges.GetValue(this)).Add(item);
+
+        }
         public override void Load(List<StructureData> data)
         {
             BreakerController.ResetStaticVariables();
@@ -127,6 +140,9 @@ namespace PlusLevelStudio.Ingame
                         Direction breakerdirection = baseData.direction;
                         GenerateBreaker(ec.CellFromPosition(breakerPosition), breakerdirection);
                         generatedBreaker = true;
+                        break;
+                    case 3:
+                        GenerateResetButton(baseData.position, baseData.direction);
                         break;
                     default:
                         throw new NotImplementedException("Unknown type encountered when generating power levers (possible de-sync?): " + baseData.data);

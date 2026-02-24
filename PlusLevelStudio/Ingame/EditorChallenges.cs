@@ -15,7 +15,7 @@ namespace PlusLevelStudio.Ingame
             Singleton<EditorPlayModeManager>.Instance.Win();
         }
 
-        protected override void ExitedSpawn()
+        public override void ExitedSpawn()
         {
             base.ExitedSpawn();
             ec.StartEventTimers();
@@ -45,7 +45,7 @@ namespace PlusLevelStudio.Ingame
         }
 
         static FieldInfo _ignorePlayerOnSpawn = AccessTools.Field(typeof(NPC), "ignorePlayerOnSpawn");
-        protected override void ExitedSpawn()
+        public override void ExitedSpawn()
         {
             Dictionary<NPC, bool> toRevert = new Dictionary<NPC, bool>();
             // change all the principal prefabs to ignore the player so we dont have any issues with that
@@ -105,7 +105,7 @@ namespace PlusLevelStudio.Ingame
 
     public class EditorSpeedyChallengeManager : SpeedyChallengeManager
     {
-        protected override void ExitedSpawn()
+        public override void ExitedSpawn()
         {
             // hack until customizable baldi speeds are implemented
             for (int i = 0; i < ec.npcsToSpawn.Count; i++)

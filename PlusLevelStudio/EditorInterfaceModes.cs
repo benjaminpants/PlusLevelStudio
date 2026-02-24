@@ -233,6 +233,7 @@ namespace PlusLevelStudio
                 new PowerLeverLeverTool(CableColor.gray),
                 new PowerLeverLeverTool(CableColor.black),
                 new PowerLeverBreakerTool(),
+                new PowerLeverResetButtonTool(),
                 new SteamValveTool(),
                 new ObjectToolNoRotation("wormhole", 5f), // not even a structure but i think its better categorized here
                 new HallDoorStructureTool("regionlockdowndoors", "regionlockdowndoor_1"),

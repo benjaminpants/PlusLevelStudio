@@ -92,6 +92,7 @@ namespace PlusLevelStudio.Editor
         public List<PointLocation> alarmLights = new List<PointLocation>();
         public List<PowerLeverLocation> powerLevers = new List<PowerLeverLocation>();
         public List<BreakerLocation> breakers = new List<BreakerLocation>();
+        public List<SimpleButtonLocation> powerResetButtons = new List<SimpleButtonLocation>();
         public int maxLevers = 3;
         public int poweredRoomChance = 10;
 
@@ -122,6 +123,15 @@ namespace PlusLevelStudio.Editor
             };
         }
 
+        public SimpleButtonLocation CreateResetButton()
+        {
+            return new SimpleButtonLocation()
+            {
+                prefab = "power_reset_button",
+                deleteAction = DeletePowerReset
+            };
+        }
+
         public BreakerLocation CreateBreaker()
         {
             return new BreakerLocation()
@@ -136,8 +146,24 @@ namespace PlusLevelStudio.Editor
             return new PowerLeverLocation()
             {
                 prefab = "powerlever_lever",
-                deleteAction=DeleteLever
+                deleteAction = DeleteLever
             };
+        }
+
+        public bool DeletePowerReset(EditorLevelData data, SimpleLocation local, bool validatePosition)
+        {
+            EditorController.Instance.RemoveVisual(local);
+            powerResetButtons.Remove((SimpleButtonLocation)local);
+            if (validatePosition)
+            {
+                DeleteIfInvalid();
+            }
+            return true;
+        }
+
+        public bool DeletePowerReset(EditorLevelData data, SimpleLocation local)
+        {
+            return DeletePowerReset(data, local, true);
         }
 
         public bool DeleteBreaker(EditorLevelData data, SimpleLocation local, bool validatePosition)
@@ -211,6 +237,10 @@ namespace PlusLevelStudio.Editor
             {
                 EditorController.Instance.RemoveVisual(breakers[i]);
             }
+            for (int i = 0; i < powerResetButtons.Count; i++)
+            {
+                EditorController.Instance.RemoveVisual(powerResetButtons[i]);
+            }
         }
 
         public override StructureInfo Compile(EditorLevelData data, BaldiLevel level)
@@ -249,6 +279,15 @@ namespace PlusLevelStudio.Editor
                     data = data.rooms.IndexOf(powerLevers[i].room),
                 });
             }
+            for (int i = 0; i < powerResetButtons.Count; i++)
+            {
+                info.data.Add(new StructureDataInfo()
+                {
+                    data = 3,
+                    position = powerResetButtons[i].position.ToData(),
+                    direction = (PlusDirection)powerResetButtons[i].direction
+                });
+            }
             for (int i = 0; i < breakers.Count; i++)
             {
                 info.data.Add(new StructureDataInfo()
@@ -279,6 +318,10 @@ namespace PlusLevelStudio.Editor
             for (int i = 0; i < breakers.Count; i++)
             {
                 EditorController.Instance.AddVisual(breakers[i]);
+            }
+            for (int i = 0; i < powerResetButtons.Count; i++)
+            {
+                EditorController.Instance.AddVisual(powerResetButtons[i]);
             }
         }
 
@@ -316,6 +359,15 @@ namespace PlusLevelStudio.Editor
                 breaker.direction = (Direction)reader.ReadByte();
                 breakers.Add(breaker);
             }
+            if (version < 3) return;
+            int powerResetButtonCount = reader.ReadInt32();
+            for (int i = 0; i < powerResetButtonCount; i++)
+            {
+                SimpleButtonLocation resetButton = CreateResetButton();
+                resetButton.position = reader.ReadByteVector2().ToInt();
+                resetButton.direction = (Direction)reader.ReadByte();
+                powerResetButtons.Add(resetButton);
+            }
         }
 
         public override void ShiftBy(Vector3 worldOffset, IntVector2 cellOffset, IntVector2 sizeDifference)
@@ -332,6 +384,10 @@ namespace PlusLevelStudio.Editor
             {
                 breakers[i].position -= cellOffset;
             }
+            for (int i = 0; i < powerResetButtons.Count; i++)
+            {
+                powerResetButtons[i].position -= cellOffset;
+            }
         }
 
         public override void UpdateVisual(GameObject visualObject)
@@ -347,6 +403,10 @@ namespace PlusLevelStudio.Editor
             for (int i = 0; i < breakers.Count; i++)
             {
                 EditorController.Instance.UpdateVisual(breakers[i]);
+            }
+            for (int i = 0; i < powerResetButtons.Count; i++)
+            {
+                EditorController.Instance.UpdateVisual(powerResetButtons[i]);
             }
         }
 
@@ -373,10 +433,17 @@ namespace PlusLevelStudio.Editor
                     DeleteBreaker(data, breakers[i], false);
                 }
             }
-            return (alarmLights.Count > 0) || (powerLevers.Count > 0) || (breakers.Count > 0);
+            for (int i = (powerResetButtons.Count - 1); i >= 0; i--)
+            {
+                if ((breakers.Count <= 0) || (!powerResetButtons[i].ValidatePosition(data, true)))
+                {
+                    DeletePowerReset(data, powerResetButtons[i], false);
+                }
+            }
+            return (alarmLights.Count > 0) || (powerLevers.Count > 0) || (breakers.Count > 0) || (powerResetButtons.Count > 0);
         }
 
-        const byte version = 2;
+        const byte version = 3;
 
         public override void Write(EditorLevelData data, BinaryWriter writer, StringCompressor compressor)
         {
@@ -401,6 +468,12 @@ namespace PlusLevelStudio.Editor
             {
                 writer.Write(breakers[i].position.ToByte());
                 writer.Write((byte)breakers[i].direction);
+            }
+            writer.Write(powerResetButtons.Count);
+            for (int i = 0; i < powerResetButtons.Count; i++)
+            {
+                writer.Write(powerResetButtons[i].position.ToByte());
+                writer.Write((byte)powerResetButtons[i].direction);
             }
         }
     }

@@ -16,6 +16,11 @@ namespace PlusLevelStudio.Editor.Tools
 
         protected override bool TryPlace(IntVector2 position, Direction dir)
         {
+            if (!EditorController.Instance.levelData.WallFree(position, dir, false))
+            {
+                return false;
+            }
+            EditorController.Instance.AddUndo();
             PowerLeverStructureLocation structure = (PowerLeverStructureLocation)EditorController.Instance.AddOrGetStructureToData("powerlever", true);
             BreakerLocation breaker = structure.CreateBreaker();
             breaker.position = position;

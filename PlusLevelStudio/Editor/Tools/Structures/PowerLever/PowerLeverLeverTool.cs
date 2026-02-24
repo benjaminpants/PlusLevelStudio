@@ -77,6 +77,11 @@ namespace PlusLevelStudio.Editor.Tools
 
         public void DirectionSelected(Direction dir)
         {
+            if (!EditorController.Instance.levelData.WallFree(pos.Value, dir, false))
+            {
+                EditorController.Instance.selector.SelectRotation(pos.Value, DirectionSelected);
+                return;
+            }
             currentLever = new PowerLeverLocation();
             currentLever.prefab = "powerlever_lever";
             currentLever.position = pos.Value;

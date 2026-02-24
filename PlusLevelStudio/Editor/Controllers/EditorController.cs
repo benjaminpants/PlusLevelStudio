@@ -1169,6 +1169,10 @@ namespace PlusLevelStudio.Editor
             if (_currentTool != null)
             {
                 _currentTool.Begin();
+                if (_currentTool == null)
+                {
+                    audMan.PlaySingle(LevelStudioPlugin.Instance.sounds["Activity_Incorrect"], 1f);
+                }
             }
             if (_currentTool == null && toolboxOnNullTool)
             {
@@ -1176,7 +1180,7 @@ namespace PlusLevelStudio.Editor
                 uiObjects[1].SetActive(true);
                 CursorController.Instance.Blink(1);
             }
-            ((EditorCursorController)CursorController.Instance).SetIcon((tool == null) ? null : tool.sprite);
+            ((EditorCursorController)CursorController.Instance).SetIcon((_currentTool == null) ? null : _currentTool.sprite);
         }
 
         /// <summary>
@@ -1185,8 +1189,8 @@ namespace PlusLevelStudio.Editor
         /// <param name="tool"></param>
         public void SwitchToToolToolbox(EditorTool tool)
         {
-            SwitchToTool(tool);
             toolboxOnNullTool = true;
+            SwitchToTool(tool);
         }
 
         /// <summary>
@@ -1602,8 +1606,10 @@ namespace PlusLevelStudio.Editor
             camera.UpdateTargets(transform,0);
             canvas.transform.SetParent(null);
             selector = GameObject.Instantiate(selectorPrefab);
+            // horrible hack to stop Elevator from throwing exceptions
+            ecPrefab.gameObject.SetActive(false);
             workerEc = GameObject.Instantiate(ecPrefab);
-            workerEc.gameObject.SetActive(false);
+            ecPrefab.gameObject.SetActive(true);
             workerEc.name = "WorkerEnvironmentController";
             workerEc.lightMode = LightMode.Cumulative;
             textTextureGenerator = (TextTextureGenerator)_TextTextureGenerator.GetValue(workerEc);

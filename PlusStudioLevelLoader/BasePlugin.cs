@@ -13,7 +13,7 @@ using System.IO;
 
 namespace PlusStudioLevelLoader
 {
-    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudioloader", "Plus Level Loader", "1.9.0.0")]
+    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudioloader", "Plus Level Loader", "1.10.0.0")]
     [BepInDependency("mtm101.rulerp.bbplus.baldidevapi")]
     public class LevelLoaderPlugin : BaseUnityPlugin
     {
@@ -180,7 +180,7 @@ namespace PlusStudioLevelLoader
             doorPrefabs.Add("mysterydoor", doors.First(x => x.name == "SQ_Door_Mystery"));
 
             WindowObject[] windows = Resources.FindObjectsOfTypeAll<WindowObject>().Where(x => x.GetInstanceID() >= 0).ToArray();
-            windowObjects.Add("standard", windows.First(x => x.name == "WoodWindow"));
+            windowObjects.Add("standard", windows.First(x => x.name == "GreenWindow"));
 
             exitDatas.Add("elevator", new LoaderExitData() {
                 prefab = Resources.FindObjectsOfTypeAll<Elevator>().First(x => x.name == "ElevatorWGate" && x.GetInstanceID() >= 0),
