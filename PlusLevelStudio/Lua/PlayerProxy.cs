@@ -214,7 +214,7 @@ namespace PlusLevelStudio.Lua
             set
             {
                 int currentPoints = Singleton<CoreGameManager>.Instance.GetPoints(pm.playerNumber);
-                Singleton<CoreGameManager>.Instance.AddPoints(value - currentPoints, pm.playerNumber, true);
+                Singleton<CoreGameManager>.Instance.AddPoints(value - currentPoints, pm.playerNumber, (currentPoints != value));
             }
         }
 

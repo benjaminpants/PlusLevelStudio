@@ -76,6 +76,17 @@ namespace PlusLevelStudio.Lua
         }
     }
 
+    public class CustomChallengeRoomFunctionHooks : RoomFunction
+    {
+        public CustomChallengeManager ccm;
+
+        public override void OnActivityProgress()
+        {
+            base.OnActivityProgress();
+            ccm.OnActivityProgress(room);
+        }
+    }
+
     public class CustomChallengeManager : BaseChallengeGameManager
     {
         public string luaScript;
@@ -108,9 +119,25 @@ namespace PlusLevelStudio.Lua
             return min + (myRandom.NextDouble() * range);
         }
 
+        public void OnActivityProgress(RoomController rc)
+        {
+            if (script.Globals.Get("OnActivityProgress").Type == DataType.Function)
+            {
+                script.Call(script.Globals["OnActivityProgress"], new RoomProxy(rc));
+            }
+        }
+
+        public override void ActivityCompleted(bool correct, Activity activity)
+        {
+            if (script.Globals.Get("OnActivityCompletion").Type == DataType.Function)
+            {
+                script.Call(script.Globals["OnActivityCompletion"], new RoomProxy(activity.room), correct);
+            }
+        }
+
         public void InitializeScriptGlobals()
         {
-            myProxy = new EditorLuaGameProxy { myManager = this };
+            myProxy = new EditorLuaGameProxy { myManager = this, elevatorManager = new ElevatorManagerProxy() { elevatorManager = ec.ElevatorManager } };
             script.Globals["self"] = myProxy;
             script.Globals["Vector3"] = (Func<float, float, float, Vector3Proxy>)CreateVector;
             script.Globals["IntVector2"] = (Func<int, int, IntVector2Proxy>)CreateIntVector;
@@ -168,6 +195,13 @@ namespace PlusLevelStudio.Lua
             updateFunction = script.Globals.Get("Update");
             InitializeScriptGlobals(); // initialize these after the initial stats have been decided
             script.Globals["player"] = new PlayerProxy(pm);
+            for (int i = 0; i < ec.rooms.Count; i++)
+            {
+                CustomChallengeRoomFunctionHooks ccrfh = ec.rooms[i].functions.gameObject.AddComponent<CustomChallengeRoomFunctionHooks>();
+                ccrfh.ccm = this;
+                ec.rooms[i].functions.AddFunction(ccrfh);
+                ccrfh.Initialize(ec.rooms[i]);
+            }
             script.Call(script.Globals["Initialize"]);
         }
 
@@ -374,6 +408,8 @@ namespace PlusLevelStudio.Lua
     {
         [MoonSharpHidden]
         public CustomChallengeManager myManager;
+
+        public ElevatorManagerProxy elevatorManager;
 
         private BaldiProxy baldi;
 

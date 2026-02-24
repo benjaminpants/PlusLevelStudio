@@ -1834,6 +1834,12 @@ namespace PlusLevelStudio
                 npcPropertiesType = typeof(GottaSweepProperties),
                 pagePath = Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "NPCSettings", "GottaSweep.json")
             });
+            npcPropertyTypes.Add("bully", new NPCPropertyPage()
+            {
+                pageType = typeof(BullyPropExchangeHandler),
+                npcPropertiesType = typeof(BullyProperties),
+                pagePath = Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "NPCSettings", "Bully.json")
+            });
 
             npcPropertyTypes.Add("baldi", new NPCPropertyPage()
             {
