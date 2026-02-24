@@ -639,6 +639,11 @@ namespace PlusLevelStudio
             EditorInterfaceModes.AddVanillaEvents(complaintMode, false);
             EditorInterfaceModes.InsertToolsInCategory(complaintMode, "npcs", "npc_baldi", new EditorTool[]
             {
+                new NPCExtraTool("baldi_main1", "baldi"),
+                new NPCExtraTool("baldi_main2", "baldi"),
+                new NPCExtraTool("baldi_main3", "baldi"),
+                new NPCExtraTool("baldi_main4", "baldi"),
+                new NPCExtraTool("baldi_main5", "baldi"),
                 new NPCExtraTool("baldi_tutor", "baldi")
             });
             //complaintMode.availableRandomEvents.Remove("testprocedure");
@@ -1670,7 +1675,11 @@ namespace PlusLevelStudio
             EditorInterface.AddNPCVisual("reflex", LevelLoaderPlugin.Instance.npcAliases["reflex"]);
 
             EditorInterface.AddNPCExtraVisual("baldi_tutor", "baldi");
-
+            EditorInterface.AddNPCExtraVisual("baldi_main1", "baldi");
+            EditorInterface.AddNPCExtraVisual("baldi_main2", "baldi");
+            EditorInterface.AddNPCExtraVisual("baldi_main3", "baldi");
+            EditorInterface.AddNPCExtraVisual("baldi_main4", "baldi");
+            EditorInterface.AddNPCExtraVisual("baldi_main5", "baldi");
             // regions stuff
 
             // frankly i need to move this to its own thing and store it in asset manager or something as a template
