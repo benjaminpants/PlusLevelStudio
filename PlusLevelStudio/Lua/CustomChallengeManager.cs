@@ -202,6 +202,10 @@ namespace PlusLevelStudio.Lua
                 ec.rooms[i].functions.AddFunction(ccrfh);
                 ccrfh.Initialize(ec.rooms[i]);
             }
+            if (NotebookTotal == 0)
+            {
+                Singleton<CoreGameManager>.Instance.GetHud(0).SetNotebookDisplay(false);
+            }
             script.Call(script.Globals["Initialize"]);
         }
 
@@ -243,6 +247,7 @@ namespace PlusLevelStudio.Lua
 
         public override void AngerBaldi(float val)
         {
+            if (val == 0) return;
             if (!globalsDefined)
             {
                 base.AngerBaldi(val);

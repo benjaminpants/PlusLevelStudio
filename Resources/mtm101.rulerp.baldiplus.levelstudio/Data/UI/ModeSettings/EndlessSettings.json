@@ -1,0 +1,22 @@
+{
+	"defines":{
+
+	},
+	"elements":[
+		{
+			"name":"RefreshButton",
+			"type":"textbutton",
+			"anchoredPosition":[0, -40],
+			"size":[300, 50],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"font":"ComicSans24",
+			"color":[0,0,0],
+			"text":"Configure Items",
+			"alignment":"Center",
+			"localized":false,
+			"onPressed":"configureItems"
+		},
+	]
+}

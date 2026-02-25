@@ -72,6 +72,7 @@ namespace PlusLevelStudio
         public List<string> selectableSkyboxes = new List<string>();
         public List<string> selectableStickers = new List<string>();
         public List<string> selectableShopItems = new List<string>();
+        public List<string> selectableGeneratorItems = new List<string>();
         public Dictionary<string, Sprite> eventSprites = new Dictionary<string, Sprite>();
         public Dictionary<string, Sprite> skyboxSprites = new Dictionary<string, Sprite>();
         public Dictionary<string, Sprite> stickerSprites = new Dictionary<string, Sprite>();
@@ -349,6 +350,7 @@ namespace PlusLevelStudio
                 descKey = "Ed_GameMode_Grapple_Desc"
             });
 
+
             gameModeAliases.Add("stealthy", new StealthyGameMode()
             {
                 prefab = editorStealthyChallenge,
@@ -364,6 +366,16 @@ namespace PlusLevelStudio
                 prefab = editorSpeedyChallenge,
                 nameKey = "Ed_GameMode_Speedy",
                 descKey = "Ed_GameMode_Speedy_Desc"
+            });
+
+            gameModeAliases.Add("endless", new EditorEndlessGameMode()
+            {
+                prefab = assetMan.Get<BaseGameManager>("EditorEndlessGameManager"),
+                nameKey = "Ed_GameMode_Endless",
+                descKey = "Ed_GameMode_Endless_Desc",
+                hasSettingsPage = true,
+                settingsPageType = typeof(EndlessSettingsPageUIExchangeHandler),
+                settingsPagePath = Path.Combine(settingsPagePath, "EndlessSettings.json"),
             });
 
             yield return "Setting up CustomChallengeManager...";
@@ -514,6 +526,7 @@ namespace PlusLevelStudio
                     "grapple",
                     "stealthy",
                     "speedy",
+                    "endless",
                     "custom"
                 }
             };
@@ -1823,6 +1836,8 @@ namespace PlusLevelStudio
             selectableShopItems.Add("inviselixer");
             selectableShopItems.Add("reachextend");
 
+            selectableGeneratorItems.AddRange(selectableShopItems);
+
             premadeRoomDoors.Add("johnny_store", "autodoor");
 
             npcPropertyTypes.Add("playtime", new NPCPropertyPage()
@@ -1887,6 +1902,14 @@ namespace PlusLevelStudio
                 .Build();
 
             assetMan.Add<BaseGameManager>("EditorMainGameManager", emg);
+
+            EndlessGameManager endlessTemplate = Resources.FindObjectsOfTypeAll<EndlessGameManager>().First(x => x.GetInstanceID() >= 0 && x.name == "EndlessGameManager");
+
+            EditorEndlessGameManager eemg = GameObject.Instantiate<EndlessGameManager>(endlessTemplate, MTM101BaldiDevAPI.prefabTransform).gameObject.SwapComponent<EndlessGameManager, EditorEndlessGameManager>();
+            eemg.name = "EditorEndlessGameManager";
+            eemg.continueButton = eemg.transform.Find("Score").Find("ContinueButton").GetComponent<StandardMenuButton>();
+            assetMan.Add<EditorEndlessGameManager>("EditorEndlessGameManager", eemg);
+            // TODO: give EditorEndlessGameManager a reference to the continue button so it can manually override OnPress.
 
             yield return "Setting up Editor Controller...";
             GameObject editorControllerObject = new GameObject("StandardEditorController");

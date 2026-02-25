@@ -67,6 +67,8 @@
 {"key":"Ed_GameMode_Stealthy_Desc","value":"Principal of The Things are after you and will send you to detention if they see you!\nBe sure to not give the detention room a door, and place Baldi inside!"},
 {"key":"Ed_GameMode_Speedy","value":"Speedy Challenge"},
 {"key":"Ed_GameMode_Speedy_Desc","value":"You and Baldi are super fast in this mode!\nNote that Baldi will spawn where you place him, so don't place him too close!"},
+{"key":"Ed_GameMode_Endless","value":"Endless Mode"},
+{"key":"Ed_GameMode_Endless_Desc","value":"Collect notebooks continually and get a high score!"},
 {"key":"Ed_GameMode_Custom","value":"Custom Challenge"},
 {"key":"Ed_GameMode_Custom_Desc","value":"Create your own challenge using Lua!"}
 

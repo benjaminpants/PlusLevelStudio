@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -50,9 +51,17 @@ namespace PlusLevelStudio.Patches
             {
                 if (___balloon[i] != null)
                 {
-                    ___balloon[i].GetComponent<Entity>().Teleport(foundSpawns[i]);
-                    ___balloon[i + 1].GetComponent<Entity>().Teleport(foundSpawns[i + 1]);
-                    continue;
+                    if (!___balloon[i].gameObject.activeSelf)
+                    {
+                        GameObject.Destroy(___balloon[i]);
+                        GameObject.Destroy(___balloon[i + 1]);
+                    }
+                    else
+                    {
+                        ___balloon[i].GetComponent<Entity>().Teleport(foundSpawns[i]);
+                        ___balloon[i + 1].GetComponent<Entity>().Teleport(foundSpawns[i + 1]);
+                        continue;
+                    }
                 }
                 Sprite sprite = ___potentialBalloonSprites[UnityEngine.Random.Range(0, ___potentialBalloonSprites.Count)];
                 // create the balloons
@@ -66,6 +75,24 @@ namespace PlusLevelStudio.Patches
                 ___balloon[i + 1].GetComponent<Entity>().Teleport(foundSpawns[i + 1]);
                 ___potentialBalloonSprites.Remove(sprite);
             }
+        }
+    }
+
+    [HarmonyPatch(typeof(MatchActivity))]
+    [HarmonyPatch("CompletionCheck")]
+    class MatchGameCompletionCheckPatch
+    {
+        static void Postfix(MatchActivity __instance, MatchActivityBalloon[] ___balloon, bool ___completed)
+        {
+            if (___completed) return;
+            for (int i = 0; i < ___balloon.Length; i++)
+            {
+                if (!___balloon[i].Completed)
+                {
+                    return;
+                }
+            }
+            __instance.Completed(0, true);
         }
     }
 }

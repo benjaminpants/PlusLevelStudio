@@ -24,6 +24,10 @@ namespace PlusLevelStudio.Ingame
                 ec.npcsToSpawn.Add(NPCMetaStorage.Instance.Get(Character.Baldi).value);
                 //ec.npcSpawnTile = ec.npcSpawnTile.AddToArray(ec.RandomCell(false,false,true));
             }
+            if (NotebookTotal == 0)
+            {
+                Singleton<CoreGameManager>.Instance.GetHud(0).SetNotebookDisplay(false);
+            }
         }
 
         public override void BeginSpoopMode()

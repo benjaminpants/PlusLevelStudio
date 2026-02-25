@@ -17,7 +17,7 @@ namespace PlusLevelStudio
         public ChallengeWin winScreen;
         public TextMeshProUGUI winText;
         public List<SceneObject> sceneObjectsToCleanUp = new List<SceneObject>();
-        public bool returnToEditor = true;
+        public bool returnToEditor = false;
         public string editorLevelToLoad;
         public string editorModeToLoad;
         public bool waitingForCreation = false;
@@ -76,6 +76,10 @@ namespace PlusLevelStudio
         public static void LoadLevel(PlayableEditorLevel level, int lives, bool returnToEditor, string levelToLoad = null, string modeToLoad = "full")
         {
             // we must establish the PlayModeManager first so we can load custom content BEFORE the SceneObject is created.
+            if (Singleton<HighScoreManager>.Instance != null)
+            {
+                Singleton<HighScoreManager>.Instance.currentLevelId = string.Empty; // no.
+            }
             EditorPlayModeManager pmm = GameObject.Instantiate<EditorPlayModeManager>(LevelStudioPlugin.Instance.assetMan.Get<EditorPlayModeManager>("playModeManager"));
             pmm.waitingForCreation = true;
             pmm.customContent = new EditorCustomContent(level.meta.contentPackage);

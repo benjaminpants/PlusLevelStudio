@@ -268,6 +268,12 @@ namespace PlusLevelStudio.Lua
             Singleton<StickerManager>.Instance.AddSticker(LevelLoaderPlugin.Instance.stickerAliases[stickerId], true, false, animation);
         }
 
+        public void RemoveStickerFromInventory(string stickerId)
+        {
+            if (!LevelLoaderPlugin.Instance.stickerAliases.ContainsKey(stickerId)) return;
+            Singleton<StickerManager>.Instance.stickerInventory.Remove(Singleton<StickerManager>.Instance.stickerInventory.Find(x => x.sticker == LevelLoaderPlugin.Instance.stickerAliases[stickerId]));
+        }
+
         public string[] GetInventoryStickers()
         {
             string[] stickerInv = new string[Singleton<StickerManager>.Instance.stickerInventory.Count];

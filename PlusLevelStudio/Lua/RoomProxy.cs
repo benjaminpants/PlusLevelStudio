@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using HarmonyLib;
 using MoonSharp.Interpreter;
 using MTM101BaldAPI;
 using PlusLevelStudio.Ingame;
@@ -13,6 +15,9 @@ namespace PlusLevelStudio.Lua
     public class RoomProxy
     {
         private RoomController roomController;
+
+        static FieldInfo _activity = AccessTools.Field(typeof(RoomController), "activity");
+        static FieldInfo _notebook = AccessTools.Field(typeof(Activity), "notebook");
 
         public RoomProxy(RoomController rc)
         {
@@ -31,6 +36,35 @@ namespace PlusLevelStudio.Lua
                 return marker.region;
             }
             return 0;
+        }
+
+        public bool hasActivity
+        {
+            get
+            {
+                return ((Activity)_activity.GetValue(roomController)) != null;
+            }
+        }
+
+        public bool activityCompleted
+        {
+            get
+            {
+                if (!hasActivity) return false;
+                return ((Activity)_activity.GetValue(roomController)).IsCompleted;
+            }
+        }
+
+        public bool RespawnActivity()
+        {
+            Activity act = ((Activity)_activity.GetValue(roomController));
+            if (act == null) return false;
+            if (!act.IsCompleted) return false;
+            if (!((Notebook)_notebook.GetValue(act)).hidden) return false;
+            act.InstantReset();
+            roomController.ec.notebookTotal++;
+            Singleton<BaseGameManager>.Instance.CollectNotebooks(0);
+            return true;
         }
 
         public string category
