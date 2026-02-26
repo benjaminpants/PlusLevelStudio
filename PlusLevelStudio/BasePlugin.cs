@@ -657,6 +657,7 @@ namespace PlusLevelStudio
                 new NPCExtraTool("baldi_main3", "baldi"),
                 new NPCExtraTool("baldi_main4", "baldi"),
                 new NPCExtraTool("baldi_main5", "baldi"),
+                new NPCExtraTool("baldi_fast", "baldi"),
                 new NPCExtraTool("baldi_tutor", "baldi")
             });
             //complaintMode.availableRandomEvents.Remove("testprocedure");
@@ -1693,6 +1694,7 @@ namespace PlusLevelStudio
             EditorInterface.AddNPCExtraVisual("baldi_main3", "baldi");
             EditorInterface.AddNPCExtraVisual("baldi_main4", "baldi");
             EditorInterface.AddNPCExtraVisual("baldi_main5", "baldi");
+            EditorInterface.AddNPCExtraVisual("baldi_fast", "baldi");
             // regions stuff
 
             // frankly i need to move this to its own thing and store it in asset manager or something as a template
@@ -1864,6 +1866,24 @@ namespace PlusLevelStudio
                 npcPropertiesType = typeof(BullyProperties),
                 pagePath = Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "NPCSettings", "Bully.json")
             });
+            npcPropertyTypes.Add("principal", new NPCPropertyPage()
+            {
+                pageType = null,
+                npcPropertiesType = typeof(PrincipalProperties),
+                pagePath = null
+            });
+
+            PrincipalProperties.timeSounds.Add(15, sounds["PRI_15"]);
+            PrincipalProperties.timeSounds.Add(20, sounds["PRI_20"]);
+            PrincipalProperties.timeSounds.Add(25, sounds["PRI_25"]);
+            PrincipalProperties.timeSounds.Add(30, sounds["PRI_30"]);
+            PrincipalProperties.timeSounds.Add(35, sounds["PRI_35"]);
+            PrincipalProperties.timeSounds.Add(40, sounds["PRI_40"]);
+            PrincipalProperties.timeSounds.Add(45, sounds["PRI_45"]);
+            PrincipalProperties.timeSounds.Add(50, sounds["PRI_50"]);
+            PrincipalProperties.timeSounds.Add(55, sounds["PRI_55"]);
+            PrincipalProperties.timeSounds.Add(60, sounds["PRI_60"]);
+            PrincipalProperties.timeSounds.Add(99, sounds["PRI_99"]);
 
             npcPropertyTypes.Add("baldi", new NPCPropertyPage()
             {

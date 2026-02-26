@@ -332,6 +332,7 @@ namespace PlusStudioLevelLoader
             npcAliases.Add("baldi_main3", MTM101BaldiDevAPI.npcMetadata.Get(Character.Baldi).prefabs["Baldi_Main3"]);
             npcAliases.Add("baldi_main4", MTM101BaldiDevAPI.npcMetadata.Get(Character.Baldi).prefabs["Baldi_Main4"]);
             npcAliases.Add("baldi_main5", MTM101BaldiDevAPI.npcMetadata.Get(Character.Baldi).prefabs["Baldi_Main5"]);
+            npcAliases.Add("baldi_fast", MTM101BaldiDevAPI.npcMetadata.Get(Character.Baldi).prefabs["FastBaldi"]);
 
             // auto add all posters i cant be bothered
             List<PosterObject> allBasePosters = Resources.FindObjectsOfTypeAll<PosterObject>().Where(x => x.GetInstanceID() >= 0).ToList();
@@ -349,7 +350,7 @@ namespace PlusStudioLevelLoader
                 {
                     continue;
                 }
-                if (poster.name == ("StoreNeon_4_wRestockBase"))
+                if (poster.name == ("StoreNeon_4_wRestockBase") || (poster.name.StartsWith("Chk_Lvl")))
                 {
                     continue;
                 }
