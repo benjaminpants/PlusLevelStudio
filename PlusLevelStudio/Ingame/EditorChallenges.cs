@@ -35,7 +35,7 @@ namespace PlusLevelStudio.Ingame
         }
     }
 
-    public class EditorStealthyChallengeManager : StealthyChallengeManager
+    public class EditorStealthyChallengeManager : StealthyChallengeManager, IStudioLegacyKnowledgable
     {
         public bool giveChalkErasers = true;
         static FieldInfo _allKnowing = AccessTools.Field(typeof(Principal), "allKnowing");
@@ -43,6 +43,8 @@ namespace PlusLevelStudio.Ingame
         {
             Singleton<EditorPlayModeManager>.Instance.Win();
         }
+
+        public StudioLevelLegacyFlags legacyFlags { get; set; } = StudioLevelLegacyFlags.None;
 
         static FieldInfo _ignorePlayerOnSpawn = AccessTools.Field(typeof(NPC), "ignorePlayerOnSpawn");
         public override void ExitedSpawn()
@@ -69,11 +71,14 @@ namespace PlusLevelStudio.Ingame
                     _ignorePlayerOnSpawn.SetValue(ec.npcsToSpawn[i], toRevert[ec.npcsToSpawn[i]]);
                 }
             }
-            foreach (NPC npc in ec.Npcs)
+            if (legacyFlags.HasFlag(StudioLevelLegacyFlags.BeforeNPCCustom))
             {
-                if ((npc.Character == Character.Principal) && (npc is Principal))
+                foreach (NPC npc in ec.Npcs)
                 {
-                    _allKnowing.SetValue(npc, true);
+                    if ((npc.Character == Character.Principal) && (npc is Principal))
+                    {
+                        _allKnowing.SetValue(npc, true);
+                    }
                 }
             }
             ec.StartEventTimers();

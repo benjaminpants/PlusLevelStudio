@@ -36,6 +36,30 @@ namespace PlusLevelStudio.Editor.ModeSettings
         {
             return new StealthyModeSettings();
         }
+
+        public override void AttemptToUpdateLegacyLevel(EditorController controller, StudioLevelLegacyFlags flagsToHandle)
+        {
+            if (flagsToHandle.HasFlag(StudioLevelLegacyFlags.BeforeNPCCustom))
+            {
+                controller.levelData.npcs.ForEach(npc =>
+                {
+                    if (npc.npc == "principal")
+                    {
+                        PrincipalProperties principalProp = (PrincipalProperties)npc.properties;
+                        principalProp.allKnowing = true;
+                    }
+                });
+            }
+        }
+
+        public override void ApplyDefaultNPCProperties(string npc, NPCProperties props)
+        {
+            if (npc == "principal")
+            {
+                PrincipalProperties principalProp = (PrincipalProperties)props;
+                principalProp.allKnowing = true;
+            }
+        }
     }
 
     public class StealthyChallengeSettingsPageUIExchangeHandler : ModeSettingsPageUIExchangeHandler

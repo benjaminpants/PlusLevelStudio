@@ -41,6 +41,11 @@ namespace PlusLevelStudio.Editor
         {
             
         }
+
+        public virtual void ApplyDefaultNPCProperties(string npc, NPCProperties props)
+        {
+
+        }
     }
 
     public abstract class EditorGameModeSettings

@@ -264,11 +264,15 @@ namespace PlusLevelStudio
             return marker;
         }
 
-        public NPCProperties ConstructNPCPropertiesOfType(string type)
+        public NPCProperties ConstructNPCPropertiesOfType(string type, EditorController controller = null)
         {
             if (!LevelStudioPlugin.Instance.npcPropertyTypes.ContainsKey(type)) return null;
-            NPCProperties structure = (NPCProperties)LevelStudioPlugin.Instance.npcPropertyTypes[type].npcPropertiesType.GetConstructor(new Type[0]).Invoke(new object[0]);
-            return structure;
+            NPCProperties properties = (NPCProperties)LevelStudioPlugin.Instance.npcPropertyTypes[type].npcPropertiesType.GetConstructor(new Type[0]).Invoke(new object[0]);
+            if (controller != null)
+            {
+                gameModeAliases[controller.levelData.meta.gameMode].ApplyDefaultNPCProperties(type, properties);
+            }
+            return properties;
         }
 
         public IEnumerator LoadEditorScene(string modeToLoad, string pathToLoad = null, string loadedLevel = null)
@@ -523,10 +527,10 @@ namespace PlusLevelStudio
                 availableGameModes = new List<string>()
                 {
                     "standard",
-                    "grapple",
-                    "stealthy",
-                    "speedy",
                     "endless",
+                    "speedy",
+                    "stealthy",
+                    "grapple",
                     "custom"
                 }
             };
@@ -1868,9 +1872,9 @@ namespace PlusLevelStudio
             });
             npcPropertyTypes.Add("principal", new NPCPropertyPage()
             {
-                pageType = null,
+                pageType = typeof(PrincipalPropExchangeHandler),
                 npcPropertiesType = typeof(PrincipalProperties),
-                pagePath = null
+                pagePath = Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "NPCSettings", "Principal.json")
             });
 
             PrincipalProperties.timeSounds.Add(15, sounds["PRI_15"]);

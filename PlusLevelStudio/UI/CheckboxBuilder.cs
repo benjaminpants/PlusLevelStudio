@@ -19,6 +19,11 @@ namespace PlusLevelStudio.UI
         static FieldInfo _hotspot = AccessTools.Field(typeof(MenuToggle), "hotspot");
         public override GameObject Build(GameObject parent, UIExchangeHandler handler, Dictionary<string, JToken> data)
         {
+            bool inverted = false;
+            if (data.ContainsKey("inverted"))
+            {
+                inverted = data["inverted"].Value<bool>();
+            }
             GameObject baseObject = new GameObject(data["name"].Value<string>() + "_Visual");
             baseObject.transform.SetParent(parent.transform, false);
             Image boxImage = baseObject.AddComponent<Image>();
@@ -26,7 +31,7 @@ namespace PlusLevelStudio.UI
             boxImage.rectTransform.anchorMax = ConvertToVector2(data["anchorMax"]);
             boxImage.rectTransform.sizeDelta = Vector2.one * 32f;
             boxImage.rectTransform.pivot = ConvertToVector2(data["pivot"]);
-            boxImage.sprite = LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("CheckBox");
+            boxImage.sprite = LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>(!inverted ? "CheckBox" : "CheckBox_Inverted");
             GameObject checkObject = new GameObject("Checkmark");
             checkObject.transform.SetParent(baseObject.transform, false);
             checkObject.transform.localScale = Vector3.one; // i still dont know why unity does this shit

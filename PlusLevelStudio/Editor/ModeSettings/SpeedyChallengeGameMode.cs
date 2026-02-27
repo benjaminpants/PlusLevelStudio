@@ -24,5 +24,18 @@ namespace PlusLevelStudio.Editor.ModeSettings
                 });
             }
         }
+
+        public override void ApplyDefaultNPCProperties(string npc, NPCProperties props)
+        {
+            if (npc == "baldi")
+            {
+                BaldiProperties baldiProp = (BaldiProperties)props;
+                int fastBaldiIndex = LevelStudioPlugin.Instance.animCurvesBaldiPrefabsDoNotAddToThis.FindIndex(x => x.name == "FastBaldi");
+                baldiProp.slapPreIndex = fastBaldiIndex;
+                baldiProp.speedPreIndex = fastBaldiIndex;
+                baldiProp.RefreshSlapPre();
+                baldiProp.RefreshSpeedPre();
+            }
+        }
     }
 }

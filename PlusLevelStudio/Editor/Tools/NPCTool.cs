@@ -30,7 +30,7 @@ namespace PlusLevelStudio.Editor.Tools
             NPCPlacement placement = new NPCPlacement();
             placement.npc = npc;
             placement.position = EditorController.Instance.mouseGridPosition;
-            placement.properties = LevelStudioPlugin.Instance.ConstructNPCPropertiesOfType(npc);
+            placement.properties = LevelStudioPlugin.Instance.ConstructNPCPropertiesOfType(npc, EditorController.Instance);
             EditorController.Instance.levelData.npcs.Add(placement);
             EditorController.Instance.AddVisual(placement);
             SoundPlayOneshot("Slap");
