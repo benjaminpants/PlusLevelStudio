@@ -1876,6 +1876,12 @@ namespace PlusLevelStudio
                 npcPropertiesType = typeof(PrincipalProperties),
                 pagePath = Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "NPCSettings", "Principal.json")
             });
+            npcPropertyTypes.Add("chalkface", new NPCPropertyPage()
+            {
+                pageType = typeof(ChalklesPropExchangeHandler),
+                npcPropertiesType = typeof(ChalklesProperties),
+                pagePath = Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "NPCSettings", "Chalkles.json")
+            });
 
             PrincipalProperties.timeSounds.Add(15, sounds["PRI_15"]);
             PrincipalProperties.timeSounds.Add(20, sounds["PRI_20"]);
