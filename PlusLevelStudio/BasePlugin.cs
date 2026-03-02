@@ -1336,8 +1336,10 @@ namespace PlusLevelStudio
             EditorInterface.AddDoor<DoorDisplay>("autodoor", DoorIngameStatus.AlwaysDoor, assetMan.Get<Material>("AutoDoorMask"), new Material[] { assetMan.Get<Material>("AutoDoorMat"), assetMan.Get<Material>("AutoDoorMat") });
             EditorInterface.AddDoor<DoorDisplay>("flaps", DoorIngameStatus.AlwaysObject, assetMan.Get<Material>("FlapDoorMask"), new Material[] { assetMan.Get<Material>("FlapDoorMat"), assetMan.Get<Material>("FlapDoorMat") });
 
-            WindowObject standardWindowObject = Resources.FindObjectsOfTypeAll<WindowObject>().First(x => x.name == "GreenWindow" && x.GetInstanceID() >= 0);
+            WindowObject standardWindowObject = Resources.FindObjectsOfTypeAll<WindowObject>().First(x => x.name == "WoodWindow" && x.GetInstanceID() >= 0);
             EditorInterface.AddWindow<DoorDisplay>("standard", standardWindowObject.mask, standardWindowObject.overlay);
+            standardWindowObject = Resources.FindObjectsOfTypeAll<WindowObject>().First(x => x.name == "GreenWindow" && x.GetInstanceID() >= 0);
+            EditorInterface.AddWindow<DoorDisplay>("green", standardWindowObject.mask, standardWindowObject.overlay);
 
             // elevators
             EditorInterface.AddExit("elevator", LevelLoaderPlugin.Instance.exitDatas["elevator"].prefab);

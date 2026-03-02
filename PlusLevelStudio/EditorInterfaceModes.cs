@@ -92,6 +92,7 @@ namespace PlusLevelStudio
                 new DoorTool("autodoor"),
                 new DoorTool("flaps"),
                 new WindowTool("standard"),
+                new WindowTool("green"),
             }, true);
         }
 

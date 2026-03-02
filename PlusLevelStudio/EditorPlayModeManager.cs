@@ -44,6 +44,7 @@ namespace PlusLevelStudio
         public void Win(string text = "Congratulation! You won!")
         {
             Singleton<MusicManager>.Instance.StopMidi();
+            Singleton<MusicManager>.Instance.StopFile();
             AudioListener.pause = true;
             Time.timeScale = 0f;
             Singleton<CoreGameManager>.Instance.disablePause = true;

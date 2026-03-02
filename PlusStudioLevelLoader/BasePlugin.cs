@@ -180,7 +180,8 @@ namespace PlusStudioLevelLoader
             doorPrefabs.Add("mysterydoor", doors.First(x => x.name == "SQ_Door_Mystery"));
 
             WindowObject[] windows = Resources.FindObjectsOfTypeAll<WindowObject>().Where(x => x.GetInstanceID() >= 0).ToArray();
-            windowObjects.Add("standard", windows.First(x => x.name == "GreenWindow"));
+            windowObjects.Add("standard", windows.First(x => x.name == "WoodWindow"));
+            windowObjects.Add("green", windows.First(x => x.name == "GreenWindow"));
 
             // forgive me for my sins
             exitDatas.Add("elevator", new LoaderExitData() {
