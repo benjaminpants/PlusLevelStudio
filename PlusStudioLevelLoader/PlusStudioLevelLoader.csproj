@@ -3,26 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
 	<GenerateDocumentationFile>True</GenerateDocumentationFile>
-
-  	<RestoreAdditionalProjectSources>
-			https://api.nuget.org/v3/index.json;
-			https://nuget.bepinex.dev/v3/index.json;
-			https://nuget.samboy.dev/v3/index.json
-	</RestoreAdditionalProjectSources>
   </PropertyGroup>
-
-  <ItemGroup>
-		<PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
-		<PackageReference Include="BepInEx.Core" Version="5.*" />
-		<PackageReference Include="UnityEngine.Modules" Version="2020.3.49" IncludeAssets="compile" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-
-		<PackageReference Include="BepInEx.AssemblyPublicizer" Version="0.4.2" />
-		<PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.2">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-</ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\PlusStudioLevelFormat\PlusStudioLevelFormat.csproj" />
