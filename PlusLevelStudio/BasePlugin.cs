@@ -1396,6 +1396,17 @@ namespace PlusLevelStudio
             EditorInterface.AddObjectVisual("waterfountain", LevelLoaderPlugin.Instance.basicObjects["waterfountain"], true);
             EditorInterface.AddObjectVisual("rounddesk", LevelLoaderPlugin.Instance.basicObjects["rounddesk"], true);
             EditorInterface.AddObjectVisualWithMeshCollider("roundtable", LevelLoaderPlugin.Instance.basicObjects["roundtable"], true);
+            EditorBasicObject roundtablechairs1 = EditorInterface.AddObjectVisual("roundtablechairs1", LevelLoaderPlugin.Instance.basicObjects["roundtablechairs1"], false);
+            EditorBasicObject roundtablechairs2 = EditorInterface.AddObjectVisual("roundtablechairs2", LevelLoaderPlugin.Instance.basicObjects["roundtablechairs2"], false);
+            MeshCollider roundtablechairs1_m = roundtablechairs1.gameObject.AddComponent<MeshCollider>();
+            roundtablechairs1_m.sharedMesh = roundtablechairs1.transform.Find("RoundTable").GetComponent<MeshFilter>().sharedMesh;
+            roundtablechairs1_m.convex = true;
+            roundtablechairs1.editorCollider = roundtablechairs1_m;
+
+            MeshCollider roundtablechairs2_m = roundtablechairs2.gameObject.AddComponent<MeshCollider>();
+            roundtablechairs2_m.sharedMesh = roundtablechairs2.transform.Find("RoundTable").GetComponent<MeshFilter>().sharedMesh;
+            roundtablechairs2_m.convex = true;
+            roundtablechairs2.editorCollider = roundtablechairs2_m;
 
             EditorInterface.AddObjectVisual("computer", LevelLoaderPlugin.Instance.basicObjects["computer"], true);
             EditorInterface.AddObjectVisual("computer_off", LevelLoaderPlugin.Instance.basicObjects["computer_off"], true);
@@ -1846,6 +1857,11 @@ namespace PlusLevelStudio
             selectableShopItems.Add("reachextend");
 
             selectableGeneratorItems.AddRange(selectableShopItems);
+            selectableGeneratorItems.Add("points25");
+            selectableGeneratorItems.Add("points50");
+            selectableGeneratorItems.Add("points100");
+            selectableGeneratorItems.Add("points250");
+            selectableGeneratorItems.Add("buspass");
 
             premadeRoomDoors.Add("johnny_store", "autodoor");
 

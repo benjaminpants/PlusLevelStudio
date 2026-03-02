@@ -238,7 +238,6 @@ namespace PlusStudioLevelLoader
             //itemObjects.Add("stickerpack_sticky", ItemMetaStorage.Instance.Find(x => x.id == Items.StickerPack && x.value.name == "StickerPack_Sticky").value);
             itemObjects.Add("gluestick", stickerMeta.itemObjects.First(x => x.name == "GlueStick"));
 
-            // code ported from legacy editor because retyping all of these would be annoying
             GameObject[] objects = Resources.FindObjectsOfTypeAll<GameObject>().Where(x => (x.GetInstanceID() >= 0) && (x.transform.parent == null)).ToArray();
             basicObjects.Add("desk", objects.First(x => (x.name == "Table_Test")));
             basicObjects.Add("bigdesk", objects.First(x => (x.name == "BigDesk")));
@@ -292,6 +291,8 @@ namespace PlusStudioLevelLoader
             basicObjects.Add("johnnysign", objects.First(x => x.name == "JohnnySign"));
             basicObjects.Add("mysterymarks", objects.First(x => x.name == "MysteryRoomMarks"));
             basicObjects.Add("packetomatic", objects.First(x => x.name == "Packet_O_Matic"));
+            basicObjects.Add("roundtablechairs1", objects.First(x => x.name == "RoundTable_Chairs_1"));
+            basicObjects.Add("roundtablechairs2", objects.First(x => x.name == "RoundTable_Chairs_2"));
 
             // activities
             Activity[] activites = Resources.FindObjectsOfTypeAll<Activity>().Where(x => x.GetInstanceID() >= 0).ToArray();

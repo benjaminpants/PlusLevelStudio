@@ -276,6 +276,10 @@
 {"key":"Ed_Tool_object_qmark7_Desc","value":"What color was Baldi's magical elixer?"},
 {"key":"Ed_Tool_object_packetomatic_Title","value":"Packet-o-Matic"},
 {"key":"Ed_Tool_object_packetomatic_Desc","value":"Allows you to apply or replace stickers!"},
+{"key":"Ed_Tool_object_roundtablechairs1_Title","value":"Round Table With Chairs (C)"},
+{"key":"Ed_Tool_object_roundtablechairs1_Desc","value":"A roundtable with 4 chairs surrounding it...\nNow as one object!"},
+{"key":"Ed_Tool_object_roundtablechairs2_Title","value":"Round Table With Chairs (C2)"},
+{"key":"Ed_Tool_object_roundtablechairs2_Desc","value":"A roundtable with 4 diagonal chairs surrounding it...\nNow as one object!"},
 
 {"key":"Ed_Tool_scatter_trees_Title","value":"Trees Scatter Tool"},
 {"key":"Ed_Tool_scatter_trees_Desc","value":"Drag across an area to randomly place trees!"},
@@ -401,7 +405,7 @@
 {"key":"Ed_Tool_itemspawn_25_Title","value":"Potential Item Spawn (25)"},
 {"key":"Ed_Tool_itemspawn_25_Desc","value":"A potential item spawn with the weight of 25."},
 {"key":"Ed_Tool_itemspawn_Title","value":"Potential Item Spawn"},
-{"key":"Ed_Tool_itemspawn_Desc","value":"A potential item spawn.\nUsed by any structure that needs an item spawn point."},
+{"key":"Ed_Tool_itemspawn_Desc","value":"A potential item spawn.\nUsed by any structure/mode/etc that needs an item spawn point."},
 
 {"key":"Ed_Tool_custom_imageposter_Title","value":"Custom Image Poster"},
 {"key":"Ed_Tool_custom_imageposter_Desc","value":"Import a custom image to use as a poster!"},

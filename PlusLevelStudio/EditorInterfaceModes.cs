@@ -373,6 +373,8 @@ namespace PlusLevelStudio
                     new BulkObjectData("chair", new Vector3(-3.5355f,0f,3.535f), new Vector3(0f, 135f, 0f)),
                     new BulkObjectData("chair", new Vector3(3.5355f,0f,3.535f), new Vector3(0f, 225f, 0f))
                 }),
+                new ObjectTool("roundtablechairs1"),
+                new ObjectTool("roundtablechairs2"),
                 new ObjectTool("cabinet"),
                 new ObjectTool("cafeteriatable"),
                 new ObjectTool("waterfountain"),

@@ -497,7 +497,7 @@ namespace PlusLevelStudio
         }
 
         /// <summary>
-        /// Adds the specified object visual with a custom capsule collider for use in editor.
+        /// Adds the specified object visual with a custom mesh collider for use in editor.
         /// </summary>
         /// <param name="key">The key to use in the dictionary.</param>
         /// <param name="obj">The prefab to copy.</param>

@@ -58,7 +58,113 @@ namespace PlusLevelStudio.Editor.ModeSettings
     {
         public override EditorGameModeSettings CreateSettings()
         {
-            return new EndlessModeSettings();
+            EndlessModeSettings settings = new EndlessModeSettings();
+            settings.items.Add(new WeightedID()
+            {
+                id="clock",
+                weight=75,
+            });
+            settings.items.Add(new WeightedID()
+            {
+                id = "boots",
+                weight = 50,
+            });
+            settings.items.Add(new WeightedID()
+            {
+                id = "bsoda",
+                weight = 10,
+            });
+            settings.items.Add(new WeightedID()
+            {
+                id = "dietbsoda",
+                weight = 50,
+            });
+            settings.items.Add(new WeightedID()
+            {
+                id = "dirtychalk",
+                weight = 75,
+            });
+            settings.items.Add(new WeightedID()
+            {
+                id = "keys",
+                weight = 50,
+            });
+            settings.items.Add(new WeightedID()
+            {
+                id = "nametag",
+                weight = 25,
+            });
+            settings.items.Add(new WeightedID()
+            {
+                id = "nosquee",
+                weight = 75,
+            });
+            settings.items.Add(new WeightedID()
+            {
+                id = "whistle",
+                weight = 50,
+            });
+            settings.items.Add(new WeightedID()
+            {
+                id = "scissors",
+                weight = 25,
+            });
+            settings.items.Add(new WeightedID()
+            {
+                id = "swinglock",
+                weight = 75,
+            });
+            settings.items.Add(new WeightedID()
+            {
+                id = "swinglock",
+                weight = 75,
+            });
+            settings.items.Add(new WeightedID()
+            {
+                id = "tape",
+                weight = 75,
+            });
+            settings.items.Add(new WeightedID()
+            {
+                id = "swinglock",
+                weight = 75,
+            });
+            settings.items.Add(new WeightedID()
+            {
+                id = "zesty",
+                weight = 100,
+            });
+            settings.items.Add(new WeightedID()
+            {
+                id = "banana",
+                weight = 75,
+            });
+            settings.items.Add(new WeightedID()
+            {
+                id = "portalposter",
+                weight = 20,
+            });
+            settings.items.Add(new WeightedID()
+            {
+                id = "grapple",
+                weight = 5,
+            });
+            settings.items.Add(new WeightedID()
+            {
+                id = "points25",
+                weight = 60,
+            });
+            settings.items.Add(new WeightedID()
+            {
+                id = "points50",
+                weight = 30,
+            });
+            settings.items.Add(new WeightedID()
+            {
+                id = "points100",
+                weight = 15,
+            });
+            return settings;
         }
     }
 
@@ -99,7 +205,17 @@ namespace PlusLevelStudio.Editor.ModeSettings
         public EndlessSettingsPageUIExchangeHandler settingsHandler;
         public override string GetNameFor(string key)
         {
-            return LocalizationManager.Instance.GetLocalizedText(LevelLoaderPlugin.Instance.itemObjects[key].nameKey);
+            string localized = LocalizationManager.Instance.GetLocalizedText(LevelLoaderPlugin.Instance.itemObjects[key].nameKey);
+            if (localized == LevelLoaderPlugin.Instance.itemObjects[key].nameKey)
+            {
+                string newKey = "Ed_Tool_item_" + key + "_Title";
+                localized = LocalizationManager.Instance.GetLocalizedText(newKey);
+                if (localized == newKey)
+                {
+                    return LevelLoaderPlugin.Instance.itemObjects[key].nameKey;
+                }
+            }
+            return localized;
         }
 
         public override Sprite GetSpriteFor(string key)
