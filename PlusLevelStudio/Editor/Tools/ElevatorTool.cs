@@ -46,7 +46,7 @@ namespace PlusLevelStudio.Editor.Tools
             ExitLocation exitLocal = new ExitLocation();
             exitLocal.position = position;
             exitLocal.direction = dir;
-            exitLocal.type = "elevator";
+            exitLocal.type = type;
             exitLocal.isSpawn = isSpawn;
             if (!exitLocal.ValidatePosition(EditorController.Instance.levelData)) return false;
             EditorController.Instance.AddUndo();

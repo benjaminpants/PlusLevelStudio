@@ -1341,6 +1341,7 @@ namespace PlusLevelStudio
 
             // elevators
             EditorInterface.AddExit("elevator", LevelLoaderPlugin.Instance.exitDatas["elevator"].prefab);
+            EditorInterface.AddExit("elevator_plantless", LevelLoaderPlugin.Instance.exitDatas["elevator_plantless"].prefab);
 
             // pickup visual
             pickupVisual = EditorInterface.CloneToPrefabStripMonoBehaviors(Resources.FindObjectsOfTypeAll<Pickup>().First(x => x.transform.parent == null && x.GetInstanceID() >= 0 && x.name == "Pickup").gameObject);

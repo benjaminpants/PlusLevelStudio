@@ -97,6 +97,11 @@
 {"key":"Ed_Tool_exit_elevator_start_Title","value":"Entrance Elevator"},
 {"key":"Ed_Tool_exit_elevator_start_Desc","value":"If placed, the player will spawn here instead of the spawn point."},
 
+{"key":"Ed_Tool_exit_elevator_plantless_Title","value":"Elevator (Plain)"},
+{"key":"Ed_Tool_exit_elevator_plantless_Desc","value":"An elevator that can be used to exit the level.\n<i>\"I hate green!\" - The green hater"},
+{"key":"Ed_Tool_exit_elevator_plantless_start_Title","value":"Entrance Elevator (Plain)"},
+{"key":"Ed_Tool_exit_elevator_plantless_start_Desc","value":"If placed, the player will spawn here instead of the spawn point.\n<i>\"I hate green!\" - The green hater"},
+
 {"key":"Ed_Tool_item_quarter_Desc","value":"Can be used in a variety of different structures, such as BSODA machines."},
 {"key":"Ed_Tool_item_dietbsoda_Desc","value":"Pushes away entities. Lasts 3 seconds."},
 {"key":"Ed_Tool_item_bsoda_Desc","value":"Pushes away entities. Lasts 30 seconds."},

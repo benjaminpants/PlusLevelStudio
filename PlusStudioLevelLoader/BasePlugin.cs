@@ -182,8 +182,14 @@ namespace PlusStudioLevelLoader
             WindowObject[] windows = Resources.FindObjectsOfTypeAll<WindowObject>().Where(x => x.GetInstanceID() >= 0).ToArray();
             windowObjects.Add("standard", windows.First(x => x.name == "GreenWindow"));
 
+            // forgive me for my sins
             exitDatas.Add("elevator", new LoaderExitData() {
                 prefab = Resources.FindObjectsOfTypeAll<Elevator>().First(x => x.name == "ElevatorWGate" && x.GetInstanceID() >= 0),
+                room = Resources.FindObjectsOfTypeAll<RoomAsset>().First(x => ((UnityEngine.Object)x).name == "Room_Elevator" && x.GetInstanceID() >= 0)
+            });
+            exitDatas.Add("elevator_plantless", new LoaderExitData()
+            {
+                prefab = Resources.FindObjectsOfTypeAll<Elevator>().First(x => x.name == "ElevatorWGate NoPlants" && x.GetInstanceID() >= 0),
                 room = Resources.FindObjectsOfTypeAll<RoomAsset>().First(x => ((UnityEngine.Object)x).name == "Room_Elevator" && x.GetInstanceID() >= 0)
             });
 

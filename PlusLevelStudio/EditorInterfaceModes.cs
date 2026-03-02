@@ -43,6 +43,8 @@ namespace PlusLevelStudio
                 {
                     new ElevatorTool("elevator", true),
                     new ElevatorTool("elevator", false),
+                    new ElevatorTool("elevator_plantless", true),
+                    new ElevatorTool("elevator_plantless", false),
                 }, true);
             }
             AddToolsToCategory(modeToModify, "tools", new EditorTool[]
