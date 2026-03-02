@@ -96,6 +96,7 @@ namespace PlusLevelStudio.Lua
         DynValue updateFunction;
         System.Random myRandom;
         bool globalsDefined = false;
+        public bool escapeSequenceActive = false;
 
         Vector3Proxy CreateVector(float x, float y, float z)
         {
@@ -312,6 +313,7 @@ namespace PlusLevelStudio.Lua
         public void ActivateExits(bool performEscape)
         {
             if (finalExitsTriggered) return;
+            escapeSequenceActive = true;
             finalExitsTriggered = true;
             ec.ElevatorManager.SetTotalOutOfOrderElevators(performEscape ? ec.Elevators.Count - 1 : 0);
             ec.ElevatorManager.SetAllElevators(ElevatorState.OpenForExit);
@@ -460,6 +462,18 @@ namespace PlusLevelStudio.Lua
         public float GetPlayerTimeScale()
         {
             return myManager.Ec.PlayerTimeScale;
+        }
+
+        public bool escapeSequenceActive
+        {
+            get
+            {
+                return myManager.escapeSequenceActive;
+            }
+            set
+            {
+                myManager.escapeSequenceActive = value;
+            }
         }
 
         public void OpenExits(bool doEscape)
