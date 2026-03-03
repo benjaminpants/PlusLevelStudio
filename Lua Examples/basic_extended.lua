@@ -50,3 +50,19 @@ end
 function OnLevelCompleted()
 	return nil -- return a different value to change the message
 end
+
+function BaldiSlapped(baldi)
+
+end
+
+function NoiseMade(position, noise)
+
+end
+
+function OnActivityProgress(room)
+
+end
+
+function ActivityCompleted(room)
+
+end
