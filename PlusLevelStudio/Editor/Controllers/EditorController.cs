@@ -107,7 +107,7 @@ namespace PlusLevelStudio.Editor
         public AudioManager audMan;
         public AudioManager loopingAudMan;
 
-        public bool MovementAndToolsAllowed()
+        public virtual bool MovementAndToolsAllowed()
         {
             return (uiOverlays.Count == 0 && (uiObjects[1] == null || !uiObjects[1].activeSelf) && (!uiObjects[2].activeSelf) && (CursorController.Instance != null && CursorController.Instance.cursorTransform.gameObject.activeSelf));
         }
@@ -1017,7 +1017,7 @@ namespace PlusLevelStudio.Editor
         protected static FieldInfo _xMin = AccessTools.Field(typeof(TooltipController), "xMin");
         protected static FieldInfo _xMax = AccessTools.Field(typeof(TooltipController), "xMax");
 
-        public void UpdateUI()
+        public virtual void UpdateUI()
         {
             if ((float)Singleton<PlayerFileManager>.Instance.resolutionX / (float)Singleton<PlayerFileManager>.Instance.resolutionY >= 1.3333f)
             {
@@ -1164,7 +1164,7 @@ namespace PlusLevelStudio.Editor
         /// Switches the current tool to the one passed in.
         /// </summary>
         /// <param name="tool"></param>
-        public void SwitchToTool(EditorTool tool)
+        public virtual void SwitchToTool(EditorTool tool)
         {
             selector.DisableSelection(); // deselect whatever we had selected
             UnhighlightAllCells();
@@ -1332,7 +1332,7 @@ namespace PlusLevelStudio.Editor
             return false;
         }
 
-        protected void HandleClicking()
+        protected virtual void HandleClicking()
         {
             if (currentTool != null)
             {

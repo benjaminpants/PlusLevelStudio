@@ -1,0 +1,16 @@
+{
+	"defines":{
+	},
+	"elements":[
+		{
+			"name":"Baldi",
+			"type":"image",
+			"graphic":"Baldi_Talk_Standing_Sheet_0",
+			"anchoredPosition":[200,-120],
+			"size":[106,256],
+			"pivot":"#center",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+		},
+	]
+}

@@ -117,8 +117,9 @@ namespace PlusLevelStudio.Menus
             });
 
             CreateMenuButton(emms.editorTypeParent.transform, "FullButton", "Full", new Vector3(0f, 64f, 0f), () => { LevelStudioPlugin.Instance.GoToEditor("full"); });
-            CreateMenuButton(emms.editorTypeParent.transform, "ComplaintButton", "Compliant", new Vector3(0f, 0f, 0f), () => { LevelStudioPlugin.Instance.GoToEditor("compliant"); });
+            CreateMenuButton(emms.editorTypeParent.transform, "CompliantButton", "Compliant", new Vector3(0f, 0f, 0f), () => { LevelStudioPlugin.Instance.GoToEditor("compliant"); });
             CreateMenuButton(emms.editorTypeParent.transform, "RoomsButton", "Rooms", new Vector3(0f, -64f, 0f), () => { LevelStudioPlugin.Instance.GoToEditor("rooms"); });
+            //CreateMenuButton(emms.editorTypeParent.transform, "TutorialButton", "Tutorial", new Vector3(0f, -90f, 0f), () => { LevelStudioPlugin.Instance.GoToEditor("tutorial"); });
 
             UIHelpers.AddBordersToCanvas(canvas);
             return emms;

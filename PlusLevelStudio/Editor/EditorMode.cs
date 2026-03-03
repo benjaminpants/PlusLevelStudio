@@ -43,5 +43,26 @@ namespace PlusLevelStudio.Editor
         public List<EditorGlobalPage> pages = new List<EditorGlobalPage>();
         public List<GlobalStructurePage> globalStructures = new List<GlobalStructurePage>();
         public List<GlobalStructurePage> globalRandomStructures = new List<GlobalStructurePage>();
+
+        public EditorMode MakeCopy()
+        {
+            EditorMode mode = new EditorMode();
+            mode.id = id;
+            mode.defaultTools = defaultTools;
+            mode.categoryOrder = categoryOrder;
+            mode.vanillaComplaint = vanillaComplaint;
+            mode.allowOutOfRoomObjects = allowOutOfRoomObjects;
+            mode.caresAboutSpawn = caresAboutSpawn;
+            mode.availableGameModes = new List<string>(availableGameModes);
+            mode.availableRandomEvents = new List<string>(availableRandomEvents);
+            mode.pages = new List<EditorGlobalPage>(pages);
+            mode.globalStructures = new List<GlobalStructurePage>(globalStructures);
+            mode.globalRandomStructures = new List<GlobalStructurePage>(globalRandomStructures);
+            foreach (var item in availableTools)
+            {
+                mode.availableTools.Add(item.Key, new List<EditorTool>(item.Value));
+            }
+            return mode;
+        }
     }
 }

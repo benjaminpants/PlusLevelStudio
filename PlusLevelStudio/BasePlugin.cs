@@ -740,6 +740,18 @@ namespace PlusLevelStudio
 
             modes.Add("rooms", roomsMode);
 
+            // tutorial mode
+            TutorialEditorController tutorialEditorController = GameObject.Instantiate<EditorController>(assetMan.Get<EditorController>("MainEditorController"), MTM101BaldiDevAPI.prefabTransform).gameObject.SwapComponent<EditorController, TutorialEditorController>();
+            tutorialEditorController.name = "TutorialEditorController";
+            tutorialEditorController.uiObjects = new GameObject[4];
+
+            EditorMode tutorialMode = fullMode.MakeCopy();
+            tutorialMode.id = "tutorial";
+            tutorialMode.prefab = tutorialEditorController;
+            tutorialMode.defaultTools = new string[] { "", "", "", "", "", "", "", "", "" };
+            modes.Add("tutorial", tutorialMode);
+
+
             for (int i = 0; i < EditorInterfaceModes.toCallAfterEditorMode.Count; i++)
             {
                 foreach (EditorMode mode in modes.Values)
@@ -2135,6 +2147,7 @@ namespace PlusLevelStudio
             uiAssetMan.Add<Sprite>("Segment8", allVanillaSprites.First(x => x.name == "Segment_Sheet_8"));
             uiAssetMan.Add<Sprite>("Segment9", allVanillaSprites.First(x => x.name == "Segment_Sheet_9"));
             uiAssetMan.Add<Sprite>("SegmentD", allVanillaSprites.First(x => x.name == "Segment_Sheet_10"));
+            uiAssetMan.Add<Sprite>("Baldi_Talk_Standing_Sheet_0", allVanillaSprites.First(x => x.name == "Baldi_Talk_Standing_Sheet_0"));
             uiAssetMan.Add<Sprite>("BaldiSpeaksPoster", AssetLoader.SpriteFromTexture2D(baldiSaysTexture, 1f));
             uiAssetMan.Add<Sprite>("chk_blank", AssetLoader.SpriteFromTexture2D(chalkTexture, 1f));
             uiAssetMan.Add<Sprite>("BulletinBoard_Blank", AssetLoader.SpriteFromTexture2D(bulletinTexture, 1f));
