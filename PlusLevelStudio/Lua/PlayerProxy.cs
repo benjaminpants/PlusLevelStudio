@@ -7,6 +7,8 @@ using UnityEngine;
 using MTM101BaldAPI;
 using MTM101BaldAPI.PlusExtensions;
 using MTM101BaldAPI.Registers;
+using System.Reflection;
+using HarmonyLib;
 
 namespace PlusLevelStudio.Lua
 {
@@ -29,6 +31,8 @@ namespace PlusLevelStudio.Lua
                 pm.plm.transform.eulerAngles = new Vector3(pm.plm.transform.eulerAngles.x, value, pm.plm.transform.eulerAngles.z);
             }
         }
+
+        static FieldInfo _defaultInventorySize = AccessTools.Field(typeof(ItemManager), "defaultInventorySize");
 
         public Vector3Proxy GetForward()
         {
@@ -234,7 +238,7 @@ namespace PlusLevelStudio.Lua
         {
             get
             {
-                return pm.itm.maxItem + 1;
+                return ((int)_defaultInventorySize.GetValue(pm.itm)) + 1;
             }
             set
             {
@@ -366,17 +370,8 @@ namespace PlusLevelStudio.Lua
 
         public void SetSlotCount(int count)
         {
-            for (int i = 0; i < pm.itm.items.Length; i++)
-            {
-                if (i >= count)
-                {
-                    pm.itm.items[i] = pm.itm.nothing;
-                }
-            }
-            pm.itm.maxItem = Mathf.Max(count - 1, -1);
-            Singleton<CoreGameManager>.Instance.GetHud(pm.playerNumber).UpdateInventorySize(pm.itm.maxItem + 1);
-            pm.itm.selectedItem = Mathf.Min(pm.itm.selectedItem, Mathf.Max(pm.itm.maxItem, 0));
-            pm.itm.UpdateSelect();
+            _defaultInventorySize.SetValue(pm.itm, count);
+            pm.itm.UpdateTargetInventorySize();
         }
 
         public void LockItemSlot(int slot)
