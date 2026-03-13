@@ -63,6 +63,6 @@ function OnActivityProgress(room)
 
 end
 
-function ActivityCompleted(room)
+function OnActivityCompletion(room, correct)
 
 end
