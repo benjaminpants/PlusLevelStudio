@@ -44,7 +44,7 @@
 {"key":"Ed_Tool_room_cafeteria_Title","value":"Cafeteria"},
 {"key":"Ed_Tool_room_cafeteria_Desc","value":"Bananas are literred across the floor in this room."},
 {"key":"Ed_Tool_room_lightbulbtesting_Title","value":"Light Bulb Testing Room"},
-{"key":"Ed_Tool_room_lightbulbtesting_Desc","value":"Lights placed in this room flicker! I suggest using low strength hanging lights."},
+{"key":"Ed_Tool_room_lightbulbtesting_Desc","value":"Lights placed in this room flicker! I suggest using low strength lights."},
 {"key":"Ed_Tool_room_mystery_Title","value":"Mystery Room"},
 {"key":"Ed_Tool_room_mystery_Desc","value":"All standard doors connected to this will become hidden, only being revealed when the mystery event begins!"},
 {"key":"Ed_Tool_room_wormhole_room_Title","value":"Wormhole Room"},
@@ -59,6 +59,8 @@
 {"key":"Ed_Tool_room_teleportroom_4_Desc","value":"Baldi's lab! Shows up on the map as \"4\". Automatically marked as belonging to Zone 4."},
 {"key":"Ed_Tool_room_saferoom_Title","value":"Safe Room"},
 {"key":"Ed_Tool_room_saferoom_Desc","value":"Baldi (and other NPCs) can't naturally wander into this room! It is also impossible to portal poster into this room."},
+{"key":"Ed_Tool_room_crane_Title","value":"Crane Room"},
+{"key":"Ed_Tool_room_crane_Desc","value":"Cranes spawn in this room picking up anything that gets under them!\nMark cells as excluded from roomgroups to make cranes go there!"},
 
 {"key":"Ed_Tool_premaderoom_johnny_store_Title","value":"(Premade) Johnny's Store"},
 {"key":"Ed_Tool_premaderoom_johnny_store_Desc","value":"Buy items and stickers from this store!"},
@@ -82,6 +84,8 @@
 {"key":"Ed_Tool_window_standard_Desc","value":"Although not a door at first glance, this 'door' can be opened by First-Prize slamming into it!"},
 {"key":"Ed_Tool_window_green_Title","value":"Green Window"},
 {"key":"Ed_Tool_window_green_Desc","value":"Green, not lean, and hopefully not mean!\nThis window is the perfect classroom decor!"},
+{"key":"Ed_Tool_window_caution_Title","value":"Caution Window"},
+{"key":"Ed_Tool_window_caution_Desc","value":"Beware of hole.\nSound goes through it, and it cannot be broken."},
 
 {"key":"Ed_Tool_light_fluorescent_Title","value":"Fluorescent Light"},
 {"key":"Ed_Tool_light_fluorescent_Desc","value":"An all time classic since 1999!"},
@@ -91,6 +95,8 @@
 {"key":"Ed_Tool_light_cordedhanging_Desc","value":"Most ceilings cannot handle the vast power of this light..."},
 {"key":"Ed_Tool_light_standardhanging_Title","value":"Hanging Light"},
 {"key":"Ed_Tool_light_standardhanging_Desc","value":"Snazzy!"},
+{"key":"Ed_Tool_light_lightbulbroom_light_Title","value":"Lightbulb Room Light"},
+{"key":"Ed_Tool_light_lightbulbroom_light_Desc","value":"Perfect for the Lightbulb Room!\nOr just any kind of dark room really."},
 {"key":"Ed_Tool_light_null_Title","value":"Invisible Light"},
 {"key":"Ed_Tool_light_null_Desc","value":"Oooooh.... It's a ghost lightttttt.... Spooookyyyy...."},
 
@@ -280,6 +286,10 @@
 {"key":"Ed_Tool_object_roundtablechairs1_Desc","value":"A roundtable with 4 chairs surrounding it...\nNow as one object!"},
 {"key":"Ed_Tool_object_roundtablechairs2_Title","value":"Round Table With Chairs (C2)"},
 {"key":"Ed_Tool_object_roundtablechairs2_Desc","value":"A roundtable with 4 diagonal chairs surrounding it...\nNow as one object!"},
+{"key":"Ed_Tool_object_factoryshelf_Title","value":"Box Shelf"},
+{"key":"Ed_Tool_object_factoryshelf_Desc","value":"A shelf with really large orange books on it!\nYou can even see the paint hasn't quite reached the bottom!"},
+{"key":"Ed_Tool_object_campfire_Title","value":"Campfire"},
+{"key":"Ed_Tool_object_campfire_Desc","value":"\"Welcome to the campsite! Take a look around, and enjoy the fresh air!\""},
 
 {"key":"Ed_Tool_scatter_trees_Title","value":"Trees Scatter Tool"},
 {"key":"Ed_Tool_scatter_trees_Desc","value":"Drag across an area to randomly place trees!"},
@@ -397,6 +407,8 @@
 {"key":"Ed_Tool_marker_eventunsafe_Desc","value":"Marks a cell as not safe for events, regardless of what the compilation process calculated."},
 {"key":"Ed_Tool_marker_hidden_Title","value":"Hidden Cell Marker"},
 {"key":"Ed_Tool_marker_hidden_Desc","value":"Hides a cell from the map, makes it unsafe for entities and events, and 'covers' the cell completely."},
+{"key":"Ed_Tool_marker_excluderoomgroup_Title","value":"Exclude RoomGroup Marker"},
+{"key":"Ed_Tool_marker_excluderoomgroup_Desc","value":"Excludes a cell from being in a roomgroup.\nThis prevents open areas from including this cell."},
 
 {"key":"Ed_Tool_itemspawn_100_Title","value":"Potential Item Spawn (100)"},
 {"key":"Ed_Tool_itemspawn_100_Desc","value":"A potential item spawn with the weight of 100."},

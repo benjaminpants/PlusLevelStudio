@@ -38,6 +38,7 @@ namespace PlusStudioLevelFormat
         public List<LightInfo> lights = new List<LightInfo>();
         public List<ByteVector2> potentialDoorPositions = new List<ByteVector2>();
         public List<ByteVector2> forcedDoorPositions = new List<ByteVector2>();
+        public List<ByteVector2> cellsExcludedFromRoomGroup = new List<ByteVector2>();
         public List<ByteVector2> entitySafeCells = new List<ByteVector2>();
         public List<ByteVector2> eventSafeCells = new List<ByteVector2>();
         public List<ByteVector2> secretCells = new List<ByteVector2>();
@@ -48,7 +49,7 @@ namespace PlusStudioLevelFormat
         public float posterChance = 0f;
 
 
-        const byte version = 1;
+        const byte version = 2;
         public void Write(BinaryWriter writer)
         {
             writer.Write(version);
@@ -149,6 +150,11 @@ namespace PlusStudioLevelFormat
             for (int i = 0; i < secretCells.Count; i++)
             {
                 writer.Write(secretCells[i]);
+            }
+            writer.Write(cellsExcludedFromRoomGroup.Count);
+            for (int i = 0; i < cellsExcludedFromRoomGroup.Count; i++)
+            {
+                writer.Write(cellsExcludedFromRoomGroup[i]);
             }
         }
 
@@ -270,6 +276,12 @@ namespace PlusStudioLevelFormat
             for (int i = 0; i < secretCellCount; i++)
             {
                 info.secretCells.Add(reader.ReadByteVector2());
+            }
+            if (version <= 1) return info;
+            int excludedCellCount = reader.ReadInt32();
+            for (int i = 0; i < excludedCellCount; i++)
+            {
+                info.cellsExcludedFromRoomGroup.Add(reader.ReadByteVector2());
             }
             return info;
         }

@@ -13,7 +13,7 @@ using System.IO;
 
 namespace PlusStudioLevelLoader
 {
-    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudioloader", "Plus Level Loader", "1.10.0.0")]
+    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudioloader", "Plus Level Loader", "1.11.0.0")]
     [BepInDependency("mtm101.rulerp.bbplus.baldidevapi")]
     public class LevelLoaderPlugin : BaseUnityPlugin
     {
@@ -135,6 +135,7 @@ namespace PlusStudioLevelLoader
             roomSettings.Add("lightbulbtesting", new RoomSettings(RoomCategory.Special, RoomType.Room, new Color(1f, 1f, 1f), assetMan.Get<StandardDoorMats>("ClassDoorSet")));
             roomSettings.Add("mystery", new RoomSettings(RoomCategory.Mystery, RoomType.Room, new Color(0f, 1f, 0f), assetMan.Get<StandardDoorMats>("MysteryDoorMats")));
             roomSettings.Add("saferoom", new RoomSettings(RoomCategory.Special, RoomType.Room, new Color(1f, 1f, 1f), assetMan.Get<StandardDoorMats>("SafeRoomDoorSet")));
+            roomSettings.Add("crane", new RoomSettings(RoomCategory.Special, RoomType.Room, new Color(1f, 1f, 1f), assetMan.Get<StandardDoorMats>("ClassDoorSet")));
             roomSettings["faculty"].container = roomFunctions.Find(x => x.name == "FacultyRoomFunction");
             roomSettings["office"].container = roomFunctions.Find(x => x.name == "OfficeRoomFunction");
             roomSettings["class"].container = roomFunctions.Find(x => x.name == "ClassRoomFunction");
@@ -144,6 +145,7 @@ namespace PlusStudioLevelLoader
             roomSettings["shop"].container = roomFunctions.Find(x => x.name == "JohnnyStoreRoomFunction");
             roomSettings["lightbulbtesting"].container = roomFunctions.Find(x => x.name == "LightbulbTestRoomFunction");
             roomSettings["saferoom"].container = roomFunctions.Find(x => x.name == "SafeRoomRoomFunction");
+            roomSettings["crane"].container = roomFunctions.Find(x => x.name == "CraneRoomFunction");
             CoverInGameRoomFunction saferoom_fix = roomSettings["saferoom"].container.gameObject.AddComponent<CoverInGameRoomFunction>();
             saferoom_fix.hardCover = true;
             roomSettings["saferoom"].container.AddFunction(saferoom_fix); // fix the saferoom from not being covered as intended
@@ -162,6 +164,7 @@ namespace PlusStudioLevelLoader
             lightTransforms.Add("caged", transforms.First(x => x.name == "CagedLight"));
             lightTransforms.Add("cordedhanging", transforms.First(x => x.name == "CordedHangingLight"));
             lightTransforms.Add("standardhanging", transforms.First(x => x.name == "HangingLight"));
+            lightTransforms.Add("lightbulbroom_light", transforms.First(x => x.name == "LightBulbTestLight"));
             lightTransforms.Add("null", null);
 
 
@@ -182,6 +185,7 @@ namespace PlusStudioLevelLoader
             WindowObject[] windows = Resources.FindObjectsOfTypeAll<WindowObject>().Where(x => x.GetInstanceID() >= 0).ToArray();
             windowObjects.Add("standard", windows.First(x => x.name == "WoodWindow"));
             windowObjects.Add("green", windows.First(x => x.name == "GreenWindow"));
+            windowObjects.Add("caution", windows.First(x => x.name == "CautionWindow"));
 
             // forgive me for my sins
             exitDatas.Add("elevator", new LoaderExitData() {
@@ -227,6 +231,18 @@ namespace PlusStudioLevelLoader
             itemObjects.Add("shapekey_weird", ItemMetaStorage.Instance.FindByEnum(Items.WeirdKey).value);
             itemObjects.Add("shapekey_star", ItemMetaStorage.Instance.FindByEnum(Items.PentagonKey).value);
             itemObjects.Add("shapekey_heart", ItemMetaStorage.Instance.FindByEnum(Items.HexagonKey).value);
+
+            // lost item
+            itemObjects.Add("lost_item0", ItemMetaStorage.Instance.FindByEnum(Items.lostItem0).value);
+            itemObjects.Add("lost_item1", ItemMetaStorage.Instance.FindByEnum(Items.lostItem1).value);
+            itemObjects.Add("lost_item2", ItemMetaStorage.Instance.FindByEnum(Items.lostItem2).value);
+            itemObjects.Add("lost_item3", ItemMetaStorage.Instance.FindByEnum(Items.lostItem3).value);
+            itemObjects.Add("lost_item4", ItemMetaStorage.Instance.FindByEnum(Items.lostItem4).value);
+            itemObjects.Add("lost_item5", ItemMetaStorage.Instance.FindByEnum(Items.lostItem5).value);
+            itemObjects.Add("lost_item6", ItemMetaStorage.Instance.FindByEnum(Items.lostItem6).value);
+            itemObjects.Add("lost_item7", ItemMetaStorage.Instance.FindByEnum(Items.lostItem7).value);
+            itemObjects.Add("lost_item8", ItemMetaStorage.Instance.FindByEnum(Items.lostItem8).value);
+            itemObjects.Add("lost_item9", ItemMetaStorage.Instance.FindByEnum(Items.lostItem9).value);
 
             //TBA
             ItemMetaData stickerMeta = ItemMetaStorage.Instance.FindByEnum(Items.StickerPack);
@@ -293,6 +309,8 @@ namespace PlusStudioLevelLoader
             basicObjects.Add("packetomatic", objects.First(x => x.name == "Packet_O_Matic"));
             basicObjects.Add("roundtablechairs1", objects.First(x => x.name == "RoundTable_Chairs_1"));
             basicObjects.Add("roundtablechairs2", objects.First(x => x.name == "RoundTable_Chairs_2"));
+            basicObjects.Add("factoryshelf", objects.First(x => x.name == "FactoryShelf_Object"));
+            basicObjects.Add("campfire", objects.First(x => x.name == "CampFire"));
 
             // activities
             Activity[] activites = Resources.FindObjectsOfTypeAll<Activity>().Where(x => x.GetInstanceID() >= 0).ToArray();

@@ -17,11 +17,12 @@ namespace PlusLevelStudio.Editor
 
     public class SimpleButtonLocation : SimpleLocation
     {
+        public bool canBePlacedOnUnbreakableWindows = false;
         public override bool ValidatePosition(EditorLevelData data, bool ignoreSelf)
         {
             bool ret = base.ValidatePosition(data, ignoreSelf);
             if (ret == false) return false;
-            if (!data.WallFree(position, direction, ignoreSelf))
+            if (!data.WallFree(position, direction, ignoreSelf, canBePlacedOnUnbreakableWindows))
             {
                 return false;
             }

@@ -815,7 +815,7 @@ namespace PlusLevelStudio
             defaultRoomTextures.Add("closet", new TextureContainer("TileFloor", "Wall", "Ceiling"));
             defaultRoomTextures.Add("reflex", new TextureContainer("HallFloor", "WallWithMolding", "ElevatorCeiling"));
             defaultRoomTextures.Add("library", new TextureContainer("BlueCarpet", "WallWithMolding", "Ceiling"));
-            defaultRoomTextures.Add("cafeteria", new TextureContainer("HallFloor", "Wall", "Ceiling"));
+            defaultRoomTextures.Add("cafeteria", new TextureContainer("HallFloor", "Wall", "None"));
             defaultRoomTextures.Add("outside", new TextureContainer("Grass", "Fence", "None"));
             defaultRoomTextures.Add("shop", new TextureContainer("HallFloor", "JohnnyWall", "Ceiling"));
             defaultRoomTextures.Add("lightbulbtesting", new TextureContainer("MaintenanceFloor", "RedBrickWall", "ElevatorCeiling"));
@@ -826,6 +826,7 @@ namespace PlusLevelStudio
             defaultRoomTextures.Add("teleportroom_3", new TextureContainer("LabFloor", "LabWall", "LabCeiling"));
             defaultRoomTextures.Add("teleportroom_4", new TextureContainer("LabFloor", "LabWall", "LabCeiling"));
             defaultRoomTextures.Add("saferoom", new TextureContainer("ElevatorFloor", "ElevatorBack", "ElevatorCeiling"));
+            defaultRoomTextures.Add("crane", new TextureContainer("DiamondPlateFloor", "Wall", "None"));
 
             defaultRoomTextures.Add("class_mathmachine", new TextureContainer("BlueCarpet", "WallWithMolding", "Ceiling"));
             defaultRoomTextures.Add("class_matchactivity", new TextureContainer("BlueCarpet", "WallWithMolding", "Ceiling"));
@@ -902,6 +903,11 @@ namespace PlusLevelStudio
             hiddenCellMat.name = "HiddenCellMat";
             hiddenCellMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "HiddenCell.png"));
             hiddenCellMat.SetTexture("_LightMap", lightmaps["white"]);
+
+            Material excludedCellMat = new Material(assetMan.Get<Material>("tileAlpha"));
+            excludedCellMat.name = "ExcludedCellMat";
+            excludedCellMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "ExcludeFromRoomGroup.png"));
+            excludedCellMat.SetTexture("_LightMap", lightmaps["white"]);
 
             Material floorRadMat = new Material(assetMan.Get<Material>("tileAlpha"));
             floorRadMat.name = "FloorRadiusMap";
@@ -1348,10 +1354,14 @@ namespace PlusLevelStudio
             EditorInterface.AddDoor<DoorDisplay>("autodoor", DoorIngameStatus.AlwaysDoor, assetMan.Get<Material>("AutoDoorMask"), new Material[] { assetMan.Get<Material>("AutoDoorMat"), assetMan.Get<Material>("AutoDoorMat") });
             EditorInterface.AddDoor<DoorDisplay>("flaps", DoorIngameStatus.AlwaysObject, assetMan.Get<Material>("FlapDoorMask"), new Material[] { assetMan.Get<Material>("FlapDoorMat"), assetMan.Get<Material>("FlapDoorMat") });
 
-            WindowObject standardWindowObject = Resources.FindObjectsOfTypeAll<WindowObject>().First(x => x.name == "WoodWindow" && x.GetInstanceID() >= 0);
+            WindowObject[] windowObjects = Resources.FindObjectsOfTypeAll<WindowObject>();
+
+            WindowObject standardWindowObject = windowObjects.First(x => x.name == "WoodWindow" && x.GetInstanceID() >= 0);
             EditorInterface.AddWindow<DoorDisplay>("standard", standardWindowObject.mask, standardWindowObject.overlay);
-            standardWindowObject = Resources.FindObjectsOfTypeAll<WindowObject>().First(x => x.name == "GreenWindow" && x.GetInstanceID() >= 0);
-            EditorInterface.AddWindow<DoorDisplay>("green", standardWindowObject.mask, standardWindowObject.overlay);
+            WindowObject greenWindowObject = windowObjects.First(x => x.name == "GreenWindow" && x.GetInstanceID() >= 0);
+            EditorInterface.AddWindow<DoorDisplay>("green", greenWindowObject.mask, greenWindowObject.overlay);
+            WindowObject cautionWindowObject = windowObjects.First(x => x.name == "CautionWindow" && x.GetInstanceID() >= 0);
+            EditorInterface.AddWindow<DoorDisplay>("caution", cautionWindowObject.mask, cautionWindowObject.overlay);
 
             // elevators
             EditorInterface.AddExit("elevator", LevelLoaderPlugin.Instance.exitDatas["elevator"].prefab);
@@ -1428,6 +1438,7 @@ namespace PlusLevelStudio
 
             EditorInterface.AddObjectVisual("bookshelf", LevelLoaderPlugin.Instance.basicObjects["bookshelf"], true);
             EditorInterface.AddObjectVisual("bookshelf_hole", LevelLoaderPlugin.Instance.basicObjects["bookshelf_hole"], true);
+            EditorInterface.AddObjectVisual("factoryshelf", LevelLoaderPlugin.Instance.basicObjects["factoryshelf"], true);
 
             EditorInterface.AddObjectVisual("cabinet", LevelLoaderPlugin.Instance.basicObjects["cabinet"], true);
             EditorBasicObject pedestalVisual = EditorInterface.AddObjectVisual("pedestal", LevelLoaderPlugin.Instance.basicObjects["pedestal"], true);
@@ -1445,6 +1456,7 @@ namespace PlusLevelStudio
             EditorBasicObject appleTreeVisual = EditorInterface.AddObjectVisual("appletree", LevelLoaderPlugin.Instance.basicObjects["appletree"], true);
             appleTreeVisual.transform.Find("Sprite").Find("Pickup").Find("ItemSprite").GetComponent<SpriteRenderer>().sprite = ItemMetaStorage.Instance.FindByEnum(Items.Apple).value.itemSpriteLarge;
             EditorInterface.AddObjectVisual("bananatree", LevelLoaderPlugin.Instance.basicObjects["bananatree"], true);
+            EditorInterface.AddObjectVisual("campfire", LevelLoaderPlugin.Instance.basicObjects["campfire"], true);
 
             EditorInterface.AddObjectVisual("counter", LevelLoaderPlugin.Instance.basicObjects["counter"], true);
             EditorInterface.AddObjectVisual("examinationtable", LevelLoaderPlugin.Instance.basicObjects["examinationtable"], true);
@@ -1529,6 +1541,7 @@ namespace PlusLevelStudio
             facultyOnlyCollider.center = facultyOnlyOGCollider.center + (Vector3.up * 10f);
             structureTypes.Add("facultyonlydoor", typeof(HallDoorStructureLocation));
             EditorInterface.AddStructureGenericVisual("button", Resources.FindObjectsOfTypeAll<GameButton>().First(x => x.GetInstanceID() >= 0 && x.name == "GameButton" && x.transform.parent == null).gameObject);
+            EditorInterface.AddStructureGenericVisual("button_backface", Resources.FindObjectsOfTypeAll<GameButton>().First(x => x.GetInstanceID() >= 0 && x.name == "GameButton_wBackFace" && x.transform.parent == null).gameObject);
 
             GameLever lever = Resources.FindObjectsOfTypeAll<GameLever>().First(x => x.GetInstanceID() >= 0 && x.name == "GameLever" && x.transform.parent == null);
 
@@ -2086,12 +2099,18 @@ namespace PlusLevelStudio
             hiddenCellPrefab.GetComponentInChildren<MeshRenderer>().material = hiddenCellMat;
             genericMarkerDisplays.Add("hidden", hiddenCellPrefab);
 
+            GameObject excludedCellPrefab = GameObject.Instantiate(genericPlaneVisual, MTM101BaldiDevAPI.prefabTransform);
+            excludedCellPrefab.name = "ExcludedCellPrefab";
+            excludedCellPrefab.GetComponentInChildren<MeshRenderer>().material = excludedCellMat;
+            genericMarkerDisplays.Add("excluderoomgroup", excludedCellPrefab);
+
             markerTypes.Add("potentialdoor", typeof(PotentialDoorLocation));
             markerTypes.Add("forceddoor", typeof(ForcedDoorLocation));
             markerTypes.Add("lightspot", typeof(RoomLightLocation));
             markerTypes.Add("entityunsafe", typeof(EntityUnsafeCellLocation));
             markerTypes.Add("eventunsafe", typeof(EventUnsafeCellLocation));
             markerTypes.Add("hidden", typeof(HiddenCellMarker));
+            markerTypes.Add("excluderoomgroup", typeof(ExcludedCellMarker));
 
             structureTypes.Add("technical_potentialdoor", typeof(LegacyRoomTechnicalStructure));
             structureTypes.Add("technical_forceddoor", typeof(LegacyRoomTechnicalStructure));

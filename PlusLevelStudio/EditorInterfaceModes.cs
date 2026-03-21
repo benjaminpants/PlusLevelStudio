@@ -52,6 +52,7 @@ namespace PlusLevelStudio
                 new CellMarkerTool("entityunsafe"),
                 new CellMarkerTool("eventunsafe"),
                 new CellMarkerTool("hidden"),
+                new CellMarkerTool("excluderoomgroup"),
                 new WallTool(true),
                 new WallTool(false),
             }, true);
@@ -93,6 +94,7 @@ namespace PlusLevelStudio
                 new DoorTool("flaps"),
                 new WindowTool("standard"),
                 new WindowTool("green"),
+                new WindowTool("caution"),
             }, true);
         }
 
@@ -108,6 +110,7 @@ namespace PlusLevelStudio
                 new LightTool("caged"),
                 new LightTool("cordedhanging"),
                 new LightTool("standardhanging"),
+                new LightTool("lightbulbroom_light"),
                 new LightTool("null")
             }, true);
         }
@@ -317,6 +320,7 @@ namespace PlusLevelStudio
                     new RoomTool("outside"),
                     new RoomTool("library"),
                     new RoomTool("lightbulbtesting"),
+                    new RoomTool("crane"),
                     new RoomTool("saferoom"),
             }, true);
             if (!includeNonVanillaComplaintTools) return;
@@ -452,6 +456,8 @@ namespace PlusLevelStudio
                 new ObjectToolNoRotation("rock"),
                 new ObjectTool("tent"),
                 new ObjectToolNoRotation("decor_zoneflag"),
+                new ObjectToolNoRotation("campfire"),
+                new ObjectTool("factoryshelf"),
                 new ObjectTool("arrow", 5f),
                 new ObjectToolNoRotation("exitsign", 10f),
                 new ObjectToolNoRotation("johnnysign", 10f),

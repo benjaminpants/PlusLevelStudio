@@ -756,11 +756,39 @@ namespace PlusLevelStudio.Editor
 
         public bool WallFree(IntVector2 pos, Direction dir, bool ignoreSelf)
         {
+            return WallFree(pos, dir, ignoreSelf, false);
+        }
+
+        public bool WallFree(IntVector2 pos, Direction dir, bool ignoreSelf, bool includeUnbreakableWindows)
+        {
             PlusStudioLevelFormat.Cell cell = GetCellSafe(pos);
             if (cell == null) return false;
             if ((((int)cell.walls) & dir.ToBinary()) == 0)
             {
-                return false;
+                if (!includeUnbreakableWindows) return false;
+                // check for windows
+                bool shouldContinue = false;
+                foreach (var window in windows)
+                {
+                    if (LevelLoaderPlugin.Instance.windowObjects[window.type].breakable) continue;
+                    if (window.position == pos)
+                    {
+                        if (window.direction == dir)
+                        {
+                            shouldContinue = true;
+                            break; // we found a valid window, proceed to the next check
+                        }
+                    }
+                    if (window.position == (pos + dir.ToIntVector2()))
+                    {
+                        if (window.direction == dir.GetOpposite())
+                        {
+                            shouldContinue = true;
+                            break; // we found a valid window, proceed to the next check
+                        }
+                    }
+                }
+                if (!shouldContinue) return false;
             }
             int thingsOccupying = 0;
             for (int i = 0; i < structures.Count; i++)

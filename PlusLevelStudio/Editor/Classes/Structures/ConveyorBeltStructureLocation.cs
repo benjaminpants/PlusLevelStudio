@@ -318,8 +318,9 @@ namespace PlusLevelStudio.Editor
         public SimpleButtonLocation CreateButton()
         {
             SimpleButtonLocation button = new SimpleButtonLocation();
-            button.prefab = "button";
+            button.prefab = "button_backface";
             button.deleteAction = OnButtonDelete;
+            button.canBePlacedOnUnbreakableWindows = true;
             return button;
         }
 

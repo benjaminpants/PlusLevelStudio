@@ -83,6 +83,10 @@ namespace PlusStudioLevelLoader
             {
                 asset.forcedDoorPositions.Add(info.forcedDoorPositions[i].ToInt());
             }
+            for (int i = 0; i < info.cellsExcludedFromRoomGroup.Count; i++)
+            {
+                asset.cellsExcludedFromRoomGroup.Add(info.cellsExcludedFromRoomGroup[i].ToInt());
+            }
             for (int i = 0; i < info.posters.Count; i++)
             {
                 PosterObject po = LevelLoaderPlugin.PosterFromAlias(info.posters[i].poster);
@@ -371,6 +375,10 @@ namespace PlusStudioLevelLoader
                     if (level.secretCells[foundCells[j].pos.x, foundCells[j].pos.z])
                     {
                         data.secretCells.Add(foundCells[j].pos);
+                    }
+                    if (level.excludedFromRoomGroupCells[foundCells[j].pos.x, foundCells[j].pos.z])
+                    {
+                        data.cellsExcludedFromRoomGroup.Add(foundCells[j].pos);
                     }
                     if (level.coverage[foundCells[j].pos.x, foundCells[j].pos.z] != PlusCellCoverage.None)
                     {

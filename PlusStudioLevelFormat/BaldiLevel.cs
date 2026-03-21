@@ -14,6 +14,7 @@ namespace PlusStudioLevelFormat
         public bool[,] entitySafeCells;
         public bool[,] eventSafeCells;
         public bool[,] secretCells;
+        public bool[,] excludedFromRoomGroupCells;
         public PlusCellCoverage[,] coverage;
         public List<RoomInfo> rooms = new List<RoomInfo>();
         public List<LightInfo> lights = new List<LightInfo>();
@@ -38,7 +39,7 @@ namespace PlusStudioLevelFormat
             }
         }
         public PlusDirection spawnDirection = PlusDirection.North;
-        public static readonly byte version = 8;
+        public static readonly byte version = 9;
         public string levelTitle = "WIP";
         public float timeLimit = 0f;
 
@@ -89,6 +90,7 @@ namespace PlusStudioLevelFormat
             entitySafeCells = new bool[size.x, size.y];
             eventSafeCells = new bool[size.x, size.y];
             secretCells = new bool[size.x, size.y];
+            excludedFromRoomGroupCells = new bool[size.x, size.y];
             coverage = new PlusCellCoverage[size.x, size.y];
             for (int x = 0; x < levelSize.x; x++)
             {
@@ -98,6 +100,7 @@ namespace PlusStudioLevelFormat
                     entitySafeCells[x, y] = false;
                     eventSafeCells[x, y] = false;
                     secretCells[x, y] = false;
+                    excludedFromRoomGroupCells[x, y] = false;
                     coverage[x, y] = PlusCellCoverage.None;
                 }
             }
@@ -177,6 +180,17 @@ namespace PlusStudioLevelFormat
                 for (int y = 0; y < level.levelSize.y; y++)
                 {
                     level.secretCells[x, y] = secretCells[(x * level.levelSize.y) + y];
+                }
+            }
+            if (version >= 9)
+            {
+                bool[] excludedCells = reader.ReadBoolArray();
+                for (int x = 0; x < level.levelSize.x; x++)
+                {
+                    for (int y = 0; y < level.levelSize.y; y++)
+                    {
+                        level.excludedFromRoomGroupCells[x, y] = excludedCells[(x * level.levelSize.y) + y];
+                    }
                 }
             }
             for (int x = 0; x < level.levelSize.x; x++)
@@ -528,6 +542,15 @@ namespace PlusStudioLevelFormat
                 }
             }
             writer.Write(bools.ToArray()); // write secretCells
+            bools.Clear();
+            for (int x = 0; x < levelSize.x; x++)
+            {
+                for (int y = 0; y < levelSize.y; y++)
+                {
+                    bools.Add(excludedFromRoomGroupCells[x, y]);
+                }
+            }
+            writer.Write(bools.ToArray()); // write excludedCells
             // write the coverage
             for (int x = 0; x < levelSize.x; x++)
             {
