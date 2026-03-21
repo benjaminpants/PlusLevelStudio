@@ -546,7 +546,7 @@ namespace PlusLevelStudio.Editor
             workerEc.standardDarkLevel = levelData.minLightColor;
             workerEc.lightMode = levelData.lightMode;
             // clear all lights
-            LightController[,] lightMap = (LightController[,])_lightMap.GetValue(workerEc);
+            LightingController[,] lightMap = (LightingController[,])_lightMap.GetValue(workerEc);
             for (int i = workerEc.lights.Count - 1; i >= 0; i--)
             {
                 Cell lightCell = workerEc.lights[i];
