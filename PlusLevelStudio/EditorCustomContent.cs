@@ -32,6 +32,7 @@ namespace PlusLevelStudio
 
         public BaseGameManager gameManagerPre;
 
+        // EXPERIMENTAL TODO: how will I write a system dynamic enough to allow this to be extended through mods?
         public Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
         public Dictionary<string, PosterObject> posters = new Dictionary<string, PosterObject>();
         public Dictionary<string, NPC> npcs = new Dictionary<string, NPC>();

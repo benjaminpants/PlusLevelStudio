@@ -23,11 +23,6 @@ namespace PlusLevelStudio.Patches
             CursorController.Instance.transform.SetAsLastSibling();
             __instance.transform.Find("Bottom").SetAsLastSibling();
             __instance.transform.Find("BlackCover").SetAsLastSibling();
-            if (LevelStudioPlugin.Instance.isFucked)
-            {
-                image.sprite = LevelStudioPlugin.Instance.assetMan.Get<Sprite>("EditorButtonFail");
-                return;
-            }
             StandardMenuButton button = image.gameObject.ConvertToButton<StandardMenuButton>();
             button.highlightedSprite = LevelStudioPlugin.Instance.assetMan.Get<Sprite>("EditorButtonGlow");
             button.unhighlightedSprite = LevelStudioPlugin.Instance.assetMan.Get<Sprite>("EditorButton");

@@ -36,7 +36,6 @@ namespace PlusLevelStudio
     public class LevelStudioPlugin : BaseUnityPlugin
     {
         public static LevelStudioPlugin Instance;
-        public bool isFucked = false;
         public AssetManager assetMan = new AssetManager();
         // a rare sight, seeing two asset mans. Usually, I'd combine these into one asset manager.
         // however, I want the code for creating UI to be as simple as possible to write
@@ -2291,7 +2290,6 @@ namespace PlusLevelStudio
             yield return "Loading title assets...";
             assetMan.Add<Sprite>("EditorButton", AssetLoader.SpriteFromTexture2D(AssetLoader.TextureFromMod(this, "UI", "TitleScreen", "EditorButton.png"), 1f));
             assetMan.Add<Sprite>("EditorButtonGlow", AssetLoader.SpriteFromTexture2D(AssetLoader.TextureFromMod(this, "UI", "TitleScreen", "EditorButtonGlow.png"), 1f));
-            assetMan.Add<Sprite>("EditorButtonFail", AssetLoader.SpriteFromTexture2D(AssetLoader.TextureFromMod(this, "UI", "TitleScreen", "EditorButtonFail.png"), 1f));
             assetMan.Add<Sprite>("ChalkBackground", AssetLoader.SpriteFromMod(this, Vector2.one / 2f, 1f, "UI", "TitleScreen", "ChalkWMath480_256c.png"));
             assetMan.Add<Sprite>("MPlayButton", AssetLoader.SpriteFromMod(this, Vector2.one / 2f, 1f, "UI", "TitleScreen", "MPlayButton.png"));
             assetMan.Add<Sprite>("MPlayButtonHover", AssetLoader.SpriteFromMod(this, Vector2.one / 2f, 1f, "UI", "TitleScreen", "MPlayButtonHover.png"));
