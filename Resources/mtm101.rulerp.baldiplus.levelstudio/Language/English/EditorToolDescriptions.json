@@ -162,6 +162,17 @@
 {"key":"Ed_Tool_item_stickerpack_sticky_Desc","value":"Gives a random <i>sticky</i> sticker when opened."},
 {"key":"Ed_Tool_item_gluestick_Desc","value":"Can upgrade a normal sticker slot to be sticky."},
 
+{"key":"Ed_Tool_item_lost_item0_Desc","value":"How is anyone supposed to read this? Where are the pictures?!"},
+{"key":"Ed_Tool_item_lost_item1_Desc","value":"Looks like someone didn't finish their game of catch 52!"},
+{"key":"Ed_Tool_item_lost_item2_Desc","value":"A popular controller commonly used with the Edutainment Prism 1."},
+{"key":"Ed_Tool_item_lost_item3_Desc","value":"Batteries not included. Good thing it doesn't need batteries."},
+{"key":"Ed_Tool_item_lost_item4_Desc","value":"A whopping 1.44 MB of data! This must've been expensive!"},
+{"key":"Ed_Tool_item_lost_item5_Desc","value":"Now with 5% more cuddles per cuddle."},
+{"key":"Ed_Tool_item_lost_item6_Desc","value":"Who doesn't love a good hand puppet? <b>The</b>"},
+{"key":"Ed_Tool_item_lost_item7_Desc","value":"Alternate name: \"Baldi's Completely Neutral Feelings About It Video Tape\""},
+{"key":"Ed_Tool_item_lost_item8_Desc","value":"I wonder if whoever owns this was raised by wild animals..."},
+{"key":"Ed_Tool_item_lost_item9_Desc","value":"This is actually just a regular black marker.\nSomeone swapped the caps."},
+
 {"key":"Ed_Tool_object_desk_Title","value":"Student Desk"},
 {"key":"Ed_Tool_object_desk_Desc","value":"Every good, functioning, limb-owning student needs one of these!"},
 {"key":"Ed_Tool_object_bigdesk_Title","value":"Big Desk"},
