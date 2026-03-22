@@ -12,14 +12,47 @@ namespace PlusLevelStudio.Editor.Tools
         public string item;
         public override string id => "item_" + item;
 
-        public override string titleKey => useItemName ? PlusStudioLevelLoader.LevelLoaderPlugin.Instance.itemObjects[item].nameKey : base.titleKey;
+        public override string titleKey
+        {
+            get
+            {
+                if (!useItemName)
+                {
+                    return base.titleKey;
+                }
+                string itemNameKey = PlusStudioLevelLoader.LevelLoaderPlugin.Instance.itemObjects[item].nameKey;
+                if (LocalizationManager.Instance == null)
+                {
+                    return itemNameKey;
+                }
+                if (LocalizationManager.Instance.GetLocalizedText(itemNameKey) != itemNameKey)
+                {
+                    return itemNameKey;
+                }
+                if (LocalizationManager.Instance.GetLocalizedText(base.titleKey) != base.titleKey)
+                {
+                    return base.titleKey;
+                }
+                return itemNameKey;
+            }
+        }
 
-        public ItemTool(string item) : this(item, PlusStudioLevelLoader.LevelLoaderPlugin.Instance.itemObjects[item].itemSpriteSmall, true)
+        static Sprite ResolveSprite(string item)
+        {
+            string customSpriteKey = "Tools/item_" + item;
+            if (LevelStudioPlugin.Instance.uiAssetMan.ContainsKey(customSpriteKey))
+            {
+                return LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>(customSpriteKey);
+            }
+            return PlusStudioLevelLoader.LevelLoaderPlugin.Instance.itemObjects[item].itemSpriteSmall;
+        }
+
+        public ItemTool(string item) : this(item, ResolveSprite(item), true)
         {
             this.item = item;
         }
 
-        public ItemTool(string item, bool useItemNameAsToolName) : this(item, PlusStudioLevelLoader.LevelLoaderPlugin.Instance.itemObjects[item].itemSpriteSmall, useItemNameAsToolName)
+        public ItemTool(string item, bool useItemNameAsToolName) : this(item, ResolveSprite(item), useItemNameAsToolName)
         {
             this.item = item;
         }
