@@ -18,7 +18,7 @@
 {"key":"Ed_Tool_room_hall_Title","value":"Main Hallway"},
 {"key":"Ed_Tool_room_hall_Desc","value":"The main building block of any level, required for some NPCs to behave properly."},
 {"key":"Ed_Tool_room_hall_secondary_Title","value":"Extra Hallway"},
-{"key":"Ed_Tool_room_hall_secondary_Desc","value":"Place extra hall rooms using this tool. <b>Use minimally, as extra hall rooms can cause bugs or weird behavior!"},
+{"key":"Ed_Tool_room_hall_secondary_Desc","value":"Place extra hall rooms using this tool. <b>Use minimally, as extra hall rooms can cause bugs or weird behavior!</b>"},
 {"key":"Ed_Tool_room_class_Title","value":"Classroom"},
 {"key":"Ed_Tool_room_class_Desc","value":"The intended location to place notebooks."},
 
@@ -85,7 +85,7 @@
 {"key":"Ed_Tool_window_green_Title","value":"Green Window"},
 {"key":"Ed_Tool_window_green_Desc","value":"Green, not lean, and hopefully not mean!\nThis window is the perfect classroom decor!"},
 {"key":"Ed_Tool_window_caution_Title","value":"Caution Window"},
-{"key":"Ed_Tool_window_caution_Desc","value":"Beware of hole.\nSound goes through it, and it cannot be broken."},
+{"key":"Ed_Tool_window_caution_Desc","value":"Beware of hole.\nSound passes through it, and it cannot be broken."},
 
 {"key":"Ed_Tool_light_fluorescent_Title","value":"Fluorescent Light"},
 {"key":"Ed_Tool_light_fluorescent_Desc","value":"An all time classic since 1999!"},
@@ -108,7 +108,7 @@
 {"key":"Ed_Tool_exit_elevator_plantless_Title","value":"Elevator (Plain)"},
 {"key":"Ed_Tool_exit_elevator_plantless_Desc","value":"An elevator that can be used to exit the level.\n<i>\"I hate green!\" - The green hater</i>"},
 {"key":"Ed_Tool_exit_elevator_plantless_start_Title","value":"Entrance Elevator (Plain)"},
-{"key":"Ed_Tool_exit_elevator_plantless_start_Desc","value":"If placed, the player will spawn here instead of the spawn point.\n<i>\"I hate green!\" - The green hater"},
+{"key":"Ed_Tool_exit_elevator_plantless_start_Desc","value":"If placed, the player will spawn here instead of the spawn point.\n<i>\"I hate green!\" - The green hater</i>"},
 
 {"key":"Ed_Tool_item_quarter_Desc","value":"Can be used in a variety of different structures, such as BSODA machines."},
 {"key":"Ed_Tool_item_dietbsoda_Desc","value":"Pushes away entities. Lasts 3 seconds."},
@@ -172,8 +172,6 @@
 {"key":"Ed_Tool_object_roundtable_Desc","value":"I like to call it: The edgeless safety table."},
 {"key":"Ed_Tool_object_cabinet_Title","value":"Cabinet"},
 {"key":"Ed_Tool_object_cabinet_Desc","value":"Need a shorter variant? Push this into the floor! Seriously that's how mystman12 does it."},
-{"key":"Ed_Tool_object_cafteriatable_Title","value":"Cabinet"},
-{"key":"Ed_Tool_object_cafteriatable_Desc","value":"For all your tasty food needs!"},
 {"key":"Ed_Tool_object_waterfountain_Title","value":"Water Fountain"},
 {"key":"Ed_Tool_object_waterfountain_Desc","value":"Allows you to restore all your stamina when clicked!"},
 {"key":"Ed_Tool_object_payphone_Title","value":"Payphone"},
