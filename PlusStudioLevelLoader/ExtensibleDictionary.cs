@@ -53,7 +53,12 @@ namespace PlusStudioLevelLoader
 
         public bool ContainsKey(string key)
         {
-            return internalDict.ContainsKey(key);
+            if (internalDict.ContainsKey(key)) return true;
+            foreach (var item in extends)
+            {
+                if (item.dictionary.ContainsKey(key)) return true;
+            }
+            return false;
         }
 
         public bool Remove(string key)
@@ -165,6 +170,7 @@ namespace PlusStudioLevelLoader
 
         public IEnumerator<KeyValuePair<string, T>> GetEnumerator()
         {
+            if (extends.Count == 0) return internalDict.GetEnumerator();
             return BuildInternalCombinedDictionary().GetEnumerator();
         }
 

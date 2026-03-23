@@ -53,19 +53,19 @@ namespace PlusLevelStudio
 
         public Dictionary<string, SoundObject> sounds = new Dictionary<string, SoundObject>();
 
-        public Dictionary<string, DoorDisplay> doorDisplays = new Dictionary<string, DoorDisplay>();
-        public Dictionary<string, DoorIngameStatus> doorIngameStatus = new Dictionary<string, DoorIngameStatus>();
-        public Dictionary<string, DoorDisplay> windowDisplays = new Dictionary<string, DoorDisplay>();
-        public Dictionary<string, GameObject> exitDisplays = new Dictionary<string, GameObject>();
-        public Dictionary<string, EditorBasicObject> basicObjectDisplays = new Dictionary<string, EditorBasicObject>();
-        public Dictionary<string, GameObject> activityDisplays = new Dictionary<string, GameObject>();
-        public Dictionary<string, Type> structureTypes = new Dictionary<string, Type>();
-        public Dictionary<string, Type> markerTypes = new Dictionary<string, Type>();
-        public Dictionary<string, GameObject> genericStructureDisplays = new Dictionary<string, GameObject>();
-        public Dictionary<string, GameObject> genericMarkerDisplays = new Dictionary<string, GameObject>();
-        public Dictionary<string, GameObject> npcDisplays = new Dictionary<string, GameObject>();
-        public Dictionary<string, GameObject> tileBasedObjectDisplays = new Dictionary<string, GameObject>();
-        public Dictionary<string, string> premadeRoomDoors = new Dictionary<string, string>();
+        public ExtensibleDictionary<DoorDisplay> doorDisplays = new ExtensibleDictionary<DoorDisplay>();
+        public ExtensibleDictionary<DoorIngameStatus> doorIngameStatus = new ExtensibleDictionary<DoorIngameStatus>();
+        public ExtensibleDictionary<DoorDisplay> windowDisplays = new ExtensibleDictionary<DoorDisplay>();
+        public ExtensibleDictionary<GameObject> exitDisplays = new ExtensibleDictionary<GameObject>();
+        public ExtensibleDictionary<EditorBasicObject> basicObjectDisplays = new ExtensibleDictionary<EditorBasicObject>();
+        public ExtensibleDictionary<GameObject> activityDisplays = new ExtensibleDictionary<GameObject>();
+        public ExtensibleDictionary<Type> structureTypes = new ExtensibleDictionary<Type>();
+        public ExtensibleDictionary<Type> markerTypes = new ExtensibleDictionary<Type>();
+        public ExtensibleDictionary<GameObject> genericStructureDisplays = new ExtensibleDictionary<GameObject>();
+        public ExtensibleDictionary<GameObject> genericMarkerDisplays = new ExtensibleDictionary<GameObject>();
+        public ExtensibleDictionary<GameObject> npcDisplays = new ExtensibleDictionary<GameObject>();
+        public ExtensibleDictionary<GameObject> tileBasedObjectDisplays = new ExtensibleDictionary<GameObject>();
+        public ExtensibleDictionary<string> premadeRoomDoors = new ExtensibleDictionary<string>();
 
         public List<string> selectableTextures = new List<string>();
         public List<string> selectableSkyboxes = new List<string>();
@@ -74,10 +74,10 @@ namespace PlusLevelStudio
         public List<string> selectableGeneratorItems = new List<string>();
         public Dictionary<string, Sprite> eventSprites = new Dictionary<string, Sprite>();
         public Dictionary<string, Sprite> skyboxSprites = new Dictionary<string, Sprite>();
-        public Dictionary<string, Sprite> stickerSprites = new Dictionary<string, Sprite>();
+        public ExtensibleDictionary<Sprite> stickerSprites = new ExtensibleDictionary<Sprite>();
         public Dictionary<string, EditorRoomVisualManager> roomVisuals = new Dictionary<string, EditorRoomVisualManager>();
         public Dictionary<string, EditorGameMode> gameModeAliases = new Dictionary<string, EditorGameMode>();
-        public Dictionary<string, TextureContainer> defaultRoomTextures = new Dictionary<string, TextureContainer>();
+        public ExtensibleDictionary<TextureContainer> defaultRoomTextures = new ExtensibleDictionary<TextureContainer>();
         public Dictionary<string, NPCPropertyPage> npcPropertyTypes = new Dictionary<string, NPCPropertyPage>();
         public GameObject pickupVisual;
         public GameObject posterVisual;

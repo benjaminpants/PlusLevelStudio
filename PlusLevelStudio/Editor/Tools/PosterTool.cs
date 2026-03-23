@@ -14,7 +14,7 @@ namespace PlusLevelStudio.Editor.Tools
         public override string titleKey => "Ed_Poster_Title_" + type;
         public override string descKey => "Ed_Poster_Desc_" + type;
         // not internalizing this one because auto generated poster sprites work regardless of the mod origin assuming they have been added to the loader
-        public PosterTool(string type) : this(type, LevelStudioPlugin.Instance.GenerateOrGetSmallPosterSprite(LevelLoaderPlugin.PosterFromAlias(type)))
+        public PosterTool(string type) : this(type, LevelStudioPlugin.Instance.GenerateOrGetSmallPosterSprite(LevelLoaderPlugin.Instance.posterAliases[type]))
         {
         }
 
