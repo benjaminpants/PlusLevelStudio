@@ -22,6 +22,8 @@ namespace PlusLevelStudio.Menus
         public GameObject restrictedTypeParent;
         public EditorPlayScreenManager playScreenManager;
 
+        public TextMeshProUGUI editModeDescription;
+
         internal static EditorModeSelectionMenu Build()
         {
             Canvas canvas = UIHelpers.CreateBlankUIScreen("EditorModeSelection", true, false);
@@ -116,9 +118,16 @@ namespace PlusLevelStudio.Menus
                 emms.editorTypeParent.SetActive(false);
             });
 
-            CreateMenuButton(emms.editorTypeParent.transform, "FullButton", "Full", new Vector3(0f, 64f, 0f), () => { LevelStudioPlugin.Instance.GoToEditor("full"); });
-            CreateMenuButton(emms.editorTypeParent.transform, "CompliantButton", "Compliant", new Vector3(0f, 0f, 0f), () => { LevelStudioPlugin.Instance.GoToEditor("compliant"); });
-            CreateMenuButton(emms.editorTypeParent.transform, "RoomsButton", "Rooms", new Vector3(0f, -64f, 0f), () => { LevelStudioPlugin.Instance.GoToEditor("rooms"); });
+            emms.editModeDescription = UIHelpers.CreateText<TextMeshProUGUI>(BaldiFonts.ComicSans18, "This is a test for a description to be shown when hovering over an editor description menu button thingy!", emms.editorTypeParent.transform, new Vector3(0f, -84f));
+            emms.editModeDescription.rectTransform.anchorMin = Vector2.one / 2f;
+            emms.editModeDescription.rectTransform.anchorMax = Vector2.one / 2f;
+            emms.editModeDescription.alignment = TextAlignmentOptions.Center;
+            emms.editModeDescription.color = Color.white;
+            emms.editModeDescription.rectTransform.sizeDelta = new Vector2(320f,64f);
+
+            CreateMenuButton(emms.editorTypeParent.transform, "FullButton", "Full", new Vector3(0f, 64f, 0f), () => { LevelStudioPlugin.Instance.GoToEditor("full"); }).OnHighlight.AddListener(() => emms.editModeDescription.text = LocalizationManager.Instance.GetLocalizedText("Ed_Tip_Mode_Full"));
+            CreateMenuButton(emms.editorTypeParent.transform, "CompliantButton", "Compliant", new Vector3(0f, 32f, 0f), () => { LevelStudioPlugin.Instance.GoToEditor("compliant"); }).OnHighlight.AddListener(() => emms.editModeDescription.text = LocalizationManager.Instance.GetLocalizedText("Ed_Tip_Mode_Compliant"));
+            CreateMenuButton(emms.editorTypeParent.transform, "RoomsButton", "Rooms", new Vector3(0f, 0f, 0f), () => { LevelStudioPlugin.Instance.GoToEditor("rooms"); }).OnHighlight.AddListener(() => emms.editModeDescription.text = LocalizationManager.Instance.GetLocalizedText("Ed_Tip_Mode_Rooms"));
             //CreateMenuButton(emms.editorTypeParent.transform, "TutorialButton", "Tutorial", new Vector3(0f, -90f, 0f), () => { LevelStudioPlugin.Instance.GoToEditor("tutorial"); });
 
             UIHelpers.AddBordersToCanvas(canvas);
@@ -144,6 +153,7 @@ namespace PlusLevelStudio.Menus
             StandardMenuButton but = mainButton.gameObject.ConvertToButton<StandardMenuButton>();
             but.text = textObj;
             but.underlineOnHigh = true;
+            but.eventOnHigh = true;
             but.OnPress.AddListener(action);
             return but;
         }
