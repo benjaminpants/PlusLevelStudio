@@ -41,34 +41,6 @@ namespace PlusStudioLevelLoader
 
         public Pickup stickerPickupPre;
 
-        public static Texture2D RoomTextureFromAlias(string alias)
-        {
-            if (!Instance.roomTextureAliases.ContainsKey(alias))
-            {
-                return Instance.roomTextureAliases["PlaceholderWall"];
-            }
-            return Instance.roomTextureAliases[alias];
-        }
-
-        public static PosterObject PosterFromAlias(string alias)
-        {
-            if (!Instance.posterAliases.ContainsKey(alias))
-            {
-                return null;
-            }
-            return Instance.posterAliases[alias];
-        }
-
-        public static NPC NPCFromAlias(string alias)
-        {
-            if (!Instance.npcAliases.ContainsKey(alias))
-            {
-                Debug.LogWarning("Cannot find: " + alias + " as NPC!");
-                return null;
-            }
-            return Instance.npcAliases[alias];
-        }
-
         void Awake()
         {
             Harmony harmony = new Harmony("mtm101.rulerp.baldiplus.levelstudioloader");

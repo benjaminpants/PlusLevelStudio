@@ -23,9 +23,9 @@ namespace PlusStudioLevelLoader
             asset.roomFunctionContainer = rc.container;
             asset.color = rc.color;
             asset.mapMaterial = rc.mapMaterial;
-            asset.florTex = LevelLoaderPlugin.RoomTextureFromAlias(info.textureContainer.floor);
-            asset.wallTex = LevelLoaderPlugin.RoomTextureFromAlias(info.textureContainer.wall);
-            asset.ceilTex = LevelLoaderPlugin.RoomTextureFromAlias(info.textureContainer.ceiling);
+            asset.florTex = LevelLoaderPlugin.Instance.roomTextureAliases[info.textureContainer.floor];
+            asset.wallTex = LevelLoaderPlugin.Instance.roomTextureAliases[info.textureContainer.wall];
+            asset.ceilTex = LevelLoaderPlugin.Instance.roomTextureAliases[info.textureContainer.ceiling];
             asset.activity = new ActivityData();
             asset.hasActivity = info.activity != null;
             if (asset.hasActivity)
@@ -89,7 +89,7 @@ namespace PlusStudioLevelLoader
             }
             for (int i = 0; i < info.posters.Count; i++)
             {
-                PosterObject po = LevelLoaderPlugin.PosterFromAlias(info.posters[i].poster);
+                PosterObject po = LevelLoaderPlugin.Instance.posterAliases[info.posters[i].poster];
                 if (po == null)
                 {
                     Debug.LogWarning("Missing poster: " + info.posters[i].poster);
@@ -264,7 +264,7 @@ namespace PlusStudioLevelLoader
             scene.extraAsset.name = "LoadedExtraAsset_" + level.levelSize.x + "_" + level.levelSize.y + "_" + level.rooms.Count;
             for (int i = 0; i < level.npcs.Count; i++)
             {
-                scene.extraAsset.npcsToSpawn.Add(LevelLoaderPlugin.NPCFromAlias(level.npcs[i].npc));
+                scene.extraAsset.npcsToSpawn.Add(LevelLoaderPlugin.Instance.npcAliases[level.npcs[i].npc]);
                 scene.extraAsset.npcSpawnPoints.Add(level.npcs[i].position.ToInt());
             }
             scene.extraAsset.minEventGap = level.minRandomEventGap;
@@ -327,9 +327,9 @@ namespace PlusStudioLevelLoader
                 ExtendedRoomData data = new ExtendedRoomData()
                 {
                     name = string.IsNullOrEmpty(level.rooms[i].name) ? level.rooms[i].type + "_" + i : level.rooms[i].name,
-                    florTex = LevelLoaderPlugin.RoomTextureFromAlias(level.rooms[i].textureContainer.floor),
-                    wallTex = LevelLoaderPlugin.RoomTextureFromAlias(level.rooms[i].textureContainer.wall),
-                    ceilTex = LevelLoaderPlugin.RoomTextureFromAlias(level.rooms[i].textureContainer.ceiling),
+                    florTex = LevelLoaderPlugin.Instance.roomTextureAliases[level.rooms[i].textureContainer.floor],
+                    wallTex = LevelLoaderPlugin.Instance.roomTextureAliases[level.rooms[i].textureContainer.wall],
+                    ceilTex = LevelLoaderPlugin.Instance.roomTextureAliases[level.rooms[i].textureContainer.ceiling],
                     color = settings.color,
                     mapMaterial = settings.mapMaterial,
                     category = settings.category,
@@ -462,7 +462,7 @@ namespace PlusStudioLevelLoader
 
             for (int i = 0; i < level.posters.Count; i++)
             {
-                PosterObject po = LevelLoaderPlugin.PosterFromAlias(level.posters[i].poster);
+                PosterObject po = LevelLoaderPlugin.Instance.posterAliases[level.posters[i].poster];
                 if (po == null)
                 {
                     Debug.LogWarning("Missing poster: " + level.posters[i].poster);
@@ -488,9 +488,9 @@ namespace PlusStudioLevelLoader
                 data.direction = (Direction)level.premadeRoomPlacements[i].direction;
                 if (level.premadeRoomPlacements[i].textureOverride != null)
                 {
-                    data.florTexOverride = LevelLoaderPlugin.RoomTextureFromAlias(level.premadeRoomPlacements[i].textureOverride.floor);
-                    data.wallTexOverride = LevelLoaderPlugin.RoomTextureFromAlias(level.premadeRoomPlacements[i].textureOverride.wall);
-                    data.ceilTexOverride = LevelLoaderPlugin.RoomTextureFromAlias(level.premadeRoomPlacements[i].textureOverride.ceiling);
+                    data.florTexOverride = LevelLoaderPlugin.Instance.roomTextureAliases[level.premadeRoomPlacements[i].textureOverride.floor];
+                    data.wallTexOverride = LevelLoaderPlugin.Instance.roomTextureAliases[level.premadeRoomPlacements[i].textureOverride.wall];
+                    data.ceilTexOverride = LevelLoaderPlugin.Instance.roomTextureAliases[level.premadeRoomPlacements[i].textureOverride.ceiling];
                 }
                 data.doorSpawnId = level.premadeRoomPlacements[i].doorSpawnId;
                 asset.roomAssetPlacements.Add(data);

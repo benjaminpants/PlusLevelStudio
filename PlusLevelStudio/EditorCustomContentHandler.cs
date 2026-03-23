@@ -1,4 +1,5 @@
-﻿using MTM101BaldAPI;
+﻿using HarmonyLib;
+using MTM101BaldAPI;
 using MTM101BaldAPI.AssetTools;
 using MTM101BaldAPI.UI;
 using PlusLevelStudio.Editor;
@@ -6,6 +7,7 @@ using PlusStudioLevelLoader;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using TMPro;
 using UnityEngine;
@@ -18,12 +20,14 @@ namespace PlusLevelStudio
 
         public string[] handledTypes = new string[0];
 
-        public abstract void AddElementOfType(EditorCustomContentEntry entry);
+        public abstract bool AddElementOfType(EditorCustomContentEntry entry);
 
-        public List<EditorCustomContentEntry> GetHandledEntries(EditorCustomContentPackage package)
+        public virtual List<EditorCustomContentEntry> GetHandledEntries(EditorCustomContentPackage package)
         {
             return package.GetAllOfTypes(handledTypes);
         }
+
+        public abstract void ClearEntriesNotInEditor(EditorController edCont, EditorCustomContentPackage package);
 
         public abstract void ClearAndCleanupEntriesNotInPackage(EditorCustomContentPackage package);
 
@@ -41,10 +45,12 @@ namespace PlusLevelStudio
             handledTypes = new string[] { "texture" };
         }
 
-        public override void AddElementOfType(EditorCustomContentEntry entry)
+        public override bool AddElementOfType(EditorCustomContentEntry entry)
         {
-            if (extend.dictionary.ContainsKey(entry.id)) return; // the texture is already loaded
+            if (extend.dictionary.ContainsKey(entry.id)) return false; // the texture is already loaded
+            LevelLoaderPlugin.Instance.roomTextureAliases.AddExtensionIfNotPresent(extend);
             extend.dictionary.Add(entry.id, LoadTextureFromPathOrData(entry, LevelStudioPlugin.customTexturePath));
+            return true;
         }
 
         public override void CleanupContent()
@@ -102,6 +108,20 @@ namespace PlusLevelStudio
                 extend.dictionary.Add(entry.id, LoadTextureFromPathOrData(entry, LevelStudioPlugin.customTexturePath));
             }
         }
+
+        public override void ClearEntriesNotInEditor(EditorController edCont, EditorCustomContentPackage package)
+        {
+            List<EditorCustomContentEntry> entriesQueuedForDeletion = new List<EditorCustomContentEntry>();
+            List<EditorCustomContentEntry> textureEntries = package.GetAllOfType("texture");
+            foreach (EditorCustomContentEntry entry in textureEntries)
+            {
+                if (edCont.levelData.rooms.Count(x => x.textureContainer.UsesTexture(entry.id)) == 0)
+                {
+                    entriesQueuedForDeletion.Add(entry);
+                }
+            }
+            entriesQueuedForDeletion.Do(x => package.entries.Remove(x));
+        }
     }
 
     public class CustomNPCContentHandler : EditorCustomContentHandler
@@ -114,7 +134,7 @@ namespace PlusLevelStudio
             handledTypes = new string[] { "npc" };
         }
 
-        public override void AddElementOfType(EditorCustomContentEntry entry)
+        public override bool AddElementOfType(EditorCustomContentEntry entry)
         {
             throw new NotImplementedException();
         }
@@ -128,6 +148,11 @@ namespace PlusLevelStudio
             gameObjects.Clear();
             extend.dictionary.Clear();
             LevelLoaderPlugin.Instance.npcAliases.extends.Remove(extend);
+        }
+
+        public override void ClearEntriesNotInEditor(EditorController edCont, EditorCustomContentPackage package)
+        {
+            // nothing necessary
         }
 
         public override void ClearAndCleanupEntriesNotInPackage(EditorCustomContentPackage package)
@@ -213,7 +238,7 @@ namespace PlusLevelStudio
         public override void LoadFromPackage(EditorCustomContentPackage package)
         {
             LevelLoaderPlugin.Instance.posterAliases.AddExtensionIfNotPresent(extend);
-            List<EditorCustomContentEntry> imagePosterEntries = package.GetAllOfType("imageposter");
+            List<EditorCustomContentEntry> imagePosterEntries = GetHandledEntries(package);
             foreach (EditorCustomContentEntry entry in imagePosterEntries)
             {
                 if (extend.dictionary.ContainsKey(entry.id)) continue; // the poster is already made
@@ -223,13 +248,28 @@ namespace PlusLevelStudio
             }
         }
 
-        public override void AddElementOfType(EditorCustomContentEntry entry)
+        public override bool AddElementOfType(EditorCustomContentEntry entry)
         {
-            if (extend.dictionary.ContainsKey(entry.id)) return; // the poster is already made
+            if (extend.dictionary.ContainsKey(entry.id)) return false; // the poster is already made
             LevelLoaderPlugin.Instance.posterAliases.AddExtensionIfNotPresent(extend);
             PosterObject posterObj = ObjectCreators.CreatePosterObject(LoadTextureFromPathOrData(entry, LevelStudioPlugin.customPostersPath), new PosterTextData[0]);
             posterObj.name = entry.id;
             extend.dictionary.Add(entry.id, posterObj);
+            return true;
+        }
+
+        public override void ClearEntriesNotInEditor(EditorController edCont, EditorCustomContentPackage package)
+        {
+            List<EditorCustomContentEntry> entriesQueuedForDeletion = new List<EditorCustomContentEntry>();
+            List<EditorCustomContentEntry> posterEntries = GetHandledEntries(package);
+            foreach (EditorCustomContentEntry entry in posterEntries)
+            {
+                if (edCont.levelData.posters.Count(x => x.type == entry.id) == 0)
+                {
+                    entriesQueuedForDeletion.Add(entry);
+                }
+            }
+            entriesQueuedForDeletion.Do(x => package.entries.Remove(x));
         }
     }
 
@@ -279,11 +319,27 @@ namespace PlusLevelStudio
             }
         }
 
-        public override void AddElementOfType(EditorCustomContentEntry entry)
+        public override bool AddElementOfType(EditorCustomContentEntry entry)
         {
+            if (extend.dictionary.ContainsKey(entry.id)) return false;
             LevelLoaderPlugin.Instance.posterAliases.AddExtensionIfNotPresent(extend);
             PosterObject posterObj = GeneratePosterObject(entry.id, Encoding.Unicode.GetString(entry.GetData()));
             extend.dictionary.Add(entry.id, posterObj);
+            return true;
+        }
+
+        public override void ClearEntriesNotInEditor(EditorController edCont, EditorCustomContentPackage package)
+        {
+            List<EditorCustomContentEntry> entriesQueuedForDeletion = new List<EditorCustomContentEntry>();
+            List<EditorCustomContentEntry> posterEntries = GetHandledEntries(package);
+            foreach (EditorCustomContentEntry entry in posterEntries)
+            {
+                if (edCont.levelData.posters.Count(x => x.type == entry.id) == 0)
+                {
+                    entriesQueuedForDeletion.Add(entry);
+                }
+            }
+            entriesQueuedForDeletion.Do(x => package.entries.Remove(x));
         }
     }
 

@@ -22,11 +22,18 @@ namespace PlusLevelStudio
 
         public EditorCustomContent()
         {
+            AddHandlers();
+        }
+
+        protected void AddHandlers()
+        {
+            handlers.Add(new CustomRoomTextureContentHandler());
             handlers.Add(new CustomImagePosterContentHandler());
             handlers.Add(new CustomBaldiSaysPosterContentHandler());
             handlers.Add(new CustomChalkboardPosterContentHandler());
             handlers.Add(new BulletInPosterContentHandler("bulletinposter", BaldiFonts.ComicSans18));
             handlers.Add(new BulletInPosterContentHandler("bulletinsmallposter", BaldiFonts.ComicSans12));
+            handlers.Add(new CustomNPCContentHandler());
             foreach (var item in onCreation)
             {
                 item.Invoke(this);
@@ -38,23 +45,22 @@ namespace PlusLevelStudio
             onCreation.Add(cb);
         }
 
-        public EditorCustomContent(EditorCustomContentPackage package) : base()
+        public EditorCustomContent(EditorCustomContentPackage package)
         {
+            AddHandlers();
             LoadFromPackage(package);
             legacyFlags |= package.legacyFlags;
+        }
+
+        public EditorCustomContentHandler GetHandlerFor(string type)
+        {
+            return handlers.Find(x => x.handledTypes.Contains(type));
         }
 
 
         public BaseGameManager gameManagerPre;
 
         public List<EditorCustomContentHandler> handlers = new List<EditorCustomContentHandler>();
-
-        // EXPERIMENTAL TODO: how will I write a system dynamic enough to allow this to be extended through mods?
-        public Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
-        public Dictionary<string, PosterObject> posters = new Dictionary<string, PosterObject>();
-        public Dictionary<string, NPC> npcs = new Dictionary<string, NPC>();
-
-        public List<GameObject> gameObjects = new List<GameObject>();
 
         public StudioLevelLegacyFlags legacyFlags { get; set; } = StudioLevelLegacyFlags.None;
 
@@ -65,54 +71,25 @@ namespace PlusLevelStudio
                 UnityEngine.Object.Destroy(gameManagerPre.gameObject);
             }
             gameManagerPre = null;
-            foreach (var kvp in textures)
+            foreach (var item in handlers)
             {
-                UnityEngine.Object.Destroy(kvp.Value);
+                item.CleanupContent();
             }
-            foreach (var kvp in posters)
-            {
-                UnityEngine.Object.Destroy(kvp.Value);
-            }
-            foreach (var gm in gameObjects)
-            {
-                UnityEngine.Object.Destroy(gm);
-            }
-            npcs.Clear();
-            gameObjects.Clear();
-            textures.Clear();
-            posters.Clear();
         }
 
-        public void ClearEntriesNotInPackage(EditorCustomContentPackage package)
+        public void ClearAndCleanupEntriesNotInPackage(EditorCustomContentPackage package)
         {
-            List<EditorCustomContentEntry> textureEntries = package.GetAllOfType("texture");
-            List<string> texturesKeyedForRemoval = new List<string>();
-            foreach (KeyValuePair<string, Texture2D> kvp in textures)
+            foreach (var item in handlers)
             {
-                if (textureEntries.Find(x => x.id == kvp.Key) == null)
-                {
-                    texturesKeyedForRemoval.Add(kvp.Key);
-                }
+                item.ClearAndCleanupEntriesNotInPackage(package);
             }
-            for (int i = 0; i < texturesKeyedForRemoval.Count; i++)
-            {
-                UnityEngine.Object.Destroy(textures[texturesKeyedForRemoval[i]]);
-                textures.Remove(texturesKeyedForRemoval[i]);
-            }
+        }
 
-            List<EditorCustomContentEntry> posterEntries = package.GetAllOfTypes("imageposter", "baldisaysposter", "chalkboardposter", "bulletinposter", "bulletinsmallposter");
-            List<string> posterEntriesKeyedForRemoval = new List<string>();
-            foreach (KeyValuePair<string, PosterObject> kvp in posters)
+        public void ClearEntriesNotInEditor(EditorController editor, EditorCustomContentPackage package)
+        {
+            foreach (var item in handlers)
             {
-                if (posterEntries.Find(x => x.id == kvp.Key) == null)
-                {
-                    posterEntriesKeyedForRemoval.Add(kvp.Key);
-                }
-            }
-            for (int i = 0; i < posterEntriesKeyedForRemoval.Count; i++)
-            {
-                UnityEngine.Object.Destroy(posters[posterEntriesKeyedForRemoval[i]]);
-                posters.Remove(posterEntriesKeyedForRemoval[i]);
+                item.ClearEntriesNotInEditor(editor, package);
             }
         }
 
@@ -135,69 +112,10 @@ namespace PlusLevelStudio
 
         public void LoadFromPackage(EditorCustomContentPackage package)
         {
-            List<EditorCustomContentEntry> textureEntries = package.GetAllOfType("texture");
-            foreach (EditorCustomContentEntry entry in textureEntries)
+            foreach (var item in handlers)
             {
-                if (textures.ContainsKey(entry.id)) continue; // the texture is already loaded
-                textures.Add(entry.id, LoadTextureFromPathOrData(entry, LevelStudioPlugin.customTexturePath));
+                item.LoadFromPackage(package);
             }
-
-            List<EditorCustomContentEntry> imagePosterEntries = package.GetAllOfType("imageposter");
-            foreach (EditorCustomContentEntry entry in imagePosterEntries)
-            {
-                if (posters.ContainsKey(entry.id)) continue; // the texture is already loaded
-                PosterObject posterObj = ObjectCreators.CreatePosterObject(LoadTextureFromPathOrData(entry, LevelStudioPlugin.customPostersPath), new PosterTextData[0]);
-                posterObj.name = entry.id;
-                posters.Add(entry.id, posterObj);
-            }
-
-            List<EditorCustomContentEntry> baldiPosterEntries = package.GetAllOfType("baldisaysposter");
-            foreach (EditorCustomContentEntry entry in baldiPosterEntries)
-            {
-                if (posters.ContainsKey(entry.id)) continue; // the texture is already loaded
-                PosterObject posterObj = LevelStudioPlugin.Instance.GenerateBaldiSaysPoster(entry.id, Encoding.Unicode.GetString(entry.GetData()));
-                posters.Add(entry.id, posterObj);
-            }
-
-            List<EditorCustomContentEntry> chalkPosterEntries = package.GetAllOfType("chalkboardposter");
-            foreach (EditorCustomContentEntry entry in chalkPosterEntries)
-            {
-                if (posters.ContainsKey(entry.id)) continue; // the texture is already loaded
-                PosterObject posterObj = LevelStudioPlugin.Instance.GenerateChalkPoster(entry.id, Encoding.Unicode.GetString(entry.GetData()));
-                posters.Add(entry.id, posterObj);
-            }
-
-            List<EditorCustomContentEntry> bulletinEntries = package.GetAllOfType("bulletinposter");
-            foreach (EditorCustomContentEntry entry in bulletinEntries)
-            {
-                if (posters.ContainsKey(entry.id)) continue; // the texture is already loaded
-                PosterObject posterObj = LevelStudioPlugin.Instance.GenerateBulletInPoster(entry.id, Encoding.Unicode.GetString(entry.GetData()), BaldiFonts.ComicSans18);
-                posters.Add(entry.id, posterObj);
-            }
-
-            List<EditorCustomContentEntry> bulletinSmallEntries = package.GetAllOfType("bulletinsmallposter");
-            foreach (EditorCustomContentEntry entry in bulletinSmallEntries)
-            {
-                if (posters.ContainsKey(entry.id)) continue; // the texture is already loaded
-                PosterObject posterObj = LevelStudioPlugin.Instance.GenerateBulletInPoster(entry.id, Encoding.Unicode.GetString(entry.GetData()), BaldiFonts.ComicSans12);
-                posters.Add(entry.id, posterObj);
-            }
-
-            List<EditorCustomContentEntry> npcEntries = package.GetAllOfType("npc");
-            foreach (EditorCustomContentEntry entry in npcEntries)
-            {
-                MemoryStream stream = new MemoryStream(entry.GetData());
-                BinaryReader reader = new BinaryReader(stream);
-                byte version = reader.ReadByte(); // just incase
-                string characterBase = reader.ReadString();
-                NPCProperties properties = LevelStudioPlugin.Instance.ConstructNPCPropertiesOfType(characterBase);
-                properties.ReadInto(reader);
-                GameObject[] createdObjects = properties.GeneratePrefabs(LevelLoaderPlugin.Instance.npcAliases[characterBase]);
-                gameObjects.AddRange(createdObjects);
-                npcs.Add(entry.id, createdObjects[0].GetComponent<NPC>());
-                reader.Close();
-            }
-
         }
     }
 

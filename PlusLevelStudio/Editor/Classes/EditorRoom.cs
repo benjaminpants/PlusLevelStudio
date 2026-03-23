@@ -15,9 +15,9 @@ namespace PlusLevelStudio.Editor
         public ActivityLocation activity;
         public EditorRoomVisualManager myVisual;
 
-        public Texture2D floorTex => LevelLoaderPlugin.RoomTextureFromAlias(textureContainer.floor);
-        public Texture2D wallTex => LevelLoaderPlugin.RoomTextureFromAlias(textureContainer.wall);
-        public Texture2D ceilTex => LevelLoaderPlugin.RoomTextureFromAlias(textureContainer.ceiling);
+        public Texture2D floorTex => LevelLoaderPlugin.Instance.roomTextureAliases[textureContainer.floor];
+        public Texture2D wallTex => LevelLoaderPlugin.Instance.roomTextureAliases[textureContainer.wall];
+        public Texture2D ceilTex => LevelLoaderPlugin.Instance.roomTextureAliases[textureContainer.ceiling];
 
         public EditorRoom(string roomType, TextureContainer container)
         {

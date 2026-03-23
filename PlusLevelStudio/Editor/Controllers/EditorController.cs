@@ -371,7 +371,7 @@ namespace PlusLevelStudio.Editor
 
         public void LoadEditorLevel(EditorLevelData newData, bool wipeUndoHistory = true)
         {
-            customContent.ClearEntriesNotInPackage(newData.meta.contentPackage);
+            customContent.ClearAndCleanupEntriesNotInPackage(newData.meta.contentPackage);
             customContent.LoadFromPackage(newData.meta.contentPackage); // load custom content before we do anything
             if (heldInteractable != null)
             {
@@ -473,26 +473,8 @@ namespace PlusLevelStudio.Editor
         public void CleanupUnusedContentFromData()
         {
             if (customContentPackage.entries.Count == 0) return; // micro optimization. honestly probably doesn't help
-            List<EditorCustomContentEntry> entriesQueuedForDeletion = new List<EditorCustomContentEntry>();
-            List<EditorCustomContentEntry> textureEntries = customContentPackage.GetAllOfType("texture");
-            foreach (EditorCustomContentEntry entry in textureEntries)
-            {
-                if (levelData.rooms.Count(x => x.textureContainer.UsesTexture(entry.id)) == 0)
-                {
-                    entriesQueuedForDeletion.Add(entry);
-                }
-            }
-
-            List<EditorCustomContentEntry> posterEntries = customContentPackage.GetAllOfTypes("imageposter", "baldisaysposter", "chalkboardposter", "bulletinposter", "bulletinsmallposter");
-            foreach (EditorCustomContentEntry entry in posterEntries)
-            {
-                if (levelData.posters.Count(x => x.type == entry.id) == 0)
-                {
-                    entriesQueuedForDeletion.Add(entry);
-                }
-            }
-            entriesQueuedForDeletion.Do(x => customContentPackage.entries.Remove(x));
-            customContent.ClearEntriesNotInPackage(customContentPackage);
+            customContent.ClearEntriesNotInEditor(this, customContentPackage);
+            customContent.ClearAndCleanupEntriesNotInPackage(customContentPackage);
         }
 
         public StructureLocation GetStructureData(string type)
@@ -872,6 +854,7 @@ namespace PlusLevelStudio.Editor
             playableLevel.uniqueId = 0;
             playableLevel.data = level;
             playableLevel.meta = levelData.meta.CompileContent(); // okay nevermind lets compile
+            customContent.CleanupContent(); // cleanup before loading level wtf am i doing
             if (!currentMode.vanillaComplaint)
             {
                 HandleNPCProperties(level, playableLevel.meta.contentPackage);

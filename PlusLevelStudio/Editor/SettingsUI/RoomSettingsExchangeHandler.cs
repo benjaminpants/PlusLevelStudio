@@ -40,7 +40,7 @@ namespace PlusLevelStudio.Editor.SettingsUI
 
         public void UpdatePreview()
         {
-            preview.texture = LevelLoaderPlugin.RoomTextureFromAlias(currentTexture);
+            preview.texture = LevelLoaderPlugin.Instance.roomTextureAliases[currentTexture];
         }
 
         public void RefreshPage(int page)
@@ -54,7 +54,7 @@ namespace PlusLevelStudio.Editor.SettingsUI
                     continue;
                 }
                 textureDisplays[i - startIndex].gameObject.SetActive(true);
-                textureDisplays[i - startIndex].texture = LevelLoaderPlugin.RoomTextureFromAlias(LevelStudioPlugin.Instance.selectableTextures[i]);
+                textureDisplays[i - startIndex].texture = LevelLoaderPlugin.Instance.roomTextureAliases[LevelStudioPlugin.Instance.selectableTextures[i]];
             }
             pageCountText.text = (page + 1) + "/" + currentMaxPages;
         }
@@ -71,6 +71,7 @@ namespace PlusLevelStudio.Editor.SettingsUI
         public void SelectTexture(string id)
         {
             currentTexture = id;
+            Debug.Log("updating preview!");
             UpdatePreview();
             parentExchange.SendInteractionMessage("changeTexture", currentTexture);
         }
@@ -79,11 +80,10 @@ namespace PlusLevelStudio.Editor.SettingsUI
         {
             string id = "cstm_" + Path.GetFileNameWithoutExtension(path);
             string fileName = Path.GetFileName(path); // unfortunately Path.GetRelativePath doesn't exist in .net 2.0
-            if (!EditorController.Instance.customContent.textures.ContainsKey(id))
+            EditorCustomContentEntry potEntry = new EditorCustomContentEntry("texture", id, fileName);
+            if (EditorController.Instance.customContent.GetHandlerFor("texture").AddElementOfType(potEntry))
             {
-                Texture2D texture = AssetLoader.TextureFromFile(path);
-                EditorController.Instance.customContent.textures.Add(id, texture);
-                EditorController.Instance.customContentPackage.entries.Add(new EditorCustomContentEntry("texture", id, fileName));
+                EditorController.Instance.customContentPackage.entries.Add(potEntry);
             }
             SelectTexture(id);
             return true;

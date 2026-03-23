@@ -47,14 +47,15 @@ namespace PlusLevelStudio.Editor.Tools.Customs
                 EditorController.Instance.TriggerError("Ed_Error_MustBe256");
                 return false;
             }
+            UnityEngine.Object.Destroy(texture);
             lastUsedFile = Path.GetFileNameWithoutExtension(path);
             posterSelected = true;
             onWaitFrame = true;
             EditorCustomContentEntry entry = new EditorCustomContentEntry("imageposter", currentId, fileName);
-            PosterObject posterObj = ObjectCreators.CreatePosterObject(texture, new PosterTextData[0]);
-            posterObj.name = entry.id;
-            EditorController.Instance.customContent.posters.Add(entry.id, posterObj);
-            EditorController.Instance.customContentPackage.entries.Add(entry);
+            if (EditorController.Instance.customContent.GetHandlerFor("imageposter").AddElementOfType(entry))
+            {
+                EditorController.Instance.customContentPackage.entries.Add(entry);
+            }
             return true;
         }
 

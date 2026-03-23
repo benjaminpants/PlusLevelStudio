@@ -12,7 +12,7 @@ namespace PlusLevelStudio.Editor
         public string type;
         public IntVector2 position;
         public Direction direction;
-        public PosterObject myPoster => LevelLoaderPlugin.PosterFromAlias(type);
+        public PosterObject myPoster => LevelLoaderPlugin.Instance.posterAliases[type];
         public void CleanupVisual(GameObject visualObject)
         {
             

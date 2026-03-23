@@ -79,7 +79,6 @@ namespace PlusStudioLevelLoader
             {
                 foreach (var item in extends)
                 {
-                    if (!item.canOverride) continue;
                     if (!item.dictionary.ContainsKey(key)) continue;
                     value = item.dictionary[key];
                     return true;
@@ -185,7 +184,7 @@ namespace PlusStudioLevelLoader
         protected Dictionary<string, T> _dictionary;
         protected bool _canOverride;
 
-        public bool canOverride => canOverride;
+        public bool canOverride => _canOverride;
         public Dictionary<string, T> dictionary => _dictionary;
 
         public ExtensibleDictionaryExtension(Dictionary<string, T> dictionary, bool canOverride)
