@@ -54,7 +54,7 @@ namespace PlusLevelStudio
                 new CellMarkerTool("hidden"),
                 new CellMarkerTool("excluderoomgroup"),
                 new WallTool(true),
-                new WallTool(false),
+                new WallTool(false)
             }, true);
             if (modeToModify.caresAboutSpawn)
             {
@@ -418,7 +418,7 @@ namespace PlusLevelStudio
                     new BulkObjectData("locker", new Vector3(2f,0f,4f)),
                     new BulkObjectData("locker", new Vector3(4f,0f,4f))
                 }, new List<KeyValuePair<string, string>>() { new KeyValuePair<string, string>("locker", "bluelocker") }),
-                new ObjectToolNoRotation("plant"),
+                new ObjectToolSubtileNoRotation("plant", 0f, true, 3.8f-(10f/3f)),
                 new ObjectToolNoRotation("decor_banana", 3.75f),
                 new ObjectToolNoRotation("decor_globe", 3.75f),
                 new ObjectToolNoRotation("decor_lunch", 3.75f),
@@ -431,10 +431,10 @@ namespace PlusLevelStudio
                 new ObjectTool("rounddesk"),
                 new ObjectTool("bookshelf"),
                 new ObjectTool("bookshelf_hole"),
-                new ObjectTool("packetomatic"),
+                new ObjectToolSubtile("packetomatic"),
                 new ObjectTool("counter"),
                 new ObjectTool("examinationtable"),
-                new ObjectToolNoRotation("pedestal"),
+                new ObjectToolSubtileNoRotation("pedestal", 0f, true, -0.25f),
                 new ObjectToolNoRotation("pinetree"),
                 new ObjectToolNoRotation("tree"),
                 new ObjectToolNoRotation("appletree"),
@@ -463,9 +463,9 @@ namespace PlusLevelStudio
                 new ObjectTool("dirtcircle"),
                 new ObjectTool("picnictable"),
                 new ObjectToolNoRotation("picnicbasket"),
-                new ObjectToolNoRotation("rock"),
+                new ObjectToolSubtileNoRotation("rock"),
                 new ObjectTool("tent"),
-                new ObjectToolNoRotation("decor_zoneflag"),
+                new ObjectToolSubtileNoRotation("decor_zoneflag"),
                 new ObjectToolNoRotation("campfire"),
                 new ObjectTool("factoryshelf"),
                 new ObjectTool("arrow", 5f),
