@@ -8,6 +8,7 @@ using PlusLevelStudio.Editor;
 
 namespace PlusLevelStudio.Patches
 {
+    /*
     [HarmonyPatch(typeof(LevelLoaderPlugin))]
     [HarmonyPatch("RoomTextureFromAlias")]
     static class RoomTextureAliasPatch
@@ -78,5 +79,5 @@ namespace PlusLevelStudio.Patches
             }
             return true;
         }
-    }
+    }*/
 }

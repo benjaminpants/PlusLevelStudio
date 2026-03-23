@@ -10,7 +10,7 @@ namespace PlusStudioLevelLoader
     /// This is so that other mods (primarily Studio) can temporarily add content to the loader without needing to manually keep track of every added element.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class ExtensibleDictionary<T> : IDictionary<string, T> where T : class
+    public class ExtensibleDictionary<T> : IDictionary<string, T>
     {
         public List<ExtensibleDictionaryExtension<T>> extends = new List<ExtensibleDictionaryExtension<T>>();
 
@@ -25,6 +25,12 @@ namespace PlusStudioLevelLoader
         public bool IsReadOnly => false;
 
         public T this[string key] { get => Get(key); set => Set(key, value); }
+
+        public void AddExtensionIfNotPresent(ExtensibleDictionaryExtension<T> ext)
+        {
+            if (extends.Contains(ext)) return;
+            extends.Add(ext);
+        }
 
         public T Get(string key)
         {
@@ -96,7 +102,8 @@ namespace PlusStudioLevelLoader
 
         public bool Contains(KeyValuePair<string, T> itm)
         {
-            if (internalDict.TryGetValue(itm.Key, out T v))
+            throw new NotImplementedException();
+            /*if (internalDict.TryGetValue(itm.Key, out T v))
             {
                 foreach (var item in extends)
                 {
@@ -112,7 +119,7 @@ namespace PlusStudioLevelLoader
                 if (!item.dictionary.ContainsKey(itm.Key)) continue;
                 return (item.dictionary[itm.Key] == itm.Value);
             }
-            return false;
+            return false;*/
         }
 
         private Dictionary<string, T> BuildInternalCombinedDictionary()
@@ -173,10 +180,10 @@ namespace PlusStudioLevelLoader
     /// A class that represents an extension to an ExtensibleDictionary.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class ExtensibleDictionaryExtension<T> where T : class
+    public class ExtensibleDictionaryExtension<T>
     {
-        protected Dictionary<string, T> _dictionary = new Dictionary<string, T>();
-        protected bool _canOverride = false;
+        protected Dictionary<string, T> _dictionary;
+        protected bool _canOverride;
 
         public bool canOverride => canOverride;
         public Dictionary<string, T> dictionary => _dictionary;
@@ -185,6 +192,12 @@ namespace PlusStudioLevelLoader
         {
             _dictionary = dictionary;
             _canOverride = canOverride;
+        }
+
+        public ExtensibleDictionaryExtension()
+        {
+            _dictionary = new Dictionary<string, T>();
+            _canOverride = false;
         }
     }
 }

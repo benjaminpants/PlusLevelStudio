@@ -21,23 +21,23 @@ namespace PlusStudioLevelLoader
 
         public AssetManager assetMan = new AssetManager();
 
-        public Dictionary<string, RoomSettings> roomSettings = new Dictionary<string, RoomSettings>();
-        public Dictionary<string, Texture2D> roomTextureAliases = new Dictionary<string, Texture2D>();
-        public Dictionary<string, Transform> lightTransforms = new Dictionary<string, Transform>();
-        public Dictionary<string, Door> doorPrefabs = new Dictionary<string, Door>();
-        public Dictionary<string, WindowObject> windowObjects = new Dictionary<string, WindowObject>();
-        public Dictionary<string, TileBasedObject> tileBasedObjectPrefabs = new Dictionary<string, TileBasedObject>();
-        public Dictionary<string, LoaderExitData> exitDatas = new Dictionary<string, LoaderExitData>();
-        public Dictionary<string, ItemObject> itemObjects = new Dictionary<string, ItemObject>();
-        public Dictionary<string, GameObject> basicObjects = new Dictionary<string, GameObject>();
-        public Dictionary<string, Activity> activityAliases = new Dictionary<string, Activity>();
-        public Dictionary<string, LoaderStructureData> structureAliases = new Dictionary<string, LoaderStructureData>();
-        public Dictionary<string, NPC> npcAliases = new Dictionary<string, NPC>();
-        public Dictionary<string, PosterObject> posterAliases = new Dictionary<string, PosterObject>();
-        public Dictionary<string, RandomEvent> randomEventAliases = new Dictionary<string, RandomEvent>();
-        public Dictionary<string, Cubemap> skyboxAliases = new Dictionary<string, Cubemap>();
-        public Dictionary<string, Sticker> stickerAliases = new Dictionary<string, Sticker>();
-        public Dictionary<string, RoomAsset> roomAssetAliases = new Dictionary<string, RoomAsset>();
+        public ExtensibleDictionary<RoomSettings> roomSettings = new ExtensibleDictionary<RoomSettings>();
+        public ExtensibleDictionary<Texture2D> roomTextureAliases = new ExtensibleDictionary<Texture2D>();
+        public ExtensibleDictionary<Transform> lightTransforms = new ExtensibleDictionary<Transform>();
+        public ExtensibleDictionary<Door> doorPrefabs = new ExtensibleDictionary<Door>();
+        public ExtensibleDictionary<WindowObject> windowObjects = new ExtensibleDictionary<WindowObject>();
+        public ExtensibleDictionary<TileBasedObject> tileBasedObjectPrefabs = new ExtensibleDictionary<TileBasedObject>();
+        public ExtensibleDictionary<LoaderExitData> exitDatas = new ExtensibleDictionary<LoaderExitData>();
+        public ExtensibleDictionary<ItemObject> itemObjects = new ExtensibleDictionary<ItemObject>();
+        public ExtensibleDictionary<GameObject> basicObjects = new ExtensibleDictionary<GameObject>();
+        public ExtensibleDictionary<Activity> activityAliases = new ExtensibleDictionary<Activity>();
+        public ExtensibleDictionary<LoaderStructureData> structureAliases = new ExtensibleDictionary<LoaderStructureData>();
+        public ExtensibleDictionary<NPC> npcAliases = new ExtensibleDictionary<NPC>();
+        public ExtensibleDictionary<PosterObject> posterAliases = new ExtensibleDictionary<PosterObject>();
+        public ExtensibleDictionary<RandomEvent> randomEventAliases = new ExtensibleDictionary<RandomEvent>();
+        public ExtensibleDictionary<Cubemap> skyboxAliases = new ExtensibleDictionary<Cubemap>();
+        public ExtensibleDictionary<Sticker> stickerAliases = new ExtensibleDictionary<Sticker>();
+        public ExtensibleDictionary<RoomAsset> roomAssetAliases = new ExtensibleDictionary<RoomAsset>();
 
         public Pickup stickerPickupPre;
 

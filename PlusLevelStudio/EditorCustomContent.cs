@@ -18,12 +18,27 @@ namespace PlusLevelStudio
     /// </summary>
     public class EditorCustomContent : IStudioLegacyKnowledgable
     {
+        private static List<Action<EditorCustomContent>> onCreation = new List<Action<EditorCustomContent>>();
+
         public EditorCustomContent()
         {
-
+            handlers.Add(new CustomImagePosterContentHandler());
+            handlers.Add(new CustomBaldiSaysPosterContentHandler());
+            handlers.Add(new CustomChalkboardPosterContentHandler());
+            handlers.Add(new BulletInPosterContentHandler("bulletinposter", BaldiFonts.ComicSans18));
+            handlers.Add(new BulletInPosterContentHandler("bulletinsmallposter", BaldiFonts.ComicSans12));
+            foreach (var item in onCreation)
+            {
+                item.Invoke(this);
+            }
         }
 
-        public EditorCustomContent(EditorCustomContentPackage package)
+        public static void AddCreationCallback(Action<EditorCustomContent> cb)
+        {
+            onCreation.Add(cb);
+        }
+
+        public EditorCustomContent(EditorCustomContentPackage package) : base()
         {
             LoadFromPackage(package);
             legacyFlags |= package.legacyFlags;
@@ -31,6 +46,8 @@ namespace PlusLevelStudio
 
 
         public BaseGameManager gameManagerPre;
+
+        public List<EditorCustomContentHandler> handlers = new List<EditorCustomContentHandler>();
 
         // EXPERIMENTAL TODO: how will I write a system dynamic enough to allow this to be extended through mods?
         public Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
