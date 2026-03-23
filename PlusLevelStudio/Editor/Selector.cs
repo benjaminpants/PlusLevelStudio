@@ -30,6 +30,10 @@ namespace PlusLevelStudio.Editor
         /// </summary>
         Object,
         /// <summary>
+        /// A subtile is selected. Show the 3x3 selection box
+        /// </summary>
+        SubTile,
+        /// <summary>
         /// An object that only can have its settings changed. Show the settings. Legacy.
         /// </summary>
         Settings
@@ -73,6 +77,7 @@ namespace PlusLevelStudio.Editor
     public class Selector : MonoBehaviour
     {
         public GameObject tileSelector;
+        public GameObject subTileSelector;
         public SelectorArrow[] tileArrows = new SelectorArrow[4];
         public SettingsWorldButton gearButton;
         public MoveHandles moveHandles;
@@ -80,6 +85,8 @@ namespace PlusLevelStudio.Editor
         float upwardsOffset => baseUpwardsOffset + EditorController.Instance.gridManager.Height;
 
         public IntVector2 selectedTile { get; private set; } = new IntVector2(0, 0);
+
+        public Direction[] selectedSubTileDirections { get; private set; } = new Direction[2] { Direction.Null, Direction.Null };
 
         protected bool showSettings = false;
         public RectInt selectedArea { get; private set; } = new RectInt(new Vector2Int(0,0), new Vector2Int(0, 0));
@@ -147,6 +154,43 @@ namespace PlusLevelStudio.Editor
             HideSettings();
             selectedTile = tile;
             state = SelectorState.Tile;
+            NullActions();
+            UpdateSelectionObjects();
+        }
+
+        private const float subTileSize = 10f / 3f;
+
+        public void SelectNearestSubTile(Vector3 mousePosition)
+        {
+            HideSettings();
+            selectedTile = mousePosition.ToCellVector();
+            selectedSubTileDirections = new Direction[] { Direction.Null, Direction.Null };
+            state = SelectorState.SubTile;
+            IntVector2 subTilePosition = new IntVector2(Mathf.RoundToInt((mousePosition.x - (subTileSize / 2f)) / subTileSize), Mathf.RoundToInt((mousePosition.z - (subTileSize / 2f)) / subTileSize));
+            IntVector2 baseTileSubCenter = (selectedTile * 3) + new IntVector2(1,1);
+            int currentInd = 0;
+            if (subTilePosition.z > baseTileSubCenter.z)
+            {
+                selectedSubTileDirections[currentInd] = Direction.North;
+                currentInd++;
+            }
+            else if (subTilePosition.z < baseTileSubCenter.z)
+            {
+                selectedSubTileDirections[currentInd] = Direction.South;
+                currentInd++;
+            }
+
+            if (subTilePosition.x > baseTileSubCenter.x)
+            {
+                selectedSubTileDirections[currentInd] = Direction.East;
+                currentInd++;
+            }
+            else if (subTilePosition.x < baseTileSubCenter.x)
+            {
+                selectedSubTileDirections[currentInd] = Direction.West;
+                currentInd++;
+            }
+
             NullActions();
             UpdateSelectionObjects();
         }
@@ -301,6 +345,14 @@ namespace PlusLevelStudio.Editor
                 case SelectorState.Tile:
                     transform.position = selectedTile.ToWorld() + (Vector3.up * upwardsOffset);
                     break;
+                case SelectorState.SubTile:
+                    transform.position = selectedTile.ToWorld() + (Vector3.up * upwardsOffset);
+                    for (int i = 0; i < selectedSubTileDirections.Length; i++)
+                    {
+                        if (selectedSubTileDirections[i] == Direction.Null) continue;
+                        transform.position += selectedSubTileDirections[i].ToVector3() * subTileSize;
+                    }
+                    break;
                 case SelectorState.Object:
                     Transform tf = selectedMovable.GetTransform();
                     moveHandles.GoToTarget(tf);
@@ -311,6 +363,7 @@ namespace PlusLevelStudio.Editor
         protected void UpdateSelectionObjects()
         {
             tileSelector.SetActive(false);
+            subTileSelector.SetActive(false);
             for (int i = 0; i < tileArrows.Length; i++)
             {
                 tileArrows[i].gameObject.SetActive(false);
@@ -323,6 +376,9 @@ namespace PlusLevelStudio.Editor
                     break;
                 case SelectorState.Tile:
                     tileSelector.SetActive(true);
+                    break;
+                case SelectorState.SubTile:
+                    subTileSelector.SetActive(true);
                     break;
                 case SelectorState.Area:
                     for (int i = 0; i < tileArrows.Length; i++)

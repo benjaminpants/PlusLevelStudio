@@ -845,6 +845,10 @@ namespace PlusLevelStudio
             selectMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "FloorSelect.png"));
             selectMat.name = "EditorSelectMaterial";
 
+            Material selectSmallMat = new Material(gridMat);
+            selectSmallMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "FloorSelect_3x3.png"));
+            selectSmallMat.name = "EditorSelectSmallMaterial";
+
             Material arrowMat = new Material(gridMat);
             arrowMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "FloorArrow.png"));
             arrowMat.name = "EditorArrowMaterial";
@@ -942,8 +946,14 @@ namespace PlusLevelStudio
             tileQuad.transform.SetParent(selectorObject.transform, false);
             tileQuad.gameObject.SetActive(false);
 
+            GameObject subTileQuad = CreateQuad("SubTileSelection", selectSmallMat, Vector3.zero, new Vector3(90f, 0f, 0f));
+            subTileQuad.transform.SetParent(selectorObject.transform, false);
+            subTileQuad.gameObject.SetActive(false);
+            subTileQuad.transform.localScale /= 3f;
+
             Selector selector = selectorObject.AddComponent<Selector>();
             selector.tileSelector = tileQuad;
+            selector.subTileSelector = subTileQuad;
 
             for (int i = 0; i < directions.Count; i++)
             {
