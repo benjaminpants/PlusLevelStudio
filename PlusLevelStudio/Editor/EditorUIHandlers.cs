@@ -7,6 +7,7 @@ using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
 using UnityEngine;
 using TMPro;
+using System.Collections;
 
 namespace PlusLevelStudio.Editor
 {
@@ -243,9 +244,21 @@ namespace PlusLevelStudio.Editor
                     return EditorController.Instance.selector.moveHandles.moveEnabled;
                 case "rotateEnabled":
                     return EditorController.Instance.selector.moveHandles.rotateEnabled;
+                case "sidebarActive":
+                    return sidebarActive;
+                case "sbHidden":
+                    return (EditorController.Instance.sidebarDisplay == SidebarGridDisplay.HiddenCells);
+                case "sbEventUnsafe":
+                    return (EditorController.Instance.sidebarDisplay == SidebarGridDisplay.EventUnsafe);
+                case "sbEntityUnsafe":
+                    return (EditorController.Instance.sidebarDisplay == SidebarGridDisplay.EntityUnsafe);
             }
             return false;
         }
+
+        public RectTransform sideBarTransform;
+
+        public bool sidebarActive = false;
 
         public override void OnElementsCreated()
         {
@@ -271,6 +284,7 @@ namespace PlusLevelStudio.Editor
             // EditorController exists by this point
             gridScaleTextBox.text = EditorController.Instance.gridSnap.ToString();
             angleSnapTextBox.text = EditorController.Instance.angleSnap.ToString();
+            sideBarTransform = transform.Find("Sidebar").GetComponent<RectTransform>();
         }
 
         public void PlayLevel()
@@ -304,10 +318,46 @@ namespace PlusLevelStudio.Editor
             return false;
         }
 
+        Coroutine currentSidebarEn;
+        IEnumerator ChangeState()
+        {
+            Vector2 initPos = sideBarTransform.anchoredPosition;
+            Vector2 targetPos = sidebarActive ? new Vector2(0f, 0f) : new Vector2(-135f,0f);
+            float time = 0f;
+            while (time < 1f)
+            {
+                time += Time.deltaTime * 2;
+                sideBarTransform.anchoredPosition = Vector2.Lerp(initPos, targetPos, 1 - (1 - time) * (1 - time));
+                sideBarTransform.anchoredPosition = new Vector2(Mathf.RoundToInt(sideBarTransform.anchoredPosition.x), Mathf.RoundToInt(sideBarTransform.anchoredPosition.y));
+                yield return null;
+            }
+            sideBarTransform.anchoredPosition = targetPos;
+            yield break;
+        }
         public override void SendInteractionMessage(string message, object data)
         {
             switch (message)
             {
+                case "sbToggleHidden":
+                    EditorController.Instance.sidebarDisplay = (EditorController.Instance.sidebarDisplay == SidebarGridDisplay.HiddenCells) ? SidebarGridDisplay.None : SidebarGridDisplay.HiddenCells;
+                    EditorController.Instance.RefreshSidebarDisplay();
+                    break;
+                case "sbToggleEventUnsafe":
+                    EditorController.Instance.sidebarDisplay = (EditorController.Instance.sidebarDisplay == SidebarGridDisplay.EventUnsafe) ? SidebarGridDisplay.None : SidebarGridDisplay.EventUnsafe;
+                    EditorController.Instance.RefreshSidebarDisplay();
+                    break;
+                case "sbToggleEntityUnsafe":
+                    EditorController.Instance.sidebarDisplay = (EditorController.Instance.sidebarDisplay == SidebarGridDisplay.EntityUnsafe) ? SidebarGridDisplay.None : SidebarGridDisplay.EntityUnsafe;
+                    EditorController.Instance.RefreshSidebarDisplay();
+                    break;
+                case "toggleSidebar":
+                    if (currentSidebarEn != null)
+                    {
+                        StopCoroutine(currentSidebarEn);
+                    }
+                    sidebarActive = !sidebarActive;
+                    currentSidebarEn = StartCoroutine(ChangeState());
+                    break;
                 case "exit":
                     EditorController.Instance.SwitchToTool(null);
                     if (EditorController.Instance.hasUnsavedChanges)

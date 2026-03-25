@@ -1,24 +1,25 @@
 ﻿using HarmonyLib;
+using MidiPlayerTK;
+using MTM101BaldAPI;
+using MTM101BaldAPI.AssetTools;
+using MTM101BaldAPI.Reflection;
 using MTM101BaldAPI.UI;
+using PlusLevelStudio.Editor.GlobalSettingsMenus;
+using PlusLevelStudio.Editor.SettingsUI;
+using PlusLevelStudio.UI;
+using PlusStudioLevelFormat;
+using PlusStudioLevelLoader;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UIElements;
-using PlusLevelStudio.UI;
-using MTM101BaldAPI.AssetTools;
-using System.IO;
 using UnityEngine.EventSystems;
-using MTM101BaldAPI.Reflection;
-using MTM101BaldAPI;
-using PlusStudioLevelFormat;
-using PlusStudioLevelLoader;
-using System.Linq;
-using MidiPlayerTK;
-using PlusLevelStudio.Editor.SettingsUI;
 using UnityEngine.Rendering.Universal;
+using UnityEngine.UIElements;
 
 namespace PlusLevelStudio.Editor
 {
@@ -61,6 +62,7 @@ namespace PlusLevelStudio.Editor
         public GameObject[] uiObjects = new GameObject[3];
         // todo: maybe make this a tuple list with (GameObject, bool) where the bool represents if it's a blocking UI element?
         public List<GameObject> uiOverlays = new List<GameObject>();
+        public SidebarGridDisplay sidebarDisplay = SidebarGridDisplay.None;
 
         public EnvironmentController workerEc;
         public EnvironmentController ecPrefab;
@@ -380,6 +382,7 @@ namespace PlusLevelStudio.Editor
             }
             SwitchToTool(null); // remove our current tool
             IEditorVisualizable[] visuals = objectVisuals.Keys.ToArray();
+            sidebarUpdatesSuppressed = true;
             foreach (var item in visuals)
             {
                 RemoveVisual(item);
@@ -452,6 +455,7 @@ namespace PlusLevelStudio.Editor
                 Debug.LogError(e);
                 throw new EditorLoadException("Ed_Exception_NonSpecific");
             }
+            sidebarUpdatesSuppressed = false;
             RefreshCells(false);
             SetupVisualsForAllRooms(); // need to do this first before lighting
             RefreshLights();
@@ -475,6 +479,70 @@ namespace PlusLevelStudio.Editor
             if (customContentPackage.entries.Count == 0) return; // micro optimization. honestly probably doesn't help
             customContent.ClearEntriesNotInEditor(this, customContentPackage);
             customContent.ClearAndCleanupEntriesNotInPackage(customContentPackage);
+        }
+
+        protected bool sidebarUpdatesSuppressed = false;
+
+        public void RefreshSidebarDisplayIfIts(SidebarGridDisplay ifIt)
+        {
+            if (sidebarUpdatesSuppressed) return;
+            if (sidebarDisplay == ifIt)
+            {
+                RefreshSidebarDisplay();
+            }
+        }
+
+        public void RefreshSidebarDisplay()
+        {
+            if (sidebarDisplay == SidebarGridDisplay.None)
+            {
+                gridManager.DisableOverlays();
+                return;
+            }
+            bool[,] mask = new bool[levelData.mapSize.x, levelData.mapSize.z];
+            bool invert = false;
+            switch (sidebarDisplay)
+            {
+                case SidebarGridDisplay.HiddenCells:
+                    for (int x = 0; x < levelData.mapSize.x; x++)
+                    {
+                        for (int y = 0; y < levelData.mapSize.z; y++)
+                        {
+                            if (levelData.cells[x, y].type == 16)
+                            {
+                                mask[x, y] = false;
+                                continue;
+                            }
+                            mask[x, y] = workerEc.LightLevel(new IntVector2(x, y)) <= VisualsAndLightsUIExchangeHandler.minHideLevel;
+                        }
+                    }
+                    break;
+                case SidebarGridDisplay.EventUnsafe:
+                    invert = true;
+                    for (int i = 0; i < levelData.objects.Count; i++)
+                    {
+                        GetVisual(levelData.objects[i]).GetComponent<EditorBasicObject>().SetMode(false);
+                    }
+                    mask = CompileSafeCells(levelData, 2f);
+                    for (int i = 0; i < levelData.objects.Count; i++)
+                    {
+                        GetVisual(levelData.objects[i]).GetComponent<EditorBasicObject>().SetMode(true);
+                    }
+                    break;
+                case SidebarGridDisplay.EntityUnsafe:
+                    invert = true;
+                    for (int i = 0; i < levelData.objects.Count; i++)
+                    {
+                        GetVisual(levelData.objects[i]).GetComponent<EditorBasicObject>().SetMode(false);
+                    }
+                    mask = CompileSafeCells(levelData, 1f);
+                    for (int i = 0; i < levelData.objects.Count; i++)
+                    {
+                        GetVisual(levelData.objects[i]).GetComponent<EditorBasicObject>().SetMode(true);
+                    }
+                    break;
+            }
+            gridManager.EnableOverlaysWithMask(mask, invert);
         }
 
         public StructureLocation GetStructureData(string type)
@@ -562,6 +630,7 @@ namespace PlusLevelStudio.Editor
             UpdateStructuresWithReason(PotentialStructureUpdateReason.LightChange);
             workerEc.UpdateQueuedLightChanges();
             LevelStudioPlugin.Instance.lightmaps["none"].Apply(false, false);
+            RefreshSidebarDisplayIfIts(SidebarGridDisplay.HiddenCells);
         }
 
         protected void HandleLightChanges(IEnumerable<IEditorCellModifier> todo)

@@ -840,6 +840,11 @@ namespace PlusLevelStudio
             gridMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "FloorGrid.png"));
             gridMat.SetTexture("_LightMap", lightmaps["white"]);
 
+            Material gridOverlayMat = new Material(assetMan.Get<Material>("tileAlpha"));
+            gridOverlayMat.name = "EditorGridOverlayMaterial";
+            gridOverlayMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "TransparentMarker.png"));
+            gridOverlayMat.SetTexture("_LightMap", lightmaps["red"]);
+
             Material selectMat = new Material(gridMat);
             selectMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "FloorSelect.png"));
             selectMat.name = "EditorSelectMaterial";
@@ -924,6 +929,10 @@ namespace PlusLevelStudio
 
             gridManager.gridCellTemplate = CreateQuad("GridCell", gridMat, Vector3.zero, new Vector3(90f, 0f, 0f));
             gridManager.gridCellTemplate.ConvertToPrefab(true);
+            GameObject gridOverlay = CreateQuad("GridOverlay", gridOverlayMat, Vector3.zero, new Vector3(90f, 0f, 0f));
+            gridOverlay.transform.SetParent(gridManager.gridCellTemplate.transform);
+            gridOverlay.transform.position += Vector3.up * 0.012f;
+            gridOverlay.gameObject.SetActive(false);
 
             for (int i = 0; i < directions.Count; i++)
             {
