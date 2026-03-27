@@ -12,6 +12,9 @@ namespace PlusLevelStudio.UI
         public int slotIndex = 0;
         private EditorTool _currentTool;
         public Image iconImage;
+        public Image slotImage;
+        public Sprite defaultSlotSprite;
+        public bool usesToolOverride = false;
         public EditorTool currentTool {
             get
             {
@@ -25,14 +28,26 @@ namespace PlusLevelStudio.UI
                 {
                     iconImage.sprite = null;
                     iconImage.color = Color.clear;
+                    if (usesToolOverride)
+                    {
+                        slotImage.sprite = defaultSlotSprite;
+                    }
                     return;
                 }
                 if (_currentTool.sprite == null)
                 {
                     iconImage.sprite = LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/unknown");
+                    if (usesToolOverride)
+                    {
+                        slotImage.sprite = defaultSlotSprite;
+                    }
                     return;
                 }
                 iconImage.sprite = _currentTool.sprite;
+                if (usesToolOverride)
+                {
+                    slotImage.sprite = (_currentTool == null || _currentTool.frameOverride == null) ? defaultSlotSprite : _currentTool.frameOverride;
+                }
             }
         }
         public StandardMenuButton button;

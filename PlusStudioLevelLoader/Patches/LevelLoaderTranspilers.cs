@@ -78,6 +78,7 @@ namespace PlusStudioLevelLoader.Patches
             Debug.Log("Level loader filling item spawns with empty... (Loader Extension)");
             foreach (RoomController room in loader.Ec.rooms)
             {
+                room.itemSpawnPoints = new List<ItemSpawnPoint>(room.itemSpawnPoints); // regenerate
                 _FillRoomWithPooledPickups.Invoke(loader, new object[] { room, false });
             }
         }

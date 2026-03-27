@@ -24,6 +24,11 @@ namespace PlusLevelStudio.Editor
         public Sprite sprite;
 
         /// <summary>
+        /// The override for the frame
+        /// </summary>
+        public Sprite frameOverride;
+
+        /// <summary>
         /// Called when the tool is selected/picked up
         /// </summary>
         public abstract void Begin();

@@ -354,6 +354,8 @@ namespace PlusStudioLevelLoader
                         rotation = x.rotation.ToUnity(),
                         prefab = LevelLoaderPlugin.Instance.basicObjects[x.prefab].transform
                     }).ToList(),
+                    minItemValue = level.rooms[i].minItemValue,
+                    maxItemValue = level.rooms[i].maxItemValue
                 };
                 if (data.hasActivity)
                 {

@@ -99,6 +99,7 @@ namespace PlusLevelStudio.Editor
             foreach (HotSlotScript slot in slots)
             {
                 hotSlots[slot.slotIndex] = slot;
+                slot.usesToolOverride = true;
             }
             pageCountText = transform.Find("PageNumber").GetComponent<TextMeshProUGUI>();
             // this code is horrible

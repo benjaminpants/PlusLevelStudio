@@ -13,7 +13,7 @@ using System.IO;
 
 namespace PlusStudioLevelLoader
 {
-    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudioloader", "Plus Level Loader", "1.11.0.0")]
+    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudioloader", "Plus Level Loader", "1.11.1.0")]
     [BepInDependency("mtm101.rulerp.bbplus.baldidevapi")]
     public class LevelLoaderPlugin : BaseUnityPlugin
     {
@@ -45,6 +45,7 @@ namespace PlusStudioLevelLoader
         {
             if (!Instance.roomTextureAliases.ContainsKey(alias))
             {
+                Debug.LogWarning("Cannot find: " + alias + " as roomtexture!");
                 return Instance.roomTextureAliases["PlaceholderWall"];
             }
             return Instance.roomTextureAliases[alias];
@@ -54,6 +55,7 @@ namespace PlusStudioLevelLoader
         {
             if (!Instance.posterAliases.ContainsKey(alias))
             {
+                Debug.LogWarning("Cannot find: " + alias + " as Poster!");
                 return null;
             }
             return Instance.posterAliases[alias];
