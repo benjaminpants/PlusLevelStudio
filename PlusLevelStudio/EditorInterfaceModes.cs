@@ -461,6 +461,7 @@ namespace PlusLevelStudio
                 new ObjectTool("hopscotch"),
                 new ObjectTool("hoop"),
                 new ObjectTool("dirtcircle"),
+                new ObjectToolNoRotPreRotated("rug", Quaternion.Euler(90f,0f,0f)),
                 new ObjectTool("picnictable"),
                 new ObjectToolNoRotation("picnicbasket"),
                 new ObjectToolSubtileNoRotation("rock"),

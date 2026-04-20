@@ -825,7 +825,7 @@ namespace PlusLevelStudio
             defaultRoomTextures.Add("teleportroom_2", new TextureContainer("LabFloor", "LabWall", "LabCeiling"));
             defaultRoomTextures.Add("teleportroom_3", new TextureContainer("LabFloor", "LabWall", "LabCeiling"));
             defaultRoomTextures.Add("teleportroom_4", new TextureContainer("LabFloor", "LabWall", "LabCeiling"));
-            defaultRoomTextures.Add("saferoom", new TextureContainer("ElevatorFloor", "ElevatorBack", "ElevatorCeiling"));
+            defaultRoomTextures.Add("saferoom", new TextureContainer("HallFloor", "ElevatorBack", "ElevatorCeiling"));
             defaultRoomTextures.Add("crane", new TextureContainer("DiamondPlateFloor", "Wall", "None"));
 
             defaultRoomTextures.Add("class_mathmachine", new TextureContainer("BlueCarpet", "WallWithMolding", "Ceiling"));
@@ -1459,6 +1459,7 @@ namespace PlusLevelStudio
             EditorInterface.AddObjectVisual("hoop", LevelLoaderPlugin.Instance.basicObjects["hoop"], true);
             EditorInterface.AddObjectVisualWithCustomBoxCollider("hopscotch", LevelLoaderPlugin.Instance.basicObjects["hopscotch"], new Vector3(30f, 0.01f, 30f), Vector3.zero);
             EditorInterface.AddObjectVisualWithCustomBoxCollider("dirtcircle", LevelLoaderPlugin.Instance.basicObjects["dirtcircle"], new Vector3(20f, 0.01f, 20f), Vector3.zero);
+            EditorInterface.AddObjectVisualWithCustomBoxCollider("rug", LevelLoaderPlugin.Instance.basicObjects["rug"], new Vector3(1f, 1f, 0.01f), Vector3.zero);
             EditorInterface.AddObjectVisual("tree", LevelLoaderPlugin.Instance.basicObjects["tree"], true);
             EditorInterface.AddObjectVisual("pinetree", LevelLoaderPlugin.Instance.basicObjects["pinetree"], true);
             EditorInterface.AddObjectVisual("picnictable", LevelLoaderPlugin.Instance.basicObjects["picnictable"], true);

@@ -313,6 +313,7 @@ namespace PlusStudioLevelLoader
             basicObjects.Add("roundtablechairs2", objects.First(x => x.name == "RoundTable_Chairs_2"));
             basicObjects.Add("factoryshelf", objects.First(x => x.name == "FactoryShelf_Object"));
             basicObjects.Add("campfire", objects.First(x => x.name == "CampFire"));
+            basicObjects.Add("rug", objects.First(x => x.name == "Rug"));
 
             // activities
             Activity[] activites = Resources.FindObjectsOfTypeAll<Activity>().Where(x => x.GetInstanceID() >= 0).ToArray();
