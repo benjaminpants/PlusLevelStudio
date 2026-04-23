@@ -10,6 +10,7 @@ using PlusLevelStudio.UI;
 using PlusStudioLevelFormat;
 using PlusStudioLevelLoader;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -236,6 +237,17 @@ namespace PlusLevelStudio.Editor
                 Debug.Log("The fuck?");
                 currentUndoIndex = undoStreams.Count - 1;
             }
+
+            RefreshSidebarDisplayInOneFrameIfIts(SidebarGridDisplay.EventUnsafe);
+            RefreshSidebarDisplayInOneFrameIfIts(SidebarGridDisplay.EntityUnsafe);
+        }
+
+
+
+        IEnumerator RefreshSidebarOneFrameEnumerator(SidebarGridDisplay gridDisp)
+        {
+            yield return null;
+            RefreshSidebarDisplayIfIts(gridDisp);
         }
 
         public void SwitchToUndo(int index)
@@ -489,6 +501,15 @@ namespace PlusLevelStudio.Editor
             if (sidebarDisplay == ifIt)
             {
                 RefreshSidebarDisplay();
+            }
+        }
+
+        public void RefreshSidebarDisplayInOneFrameIfIts(SidebarGridDisplay ifIt)
+        {
+            if (sidebarUpdatesSuppressed) return;
+            if (sidebarDisplay == ifIt)
+            {
+                StartCoroutine(RefreshSidebarOneFrameEnumerator(ifIt));
             }
         }
 
