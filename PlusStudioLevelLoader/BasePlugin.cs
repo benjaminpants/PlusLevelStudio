@@ -13,7 +13,7 @@ using System.IO;
 
 namespace PlusStudioLevelLoader
 {
-    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudioloader", "Plus Level Loader", "1.11.0.0")]
+    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudioloader", "Plus Level Loader", "1.12.1.0")]
     [BepInDependency("mtm101.rulerp.bbplus.baldidevapi")]
     public class LevelLoaderPlugin : BaseUnityPlugin
     {
@@ -283,6 +283,7 @@ namespace PlusStudioLevelLoader
             basicObjects.Add("roundtablechairs2", objects.First(x => x.name == "RoundTable_Chairs_2"));
             basicObjects.Add("factoryshelf", objects.First(x => x.name == "FactoryShelf_Object"));
             basicObjects.Add("campfire", objects.First(x => x.name == "CampFire"));
+            basicObjects.Add("rug", objects.First(x => x.name == "Rug"));
 
             // activities
             Activity[] activites = Resources.FindObjectsOfTypeAll<Activity>().Where(x => x.GetInstanceID() >= 0).ToArray();

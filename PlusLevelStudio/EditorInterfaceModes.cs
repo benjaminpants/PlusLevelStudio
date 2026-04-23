@@ -435,6 +435,7 @@ namespace PlusLevelStudio
                 new ObjectTool("counter"),
                 new ObjectTool("examinationtable"),
                 new ObjectToolSubtileNoRotation("pedestal", 0f, true, -0.25f),
+                new ObjectToolNoRotPreRotated("rug", Quaternion.Euler(90f,0f,0f)),
                 new ObjectToolNoRotation("pinetree"),
                 new ObjectToolNoRotation("tree"),
                 new ObjectToolNoRotation("appletree"),

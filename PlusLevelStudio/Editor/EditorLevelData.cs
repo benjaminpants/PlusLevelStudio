@@ -482,6 +482,18 @@ namespace PlusLevelStudio.Editor
             return area.roomId;
         }
 
+        public ushort RoomIdFromPosIncludeExisting(IntVector2 vector)
+        {
+            CellArea area = AreaFromPos(vector, true);
+            if (area == null)
+            {
+                PlusStudioLevelFormat.Cell cell = GetCellSafe(vector);
+                if (cell == null) return 0;
+                return cell.roomId;
+            }
+            return area.roomId;
+        }
+
         public EditorRoom RoomFromPos(IntVector2 vector, bool forEditor)
         {
             ushort id = RoomIdFromPos(vector, forEditor);

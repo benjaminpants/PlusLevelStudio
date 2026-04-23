@@ -39,7 +39,7 @@ namespace PlusStudioLevelFormat
             }
         }
         public PlusDirection spawnDirection = PlusDirection.North;
-        public static readonly byte version = 9;
+        public static readonly byte version = 10;
         public string levelTitle = "WIP";
         public float timeLimit = 0f;
 
@@ -253,6 +253,11 @@ namespace PlusStudioLevelFormat
                         direction=(PlusDirection)reader.ReadByte()
                     };
                     room.activity = activity;
+                }
+                if (version >= 10)
+                {
+                    room.minItemValue = reader.ReadInt32();
+                    room.maxItemValue = reader.ReadInt32();
                 }
                 level.rooms.Add(room);
             }
@@ -599,6 +604,8 @@ namespace PlusStudioLevelFormat
                     writer.Write(rooms[i].activity.position);
                     writer.Write((byte)rooms[i].activity.direction);
                 }
+                writer.Write(rooms[i].minItemValue);
+                writer.Write(rooms[i].maxItemValue);
             }
             writer.Write(lights.Count);
             for (int i = 0; i < lights.Count; i++)

@@ -93,6 +93,8 @@ namespace PlusLevelStudio.Editor
                 if (data.windows[i].position == (position + direction.ToIntVector2()) && data.windows[i].direction == direction.GetOpposite()) return false; // window is clashing
             }
             return (data.RoomIdFromPos(position, true) != 0 && data.RoomIdFromPos(position + direction.ToIntVector2(), true) != 0); // make sure both rooms we are facing are valid
+            // TODO: investigate implementation of this, properly bug test it to make sure it doesnt break anything before implementation
+            //return (data.RoomIdFromPosIncludeExisting(position) != 0 && data.RoomIdFromPosIncludeExisting(position + direction.ToIntVector2()) != 0); // make sure both rooms we are facing are valid
         }
     }
 }
