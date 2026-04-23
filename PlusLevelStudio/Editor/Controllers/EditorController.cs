@@ -247,6 +247,7 @@ namespace PlusLevelStudio.Editor
         IEnumerator RefreshSidebarOneFrameEnumerator(SidebarGridDisplay gridDisp)
         {
             yield return null;
+            if (sidebarUpdatesSuppressed) yield break;
             RefreshSidebarDisplayIfIts(gridDisp);
         }
 
