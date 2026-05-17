@@ -64,6 +64,7 @@ namespace PlusLevelStudio.Editor
         // todo: maybe make this a tuple list with (GameObject, bool) where the bool represents if it's a blocking UI element?
         public List<GameObject> uiOverlays = new List<GameObject>();
         public SidebarGridDisplay sidebarDisplay = SidebarGridDisplay.None;
+        public bool fullbrightEnabled = false;
 
         public EnvironmentController workerEc;
         public EnvironmentController ecPrefab;
@@ -616,6 +617,10 @@ namespace PlusLevelStudio.Editor
         {
             workerEc.UpdateQueuedLightChanges(); // there shouldn't be any of these but just incase there somehow are, take care of them now
             workerEc.standardDarkLevel = levelData.minLightColor;
+            if (fullbrightEnabled)
+            {
+                workerEc.standardDarkLevel = Color.white;
+            }
             workerEc.lightMode = levelData.lightMode;
             // clear all lights
             LightingController[,] lightMap = (LightingController[,])_lightMap.GetValue(workerEc);
