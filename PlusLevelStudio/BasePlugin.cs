@@ -827,6 +827,7 @@ namespace PlusLevelStudio
             defaultRoomTextures.Add("teleportroom_4", new TextureContainer("LabFloor", "LabWall", "LabCeiling"));
             defaultRoomTextures.Add("saferoom", new TextureContainer("HallFloor", "ElevatorBack", "ElevatorCeiling"));
             defaultRoomTextures.Add("crane", new TextureContainer("DiamondPlateFloor", "Wall", "None"));
+            defaultRoomTextures.Add("eventspawner", new TextureContainer("Black", "Black", "Black"));
 
             defaultRoomTextures.Add("class_mathmachine", new TextureContainer("BlueCarpet", "WallWithMolding", "Ceiling"));
             defaultRoomTextures.Add("class_matchactivity", new TextureContainer("BlueCarpet", "WallWithMolding", "Ceiling"));
@@ -1363,6 +1364,7 @@ namespace PlusLevelStudio
             EditorInterface.AddDoor<DoorDisplay>("coinswinging", DoorIngameStatus.AlwaysObject, assetMan.Get<Material>("swingingDoorMask"), new Material[] { assetMan.Get<Material>("CoinDoorMat"), assetMan.Get<Material>("CoinDoorMat") });
             EditorInterface.AddDoor<DoorDisplay>("autodoor", DoorIngameStatus.AlwaysDoor, assetMan.Get<Material>("AutoDoorMask"), new Material[] { assetMan.Get<Material>("AutoDoorMat"), assetMan.Get<Material>("AutoDoorMat") });
             EditorInterface.AddDoor<DoorDisplay>("flaps", DoorIngameStatus.AlwaysObject, assetMan.Get<Material>("FlapDoorMask"), new Material[] { assetMan.Get<Material>("FlapDoorMat"), assetMan.Get<Material>("FlapDoorMat") });
+            EditorInterface.AddDoor<DoorDisplay>("eventspawner", DoorIngameStatus.AlwaysDoor, assetMan.Get<Material>("AutoDoorMask"), new Material[] { assetMan.Get<Material>("Curtain_Closed"), assetMan.Get<Material>("Curtain_Closed") });
 
             WindowObject[] windowObjects = Resources.FindObjectsOfTypeAll<WindowObject>();
 

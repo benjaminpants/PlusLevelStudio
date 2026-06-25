@@ -138,6 +138,7 @@ namespace PlusStudioLevelLoader
             roomSettings.Add("mystery", new RoomSettings(RoomCategory.Mystery, RoomType.Room, new Color(0f, 1f, 0f), assetMan.Get<StandardDoorMats>("MysteryDoorMats")));
             roomSettings.Add("saferoom", new RoomSettings(RoomCategory.Special, RoomType.Room, new Color(1f, 1f, 1f), assetMan.Get<StandardDoorMats>("SafeRoomDoorSet")));
             roomSettings.Add("crane", new RoomSettings(RoomCategory.Special, RoomType.Room, new Color(1f, 1f, 1f), assetMan.Get<StandardDoorMats>("ClassDoorSet")));
+            roomSettings.Add("eventspawner", new RoomSettings(RoomCategory.EventSpawner, RoomType.Room, new Color(1f, 1f, 1f), assetMan.Get<StandardDoorMats>("DefaultDoorSet")));
             roomSettings["faculty"].container = roomFunctions.Find(x => x.name == "FacultyRoomFunction");
             roomSettings["office"].container = roomFunctions.Find(x => x.name == "OfficeRoomFunction");
             roomSettings["class"].container = roomFunctions.Find(x => x.name == "ClassRoomFunction");
@@ -148,6 +149,7 @@ namespace PlusStudioLevelLoader
             roomSettings["lightbulbtesting"].container = roomFunctions.Find(x => x.name == "LightbulbTestRoomFunction");
             roomSettings["saferoom"].container = roomFunctions.Find(x => x.name == "SafeRoomRoomFunction");
             roomSettings["crane"].container = roomFunctions.Find(x => x.name == "CraneRoomFunction");
+            roomSettings["eventspawner"].container = roomFunctions.Find(x => x.name == "EventSpawnerRoomFunction");
             CoverInGameRoomFunction saferoom_fix = roomSettings["saferoom"].container.gameObject.AddComponent<CoverInGameRoomFunction>();
             saferoom_fix.hardCover = true;
             roomSettings["saferoom"].container.AddFunction(saferoom_fix); // fix the saferoom from not being covered as intended
@@ -183,6 +185,7 @@ namespace PlusStudioLevelLoader
             doorPrefabs.Add("swinging", doors.First(x => x.name == "Door_Swinging")); // swinging doors are smart and may be a regular door somethings
             doorPrefabs.Add("swinging_silent", doors.First(x => x.name == "SilentDoor_Swinging")); // swinging doors are smart and may be a regular door somethings
             doorPrefabs.Add("mysterydoor", doors.First(x => x.name == "SQ_Door_Mystery"));
+            doorPrefabs.Add("eventspawner", doors.First(x => x.name == "Door_SwingingOneWay_EventSpawner"));
 
             WindowObject[] windows = Resources.FindObjectsOfTypeAll<WindowObject>().Where(x => x.GetInstanceID() >= 0).ToArray();
             windowObjects.Add("standard", windows.First(x => x.name == "WoodWindow"));

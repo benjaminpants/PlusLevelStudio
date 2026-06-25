@@ -92,6 +92,7 @@ namespace PlusLevelStudio
                 new DoorTool("swinging_silent"),
                 new DoorTool("autodoor"),
                 new DoorTool("flaps"),
+                new DoorTool("eventspawner"),
                 new WindowTool("standard"),
                 new WindowTool("green"),
                 new WindowTool("caution"),
@@ -332,6 +333,7 @@ namespace PlusLevelStudio
                     new RoomTool("lightbulbtesting"),
                     new RoomTool("crane"),
                     new RoomTool("saferoom"),
+                    new RoomTool("eventspawner"),
             }, true);
             if (!includeNonVanillaComplaintTools) return;
             AddToolsToCategory(modeToModify, "rooms", new EditorTool[]
