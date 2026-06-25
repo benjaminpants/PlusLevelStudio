@@ -528,6 +528,10 @@ namespace PlusLevelStudio.Editor
                         toFinalize.eventSafeCells[x, y] = false;
                         toFinalize.coverage[x,y] = PlusCellCoverage.North | PlusCellCoverage.South | PlusCellCoverage.West | PlusCellCoverage.East | PlusCellCoverage.Up | PlusCellCoverage.Down | PlusCellCoverage.Center; // cover entirely
                     }
+                    if (toFinalize.rooms[toFinalize.cells[x, y].roomId - 1].type == "eventspawner")
+                    {
+                        toFinalize.excludedFromRoomGroupCells[x, y] = true;
+                    }
                 }
             }
         }
@@ -599,8 +603,10 @@ namespace PlusLevelStudio.Editor
                 string typeToCompileAs = doors[i].type;
                 bool usedSmartPosition = GetSmartDoorPosition(doors[i].position, doors[i].direction, out IntVector2 smartPosition, out Direction smartDirection);
                 bool shouldBeTile = false;
-                switch (LevelStudioPlugin.Instance.doorIngameStatus[doors[i].type])
+                DoorIngameStatus ingameStat = LevelStudioPlugin.Instance.doorIngameStatus[doors[i].type];
+                switch (ingameStat)
                 {
+                    case DoorIngameStatus.AlwaysDoorNoSmart:
                     case DoorIngameStatus.AlwaysDoor:
                         shouldBeTile = false;
                         break;
@@ -638,13 +644,26 @@ namespace PlusLevelStudio.Editor
                 }
                 else
                 {
-                    compiled.doors.Add(new DoorInfo()
+                    if (ingameStat == DoorIngameStatus.AlwaysDoorNoSmart)
                     {
-                        prefab = typeToCompileAs,
-                        position = smartPosition.ToByte(),
-                        direction = (PlusDirection)smartDirection,
-                        roomId = GetCellSafe(smartPosition.x, smartPosition.z).roomId
-                    });
+                        compiled.doors.Add(new DoorInfo()
+                        {
+                            prefab = typeToCompileAs,
+                            position = doors[i].position.ToByte(),
+                            direction = (PlusDirection)doors[i].direction,
+                            roomId = GetCellSafe(doors[i].position.x, doors[i].position.z).roomId
+                        });
+                    }
+                    else
+                    {
+                        compiled.doors.Add(new DoorInfo()
+                        {
+                            prefab = typeToCompileAs,
+                            position = smartPosition.ToByte(),
+                            direction = (PlusDirection)smartDirection,
+                            roomId = GetCellSafe(smartPosition.x, smartPosition.z).roomId
+                        });
+                    }
                 }
             }
             for (int i = 0; i < windows.Count; i++)
@@ -764,7 +783,7 @@ namespace PlusLevelStudio.Editor
             return compiled;
         }
 
-        public const byte version = 17;
+        public const byte version = 18;
 
         public bool WallFree(IntVector2 pos, Direction dir, bool ignoreSelf)
         {
@@ -964,19 +983,26 @@ namespace PlusLevelStudio.Editor
                 writer.Write(posters[i].position.ToByte());
                 writer.Write((byte)posters[i].direction);
             }
-            WallLocation[] addWalls = walls.Where(x => x.wallState).ToArray();
+            WallLocation[] addWalls = walls.Where(x => x.wallState == WallState.AddWall).ToArray();
             writer.Write(addWalls.Length);
             for (int i = 0; i < addWalls.Length; i++)
             {
                 writer.Write(addWalls[i].position.ToByte());
                 writer.Write((byte)addWalls[i].direction);
             }
-            WallLocation[] removeWalls = walls.Where(x => !x.wallState).ToArray();
+            WallLocation[] removeWalls = walls.Where(x => x.wallState == WallState.RemoveWall).ToArray();
             writer.Write(removeWalls.Length);
             for (int i = 0; i < removeWalls.Length; i++)
             {
                 writer.Write(removeWalls[i].position.ToByte());
                 writer.Write((byte)removeWalls[i].direction);
+            }
+            WallLocation[] onewayWalls = walls.Where(x => x.wallState == WallState.Oneway).ToArray();
+            writer.Write(onewayWalls.Length);
+            for (int i = 0; i < onewayWalls.Length; i++)
+            {
+                writer.Write(onewayWalls[i].position.ToByte());
+                writer.Write((byte)onewayWalls[i].direction);
             }
             writer.Write(markers.Count);
             for (int i = 0; i < markers.Count; i++)
@@ -1221,7 +1247,7 @@ namespace PlusLevelStudio.Editor
             {
                 levelData.walls.Add(new WallLocation()
                 {
-                    wallState = true,
+                    wallState = WallState.AddWall,
                     position=reader.ReadByteVector2().ToInt(),
                     direction=(Direction)reader.ReadByte()
                 });
@@ -1231,10 +1257,23 @@ namespace PlusLevelStudio.Editor
             {
                 levelData.walls.Add(new WallLocation()
                 {
-                    wallState = false,
+                    wallState = WallState.RemoveWall,
                     position = reader.ReadByteVector2().ToInt(),
                     direction = (Direction)reader.ReadByte()
                 });
+            }
+            if (version >= 18)
+            {
+                int onewayWallsCount = reader.ReadInt32();
+                for (int i = 0; i < onewayWallsCount; i++)
+                {
+                    levelData.walls.Add(new WallLocation()
+                    {
+                        wallState = WallState.Oneway,
+                        position = reader.ReadByteVector2().ToInt(),
+                        direction = (Direction)reader.ReadByte()
+                    });
+                }
             }
             if (version >= 9)
             {

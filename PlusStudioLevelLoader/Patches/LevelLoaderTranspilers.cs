@@ -28,7 +28,20 @@ namespace PlusStudioLevelLoader.Patches
             { "Level loader blocking tiles marked to be blocked.", "ApplyCellCoverages" },
             { "Tile data loaded.", "ApplyCellSecrets" },
             { "Level loader loading tile based objects.", "PoolItemSpawns" }, // this runs after "Level loader placing items"
+            { "Level loader loading tile data.", "AddEventSpawners" }
         };
+
+        public static void AddEventSpawners(LevelLoader loader, LevelData data)
+        {
+            Debug.Log("Level loader adding event spawners... (Loader Extension)");
+            foreach (RoomController rc in loader.Ec.rooms)
+            {
+                if (rc.category == RoomCategory.EventSpawner)
+                {
+                    loader.Ec.eventSpawnRooms.Add(rc);
+                }
+            }
+        }
 
         public static void ApplyCellSecrets(LevelLoader loader, LevelData data)
         {

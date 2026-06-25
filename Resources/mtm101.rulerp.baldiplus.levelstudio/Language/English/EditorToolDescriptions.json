@@ -8,6 +8,8 @@
 {"key":"Ed_Tool_spawnpoint_Desc","value":"Click a position and direction to set the spawnpoint there. (You can also just click it and move it that way!)"},
 {"key":"Ed_Tool_wallplacer_Title","value":"Wall Tool"},
 {"key":"Ed_Tool_wallplacer_Desc","value":"Click anywhere with any rotation to add a wall there!"},
+{"key":"Ed_Tool_walloneway_Title","value":"Oneway Wall Tool"},
+{"key":"Ed_Tool_walloneway_Desc","value":"Click anywhere with any rotation to add a oneway wall there!"},
 {"key":"Ed_Tool_wallremover_Title","value":"Wall Remover Tool"},
 {"key":"Ed_Tool_wallremover_Desc","value":"Click anywhere with any rotation to remove a wall!"},
 {"key":"Ed_Tool_paintbrush_Title","value":"Paintbrush"},
@@ -61,6 +63,8 @@
 {"key":"Ed_Tool_room_saferoom_Desc","value":"Baldi (and other NPCs) can't naturally wander into this room! It is also impossible to portal poster into this room."},
 {"key":"Ed_Tool_room_crane_Title","value":"Crane Room"},
 {"key":"Ed_Tool_room_crane_Desc","value":"Cranes spawn in this room picking up anything that gets under them!\nMark cells as excluded from roomgroups to make cranes go there!"},
+{"key":"Ed_Tool_room_eventspawner_Title","value":"Event Spawning Room"},
+{"key":"Ed_Tool_room_eventspawner_Desc","value":"Certain events (such as Student Shuffle and Balder Dash) will only spawn in this room. All cells in this room are excluded from roomgroups."},
 
 {"key":"Ed_Tool_premaderoom_johnny_store_Title","value":"(Premade) Johnny's Store"},
 {"key":"Ed_Tool_premaderoom_johnny_store_Desc","value":"Buy items and stickers from this store!"},
@@ -79,6 +83,8 @@
 {"key":"Ed_Tool_door_flaps_Desc","value":"A yellow door reskin. Flappy flappy flappy.. Flap door. Door."},
 {"key":"Ed_Tool_door_autodoor_Title","value":"Auto Door"},
 {"key":"Ed_Tool_door_autodoor_Desc","value":"Beloved by all store-goers and store-owners everywhere."},
+{"key":"Ed_Tool_door_eventspawner_Title","value":"Event Curtains"},
+{"key":"Ed_Tool_door_eventspawner_Desc","value":"Oneway curtains used by the event spawning rooms."},
 
 {"key":"Ed_Tool_window_standard_Title","value":"Wooden Window"},
 {"key":"Ed_Tool_window_standard_Desc","value":"Although not a door at first glance, this 'door' can be opened by First-Prize slamming into it!"},

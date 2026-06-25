@@ -130,6 +130,7 @@ namespace PlusLevelStudio.Lua
 
         public override void ActivityCompleted(bool correct, Activity activity)
         {
+            base.ActivityCompleted(correct, activity);
             if (script.Globals.Get("OnActivityCompletion").Type == DataType.Function)
             {
                 script.Call(script.Globals["OnActivityCompletion"], new RoomProxy(activity.room), correct);

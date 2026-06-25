@@ -53,8 +53,9 @@ namespace PlusLevelStudio
                 new CellMarkerTool("eventunsafe"),
                 new CellMarkerTool("hidden"),
                 new CellMarkerTool("excluderoomgroup"),
-                new WallTool(true),
-                new WallTool(false)
+                new WallTool("wallplacer", WallState.AddWall),
+                new WallTool("wallremover", WallState.RemoveWall),
+                new WallTool("walloneway", WallState.Oneway),
             }, true);
             if (modeToModify.caresAboutSpawn)
             {
@@ -92,6 +93,7 @@ namespace PlusLevelStudio
                 new DoorTool("swinging_silent"),
                 new DoorTool("autodoor"),
                 new DoorTool("flaps"),
+                new DoorTool("eventspawner"),
                 new WindowTool("standard"),
                 new WindowTool("green"),
                 new WindowTool("caution"),
@@ -332,6 +334,7 @@ namespace PlusLevelStudio
                     new RoomTool("lightbulbtesting"),
                     new RoomTool("crane"),
                     new RoomTool("saferoom"),
+                    new RoomTool("eventspawner"),
             }, true);
             if (!includeNonVanillaComplaintTools) return;
             AddToolsToCategory(modeToModify, "rooms", new EditorTool[]

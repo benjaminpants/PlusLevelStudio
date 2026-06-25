@@ -6,9 +6,17 @@ using UnityEngine;
 
 namespace PlusLevelStudio.Editor
 {
+
+    public enum WallState
+    {
+        RemoveWall,
+        AddWall,
+        Oneway
+    }
+
     public class WallLocation : IEditorVisualizable, IEditorCellModifier, IEditorDeletable, IEditorPositionVerifyable
     {
-        public bool wallState;
+        public WallState wallState;
         public IntVector2 position;
         public Direction direction;
         public void CleanupVisual(GameObject visualObject)
@@ -18,7 +26,16 @@ namespace PlusLevelStudio.Editor
 
         public GameObject GetVisualPrefab()
         {
-            return wallState ? LevelStudioPlugin.Instance.wallVisual : LevelStudioPlugin.Instance.wallRemoveVisual;
+            switch (wallState)
+            {
+                case WallState.AddWall:
+                    return LevelStudioPlugin.Instance.wallVisual;
+                case WallState.RemoveWall:
+                    return LevelStudioPlugin.Instance.wallRemoveVisual;
+                case WallState.Oneway:
+                    return LevelStudioPlugin.Instance.oneWayWallVisual;
+            }
+            return null;
         }
 
         public void InitializeVisual(GameObject visualObject)
@@ -29,19 +46,22 @@ namespace PlusLevelStudio.Editor
 
         public void ModifyCells(EditorLevelData data, bool forEditor)
         {
-            IntVector2 pos2;
-            // set the wall
-            if (wallState)
+            IntVector2 pos2 = direction.ToIntVector2();
+            switch (wallState)
             {
-                data.cells[position.x, position.z].walls = (Nybble)(data.cells[position.x, position.z].walls | direction.ToBinary());
-                pos2 = direction.ToIntVector2();
-                data.cells[position.x + pos2.x, position.z + pos2.z].walls = (Nybble)(data.cells[position.x + pos2.x, position.z + pos2.z].walls | direction.GetOpposite().ToBinary());
-                return;
+                case WallState.AddWall:
+                    data.cells[position.x, position.z].walls = (Nybble)(data.cells[position.x, position.z].walls | direction.ToBinary());
+                    data.cells[position.x + pos2.x, position.z + pos2.z].walls = (Nybble)(data.cells[position.x + pos2.x, position.z + pos2.z].walls | direction.GetOpposite().ToBinary());
+                    break;
+                case WallState.RemoveWall:
+                    data.cells[position.x, position.z].walls = (Nybble)(data.cells[position.x, position.z].walls & ~direction.ToBinary());
+                    data.cells[position.x + pos2.x, position.z + pos2.z].walls = (Nybble)(data.cells[position.x + pos2.x, position.z + pos2.z].walls & ~direction.GetOpposite().ToBinary());
+                    break;
+                case WallState.Oneway:
+                    data.cells[position.x, position.z].walls = (Nybble)(data.cells[position.x, position.z].walls & ~direction.ToBinary());
+                    data.cells[position.x + pos2.x, position.z + pos2.z].walls = (Nybble)(data.cells[position.x + pos2.x, position.z + pos2.z].walls | direction.GetOpposite().ToBinary());
+                    break;
             }
-            // remove the wall
-            data.cells[position.x, position.z].walls = (Nybble)(data.cells[position.x, position.z].walls & ~direction.ToBinary());
-            pos2 = direction.ToIntVector2();
-            data.cells[position.x + pos2.x, position.z + pos2.z].walls = (Nybble)(data.cells[position.x + pos2.x, position.z + pos2.z].walls & ~direction.GetOpposite().ToBinary());
         }
 
         public void ModifyLightsForEditor(EnvironmentController workerEc)

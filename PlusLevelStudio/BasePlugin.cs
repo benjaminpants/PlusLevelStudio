@@ -30,7 +30,7 @@ using UnityEngine.UI;
 
 namespace PlusLevelStudio
 {
-    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudio", "Plus Level Studio", "1.8.2.0")]
+    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudio", "Plus Level Studio", "1.8.3.0")]
     [BepInDependency("mtm101.rulerp.bbplus.baldidevapi")]
     [BepInDependency("mtm101.rulerp.baldiplus.levelstudioloader")]
     public class LevelStudioPlugin : BaseUnityPlugin
@@ -46,7 +46,7 @@ namespace PlusLevelStudio
         public const int editorInteractableLayer = 13; // CollidableEntities
         public const int editorInteractableLayerMask = 1 << editorInteractableLayer;
 
-        private Version expectedLoaderVersion = new Version("1.12.1.0");
+        private Version expectedLoaderVersion = new Version("1.12.2.0");
 
         public const int editorHandleLayer = 12; // ClickableEntities
         public const int editorHandleLayerMask = 1 << editorHandleLayer;
@@ -82,6 +82,7 @@ namespace PlusLevelStudio
         public GameObject pickupVisual;
         public GameObject posterVisual;
         public GameObject wallVisual;
+        public GameObject oneWayWallVisual;
         public GameObject wallRemoveVisual;
 
         // listen to the fucking variable name modders and DO NOT ADD TO THIS! This system is PLACEHOLDER and if you add things then it wont work as its stored as an index and not as a name or anything that could be properly handled!
@@ -826,6 +827,7 @@ namespace PlusLevelStudio
             defaultRoomTextures.Add("teleportroom_4", new TextureContainer("LabFloor", "LabWall", "LabCeiling"));
             defaultRoomTextures.Add("saferoom", new TextureContainer("HallFloor", "ElevatorBack", "ElevatorCeiling"));
             defaultRoomTextures.Add("crane", new TextureContainer("DiamondPlateFloor", "Wall", "None"));
+            defaultRoomTextures.Add("eventspawner", new TextureContainer("Black", "Black", "Black"));
 
             defaultRoomTextures.Add("class_mathmachine", new TextureContainer("BlueCarpet", "WallWithMolding", "Ceiling"));
             defaultRoomTextures.Add("class_matchactivity", new TextureContainer("BlueCarpet", "WallWithMolding", "Ceiling"));
@@ -869,6 +871,16 @@ namespace PlusLevelStudio
             silentDoorMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "SwingDoorSilent.png"));
             silentDoorMat.name = "SilentSwingDoorDisplayMat";
             silentDoorMat.MarkAsNeverUnload();
+
+            Material curtainRightMat = new Material(assetMan.Get<Material>("SwingingDoorMat"));
+            curtainRightMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "Curtain_ClosedRight.png"));
+            curtainRightMat.name = "Curtain_ClosedRight";
+            curtainRightMat.MarkAsNeverUnload();
+
+            Material curtainWrongMat = new Material(assetMan.Get<Material>("SwingingDoorMat"));
+            curtainWrongMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "Curtain_ClosedWrong.png"));
+            curtainWrongMat.name = "Curtain_ClosedWrong";
+            curtainWrongMat.MarkAsNeverUnload();
 
             Material gridArrowMat = new Material(gridMat);
             gridArrowMat.SetMainTexture(AssetLoader.TextureFromMod(this, "Editor", "GridArrow.png"));
@@ -1371,6 +1383,7 @@ namespace PlusLevelStudio
             EditorInterface.AddDoor<DoorDisplay>("coinswinging", DoorIngameStatus.AlwaysObject, assetMan.Get<Material>("swingingDoorMask"), new Material[] { assetMan.Get<Material>("CoinDoorMat"), assetMan.Get<Material>("CoinDoorMat") });
             EditorInterface.AddDoor<DoorDisplay>("autodoor", DoorIngameStatus.AlwaysDoor, assetMan.Get<Material>("AutoDoorMask"), new Material[] { assetMan.Get<Material>("AutoDoorMat"), assetMan.Get<Material>("AutoDoorMat") });
             EditorInterface.AddDoor<DoorDisplay>("flaps", DoorIngameStatus.AlwaysObject, assetMan.Get<Material>("FlapDoorMask"), new Material[] { assetMan.Get<Material>("FlapDoorMat"), assetMan.Get<Material>("FlapDoorMat") });
+            EditorInterface.AddDoor<DoorDisplay>("eventspawner", DoorIngameStatus.AlwaysDoorNoSmart, assetMan.Get<Material>("AutoDoorMask"), new Material[] { curtainRightMat, curtainWrongMat });
 
             WindowObject[] windowObjects = Resources.FindObjectsOfTypeAll<WindowObject>();
 
@@ -1426,6 +1439,12 @@ namespace PlusLevelStudio
             wallRemoveBase.GetComponent<EditorDeletableObject>();
             wallRemoveBase.GetComponent<EditorRendererContainer>().myRenderers.ForEach(x => x.material = wallRemoveMat);
             wallRemoveVisual = wallRemoveBase;
+
+            GameObject oneWayWallBase = GameObject.Instantiate(wallVisualBase, MTM101BaldiDevAPI.prefabTransform);
+            oneWayWallBase.name = "WallOnewayVisual";
+            oneWayWallBase.GetComponent<EditorDeletableObject>();
+            oneWayWallBase.GetComponent<EditorRendererContainer>().myRenderers.First(x => x.name == "WallVisualA").material = wallRemoveMat;
+            oneWayWallVisual = oneWayWallBase;
 
 
             // object visuals
