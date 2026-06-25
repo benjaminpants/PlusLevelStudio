@@ -27,7 +27,11 @@ namespace PlusLevelStudio
         /// <summary>
         /// When the level is compiled, if this door is connected to a non-hall room, it'll be a door assigned to that room, otherwise it'll be a tile object.
         /// </summary>
-        Smart
+        Smart,
+        /// <summary>
+        /// When the level is compiled, this door will always be a door assigned to the respective room, however the door will not use smart positioning.
+        /// </summary>
+        AlwaysDoorNoSmart
     }
 
     public static class EditorInterface

@@ -53,8 +53,9 @@ namespace PlusLevelStudio
                 new CellMarkerTool("eventunsafe"),
                 new CellMarkerTool("hidden"),
                 new CellMarkerTool("excluderoomgroup"),
-                new WallTool(true),
-                new WallTool(false)
+                new WallTool("wallplacer", WallState.AddWall),
+                new WallTool("wallremover", WallState.RemoveWall),
+                new WallTool("walloneway", WallState.Oneway),
             }, true);
             if (modeToModify.caresAboutSpawn)
             {
