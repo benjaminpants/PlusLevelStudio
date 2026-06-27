@@ -1,5 +1,7 @@
 ﻿using MTM101BaldAPI;
+using MTM101BaldAPI.AssetTools;
 using MTM101BaldAPI.UI;
+using PlusLevelStudio.Editor;
 using PlusLevelStudio.UI;
 using System;
 using System.Collections;
@@ -99,7 +101,21 @@ namespace PlusLevelStudio.Menus
         {
             int startIndex = (currentPage * buttons.Length);
             PlayableEditorLevel level = playableLevels[startIndex + buttonIndex];
-            EditorPlayModeManager.LoadLevel(level, LevelStudioPlugin.Instance.gameModeAliases[level.meta.gameMode].supportsCampaigns ? 2 : 0, false);
+            try
+            {
+                EditorPlayModeManager.LoadLevel(level, LevelStudioPlugin.Instance.gameModeAliases[level.meta.gameMode].supportsCampaigns ? 2 : 0, false);
+            }
+            catch (Exception e)
+            {
+                if (Singleton<EditorPlayModeManager>.Instance != null)
+                {
+                    Singleton<EditorPlayModeManager>.Instance.CleanupEverything();
+                    Destroy(Singleton<EditorPlayModeManager>.Instance.gameObject);
+                }
+                GenericPopupExchangeHandler handler = UIBuilder.BuildUIFromFile<GenericPopupExchangeHandler>((RectTransform)transform, "ErrorPop", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "1ChoicePopup.json"));
+
+                handler.transform.Find("Title").GetComponent<TextMeshProUGUI>().text = string.Format(LocalizationManager.Instance.GetLocalizedText("Ed_Exception_FileLoad"), e.Message);
+            }
         }
 
         bool shouldRefresh = false;

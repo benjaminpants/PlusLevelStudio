@@ -21,7 +21,8 @@ namespace PlusLevelStudio
         public string editorLevelToLoad;
         public string editorModeToLoad;
         public bool waitingForCreation = false;
-        public void OnExit()
+        
+        public void CleanupEverything()
         {
             if (customContent != null)
             {
@@ -33,6 +34,11 @@ namespace PlusLevelStudio
                 GameObject.Destroy(sceneObjectsToCleanUp[i].levelAsset);
                 GameObject.Destroy(sceneObjectsToCleanUp[i]);
             }
+        }
+
+        public void OnExit()
+        {
+            CleanupEverything();
             if (!returnToEditor)
             {
                 Destroy(gameObject);

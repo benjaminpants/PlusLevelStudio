@@ -36,4 +36,35 @@ namespace PlusLevelStudio.Editor
             EditorController.Instance.RemoveUI(gameObject);
         }
     }
+
+    public class GenericPopupExchangeHandler : UIExchangeHandler
+    {
+        public Action OnYes;
+        public Action OnNo;
+        public override bool GetStateBoolean(string key)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void OnElementsCreated()
+        {
+
+        }
+
+        public override void SendInteractionMessage(string message, object data = null)
+        {
+            if (message == "yes")
+            {
+                OnYes();
+            }
+            else
+            {
+                if (OnNo != null)
+                {
+                    OnNo();
+                }
+            }
+            Destroy(gameObject);
+        }
+    }
 }
