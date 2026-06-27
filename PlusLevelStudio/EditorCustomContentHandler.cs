@@ -195,6 +195,7 @@ namespace PlusLevelStudio
             foreach (KeyValuePair<string, PosterObject> kvp in extend.dictionary)
             {
                 UnityEngine.Object.Destroy(kvp.Value);
+                UnityEngine.Object.Destroy(kvp.Value.baseTexture);
             }
             extend.dictionary.Clear();
             LevelLoaderPlugin.Instance.posterAliases.extends.Remove(extend);
@@ -214,6 +215,7 @@ namespace PlusLevelStudio
             for (int i = 0; i < posterEntriesKeyedForRemoval.Count; i++)
             {
                 UnityEngine.Object.Destroy(extend.dictionary[posterEntriesKeyedForRemoval[i]]);
+                UnityEngine.Object.Destroy(extend.dictionary[posterEntriesKeyedForRemoval[i]].baseTexture);
                 extend.dictionary.Remove(posterEntriesKeyedForRemoval[i]);
             }
         }
