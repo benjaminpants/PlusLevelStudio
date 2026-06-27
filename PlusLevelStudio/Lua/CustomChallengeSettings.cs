@@ -47,8 +47,8 @@ namespace PlusLevelStudio.Lua
         public bool ScriptSelected(string path)
         {
             luaSettings.luaScript = File.ReadAllText(path);
-            luaSettings.fileName = Path.GetFileNameWithoutExtension(path);
-            refreshText.text = String.Format(LocalizationManager.Instance.GetLocalizedText("Ed_Menu_RefreshLua"), luaSettings.fileName + ".lua");
+            luaSettings.fileName = PathHelpers.GetRelativePath(LevelStudioPlugin.luaPath, path);
+            refreshText.text = String.Format(LocalizationManager.Instance.GetLocalizedText("Ed_Menu_RefreshLua"), Path.GetFileNameWithoutExtension(luaSettings.fileName) + ".lua");
             return true;
         }
 
