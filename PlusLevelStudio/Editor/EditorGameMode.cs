@@ -17,6 +17,11 @@ namespace PlusLevelStudio.Editor
         /// </summary>
         public Type settingsPageType;
 
+        /// <summary>
+        /// True if the selected Gamemode gracefully handles respawning/restarting the level, and should be allowed to be included in campaigns.
+        /// </summary>
+        public bool supportsCampaigns = false;
+
         public string nameKey;
         public string descKey;
         public bool hasSettingsPage = false;

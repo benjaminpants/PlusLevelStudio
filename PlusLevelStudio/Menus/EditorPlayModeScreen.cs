@@ -224,7 +224,8 @@ namespace PlusLevelStudio.Menus
         public void PlayLevel(int buttonIndex)
         {
             int startIndex = (currentPage * buttons.Length);
-            EditorPlayModeManager.LoadLevel(playableLevels[startIndex + buttonIndex], 0, false); // i would love to start the player with more than 1 life here but. UGH
+            PlayableEditorLevel level = playableLevels[startIndex + buttonIndex];
+            EditorPlayModeManager.LoadLevel(level, LevelStudioPlugin.Instance.gameModeAliases[level.meta.gameMode].supportsCampaigns ? 2 : 0, false);
         }
 
         bool shouldRefresh = false;

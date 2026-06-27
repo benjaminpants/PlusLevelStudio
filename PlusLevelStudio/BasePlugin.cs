@@ -335,7 +335,8 @@ namespace PlusLevelStudio
                 settingsPagePath = Path.Combine(settingsPagePath, "MainSettings.json"),
                 settingsPageType = typeof(MainModeSettingsPageUIExchangeHandler),
                 nameKey = "Ed_GameMode_Standard",
-                descKey = "Ed_GameMode_Standard_Desc"
+                descKey = "Ed_GameMode_Standard_Desc",
+                supportsCampaigns = true
             });
 
             EditorGrappleChallengeManager editorGrappleChallenge = GameObject.Instantiate<GrappleChallengeManager>(Resources.FindObjectsOfTypeAll<GrappleChallengeManager>().First(x => x.GetInstanceID() >= 0), MTM101BaldiDevAPI.prefabTransform).gameObject.SwapComponent<GrappleChallengeManager, EditorGrappleChallengeManager>();
