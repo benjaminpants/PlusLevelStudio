@@ -5,3 +5,10 @@ Add diagonal walls from wormhole room so you can finally create it properly
 Finish sidebar implementation
 Add texture pack embedding so custom sounds/music can be included in levels
 New "Hide & Seek+"/"EZ Custom Challenge" mode that allows for non-lua customization of level parameters and logic.
+
+CAMPAIGN SYSTEM TODO:
+Rewrite main menu UI to use the UI system the rest of the mod does.
+Allow customization of map price and disable pitstop in meta settings
+Create campaign editor, pbpl files should be able to be selected and ordered, alongside default life count.
+Export as cbpl, or "campaign baldi plus level"
+
