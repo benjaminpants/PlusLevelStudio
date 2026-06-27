@@ -72,6 +72,7 @@ namespace PlusLevelStudio.Editor.GlobalSettingsMenus
 
         public bool CustomThumbnailSubmitted(string path)
         {
+            string relativePath = PathHelpers.GetRelativePath(LevelStudioPlugin.customThumbnailsPath, path);
             Texture2D verifyTex = new Texture2D(2, 2, TextureFormat.RGBA4444, false);
             try
             {
@@ -97,7 +98,7 @@ namespace PlusLevelStudio.Editor.GlobalSettingsMenus
             {
                 contentType = "thumbnail",
                 id = "thumbnail",
-                filePath = path
+                filePath = relativePath
             };
             Refresh();
             handler.somethingChanged = true;

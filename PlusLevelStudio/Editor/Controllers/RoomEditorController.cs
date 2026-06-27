@@ -212,13 +212,13 @@ namespace PlusLevelStudio.Editor
             if (roomAssets.Count == 1)
             {
                 Directory.CreateDirectory(LevelStudioPlugin.levelExportPath);
-                BinaryWriter writer = new BinaryWriter(new FileStream(Path.Combine(LevelStudioPlugin.levelExportPath, currentFileName + ".rbpl"), FileMode.Create, FileAccess.Write));
+                BinaryWriter writer = new BinaryWriter(new FileStream(Path.Combine(LevelStudioPlugin.levelExportPath, Path.GetFileNameWithoutExtension(currentFileName) + ".rbpl"), FileMode.Create, FileAccess.Write));
                 roomAssets[0].Write(writer);
                 writer.Close();
                 Application.OpenURL("file://" + LevelStudioPlugin.levelExportPath);
                 return;
             }
-            string roomsPath = Path.Combine(LevelStudioPlugin.levelExportPath, currentFileName);
+            string roomsPath = Path.Combine(LevelStudioPlugin.levelExportPath, Path.GetFileNameWithoutExtension(currentFileName));
             Directory.CreateDirectory(roomsPath);
             for (int i = 0; i < roomAssets.Count; i++)
             {

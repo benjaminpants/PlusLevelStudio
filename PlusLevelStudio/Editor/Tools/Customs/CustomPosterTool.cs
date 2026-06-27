@@ -30,12 +30,12 @@ namespace PlusLevelStudio.Editor.Tools.Customs
 
         public virtual bool OnSubmit(string path)
         {
-            currentId = "cstm_simple_" + Path.GetFileNameWithoutExtension(path);
-            string fileName = Path.GetFileName(path);
+            EditorCustomContentHelpers.GetRelativePathsAndID(LevelStudioPlugin.customPostersPath, path, out string relativePath, out string relativePathNoExtension, out string idSuff);
+            currentId = "cstm_simple_" + idSuff;
             // check to make sure the entry doesn't already exist
             if (EditorController.Instance.customContentPackage.entries.Find(x => x.id == currentId) != null)
             {
-                lastUsedFile = Path.GetFileNameWithoutExtension(path);
+                lastUsedFile = relativePathNoExtension;
                 posterSelected = true;
                 onWaitFrame = true;
                 return true;
@@ -48,10 +48,10 @@ namespace PlusLevelStudio.Editor.Tools.Customs
                 return false;
             }
             UnityEngine.Object.Destroy(texture);
-            lastUsedFile = Path.GetFileNameWithoutExtension(path);
+            lastUsedFile = relativePathNoExtension;
             posterSelected = true;
             onWaitFrame = true;
-            EditorCustomContentEntry entry = new EditorCustomContentEntry("imageposter", currentId, fileName);
+            EditorCustomContentEntry entry = new EditorCustomContentEntry("imageposter", currentId, relativePath);
             if (EditorController.Instance.customContent.GetHandlerFor("imageposter").AddElementOfType(entry))
             {
                 EditorController.Instance.customContentPackage.entries.Add(entry);

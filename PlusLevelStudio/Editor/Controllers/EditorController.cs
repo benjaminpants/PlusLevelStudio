@@ -369,7 +369,7 @@ namespace PlusLevelStudio.Editor
             }
             //EditorController.Instance.LoadEditorLevel(EditorLevelData.ReadFrom(reader), true);
             reader.Close();
-            currentFileName = Path.GetFileNameWithoutExtension(path);
+            currentFileName = Path.ChangeExtension(PathHelpers.GetRelativePath(LevelStudioPlugin.levelFilePath, path), null);
             return true;
         }
 
@@ -382,7 +382,7 @@ namespace PlusLevelStudio.Editor
             currentFile.Write(writer);
             writer.Close();
             hasUnsavedChanges = false;
-            currentFileName = Path.GetFileNameWithoutExtension(path);
+            currentFileName = Path.ChangeExtension(PathHelpers.GetRelativePath(LevelStudioPlugin.levelFilePath, path),null);
         }
 
         public void LoadEditorLevel(EditorLevelData newData, bool wipeUndoHistory = true)
@@ -903,7 +903,7 @@ namespace PlusLevelStudio.Editor
             }
             Directory.CreateDirectory(LevelStudioPlugin.levelExportPath);
 
-            BinaryWriter writer = new BinaryWriter(new FileStream(Path.Combine(LevelStudioPlugin.levelExportPath, currentFileName + ".pbpl"), FileMode.Create, FileAccess.Write));
+            BinaryWriter writer = new BinaryWriter(new FileStream(Path.Combine(LevelStudioPlugin.levelExportPath, Path.GetFileNameWithoutExtension(currentFileName) + ".pbpl"), FileMode.Create, FileAccess.Write));
             playableLevel.Write(writer);
             writer.Close();
             Application.OpenURL("file://" + LevelStudioPlugin.levelExportPath);

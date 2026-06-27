@@ -14,7 +14,7 @@ namespace PlusLevelStudio.Editor
             BaldiLevel level = Compile();
             Directory.CreateDirectory(LevelStudioPlugin.levelExportPath);
 
-            BinaryWriter writer = new BinaryWriter(new FileStream(Path.Combine(LevelStudioPlugin.levelExportPath, currentFileName + ".bpl"), FileMode.Create, FileAccess.Write));
+            BinaryWriter writer = new BinaryWriter(new FileStream(Path.Combine(LevelStudioPlugin.levelExportPath, Path.GetFileNameWithoutExtension(currentFileName) + ".bpl"), FileMode.Create, FileAccess.Write));
             level.Write(writer);
             writer.Close();
             Application.OpenURL("file://" + LevelStudioPlugin.levelExportPath);

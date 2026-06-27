@@ -346,4 +346,14 @@ namespace PlusLevelStudio
             return entry;
         }
     }
+
+    public static class EditorCustomContentHelpers
+    {
+        public static void GetRelativePathsAndID(string basePath, string selectedPath, out string relativePath, out string relativePathNoExtension, out string id)
+        {
+            relativePath = PathHelpers.GetRelativePath(basePath, selectedPath);
+            relativePathNoExtension = Path.ChangeExtension(relativePath, null);
+            id = relativePathNoExtension.Replace(Path.DirectorySeparatorChar, '_').Replace(Path.AltDirectorySeparatorChar, '_');
+        }
+    }
 }

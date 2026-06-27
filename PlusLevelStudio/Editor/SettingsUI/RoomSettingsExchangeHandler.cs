@@ -78,9 +78,9 @@ namespace PlusLevelStudio.Editor.SettingsUI
 
         public bool CustomTextureSubmitted(string path)
         {
-            string id = "cstm_" + Path.GetFileNameWithoutExtension(path);
-            string fileName = Path.GetFileName(path); // unfortunately Path.GetRelativePath doesn't exist in .net 2.0
-            EditorCustomContentEntry potEntry = new EditorCustomContentEntry("texture", id, fileName);
+            EditorCustomContentHelpers.GetRelativePathsAndID(LevelStudioPlugin.customTexturePath, path, out string relativePath, out string relativePathNoExtension, out string idSuff);
+            string id = "cstm_" + idSuff;
+            EditorCustomContentEntry potEntry = new EditorCustomContentEntry("texture", id, relativePath);
             if (EditorController.Instance.customContent.GetHandlerFor("texture").AddElementOfType(potEntry))
             {
                 EditorController.Instance.customContentPackage.entries.Add(potEntry);
