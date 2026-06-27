@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace PlusLevelStudio.Editor
 {
-    public class ExcludedCellMarker : CellMarker
+    public class ExcludedCellMarker : RoomCellMarker
     {
         public override void Compile(EditorLevelData data, BaldiLevel compiled)
         {
@@ -22,6 +22,11 @@ namespace PlusLevelStudio.Editor
         {
             base.UpdateVisual(visualObject);
             visualObject.transform.position += Vector3.up * 11.2f;
+        }
+
+        public override void CompileIntoRoom(EditorLevelData data, BaldiLevel compiled, IntVector2 offset, BaldiRoomAsset asset)
+        {
+            asset.cellsExcludedFromRoomGroup.Add((position - offset).ToByte());
         }
     }
 }
