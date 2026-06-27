@@ -43,6 +43,17 @@ namespace PlusLevelStudio.UI
                 hl.toCheck = data["useAltOn"].Value<string>();
                 hl.specialSprite = GetSprite(data["altGraphic"]);
             }
+            if (data.ContainsKey("transitionType"))
+            {
+                button.transitionOnPress = true;
+                button.transitionTime = 0.0167f;
+                button.transitionType = (UiTransition)Enum.Parse(typeof(UiTransition), data["transitionType"].Value<string>());
+            }
+            if (data.ContainsKey("onHighlight"))
+            {
+                button.eventOnHigh = true;
+                button.OnHighlight.AddListener(() => handler.SendInteractionMessage(data["onHighlight"].Value<string>()));
+            }
             return b;
         }
     }

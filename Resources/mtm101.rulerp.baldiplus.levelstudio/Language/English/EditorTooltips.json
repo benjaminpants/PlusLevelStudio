@@ -19,6 +19,7 @@
 {"key":"Ed_Tip_Mode_Full","value":"This is the editor mode most people want to use.\nCreate and share levels here!"},
 {"key":"Ed_Tip_Mode_Compliant","value":"A more restricted version of the editor designed for modders.\nExports a .bpl that can be loaded only using the loader."},
 {"key":"Ed_Tip_Mode_Rooms","value":"A version of the editor designed for creating rooms for use in the level generator.\nExports multiple .rbpl files for the level loader."},
+{"key":"Ed_Tip_Mode_Campaign","value":"Combine levels made in Full mode into a campaign and share them!"},
 {"key":"Ed_Tip_OpenFolder","value":"Open Folder"}
 
 ]}

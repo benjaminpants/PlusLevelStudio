@@ -20,7 +20,7 @@ namespace PlusLevelStudio.UI
             img.rectTransform.pivot = ConvertToVector2(data["pivot"]);
             if (data.ContainsKey("graphic"))
             {
-                img.sprite = GetSprite(data["graphic"].Value<string>());
+                img.sprite = GetSprite(data["graphic"]);
             }
             if (data.ContainsKey("color"))
             {

@@ -2214,6 +2214,7 @@ namespace PlusLevelStudio
 
             UIBuilder.elementBuilders.Add("image", new ImageBuilder());
             UIBuilder.elementBuilders.Add("imageButton", new ButtonBuilder());
+            UIBuilder.elementBuilders.Add("playlevelbutton", new EditorPlayLevelButtonBuilder());
             UIBuilder.elementBuilders.Add("hotslot", new HotSlotBuilder());
             UIBuilder.elementBuilders.Add("hotslottoolbox", new HotSlotToolboxBuilder());
             UIBuilder.elementBuilders.Add("blocker", new BlockerBuilder());
@@ -2344,6 +2345,10 @@ namespace PlusLevelStudio
 
             assetMan.Add<Sprite>("BackArrow", baseSprites.First(x => x.name == "BackArrow_0"));
             assetMan.Add<Sprite>("BackArrowHighlight", baseSprites.First(x => x.name == "BackArrow_1"));
+            assetMan.Add<Sprite>("MenuArrowLeft", baseSprites.First(x => x.name == "MenuArrowSheet_2"));
+            assetMan.Add<Sprite>("MenuArrowLeftHigh", baseSprites.First(x => x.name == "MenuArrowSheet_0"));
+            assetMan.Add<Sprite>("MenuArrowRight", baseSprites.Where(x => x.name == "MenuArrowSheet_3").First());
+            assetMan.Add<Sprite>("MenuArrowRightHigh", baseSprites.First(x => x.name == "MenuArrowSheet_1"));
             yield return "Loading MIDIs...";
             string[] midiPaths = Directory.GetFiles(Path.Combine(AssetLoader.GetModPath(this), "MIDIs"), "*.mid");
             for (int i = 0; i < midiPaths.Length; i++)

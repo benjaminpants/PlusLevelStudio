@@ -42,7 +42,7 @@ namespace PlusLevelStudio.UI
             // nightmare over
 
             Image foregroundImage = foregroundObject.AddComponent<Image>();
-            foregroundImage.sprite = GetSprite(data["graphic"].Value<string>());
+            foregroundImage.sprite = GetSprite(data["graphic"]);
             foregroundImage.rectTransform.sizeDelta = img.rectTransform.sizeDelta;
             // ABSOLUTE NIGHTMARE
             foregroundImage.rectTransform.anchoredPosition3D = Vector3.zero;

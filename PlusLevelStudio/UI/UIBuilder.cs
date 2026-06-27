@@ -13,9 +13,12 @@ namespace PlusLevelStudio.UI
 
     public abstract class UIElementBuilder
     {
+        // TODO: CHANGE! ACK HACK!
+        internal static bool usingRegularAssetMan = false;
 
         protected Sprite GetSprite(string spriteName)
         {
+            if (usingRegularAssetMan) return LevelStudioPlugin.Instance.assetMan.Get<Sprite>(spriteName);
             return LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>(spriteName);
         }
 

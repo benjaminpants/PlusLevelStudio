@@ -1,9 +1,12 @@
 ﻿using HarmonyLib;
+using MTM101BaldAPI.AssetTools;
 using MTM101BaldAPI.UI;
 using PlusLevelStudio.Menus;
+using PlusLevelStudio.UI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
@@ -39,6 +42,7 @@ namespace PlusLevelStudio.Patches
             {
                 yield return null;
             }
+            UIBuilder.LoadGlobalDefinesFromFile(Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "GlobalDefines.json"));
             EditorModeSelectionMenu menu = EditorModeSelectionMenu.Build();
             menu.mainMenu = GameObject.Find("Menu");
             button.OnPress.AddListener(() =>
