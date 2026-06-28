@@ -70,6 +70,9 @@
 {"key":"Ed_GameMode_Endless","value":"Endless Mode"},
 {"key":"Ed_GameMode_Endless_Desc","value":"Collect notebooks continually and get a high score!"},
 {"key":"Ed_GameMode_Custom","value":"Custom Challenge"},
-{"key":"Ed_GameMode_Custom_Desc","value":"Create your own challenge using Lua!"}
+{"key":"Ed_GameMode_Custom_Desc","value":"Create your own challenge using Lua!"},
+
+{"key":"Ed_GameMode_Campaign","value":"Campaign ({0})"},
+{"key":"Ed_GameMode_Campaign_Mixed","value":"Campaign (Mixed)"}
 
 ]}

@@ -1,6 +1,7 @@
 ﻿using MTM101BaldAPI;
 using MTM101BaldAPI.AssetTools;
 using MTM101BaldAPI.UI;
+using PlusLevelStudio.Campaigns;
 using PlusLevelStudio.Editor;
 using PlusLevelStudio.UI;
 using System;
@@ -8,12 +9,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Text;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Playables;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 namespace PlusLevelStudio.Menus
 {
@@ -60,15 +64,16 @@ namespace PlusLevelStudio.Menus
         }
 
 
-        public List<PlayableEditorLevel> playableLevels = new List<PlayableEditorLevel>();
-        public Dictionary<PlayableEditorLevel, Texture2D> playableLevelThumbnails = new Dictionary<PlayableEditorLevel, Texture2D>();
-        public Dictionary<PlayableEditorLevel, string> playableToPath = new Dictionary<PlayableEditorLevel, string>();
+        public List<IStudioPlayable> playableLevels = new List<IStudioPlayable>();
+        public Dictionary<IStudioPlayable, Texture2D> playableLevelThumbnails = new Dictionary<IStudioPlayable, Texture2D>();
+        public Dictionary<IStudioPlayable, string> playableToPath = new Dictionary<IStudioPlayable, string>();
         public EditorPlayLevelButton[] buttons = new EditorPlayLevelButton[3];
         public TextMeshProUGUI pageDisplay;
         public StandardMenuButton upButton;
         public StandardMenuButton downButton;
         public TextMeshProUGUI bigText;
-        FileSystemWatcher watcher;
+        FileSystemWatcher pbplWatcher;
+        FileSystemWatcher cbplWatcher;
         public int currentPage;
         public int maxPage => Mathf.CeilToInt(playableLevels.Count / (float)buttons.Length) - 1;
 
@@ -100,10 +105,10 @@ namespace PlusLevelStudio.Menus
         public void PlayLevel(int buttonIndex)
         {
             int startIndex = (currentPage * buttons.Length);
-            PlayableEditorLevel level = playableLevels[startIndex + buttonIndex];
+            IStudioPlayable level = playableLevels[startIndex + buttonIndex];
             try
             {
-                EditorPlayModeManager.LoadLevel(level, LevelStudioPlugin.Instance.gameModeAliases[level.meta.gameMode].supportsCampaigns ? 2 : 0, false);
+                level.Play();
             }
             catch (Exception e)
             {
@@ -113,7 +118,7 @@ namespace PlusLevelStudio.Menus
                     Destroy(Singleton<EditorPlayModeManager>.Instance.gameObject);
                 }
                 GenericPopupExchangeHandler handler = UIBuilder.BuildUIFromFile<GenericPopupExchangeHandler>((RectTransform)transform, "ErrorPop", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "1ChoicePopup.json"));
-
+                UnityEngine.Debug.LogError(e);
                 handler.transform.Find("Title").GetComponent<TextMeshProUGUI>().text = string.Format(LocalizationManager.Instance.GetLocalizedText("Ed_Exception_FileLoad"), e.Message);
             }
         }
@@ -187,25 +192,31 @@ namespace PlusLevelStudio.Menus
 
         public void SetFileWatcherStatus(bool active)
         {
-            if (watcher == null)
+            if (pbplWatcher == null)
             {
                 if (active)
                 {
-                    watcher = new FileSystemWatcher(LevelStudioPlugin.playableLevelPath, "*.pbpl");
-                    watcher.Created += FileChangedAtAll;
-                    watcher.Deleted += FileChangedAtAll;
-                    watcher.Changed += FileChangedAtAll;
-                    watcher.Renamed += FileChangedAtAll;
+                    pbplWatcher = new FileSystemWatcher(LevelStudioPlugin.playableLevelPath, "*.pbpl");
+                    pbplWatcher.Created += FileChangedAtAll;
+                    pbplWatcher.Deleted += FileChangedAtAll;
+                    pbplWatcher.Changed += FileChangedAtAll;
+                    pbplWatcher.Renamed += FileChangedAtAll;
+                    cbplWatcher = new FileSystemWatcher(LevelStudioPlugin.playableLevelPath, "*.cbpl");
+                    cbplWatcher.Created += FileChangedAtAll;
+                    cbplWatcher.Deleted += FileChangedAtAll;
+                    cbplWatcher.Changed += FileChangedAtAll;
+                    cbplWatcher.Renamed += FileChangedAtAll;
                 }
                 else
                 {
                     return;
                 }
             }
-            watcher.EnableRaisingEvents = active;
+            pbplWatcher.EnableRaisingEvents = active;
+            cbplWatcher.EnableRaisingEvents = active;
         }
 
-        protected void AddFromFile(string path, int index = -1)
+        protected void AddPBPLFromFile(string path, int index = -1)
         {
             BinaryReader reader = new BinaryReader(System.IO.File.OpenRead(path));
             PlayableEditorLevel level = PlayableEditorLevel.Read(reader);
@@ -239,6 +250,52 @@ namespace PlusLevelStudio.Menus
             reader.Close();
         }
 
+        protected void AddCBPLFromFile(string path, int index = -1)
+        {
+            BinaryReader reader = new BinaryReader(System.IO.File.OpenRead(path));
+            PlayableEditorCampaign campaign = PlayableEditorCampaign.Read(reader);
+            if (index == -1)
+            {
+                playableLevels.Add(campaign);
+            }
+            else
+            {
+                playableLevels.Insert(index, campaign);
+            }
+            if (campaign.contentPackage.thumbnailEntry != null)
+            {
+                Texture2D thumbTex = new Texture2D(2, 2, TextureFormat.RGBA4444, false);
+                try
+                {
+                    ImageConversion.LoadImage(thumbTex, campaign.contentPackage.thumbnailEntry.data);
+                    thumbTex.filterMode = FilterMode.Point;
+                }
+                catch (Exception e)
+                {
+                    UnityEngine.Debug.LogError("Invalid thumbnail data " + e.ToString());
+                    UnityEngine.Object.Destroy(thumbTex);
+                    thumbTex = null;
+                }
+                thumbTex.name = Path.GetFileNameWithoutExtension(path) + "_Thumb";
+                playableLevelThumbnails.Add(campaign, thumbTex);
+            }
+            playableToPath.Add(campaign, path);
+            reader.Close();
+        }
+
+        protected void AddFromFile(string path, int index = -1)
+        {
+            switch (Path.GetExtension(path))
+            {
+                case ".pbpl":
+                    AddPBPLFromFile(path, index);
+                    break;
+                case ".cbpl":
+                    AddCBPLFromFile(path, index);
+                    break;
+            }
+        }
+
         public void UpdateFromFolder()
         {
             bigText.gameObject.SetActive(true);
@@ -247,7 +304,7 @@ namespace PlusLevelStudio.Menus
                 buttons[i].gameObject.SetActive(false);
             }
             bigText.text = LocalizationManager.Instance.GetLocalizedText("Ed_Menu_LoadingLevels");
-            foreach (KeyValuePair<PlayableEditorLevel, Texture2D> item in playableLevelThumbnails)
+            foreach (KeyValuePair<IStudioPlayable, Texture2D> item in playableLevelThumbnails)
             {
                 Destroy(item.Value);
             }
@@ -255,7 +312,8 @@ namespace PlusLevelStudio.Menus
             playableLevels.Clear();
             playableToPath.Clear();
             Directory.CreateDirectory(LevelStudioPlugin.playableLevelPath);
-            string[] files = Directory.GetFiles(LevelStudioPlugin.playableLevelPath, "*.pbpl");
+            string[] files = Directory.GetFiles(LevelStudioPlugin.playableLevelPath);
+            files = files.Where(x => (Path.GetExtension(x) == ".pbpl" || Path.GetExtension(x) == ".cbpl")).ToArray();
             StartCoroutine(LoadEnumerator(files));
         }
 
@@ -275,7 +333,7 @@ namespace PlusLevelStudio.Menus
             }
             stopwatch.Stop();
             //UnityEngine.Debug.Log("It took: " + stopwatch.Elapsed.Milliseconds + " ms to read " + files.Length + " files!");
-            playableLevels.Sort((a, b) => (a.meta.name.CompareTo(b.meta.name)));
+            playableLevels.Sort((a, b) => (a.GetName().CompareTo(b.GetName())));
             ChangePage(0);
             yield break;
         }
@@ -314,11 +372,11 @@ namespace PlusLevelStudio.Menus
         public StandardMenuButton playButton;
         public StandardMenuButton discardButton;
 
-        public void UpdateDisplay(PlayableEditorLevel level, Texture2D thumb)
+        public void UpdateDisplay(IStudioPlayable level, Texture2D thumb)
         {
-            titleText.text = level.meta.name;
-            authorText.text = string.Format(LocalizationManager.Instance.GetLocalizedText("Ed_Menu_LevelBy"), level.meta.author);
-            modeText.text = LocalizationManager.Instance.GetLocalizedText(LevelStudioPlugin.Instance.gameModeAliases[level.meta.gameMode].nameKey);
+            titleText.text = level.GetName();
+            authorText.text = string.Format(LocalizationManager.Instance.GetLocalizedText("Ed_Menu_LevelBy"), level.GetAuthor());
+            modeText.text = level.GetLocalizedGamemode();
             if (thumb == null)
             {
                 thumb = LevelStudioPlugin.Instance.assetMan.Get<Texture2D>("IconMissing");

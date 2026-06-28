@@ -66,7 +66,12 @@ namespace PlusLevelStudio.Ingame
 
         public override void LoadNextLevel()
         {
-            Singleton<EditorPlayModeManager>.Instance.Win();
+            if (Singleton<CoreGameManager>.Instance.sceneObject.nextLevel == null)
+            {
+                Singleton<EditorPlayModeManager>.Instance.Win();
+                return;
+            }
+            base.LoadNextLevel();
         }
     }
 }

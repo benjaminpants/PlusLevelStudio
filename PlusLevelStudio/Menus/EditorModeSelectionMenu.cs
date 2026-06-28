@@ -23,6 +23,7 @@ namespace PlusLevelStudio.Menus
 
         public GameObject editorTypeParent;
         public GameObject restrictedTypeParent;
+        public EditorCampaignEditorMenu campaignEditManager;
         public EditorPlayScreenUIHandler playScreenManager;
 
         public TextMeshProUGUI editModeDescription;
@@ -52,6 +53,11 @@ namespace PlusLevelStudio.Menus
             emms.playParent = playModeMen.gameObject;
             emms.playParent.SetActive(false);
             emms.playScreenManager = playModeMen;
+
+            EditorCampaignEditorMenu campaignEditMen = UIBuilder.BuildUIFromFile<EditorCampaignEditorMenu>(canvas.GetComponent<RectTransform>(), "CampaignEditor", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "Titlescreen", "CampaignEditMenu.json"));
+            campaignEditMen.menu = emms;
+            emms.campaignEditManager = campaignEditMen;
+            emms.campaignEditManager.gameObject.SetActive(false);
 
             UIElementBuilder.usingRegularAssetMan = false;
 

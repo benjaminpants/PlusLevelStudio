@@ -8,6 +8,7 @@ using UnityEngine.UIElements;
 using UnityEngine;
 using TMPro;
 using static Rewired.InputMapper;
+using PlusLevelStudio.Campaigns;
 
 namespace PlusLevelStudio
 {
@@ -80,6 +81,45 @@ namespace PlusLevelStudio
             }
         }
 
+        public static void LoadCampaign(PlayableEditorCampaign campaign, int lives, LifeMode mode)
+        {
+            EditorPlayModeManager pmm = GameObject.Instantiate<EditorPlayModeManager>(LevelStudioPlugin.Instance.assetMan.Get<EditorPlayModeManager>("playModeManager"));
+            pmm.waitingForCreation = true;
+            pmm.customContent = new EditorCustomContent(campaign.contentPackage);
+            List<SceneObject> createdObjects = new List<SceneObject>();
+            for (int i = 0; i < campaign.levels.Count; i++)
+            {
+                PlayableEditorLevel level = campaign.levels[i];
+                SceneObject sceneObj = LevelImporter.CreateSceneObject(level.data);
+                if (i != 0)
+                {
+                    createdObjects[i - 1].nextLevel = sceneObj;
+                }
+                createdObjects.Add(sceneObj);
+                sceneObj.manager = LevelStudioPlugin.Instance.gameModeAliases[level.meta.gameMode].prefab;
+                if (level.meta.modeSettings != null)
+                {
+                    BaseGameManager modifiedManager = GameObject.Instantiate<BaseGameManager>(LevelStudioPlugin.Instance.gameModeAliases[level.meta.gameMode].prefab, MTM101BaldAPI.MTM101BaldiDevAPI.prefabTransform);
+                    modifiedManager.name = modifiedManager.name.Replace("(Clone)", "_Customized_" + i);
+                    level.meta.modeSettings.ApplySettingsToManager(modifiedManager);
+                    sceneObj.manager = modifiedManager;
+                    pmm.customContent.gameManagerPre.Add(modifiedManager);
+                }
+                pmm.sceneObjectsToCleanUp.Add(sceneObj);
+            }
+
+            // load stuff now
+            GameLoader loader = GameObject.Instantiate<GameLoader>(LevelStudioPlugin.Instance.assetMan.Get<GameLoader>("gameLoaderPrefab"));
+            ElevatorScreen screen = GameObject.Instantiate<ElevatorScreen>(LevelStudioPlugin.Instance.assetMan.Get<ElevatorScreen>("elevatorScreenPrefab"));
+            loader.AssignElevatorScreen(screen);
+            loader.Initialize(lives);
+            loader.SetMode(0);
+            loader.LoadLevel(createdObjects[0]);
+            screen.Initialize();
+            loader.SetSave(false);
+            Singleton<CoreGameManager>.Instance.lifeMode = mode;
+        }
+
         public static void LoadLevel(PlayableEditorLevel level, int lives, bool returnToEditor, string levelToLoad = null, string modeToLoad = "full")
         {
             // we must establish the PlayModeManager first so we can load custom content BEFORE the SceneObject is created.
@@ -101,7 +141,7 @@ namespace PlusLevelStudio
                 modifiedManager.name = modifiedManager.name.Replace("(Clone)", "_Customized");
                 level.meta.modeSettings.ApplySettingsToManager(modifiedManager);
                 sceneObj.manager = modifiedManager;
-                pmm.customContent.gameManagerPre = modifiedManager;
+                pmm.customContent.gameManagerPre.Add(modifiedManager);
             }
             pmm.sceneObjectsToCleanUp.Add(sceneObj);
             pmm.editorLevelToLoad = levelToLoad;

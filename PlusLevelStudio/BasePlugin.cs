@@ -2336,9 +2336,16 @@ namespace PlusLevelStudio
             assetMan.Add<Sprite>("MPlayButtonHover", AssetLoader.SpriteFromMod(this, Vector2.one / 2f, 1f, "UI", "TitleScreen", "MPlayButtonHover.png"));
             assetMan.Add<Sprite>("MDiscardButton", AssetLoader.SpriteFromMod(this, Vector2.one / 2f, 1f, "UI", "TitleScreen", "MDiscardButton.png"));
             assetMan.Add<Sprite>("MDiscardButtonHover", AssetLoader.SpriteFromMod(this, Vector2.one / 2f, 1f, "UI", "TitleScreen", "MDiscardButtonHover.png"));
+            assetMan.Add<Sprite>("SettingsButton", AssetLoader.SpriteFromMod(this, Vector2.one / 2f, 1f, "UI", "TitleScreen", "SettingsButton.png"));
+            assetMan.Add<Sprite>("SettingsButtonHover", AssetLoader.SpriteFromMod(this, Vector2.one / 2f, 1f, "UI", "TitleScreen", "SettingsButtonHover.png"));
             assetMan.Add<Sprite>("PlayLevelBorder", AssetLoader.SpriteFromMod(this, Vector2.one / 2f, 1f, "UI", "TitleScreen", "PlayLevelBorder.png"));
+            assetMan.Add<Sprite>("CampaignLevelBorder", AssetLoader.SpriteFromMod(this, Vector2.one / 2f, 1f, "UI", "TitleScreen", "CampaignLevelBorder.png"));
             assetMan.Add<Sprite>("OpenFolderIcon", AssetLoader.SpriteFromMod(this, Vector2.one / 2f, 1f, "UI", "TitleScreen", "OpenFolderIcon.png"));
             assetMan.Add<Sprite>("OpenFolderIconHover", AssetLoader.SpriteFromMod(this, Vector2.one / 2f, 1f, "UI", "TitleScreen", "OpenFolderIconHover.png"));
+            assetMan.Add<Sprite>("DownSquished", AssetLoader.SpriteFromMod(this, Vector2.one / 2f, 1f, "UI", "TitleScreen", "DownSquished.png"));
+            assetMan.Add<Sprite>("DownSquishedHigh", AssetLoader.SpriteFromMod(this, Vector2.one / 2f, 1f, "UI", "TitleScreen", "DownSquishedHigh.png"));
+            assetMan.Add<Sprite>("UpSquished", AssetLoader.SpriteFromMod(this, Vector2.one / 2f, 1f, "UI", "TitleScreen", "UpSquished.png"));
+            assetMan.Add<Sprite>("UpSquishedHigh", AssetLoader.SpriteFromMod(this, Vector2.one / 2f, 1f, "UI", "TitleScreen", "UpSquishedHigh.png"));
             assetMan.Add<Texture2D>("IconMissing", AssetLoader.TextureFromMod(this, "UI", "TitleScreen", "IconMissing.png"));
             assetMan.Add<Texture2D>("Premade_Wall", AssetLoader.TextureFromMod(this, "Editor", "Premade_Wall.png"));
             Sprite[] baseSprites = Resources.FindObjectsOfTypeAll<Sprite>().Where(x => x.GetInstanceID() >= 0).ToArray();

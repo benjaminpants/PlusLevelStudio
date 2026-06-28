@@ -58,7 +58,7 @@ namespace PlusLevelStudio
         }
 
 
-        public BaseGameManager gameManagerPre;
+        public List<BaseGameManager> gameManagerPre = new List<BaseGameManager>();
 
         public List<EditorCustomContentHandler> handlers = new List<EditorCustomContentHandler>();
 
@@ -66,11 +66,11 @@ namespace PlusLevelStudio
 
         public void CleanupContent()
         {
-            if (gameManagerPre != null)
+            foreach (BaseGameManager item in gameManagerPre)
             {
-                UnityEngine.Object.Destroy(gameManagerPre.gameObject);
+                UnityEngine.Object.Destroy(item.gameObject);
             }
-            gameManagerPre = null;
+            gameManagerPre.Clear();
             foreach (var item in handlers)
             {
                 item.CleanupContent();

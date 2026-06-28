@@ -6,10 +6,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace PlusLevelStudio
 {
-    public class PlayableEditorLevel : IStudioLegacyKnowledgable
+    public class PlayableEditorLevel : IStudioLegacyKnowledgable, IStudioPlayable
     {
         public StudioLevelLegacyFlags legacyFlags { get; set; } = StudioLevelLegacyFlags.None;
 
@@ -64,6 +65,31 @@ namespace PlusLevelStudio
                 }
             }
             return playable;
+        }
+
+        public string GetName()
+        {
+            return meta.name;
+        }
+
+        public string GetAuthor()
+        {
+            return meta.author;
+        }
+
+        public string GetLocalizedGamemode()
+        {
+            return LocalizationManager.Instance.GetLocalizedText(LevelStudioPlugin.Instance.gameModeAliases[meta.gameMode].nameKey);
+        }
+
+        public EditorCustomContentEntry GetThumbnail()
+        {
+            return meta.contentPackage.thumbnailEntry;
+        }
+
+        public void Play()
+        {
+            EditorPlayModeManager.LoadLevel(this, LevelStudioPlugin.Instance.gameModeAliases[meta.gameMode].supportsCampaigns ? 2 : 0, false);
         }
 
         // default stickers for older levels

@@ -71,10 +71,16 @@ namespace PlusLevelStudio.Menus
                 LevelStudioPlugin.Instance.GoToEditor(targMode);
                 return;
             }
-            if (message == "exit")
+            switch (message)
             {
-                menu.playOrEditParent.SetActive(true);
-                menu.editorTypeParent.SetActive(false);
+                case "exit":
+                    menu.playOrEditParent.SetActive(true);
+                    menu.editorTypeParent.SetActive(false);
+                    break;
+                case "campaignEditor":
+                    menu.campaignEditManager.gameObject.SetActive(true);
+                    menu.editorTypeParent.SetActive(false);
+                    break;
             }
         }
 

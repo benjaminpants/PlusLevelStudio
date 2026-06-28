@@ -101,7 +101,8 @@
 			"onPressed":"campaignEditor",
 			"onHighlight":"edHigh_Ed_Tip_Mode_Campaign",
 			"alignment":"Center",
-			"localized":false
+			"localized":false,
+			"transitionType":"Dither"
 		}
 	]
 }

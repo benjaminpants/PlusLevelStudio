@@ -184,7 +184,7 @@ namespace PlusLevelStudio.Editor
                     }
                     if (onSubmit(generatedPath))
                     {
-                        base.SendInteractionMessage("exit", null);
+                        SendInteractionMessage("exit", null);
                     }
                     break;
                 case "up":
@@ -196,6 +196,19 @@ namespace PlusLevelStudio.Editor
                 case "openFolder":
                     Application.OpenURL("file:///" + path);
                     break;
+            }
+            base.SendInteractionMessage(message, data);
+        }
+    }
+
+    public class GenericUIFileBrowser : EditorUIFileBrowser
+    {
+        public override void SendInteractionMessage(string message, object data)
+        {
+            if (message == "exit")
+            {
+                Destroy(gameObject);
+                return;
             }
             base.SendInteractionMessage(message, data);
         }

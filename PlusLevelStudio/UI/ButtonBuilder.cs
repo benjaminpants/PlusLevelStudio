@@ -33,8 +33,11 @@ namespace PlusLevelStudio.UI
             {
                 string key = data["tooltip"].Value<string>();
                 button.eventOnHigh = true;
-                button.OnHighlight.AddListener(() => EditorController.Instance.tooltipController.UpdateTooltip(key));
-                button.OffHighlight.AddListener(() => EditorController.Instance.tooltipController.CloseTooltip());
+                if (EditorController.Instance != null)
+                {
+                    button.OnHighlight.AddListener(() => EditorController.Instance.tooltipController.UpdateTooltip(key));
+                    button.OffHighlight.AddListener(() => EditorController.Instance.tooltipController.CloseTooltip());
+                }
             }
             if (data.ContainsKey("useAltOn"))
             {
