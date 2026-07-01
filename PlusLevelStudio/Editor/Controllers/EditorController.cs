@@ -1153,6 +1153,7 @@ namespace PlusLevelStudio.Editor
         public void UpdateSkybox()
         {
             Shader.SetGlobalTexture("_Skybox", LevelLoaderPlugin.Instance.skyboxAliases[levelData.skybox]);
+            Shader.SetGlobalColor("_SkyboxColor", levelData.skyboxColor);
         }
 
         public void LoadToolbar(string[] tools)

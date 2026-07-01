@@ -7,8 +7,9 @@ using System.Text;
 using UnityEngine.UIElements;
 using UnityEngine;
 using TMPro;
-using static Rewired.InputMapper;
 using PlusLevelStudio.Campaigns;
+using System.Reflection;
+using HarmonyLib;
 
 namespace PlusLevelStudio
 {
@@ -18,10 +19,20 @@ namespace PlusLevelStudio
         public ChallengeWin winScreen;
         public TextMeshProUGUI winText;
         public List<SceneObject> sceneObjectsToCleanUp = new List<SceneObject>();
+        public List<PlaymodeSettingsMeta> sceneObjectSettings = new List<PlaymodeSettingsMeta>();
+        public SceneObject pitstopScene;
         public bool returnToEditor = false;
         public string editorLevelToLoad;
         public string editorModeToLoad;
         public bool waitingForCreation = false;
+
+        public PlaymodeSettingsMeta GetSettingsFor(SceneObject obj)
+        {
+            int index = sceneObjectsToCleanUp.IndexOf(obj);
+            if (index < 0) return new PlaymodeSettingsMeta();
+            PlaymodeSettingsMeta settings = sceneObjectSettings[index];
+            return settings == null ? new PlaymodeSettingsMeta() : settings;
+        }
         
         public void CleanupEverything()
         {
@@ -46,6 +57,98 @@ namespace PlusLevelStudio
                 return;
             }
             GoToEditor();
+        }
+
+
+
+        static FieldInfo _elevatorScreen = AccessTools.Field(typeof(BaseGameManager), "elevatorScreen");
+        static FieldInfo _elevatorScreenPre = AccessTools.Field(typeof(BaseGameManager), "elevatorScreenPre");
+        static FieldInfo _time = AccessTools.Field(typeof(BaseGameManager), "time");
+        static MethodInfo _PrepareToLoad = AccessTools.Method(typeof(BaseGameManager), "PrepareToLoad");
+        // I hate copying big chunks of vanilla bb+ code like this, however in this particular case it is warranted due to this behavior needing to be extracted and modified for the sake of playmode.
+        public void CampaignLoadNextLevel(BaseGameManager man, EnvironmentController ec)
+        {
+            Singleton<HighlightManager>.Instance.Highlight("steam_completed", Singleton<LocalizationManager>.Instance.GetLocalizedText("Steam_Highlight_Win"), string.Format(Singleton<LocalizationManager>.Instance.GetLocalizedText("Steam_Highlight_Win_Desc"), 0), 2U, 0f, 0f, TimelineEventClipPriority.Standard);
+            int num = 0;
+            Baldi baldi = ec.GetBaldi();
+            if (baldi != null)
+            {
+                num = ec.NavigableDistance(ec.CellFromPosition(Singleton<CoreGameManager>.Instance.GetPlayer(0).transform.position), ec.CellFromPosition(baldi.transform.position), PathType.Nav);
+                if (num < 0)
+                {
+                    num = ec.NavigableDistance(ec.CellFromPosition(Singleton<CoreGameManager>.Instance.GetPlayer(0).transform.position), ec.CellFromPosition(baldi.transform.position), PathType.Const) * 2;
+                    if (num < 0)
+                    {
+                        num = 100;
+                    }
+                }
+            }
+            int stickerBonuses = Singleton<CoreGameManager>.Instance.GetStickerBonuses(ec.RemainingTime, num, ec.map.PlayerDiscoveredCells);
+            Singleton<CoreGameManager>.Instance.AddPoints(stickerBonuses, 0, false, false, true);
+            Singleton<CoreGameManager>.Instance.saveMapAvailable = false;
+            Singleton<CoreGameManager>.Instance.saveMapPurchased = false;
+            for (int i = 0; i < 2 - Singleton<CoreGameManager>.Instance.Attempts; i++)
+            {
+                Singleton<CoreGameManager>.Instance.AddPoints(Singleton<CoreGameManager>.Instance.GetPointsThisLevel(0), 0, false, false, false);
+            }
+            _PrepareToLoad.Invoke(man, null);
+            ElevatorScreen elevatorScreen = UnityEngine.Object.Instantiate<ElevatorScreen>((ElevatorScreen)_elevatorScreenPre.GetValue(man));
+            _elevatorScreen.SetValue(man, elevatorScreen);
+            elevatorScreen.OnLoadReady += () =>
+            {
+                CampaignLoadReady(man);
+            };
+            elevatorScreen.Initialize();
+            // grades arent used anymore why is this here.
+            /*if (this.problems > 0)
+            {
+                Singleton<CoreGameManager>.Instance.GradeVal += -Mathf.RoundToInt(this.gradeValue * ((float)this.correctProblems / (float)this.problems * 2f - 1f));
+            }*/
+            elevatorScreen.ShowResults((float)_time.GetValue(man), Mathf.RoundToInt((float)stickerBonuses * Singleton<CoreGameManager>.Instance.YtpMultiplier));
+        }
+
+        protected void CampaignLoadReady(BaseGameManager man)
+        {
+            man.StopAllCoroutines();
+            man.Ec.gameObject.SetActive(false);
+            Singleton<CoreGameManager>.Instance.PrepareForReload();
+            Singleton<CoreGameManager>.Instance.tripPlayed = false;
+            Singleton<SubtitleManager>.Instance.DestroyAll();
+            // actually load new level
+            CampaignLoadLevel(Singleton<CoreGameManager>.Instance.sceneObject.nextLevel, false);
+        }
+
+        public void CampaignRestartLevel(BaseGameManager man)
+        {
+            Singleton<CoreGameManager>.Instance.saveMapAvailable = true;
+            _PrepareToLoad.Invoke(man, null);
+            ElevatorScreen elevatorScreen = UnityEngine.Object.Instantiate<ElevatorScreen>((ElevatorScreen)_elevatorScreenPre.GetValue(man));
+            _elevatorScreen.SetValue(man, elevatorScreen);
+            elevatorScreen.OnLoadReady += () =>
+            {
+                CampaignRestartLevelReady(man);
+            };
+            elevatorScreen.Initialize();
+        }
+
+        protected void CampaignRestartLevelReady(BaseGameManager man)
+        {
+            Singleton<CoreGameManager>.Instance.PrepareForReload();
+            Singleton<CoreGameManager>.Instance.BackupMap(man.Ec.map);
+            Singleton<CoreGameManager>.Instance.RestorePlayers();
+            CampaignLoadLevel(Singleton<CoreGameManager>.Instance.sceneObject, true);
+        }
+
+        public void CampaignLoadLevel(SceneObject sceneObj, bool restarting)
+        {
+            Singleton<CoreGameManager>.Instance.nextLevel = sceneObj;
+            SceneObject sceneObjToLoad = sceneObj;
+            if (GetSettingsFor(sceneObj).hasPitstop) // TODO: implement finalLevel.
+            {
+                sceneObjToLoad = pitstopScene;
+            }
+            Singleton<CoreGameManager>.Instance.sceneObject = sceneObjToLoad;
+            Singleton<AdditiveSceneManager>.Instance.LoadScene("Game");
         }
 
         public void Win(string text = "Congratulation! You won!")
@@ -106,6 +209,7 @@ namespace PlusLevelStudio
                     pmm.customContent.gameManagerPre.Add(modifiedManager);
                 }
                 pmm.sceneObjectsToCleanUp.Add(sceneObj);
+                pmm.sceneObjectSettings.Add(new PlaymodeSettingsMeta());
             }
 
             // load stuff now
@@ -144,6 +248,7 @@ namespace PlusLevelStudio
                 pmm.customContent.gameManagerPre.Add(modifiedManager);
             }
             pmm.sceneObjectsToCleanUp.Add(sceneObj);
+            pmm.sceneObjectSettings.Add(new PlaymodeSettingsMeta(level.meta.playSettings));
             pmm.editorLevelToLoad = levelToLoad;
             pmm.editorModeToLoad = modeToLoad;
             loader.AssignElevatorScreen(screen);

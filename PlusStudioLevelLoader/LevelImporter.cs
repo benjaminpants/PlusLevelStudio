@@ -277,6 +277,8 @@ namespace PlusStudioLevelLoader
             scene.skybox = LevelLoaderPlugin.Instance.skyboxAliases[level.skybox];
             scene.levelTitle = level.levelTitle;
             scene.usesMap = level.usesMap;
+            scene.mapPrice = level.mapPrice;
+            scene.skyboxColor = level.skyboxColor.ToStandard();
             List<WeightedSticker> potentialStickerList = new List<WeightedSticker>();
             for (int i = 0; i < level.potentialStickers.Count; i++)
             {

@@ -13,6 +13,7 @@ namespace PlusLevelStudio.Editor.GlobalSettingsMenus
         TextMeshProUGUI initEventText;
         TextMeshProUGUI minEventText;
         TextMeshProUGUI maxEventText;
+        TextMeshProUGUI mapPriceText;
         StandardMenuButton[] randomEventButtons;
         DigitalNumberDisplay[] displays;
         MenuToggle toggle;
@@ -38,6 +39,7 @@ namespace PlusLevelStudio.Editor.GlobalSettingsMenus
             initEventText = transform.Find("InitialEventTime").GetComponent<TextMeshProUGUI>();
             minEventText = transform.Find("MinEventTime").GetComponent<TextMeshProUGUI>();
             maxEventText = transform.Find("MaxEventTime").GetComponent<TextMeshProUGUI>();
+            mapPriceText = transform.Find("MapPriceBox").GetComponent<TextMeshProUGUI>();
             displays = new DigitalNumberDisplay[]
             {
                 transform.Find("LevelTimeSeg0").GetComponent<DigitalNumberDisplay>(),
@@ -69,6 +71,7 @@ namespace PlusLevelStudio.Editor.GlobalSettingsMenus
             initEventText.text = EditorController.Instance.levelData.initialRandomEventGap.ToString();
             minEventText.text = EditorController.Instance.levelData.minRandomEventGap.ToString();
             maxEventText.text = EditorController.Instance.levelData.maxRandomEventGap.ToString();
+            mapPriceText.text = EditorController.Instance.levelData.mapPrice.ToString();
             toggle.Set(EditorController.Instance.levelData.usesMap);
             int time = Mathf.RoundToInt(EditorController.Instance.levelData.timeLimit);
             string displayTime = string.Format("{0}{1}", Mathf.Floor((float)(time / 60)).ToString("00"), (time % 60).ToString("00"));
@@ -174,6 +177,14 @@ namespace PlusLevelStudio.Editor.GlobalSettingsMenus
                     {
                         handler.somethingChanged = true;
                         EditorController.Instance.levelData.maxRandomEventGap = Mathf.Abs(maxResult);
+                    }
+                    Refresh();
+                    break;
+                case "mapPriceChange":
+                    if (int.TryParse((string)data, out int priceRes))
+                    {
+                        handler.somethingChanged = true;
+                        EditorController.Instance.levelData.mapPrice = priceRes;
                     }
                     Refresh();
                     break;

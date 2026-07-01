@@ -36,6 +36,7 @@ namespace PlusLevelStudio.Editor
         public string elevatorTitle = "WIP";
 
         public string skybox = "daystandard";
+        public Color skyboxColor = new Color(1f,1f,1f);
         public Color minLightColor = new Color(0f, 0f, 0f);
         public LightMode lightMode = LightMode.Cumulative;
 
@@ -55,6 +56,7 @@ namespace PlusLevelStudio.Editor
         public int seed = 0;
         public List<WeightedID> potentialStickers = new List<WeightedID>();
         public bool usesMap = true;
+        public int mapPrice = 250;
 
         // store stuff
         public List<WeightedID> potentialStoreItems = new List<WeightedID>();
@@ -542,6 +544,7 @@ namespace PlusLevelStudio.Editor
             compiled.levelTitle = elevatorTitle;
             compiled.timeLimit = timeLimit;
             compiled.skybox = skybox;
+            compiled.skyboxColor = skyboxColor.ToData();
             compiled.spawnPoint = spawnPoint.ToData();
             compiled.spawnDirection = (PlusDirection)spawnDirection;
             compiled.randomEvents = new List<string>(randomEvents);
@@ -552,6 +555,7 @@ namespace PlusLevelStudio.Editor
             compiled.maxRandomEventGap = maxRandomEventGap;
             compiled.seed = seed;
             compiled.usesMap = usesMap;
+            compiled.mapPrice = mapPrice;
             UpdateCells(false); // update our cells
             for (int x = 0; x < mapSize.x; x++)
             {
@@ -783,7 +787,7 @@ namespace PlusLevelStudio.Editor
             return compiled;
         }
 
-        public const byte version = 18;
+        public const byte version = 19;
 
         public bool WallFree(IntVector2 pos, Direction dir, bool ignoreSelf)
         {
@@ -1031,6 +1035,7 @@ namespace PlusLevelStudio.Editor
                 writer.Write(randomEvents[i]);
             }
             writer.Write(skybox);
+            writer.Write(skyboxColor.ToData());
             writer.Write(minLightColor.ToData());
             writer.Write((byte)lightMode);
             writer.Write(seed);
@@ -1041,6 +1046,7 @@ namespace PlusLevelStudio.Editor
                 writer.Write(potentialStickers[i].weight);
             }
             writer.Write(usesMap);
+            writer.Write(mapPrice);
             writer.Write(premadeRooms.Count);
             for (int i = 0; i < premadeRooms.Count; i++)
             {
@@ -1317,6 +1323,10 @@ namespace PlusLevelStudio.Editor
             }
             if (version <= 4) return levelData;
             levelData.skybox = reader.ReadString();
+            if (version >= 19)
+            {
+                levelData.skyboxColor = reader.ReadUnityColor().ToStandard();
+            }
             if (version <= 5) return levelData;
             levelData.minLightColor = reader.ReadUnityColor().ToStandard();
             levelData.lightMode = (LightMode)reader.ReadByte();
@@ -1342,6 +1352,10 @@ namespace PlusLevelStudio.Editor
             if (version >= 13)
             {
                 levelData.usesMap = reader.ReadBoolean();
+            }
+            if (version >= 19)
+            {
+                levelData.mapPrice = reader.ReadInt32();
             }
             if (version >= 15)
             {

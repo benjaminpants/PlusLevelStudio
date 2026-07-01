@@ -39,11 +39,12 @@ namespace PlusStudioLevelFormat
             }
         }
         public PlusDirection spawnDirection = PlusDirection.North;
-        public static readonly byte version = 10;
+        public static readonly byte version = 11;
         public string levelTitle = "WIP";
         public float timeLimit = 0f;
 
         public string skybox = "default";
+        public UnityColor skyboxColor = new UnityColor(1f,1f,1f);
         public UnityColor minLightColor = new UnityColor(0f,0f,0f);
         public PlusLightMode lightMode = PlusLightMode.Cumulative;
 
@@ -61,6 +62,7 @@ namespace PlusStudioLevelFormat
         public int storeItemCount = 0;
 
         public bool usesMap = true;
+        public int mapPrice = 250;
 
         /// <summary>
         /// Creates a new level that is properly initialized with the specified width and height
@@ -123,8 +125,16 @@ namespace PlusStudioLevelFormat
             {
                 level.usesMap = reader.ReadBoolean();
             }
+            if (version >= 11)
+            {
+                level.mapPrice = reader.ReadInt32();
+            }
 
             level.skybox = reader.ReadString();
+            if (version >= 11)
+            {
+                level.skyboxColor = reader.ReadUnityColor();
+            }
             level.minLightColor = reader.ReadUnityColor();
             level.lightMode = (PlusLightMode)reader.ReadByte();
 
@@ -486,8 +496,10 @@ namespace PlusStudioLevelFormat
             writer.Write(timeLimit);
             writer.Write(seed);
             writer.Write(usesMap);
+            writer.Write(mapPrice);
 
             writer.Write(skybox);
+            writer.Write(skyboxColor);
             writer.Write(minLightColor);
             writer.Write((byte)lightMode);
 

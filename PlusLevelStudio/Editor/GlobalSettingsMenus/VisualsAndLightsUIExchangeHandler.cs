@@ -117,10 +117,11 @@ namespace PlusLevelStudio.Editor.GlobalSettingsMenus
                     skyboxButtons[i].image.color = Color.clear;
                     continue;
                 }
-                skyboxButtons[i].image.color = Color.white;
+                skyboxButtons[i].image.color = EditorController.Instance.levelData.skyboxColor;
                 skyboxButtons[i].image.sprite = LevelStudioPlugin.Instance.skyboxSprites[LevelStudioPlugin.Instance.selectableSkyboxes[i + skyboxViewOffset]];
             }
             skyboxImage.sprite = LevelStudioPlugin.Instance.skyboxSprites[EditorController.Instance.levelData.skybox];
+            skyboxImage.color = EditorController.Instance.levelData.skyboxColor;
         }
 
         public override void SendInteractionMessage(string message, object data = null)

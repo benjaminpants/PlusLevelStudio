@@ -71,7 +71,12 @@ namespace PlusLevelStudio.Ingame
                 Singleton<EditorPlayModeManager>.Instance.Win();
                 return;
             }
-            base.LoadNextLevel();
+            Singleton<EditorPlayModeManager>.Instance.CampaignLoadNextLevel(this, Ec);
+        }
+
+        public override void RestartLevel()
+        {
+            Singleton<EditorPlayModeManager>.Instance.CampaignRestartLevel(this);
         }
     }
 }

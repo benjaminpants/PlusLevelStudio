@@ -23,6 +23,7 @@ namespace PlusStudioLevelLoader.Patches
             __result = extendedData;
             extendedData.timeOutTime = extendedAsset.timeOutTime;
             extendedData.timeOutEvent = extendedAsset.timeOutEvent;
+            extendedData.finalLevel = extendedAsset.finalLevel;
         }
     }
 

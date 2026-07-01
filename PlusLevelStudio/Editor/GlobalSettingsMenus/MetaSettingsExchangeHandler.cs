@@ -14,6 +14,8 @@ namespace PlusLevelStudio.Editor.GlobalSettingsMenus
     {
         TextMeshProUGUI titleText;
         TextMeshProUGUI authorText;
+        MenuToggle threeLivesCheck;
+        MenuToggle pitstopCheck;
         RawImage thumbnailImage;
         Texture2D cachedThumbnail = null;
         public override bool GetStateBoolean(string key)
@@ -26,6 +28,8 @@ namespace PlusLevelStudio.Editor.GlobalSettingsMenus
             titleText = transform.Find("LevelTitle").GetComponent<TextMeshProUGUI>();
             authorText = transform.Find("AuthorName").GetComponent<TextMeshProUGUI>();
             thumbnailImage = transform.Find("Thumbnail").GetComponent<RawImage>();
+            threeLivesCheck = transform.Find("AllowRetryCheckbox").GetComponent<MenuToggle>();
+            pitstopCheck = transform.Find("HasStoreCheckbox").GetComponent<MenuToggle>();
         }
 
         public override void Cleanup()
@@ -68,6 +72,8 @@ namespace PlusLevelStudio.Editor.GlobalSettingsMenus
                 cachedThumbnail = EditorController.Instance.GenerateThumbnail();
             }
             thumbnailImage.texture = cachedThumbnail;
+            threeLivesCheck.Set(EditorController.Instance.levelData.meta.playSettings.allowsRetries);
+            pitstopCheck.Set(EditorController.Instance.levelData.meta.playSettings.hasPitstop);
         }
 
         public bool CustomThumbnailSubmitted(string path)
@@ -122,6 +128,16 @@ namespace PlusLevelStudio.Editor.GlobalSettingsMenus
                     break;
                 case "clearThumb":
                     EditorController.Instance.levelData.meta.contentPackage.thumbnailEntry = null;
+                    handler.somethingChanged = true;
+                    Refresh();
+                    break;
+                case "togglePitstop":
+                    EditorController.Instance.levelData.meta.playSettings.hasPitstop = (bool)data;
+                    handler.somethingChanged = true;
+                    Refresh();
+                    break;
+                case "toggleRetries":
+                    EditorController.Instance.levelData.meta.playSettings.allowsRetries = (bool)data;
                     handler.somethingChanged = true;
                     Refresh();
                     break;

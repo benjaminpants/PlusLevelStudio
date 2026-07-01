@@ -89,7 +89,7 @@ namespace PlusLevelStudio
 
         public void Play()
         {
-            EditorPlayModeManager.LoadLevel(this, LevelStudioPlugin.Instance.gameModeAliases[meta.gameMode].supportsCampaigns ? 2 : 0, false);
+            EditorPlayModeManager.LoadLevel(this, (LevelStudioPlugin.Instance.gameModeAliases[meta.gameMode].supportsCampaigns && meta.playSettings.allowsRetries) ? 2 : 0, false);
         }
 
         // default stickers for older levels
@@ -118,6 +118,7 @@ namespace PlusLevelStudio
         public string gameMode = "standard";
         public EditorGameModeSettings modeSettings;
         public EditorCustomContentPackage contentPackage;
+        public PlaymodeSettingsMeta playSettings = new PlaymodeSettingsMeta();
 
         public PlayableLevelMeta CompileContent()
         {
@@ -127,11 +128,12 @@ namespace PlusLevelStudio
                 author = author,
                 gameMode = gameMode,
                 modeSettings = (modeSettings == null ? null : modeSettings.MakeCopy()),
-                contentPackage = contentPackage.AsFilePathless()
+                contentPackage = contentPackage.AsFilePathless(),
+                playSettings = new PlaymodeSettingsMeta(playSettings)
             };
         }
 
-        public const byte version = 2;
+        public const byte version = 4;
 
         public void Write(BinaryWriter writer)
         {
@@ -144,6 +146,7 @@ namespace PlusLevelStudio
             {
                 modeSettings.Write(writer);
             }
+            playSettings.Write(writer);
             contentPackage.Write(writer);
         }
 
@@ -157,14 +160,28 @@ namespace PlusLevelStudio
                 meta.author = reader.ReadString();
             }
             meta.gameMode = reader.ReadString();
-            if (!reader.ReadBoolean())
+            meta.modeSettings = LevelStudioPlugin.Instance.gameModeAliases[meta.gameMode].CreateSettings();
+            if (reader.ReadBoolean())
             {
-                meta.modeSettings = LevelStudioPlugin.Instance.gameModeAliases[meta.gameMode].CreateSettings();
+                meta.modeSettings.ReadInto(reader);
+            }
+            if (version < 4)
+            {
+                if (version < 3)
+                {
+                    // maintain old behavior for old levels that weren't designed with pitstops or retries in mind
+                    meta.playSettings.allowsRetries = false;
+                    meta.playSettings.hasPitstop = false;
+                }
+                else
+                {
+                    meta.playSettings.hasPitstop = reader.ReadBoolean();
+                    meta.playSettings.allowsRetries = reader.ReadBoolean();
+                }
             }
             else
             {
-                meta.modeSettings = LevelStudioPlugin.Instance.gameModeAliases[meta.gameMode].CreateSettings();
-                meta.modeSettings.ReadInto(reader);
+                meta.playSettings = PlaymodeSettingsMeta.Read(reader);
             }
             if (version < 2)
             {
@@ -177,4 +194,39 @@ namespace PlusLevelStudio
             return meta;
         }
     }
+
+    public class PlaymodeSettingsMeta
+    {
+        public bool hasPitstop = true;
+        public bool allowsRetries = true;
+
+        public const byte version = 0;
+        public void Write(BinaryWriter writer)
+        {
+            writer.Write(version);
+            writer.Write(hasPitstop);
+            writer.Write(allowsRetries);
+        }
+
+        public static PlaymodeSettingsMeta Read(BinaryReader reader)
+        {
+            byte version = reader.ReadByte();
+            PlaymodeSettingsMeta settings = new PlaymodeSettingsMeta();
+            settings.hasPitstop = reader.ReadBoolean();
+            settings.allowsRetries = reader.ReadBoolean();
+            return settings;
+        }
+
+        public PlaymodeSettingsMeta()
+        {
+
+        }
+
+        public PlaymodeSettingsMeta(PlaymodeSettingsMeta toCopy)
+        {
+            hasPitstop = toCopy.hasPitstop;
+            allowsRetries = toCopy.allowsRetries;
+        }
+    }
+
 }

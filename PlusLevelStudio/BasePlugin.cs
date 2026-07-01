@@ -1170,6 +1170,7 @@ namespace PlusLevelStudio
             GameObject playModeGameObject = new GameObject("EditorPlayModeManager");
             playModeGameObject.ConvertToPrefab(true);
             EditorPlayModeManager playModeManager = playModeGameObject.AddComponent<EditorPlayModeManager>();
+            playModeManager.pitstopScene = Resources.FindObjectsOfTypeAll<SceneObject>().First(x => x.name == "Pitstop" && x.GetInstanceID() >= 0);
 
             ChallengeWin winCopy = GameObject.Instantiate<ChallengeWin>(Resources.FindObjectsOfTypeAll<ChallengeWin>().First(x => x.GetInstanceID() >= 0 && x.transform.parent.name == "GrappleChallengeManager"), playModeGameObject.transform);
             winCopy.name = "GameWin";

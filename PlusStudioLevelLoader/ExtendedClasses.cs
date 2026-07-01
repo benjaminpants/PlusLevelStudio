@@ -9,12 +9,14 @@ namespace PlusStudioLevelLoader
     {
         public float timeOutTime = 0f;
         public RandomEvent timeOutEvent;
+        public bool finalLevel = false;
     }
 
     public class ExtendedExtraLevelDataAsset : ExtraLevelDataAsset
     {
         public float timeOutTime = 0f;
         public RandomEvent timeOutEvent;
+        public bool finalLevel = false;
     }
 
     public class ExtendedRoomAsset : RoomAsset
