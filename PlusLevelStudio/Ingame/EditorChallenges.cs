@@ -12,7 +12,17 @@ namespace PlusLevelStudio.Ingame
     {
         public override void LoadNextLevel()
         {
-            Singleton<EditorPlayModeManager>.Instance.Win();
+            if (Singleton<CoreGameManager>.Instance.sceneObject.nextLevel == null)
+            {
+                Singleton<EditorPlayModeManager>.Instance.Win();
+                return;
+            }
+            Singleton<EditorPlayModeManager>.Instance.CampaignLoadNextLevel(this, Ec);
+        }
+
+        public override void RestartLevel()
+        {
+            Singleton<EditorPlayModeManager>.Instance.CampaignRestartLevel(this);
         }
 
         public override void ExitedSpawn()
@@ -41,7 +51,17 @@ namespace PlusLevelStudio.Ingame
         static FieldInfo _allKnowing = AccessTools.Field(typeof(Principal), "allKnowing");
         public override void LoadNextLevel()
         {
-            Singleton<EditorPlayModeManager>.Instance.Win();
+            if (Singleton<CoreGameManager>.Instance.sceneObject.nextLevel == null)
+            {
+                Singleton<EditorPlayModeManager>.Instance.Win();
+                return;
+            }
+            Singleton<EditorPlayModeManager>.Instance.CampaignLoadNextLevel(this, Ec);
+        }
+
+        public override void RestartLevel()
+        {
+            Singleton<EditorPlayModeManager>.Instance.CampaignRestartLevel(this);
         }
 
         public StudioLevelLegacyFlags legacyFlags { get; set; } = StudioLevelLegacyFlags.None;
@@ -130,7 +150,17 @@ namespace PlusLevelStudio.Ingame
         }
         public override void LoadNextLevel()
         {
-            Singleton<EditorPlayModeManager>.Instance.Win();
+            if (Singleton<CoreGameManager>.Instance.sceneObject.nextLevel == null)
+            {
+                Singleton<EditorPlayModeManager>.Instance.Win();
+                return;
+            }
+            Singleton<EditorPlayModeManager>.Instance.CampaignLoadNextLevel(this, Ec);
+        }
+
+        public override void RestartLevel()
+        {
+            Singleton<EditorPlayModeManager>.Instance.CampaignRestartLevel(this);
         }
 
         public override void GiveRandomSticker(StickerPackType packType, int total)

@@ -352,7 +352,8 @@ namespace PlusLevelStudio
             {
                 prefab = editorGrappleChallenge,
                 nameKey = "Ed_GameMode_Grapple",
-                descKey = "Ed_GameMode_Grapple_Desc"
+                descKey = "Ed_GameMode_Grapple_Desc",
+                supportsCampaigns = true
             });
 
 
@@ -364,13 +365,15 @@ namespace PlusLevelStudio
                 hasSettingsPage = true,
                 settingsPagePath = Path.Combine(settingsPagePath, "StealthySettings.json"),
                 settingsPageType = typeof(StealthyChallengeSettingsPageUIExchangeHandler),
+                supportsCampaigns = true
             });
 
             gameModeAliases.Add("speedy", new SpeedyChallengeGameMode()
             {
                 prefab = editorSpeedyChallenge,
                 nameKey = "Ed_GameMode_Speedy",
-                descKey = "Ed_GameMode_Speedy_Desc"
+                descKey = "Ed_GameMode_Speedy_Desc",
+                supportsCampaigns = true
             });
 
             gameModeAliases.Add("endless", new EditorEndlessGameMode()
