@@ -274,6 +274,10 @@ namespace PlusStudioLevelLoader
             extendedAsset.timeOutTime = level.timeLimit;
             extendedAsset.lightMode = (LightMode)level.lightMode;
             extendedAsset.minLightColor = level.minLightColor.ToStandard();
+            if (!string.IsNullOrEmpty(level.levelTypePoster))
+            {
+                extendedAsset.levelTypePoster = LevelLoaderPlugin.Instance.posterAliases[level.levelTypePoster];
+            }
             scene.skybox = LevelLoaderPlugin.Instance.skyboxAliases[level.skybox];
             scene.levelTitle = level.levelTitle;
             scene.usesMap = level.usesMap;

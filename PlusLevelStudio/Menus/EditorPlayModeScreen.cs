@@ -333,7 +333,12 @@ namespace PlusLevelStudio.Menus
             }
             stopwatch.Stop();
             //UnityEngine.Debug.Log("It took: " + stopwatch.Elapsed.Milliseconds + " ms to read " + files.Length + " files!");
-            playableLevels.Sort((a, b) => (a.GetName().CompareTo(b.GetName())));
+            playableLevels.Sort((a, b) =>
+            {
+                int pr1 = b.GetPriority().CompareTo(a.GetPriority());
+                if (pr1 != 0) return pr1;
+                return (a.GetName().CompareTo(b.GetName()));
+            });
             ChangePage(0);
             yield break;
         }

@@ -12,6 +12,7 @@ namespace PlusLevelStudio
         string GetName();
         string GetAuthor();
         string GetLocalizedGamemode();
+        int GetPriority();
         EditorCustomContentEntry GetThumbnail();
 
         void Play();

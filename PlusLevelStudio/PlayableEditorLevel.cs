@@ -72,6 +72,11 @@ namespace PlusLevelStudio
             return meta.name;
         }
 
+        public int GetPriority()
+        {
+            return 0;
+        }
+
         public string GetAuthor()
         {
             return meta.author;
@@ -199,13 +204,15 @@ namespace PlusLevelStudio
     {
         public bool hasPitstop = true;
         public bool allowsRetries = true;
+        public string fieldTrip = "none";
 
-        public const byte version = 0;
+        public const byte version = 1;
         public void Write(BinaryWriter writer)
         {
             writer.Write(version);
             writer.Write(hasPitstop);
             writer.Write(allowsRetries);
+            writer.Write(fieldTrip);
         }
 
         public static PlaymodeSettingsMeta Read(BinaryReader reader)
@@ -214,6 +221,10 @@ namespace PlusLevelStudio
             PlaymodeSettingsMeta settings = new PlaymodeSettingsMeta();
             settings.hasPitstop = reader.ReadBoolean();
             settings.allowsRetries = reader.ReadBoolean();
+            if (version >= 1)
+            {
+                settings.fieldTrip = reader.ReadString();
+            }
             return settings;
         }
 
@@ -226,6 +237,7 @@ namespace PlusLevelStudio
         {
             hasPitstop = toCopy.hasPitstop;
             allowsRetries = toCopy.allowsRetries;
+            fieldTrip = toCopy.fieldTrip;
         }
     }
 

@@ -39,7 +39,7 @@ namespace PlusStudioLevelFormat
             }
         }
         public PlusDirection spawnDirection = PlusDirection.North;
-        public static readonly byte version = 11;
+        public static readonly byte version = 12;
         public string levelTitle = "WIP";
         public float timeLimit = 0f;
 
@@ -63,6 +63,8 @@ namespace PlusStudioLevelFormat
 
         public bool usesMap = true;
         public int mapPrice = 250;
+
+        public string levelTypePoster = string.Empty;
 
         /// <summary>
         /// Creates a new level that is properly initialized with the specified width and height
@@ -128,6 +130,10 @@ namespace PlusStudioLevelFormat
             if (version >= 11)
             {
                 level.mapPrice = reader.ReadInt32();
+            }
+            if (version >= 12)
+            {
+                level.levelTypePoster = reader.ReadString();
             }
 
             level.skybox = reader.ReadString();
@@ -497,6 +503,7 @@ namespace PlusStudioLevelFormat
             writer.Write(seed);
             writer.Write(usesMap);
             writer.Write(mapPrice);
+            writer.Write(levelTypePoster);
 
             writer.Write(skybox);
             writer.Write(skyboxColor);

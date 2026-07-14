@@ -97,6 +97,7 @@
 			"pivot":"#center",
 			"anchorMin":"#center",
 			"anchorMax":"#center",
+			"onPressed":"settings0",
 		},
 		{
 			"name":"CampUp0",
@@ -183,6 +184,7 @@
 			"pivot":"#center",
 			"anchorMin":"#center",
 			"anchorMax":"#center",
+			"onPressed":"settings1",
 		},
 		{
 			"name":"CampUp1",
@@ -269,6 +271,7 @@
 			"pivot":"#center",
 			"anchorMin":"#center",
 			"anchorMax":"#center",
+			"onPressed":"settings2",
 		},
 		{
 			"name":"CampUp2",

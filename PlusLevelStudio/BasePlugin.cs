@@ -84,6 +84,8 @@ namespace PlusLevelStudio
         public GameObject wallVisual;
         public GameObject oneWayWallVisual;
         public GameObject wallRemoveVisual;
+        public ExtensibleDictionary<FieldTripObject> fieldTrips = new ExtensibleDictionary<FieldTripObject>();
+        public List<string> selectableFieldTrips = new List<string>();
 
         // listen to the fucking variable name modders and DO NOT ADD TO THIS! This system is PLACEHOLDER and if you add things then it wont work as its stored as an index and not as a name or anything that could be properly handled!
         internal List<Baldi> animCurvesBaldiPrefabsDoNotAddToThis = new List<Baldi>();
@@ -1988,6 +1990,13 @@ namespace PlusLevelStudio
                 npcPropertiesType = typeof(BaldiProperties),
                 pagePath = Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "NPCSettings", "Baldi.json")
             });
+
+            FieldTripObject[] vanillaTrips = Resources.FindObjectsOfTypeAll<FieldTripObject>().Where(x => x.GetInstanceID() >= 0).ToArray();
+            fieldTrips.Add("none", null);
+            fieldTrips.Add("camping", vanillaTrips.First(x => x.name == "CampTrip"));
+
+            selectableFieldTrips.Add("none");
+            selectableFieldTrips.Add("camping");
 
             yield return "Setting up GameManagers...";
 

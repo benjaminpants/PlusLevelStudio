@@ -198,6 +198,8 @@ namespace PlusLevelStudio
                 {
                     createdObjects[i - 1].nextLevel = sceneObj;
                 }
+                sceneObj.name = campaign.GetName() + " " + i;
+                sceneObj.levelNo = i; // assign here so all logic that checks if we've gone to the next floor works correctly
                 createdObjects.Add(sceneObj);
                 sceneObj.manager = LevelStudioPlugin.Instance.gameModeAliases[level.meta.gameMode].prefab;
                 if (level.meta.modeSettings != null)
@@ -209,7 +211,7 @@ namespace PlusLevelStudio
                     pmm.customContent.gameManagerPre.Add(modifiedManager);
                 }
                 pmm.sceneObjectsToCleanUp.Add(sceneObj);
-                pmm.sceneObjectSettings.Add(new PlaymodeSettingsMeta());
+                pmm.sceneObjectSettings.Add(new PlaymodeSettingsMeta(level.meta.playSettings));
             }
 
             // load stuff now
@@ -235,6 +237,7 @@ namespace PlusLevelStudio
             pmm.waitingForCreation = true;
             pmm.customContent = new EditorCustomContent(level.meta.contentPackage);
             SceneObject sceneObj = LevelImporter.CreateSceneObject(level.data);
+            sceneObj.name = level.GetName();
             sceneObj.manager = LevelStudioPlugin.Instance.gameModeAliases[level.meta.gameMode].prefab;
             GameLoader loader = GameObject.Instantiate<GameLoader>(LevelStudioPlugin.Instance.assetMan.Get<GameLoader>("gameLoaderPrefab"));
             ElevatorScreen screen = GameObject.Instantiate<ElevatorScreen>(LevelStudioPlugin.Instance.assetMan.Get<ElevatorScreen>("elevatorScreenPrefab"));

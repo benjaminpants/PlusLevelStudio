@@ -149,6 +149,11 @@ namespace PlusLevelStudio.Editor
             }
         }
 
+        public virtual void TriggerError(string error)
+        {
+            EditorController.Instance.TriggerError(error);
+        }
+
         public override void SendInteractionMessage(string message, object data)
         {
             if (message.StartsWith("pressed"))
@@ -179,7 +184,7 @@ namespace PlusLevelStudio.Editor
                     string generatedPath = Path.Combine(path, textbox.text + "." + extension);
                     if ((!allowNonExistantFiles) && (!File.Exists(generatedPath)))
                     {
-                        EditorController.Instance.TriggerError("Ed_Error_FileNoExist");
+                        TriggerError("Ed_Error_FileNoExist");
                         return;
                     }
                     if (onSubmit(generatedPath))
@@ -211,6 +216,12 @@ namespace PlusLevelStudio.Editor
                 return;
             }
             base.SendInteractionMessage(message, data);
+        }
+
+        // TODO: replace
+        public override void TriggerError(string error)
+        {
+            Debug.Log(LocalizationManager.Instance.GetLocalizedText(error));
         }
     }
 }

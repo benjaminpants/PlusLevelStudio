@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 
 namespace PlusLevelStudio.Campaigns
 {
@@ -16,7 +15,7 @@ namespace PlusLevelStudio.Campaigns
 
         public List<PlayableEditorLevel> levels = new List<PlayableEditorLevel>();
 
-        public const byte version = 0;
+        public const byte version = 1;
 
         public void ImportLevels(List<PlayableEditorLevel> toImport)
         {
@@ -26,8 +25,9 @@ namespace PlusLevelStudio.Campaigns
                 PlayableEditorLevel level = new PlayableEditorLevel()
                 {
                     data = item.data,
-                    meta = new PlayableLevelMeta() { gameMode = item.meta.gameMode }
+                    meta = new PlayableLevelMeta() { gameMode = item.meta.gameMode, playSettings = new PlaymodeSettingsMeta(item.meta.playSettings) }
                 };
+                level.meta.playSettings.allowsRetries = true; // just incase i want to change the behavior of this in the future.
                 if (item.meta.modeSettings != null)
                 {
                     level.meta.modeSettings = item.meta.modeSettings.MakeCopy();
@@ -58,6 +58,7 @@ namespace PlusLevelStudio.Campaigns
                 {
                     levels[i].meta.modeSettings.Write(writer);
                 }
+                levels[i].meta.playSettings.Write(writer);
                 levels[i].data.Write(writer);
             }
         }
@@ -83,6 +84,10 @@ namespace PlusLevelStudio.Campaigns
                     level.meta.modeSettings = LevelStudioPlugin.Instance.gameModeAliases[level.meta.gameMode].CreateSettings();
                     level.meta.modeSettings.ReadInto(reader);
                 }
+                if (version >= 1)
+                {
+                    level.meta.playSettings = PlaymodeSettingsMeta.Read(reader);
+                }
                 level.data = BaldiLevel.Read(reader);
                 camp.levels.Add(level);
             }
@@ -92,6 +97,11 @@ namespace PlusLevelStudio.Campaigns
         public string GetName()
         {
             return name;
+        }
+
+        public int GetPriority()
+        {
+            return 100;
         }
 
         public string GetAuthor()

@@ -14,6 +14,63 @@ using UnityEngine.UIElements;
 
 namespace PlusLevelStudio.Menus
 {
+    public class EditorCampaignEditorSettingsMenu : UIExchangeHandler
+    {
+        public PlayableEditorLevel targetLevel;
+        public TextMeshProUGUI fieldTripText;
+        public int currentFieldtripIndex = 0;
+        public string fieldTripId => LevelStudioPlugin.Instance.selectableFieldTrips[currentFieldtripIndex];
+        public FieldTripObject currentFieldTrip => LevelStudioPlugin.Instance.fieldTrips[fieldTripId];
+        public override bool GetStateBoolean(string key)
+        {
+            return false;
+        }
+
+        public override void OnElementsCreated()
+        {
+            fieldTripText = transform.Find("FieldTripText").GetComponent<TextMeshProUGUI>();
+        }
+
+        public void ChangeTrip(int add)
+        {
+            currentFieldtripIndex = (currentFieldtripIndex + add) % LevelStudioPlugin.Instance.selectableFieldTrips.Count;
+            if (currentFieldtripIndex < 0)
+            {
+                currentFieldtripIndex = LevelStudioPlugin.Instance.selectableFieldTrips.Count - 1;
+            }
+            if (fieldTripId == "none")
+            {
+                fieldTripText.text = LocalizationManager.Instance.GetLocalizedText("Ed_Menu_NoTrip");
+                return;
+            }
+            fieldTripText.text = LocalizationManager.Instance.GetLocalizedText(currentFieldTrip.nameKey);
+            targetLevel.meta.playSettings.fieldTrip = fieldTripId;
+        }
+
+        public void AssignLevel(PlayableEditorLevel level)
+        {
+            targetLevel = level;
+            currentFieldtripIndex = Mathf.Max(LevelStudioPlugin.Instance.selectableFieldTrips.IndexOf(targetLevel.meta.playSettings.fieldTrip),0);
+            ChangeTrip(0);
+        }
+
+        public override void SendInteractionMessage(string message, object data = null)
+        {
+            switch (message)
+            {
+                case "exit":
+                    Destroy(gameObject);
+                    break;
+                case "prevFieldTrip":
+                    ChangeTrip(-1);
+                    break;
+                case "nextFieldTrip":
+                    ChangeTrip(1);
+                    break;
+            }
+        }
+    }
+
     public class EditorCampaignEditorMenu : UIExchangeHandler
     {
         public Transform upButton;
@@ -151,6 +208,14 @@ namespace PlusLevelStudio.Menus
                 levels.Insert(indexToInsertAt, level);
                 ChangePage(0);
                 Refresh();
+                return;
+            }
+            if (message.StartsWith("settings"))
+            {
+                int index = (int.Parse(message.Substring(8))) + (page * campaignListings.Count);
+                if (index >= levels.Count) return;
+                EditorCampaignEditorSettingsMenu menu = UIBuilder.BuildUIFromFile<EditorCampaignEditorSettingsMenu>(gameObject.GetComponent<RectTransform>(), "Settings", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "Titlescreen", "CampaignSettings.json"));
+                menu.AssignLevel(levels[index]);
                 return;
             }
             GenericUIFileBrowser fileBrowser;

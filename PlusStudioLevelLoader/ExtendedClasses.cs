@@ -10,6 +10,7 @@ namespace PlusStudioLevelLoader
         public float timeOutTime = 0f;
         public RandomEvent timeOutEvent;
         public bool finalLevel = false;
+        public PosterObject levelTypePoster;
     }
 
     public class ExtendedExtraLevelDataAsset : ExtraLevelDataAsset
@@ -17,6 +18,7 @@ namespace PlusStudioLevelLoader
         public float timeOutTime = 0f;
         public RandomEvent timeOutEvent;
         public bool finalLevel = false;
+        public PosterObject levelTypePoster;
     }
 
     public class ExtendedRoomAsset : RoomAsset
