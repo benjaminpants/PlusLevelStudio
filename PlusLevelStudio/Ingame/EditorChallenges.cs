@@ -31,6 +31,23 @@ namespace PlusLevelStudio.Ingame
             ec.StartEventTimers();
         }
 
+        // mystman12. come on man
+        private void Update()
+        {
+            VirtualUpdate();
+        }
+
+        static FieldInfo _hook = AccessTools.Field(typeof(GrappleChallengeManager), "hook");
+        protected override void VirtualUpdate()
+        {
+            base.VirtualUpdate();
+            if (playStarted)
+            {
+                Singleton<CoreGameManager>.Instance.GetPlayer(0).itm.SetItem((ItemObject)_hook.GetValue(this), 0);
+                Singleton<CoreGameManager>.Instance.GetPlayer(0).itm.LockSlot(0, true);
+            }
+        }
+
         public override void GiveRandomSticker(StickerPackType packType, int total)
         {
             if (packType == StickerPackType.Bonus)

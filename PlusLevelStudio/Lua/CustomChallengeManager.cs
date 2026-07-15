@@ -381,8 +381,9 @@ namespace PlusLevelStudio.Lua
             base.GiveRandomSticker(packType, total);
         }
 
-        void Update()
+        protected override void VirtualUpdate()
         {
+            base.VirtualUpdate();
             if (!globalsDefined) return;
             script.Call(updateFunction, Time.deltaTime);
         }
