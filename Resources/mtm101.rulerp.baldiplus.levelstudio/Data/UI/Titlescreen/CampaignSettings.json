@@ -42,19 +42,6 @@
 			"alignment":"Center"
 		},
 		{
-			"name":"PlaySettingsWarning",
-			"type":"text",
-			"anchoredPosition":[0,84],
-			"size":[280,12],
-			"pivot":"#center",
-			"anchorMin":"#center",
-			"anchorMax":"#center",
-			"font":"ComicSans12",
-			"color":[128,128,128],
-			"text":"(Can't be changed here, change in Level Editor)",
-			"alignment":"Center"
-		},
-		{
 			"name":"FieldTripTitle",
 			"type":"text",
 			"anchoredPosition":[0,20],

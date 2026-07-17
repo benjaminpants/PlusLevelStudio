@@ -9,13 +9,12 @@ namespace PlusLevelStudio.Campaigns
 {
     public class PlayableEditorCampaign : IStudioPlayable
     {
-        public string name = "My Awesome Campaign!";
-        public string author = "Unknown";
+        public EditorCampaignMeta meta = new EditorCampaignMeta();
         public EditorCustomContentPackage contentPackage = new EditorCustomContentPackage(false);
 
         public List<PlayableEditorLevel> levels = new List<PlayableEditorLevel>();
 
-        public const byte version = 1;
+        public const byte version = 2;
 
         public void ImportLevels(List<PlayableEditorLevel> toImport)
         {
@@ -46,8 +45,9 @@ namespace PlusLevelStudio.Campaigns
         public void Write(BinaryWriter writer)
         {
             writer.Write(version);
-            writer.Write(name);
-            writer.Write(author);
+            writer.Write(meta.name);
+            writer.Write(meta.author);
+            writer.Write(meta.lifeMode);
             contentPackage.Write(writer);
             writer.Write(levels.Count);
             for (int i = 0; i < levels.Count; i++)
@@ -67,8 +67,12 @@ namespace PlusLevelStudio.Campaigns
         {
             PlayableEditorCampaign camp = new PlayableEditorCampaign();
             byte version = reader.ReadByte();
-            camp.name = reader.ReadString();
-            camp.author = reader.ReadString();
+            camp.meta.name = reader.ReadString();
+            camp.meta.author = reader.ReadString();
+            if (version >= 2)
+            {
+                camp.meta.lifeMode = reader.ReadString();
+            }
             camp.contentPackage = EditorCustomContentPackage.Read(reader);
             int levelCount = reader.ReadInt32();
             for (int i = 0; i < levelCount; i++)
@@ -96,7 +100,7 @@ namespace PlusLevelStudio.Campaigns
 
         public string GetName()
         {
-            return name;
+            return meta.name;
         }
 
         public int GetPriority()
@@ -106,7 +110,7 @@ namespace PlusLevelStudio.Campaigns
 
         public string GetAuthor()
         {
-            return author;
+            return meta.author;
         }
 
         public string GetLocalizedGamemode()
@@ -126,7 +130,7 @@ namespace PlusLevelStudio.Campaigns
 
         public void Play()
         {
-            EditorPlayModeManager.LoadCampaign(this, 2, LifeMode.Normal);
+            EditorPlayModeManager.LoadCampaign(this);
         }
     }
 }

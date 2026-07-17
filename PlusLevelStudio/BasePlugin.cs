@@ -7,6 +7,7 @@ using MTM101BaldAPI.ObjectCreation;
 using MTM101BaldAPI.Reflection;
 using MTM101BaldAPI.Registers;
 using MTM101BaldAPI.UI;
+using PlusLevelStudio.Campaigns;
 using PlusLevelStudio.Editor;
 using PlusLevelStudio.Editor.GlobalSettingsMenus;
 using PlusLevelStudio.Editor.GlobalSettingsMenus.Structures;
@@ -84,8 +85,12 @@ namespace PlusLevelStudio
         public GameObject wallVisual;
         public GameObject oneWayWallVisual;
         public GameObject wallRemoveVisual;
+
         public ExtensibleDictionary<FieldTripObject> fieldTrips = new ExtensibleDictionary<FieldTripObject>();
         public List<string> selectableFieldTrips = new List<string>();
+
+        public Dictionary<string, LifeModeData> lifeModes = new Dictionary<string, LifeModeData>();
+        public List<string> selectableLifeModes = new List<string>();
 
         // listen to the fucking variable name modders and DO NOT ADD TO THIS! This system is PLACEHOLDER and if you add things then it wont work as its stored as an index and not as a name or anything that could be properly handled!
         internal List<Baldi> animCurvesBaldiPrefabsDoNotAddToThis = new List<Baldi>();
@@ -95,6 +100,7 @@ namespace PlusLevelStudio
         public static string playableLevelPath => Path.Combine(basePath, "Playables");
         public static string basePath => Path.Combine(Application.persistentDataPath, "Level Studio");
         public static string levelFilePath => Path.Combine(basePath, "Editor Levels");
+        public static string campaignFilePath => Path.Combine(basePath, "Editor Campaigns");
         public static string oldLevelFilePath => Path.Combine(Application.persistentDataPath, "Custom Levels");
         public static string levelExportPath => Path.Combine(basePath, "Exports");
         public static string luaPath => Path.Combine(basePath, "LuaScripts");
@@ -227,6 +233,7 @@ namespace PlusLevelStudio
             Directory.CreateDirectory(customTexturePath); // this will also create the custom content path
             Directory.CreateDirectory(customPostersPath);
             Directory.CreateDirectory(customThumbnailsPath);
+            Directory.CreateDirectory(campaignFilePath);
 
             EditorController.maxUndos = Config.Bind("General",
                 "Max Undos",
@@ -1998,6 +2005,13 @@ namespace PlusLevelStudio
             selectableFieldTrips.Add("none");
             selectableFieldTrips.Add("camping");
 
+            lifeModes.Add("normal", new LifeModeData(LifeMode.Normal));
+            lifeModes.Add("arcade", new LifeModeData(LifeMode.Arcade));
+            lifeModes.Add("strict", new LifeModeData(LifeMode.Intense, null, 0));
+            selectableLifeModes.Add("normal");
+            selectableLifeModes.Add("arcade");
+            selectableLifeModes.Add("strict");
+
             yield return "Setting up GameManagers...";
 
             SoundObject balAllBooks = ObjectCreators.CreateSoundObject(AssetLoader.AudioClipFromMod(this, "Sounds", "Ingame", "BAL_AllNotebooks_Generic.wav"), "Vfx_BAL_Tutorial_AllNotebooks_0", SoundType.Voice, Color.green);
@@ -2240,6 +2254,12 @@ namespace PlusLevelStudio
             UIBuilder.elementBuilders.Add("segment", new DigitalNumberBuilder());
             UIBuilder.elementBuilders.Add("checkbox", new CheckboxBuilder());
             SpritesFromPath(Path.Combine(AssetLoader.GetModPath(this), "UI", "Editor"), "");
+            assetMan.Add("SaveButton", uiAssetMan.Get<Sprite>("SaveButton"));
+            assetMan.Add("SaveButtonHover", uiAssetMan.Get<Sprite>("SaveButtonHover"));
+            assetMan.Add("LoadButton", uiAssetMan.Get<Sprite>("LoadButton"));
+            assetMan.Add("LoadButtonHover", uiAssetMan.Get<Sprite>("LoadButtonHover"));
+            assetMan.Add("ExportButton", uiAssetMan.Get<Sprite>("ExportButton"));
+            assetMan.Add("ExportButtonHover", uiAssetMan.Get<Sprite>("ExportButtonHover"));
 
             string[] eventSpritesToPrepare = new string[]
             {

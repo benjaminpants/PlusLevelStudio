@@ -5,6 +5,7 @@ using PlusLevelStudio.UI;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using TMPro;
@@ -71,19 +72,23 @@ namespace PlusLevelStudio.Menus
         }
     }
 
+    // the code here is so jank and needs refactoring
     public class EditorCampaignEditorMenu : UIExchangeHandler
     {
         public Transform upButton;
         public Transform downButton;
         TextMeshProUGUI nameText;
         TextMeshProUGUI authorText;
+        TextMeshProUGUI lifeModeText;
         RawImage thumbImage;
         public Texture2D thumbTexture;
         public byte[] thumbData = null;
         bool currentThumbIsPlayerSelected = false;
+        public string currentFileName = "MyAwesomeCampaign";
 
-        public string campName = "My Awesome Campaign!";
-        public string campAuthor = "Unknown";
+        public EditorCampaignData campaignData = new EditorCampaignData();
+
+        public int currentLifeModeIndex = 0;
 
         protected class CampaignLevelListing
         {
@@ -97,6 +102,18 @@ namespace PlusLevelStudio.Menus
             }
         }
 
+        public void ChangeLifeMode(int add)
+        {
+            currentLifeModeIndex = (currentLifeModeIndex + add) % LevelStudioPlugin.Instance.selectableLifeModes.Count;
+            if (currentLifeModeIndex < 0)
+            {
+                currentLifeModeIndex = LevelStudioPlugin.Instance.selectableLifeModes.Count - 1;
+            }
+            LifeModeData data = LevelStudioPlugin.Instance.lifeModes[LevelStudioPlugin.Instance.selectableLifeModes[currentLifeModeIndex]];
+            lifeModeText.text = LocalizationManager.Instance.GetLocalizedText(data.localizationKey);
+            campaignData.meta.lifeMode = LevelStudioPlugin.Instance.selectableLifeModes[currentLifeModeIndex];
+        }
+
         protected void PlaySongIfNecessary()
         {
             if (!Singleton<MusicManager>.Instance.MidiPlaying)
@@ -108,7 +125,6 @@ namespace PlusLevelStudio.Menus
 
         int page = 0;
 
-        public List<PlayableEditorLevel> levels = new List<PlayableEditorLevel>();
         protected List<CampaignLevelListing> campaignListings = new List<CampaignLevelListing>();
 
         public EditorModeSelectionMenu menu;
@@ -143,6 +159,7 @@ namespace PlusLevelStudio.Menus
             nameText = transform.Find("NameBox").GetComponent<TextMeshProUGUI>();
             authorText = transform.Find("AuthorBox").GetComponent<TextMeshProUGUI>();
             thumbImage = transform.Find("Thumbnail").GetComponent<RawImage>();
+            lifeModeText = transform.Find("PlayStyleText").GetComponent<TextMeshProUGUI>();
             ChangePage(0);
             Refresh();
         }
@@ -162,14 +179,14 @@ namespace PlusLevelStudio.Menus
             for (int i = 0; i < campaignListings.Count; i++)
             {
                 int ind = i + (page * campaignListings.Count);
-                if (ind >= levels.Count)
+                if (ind >= campaignData.levelNamesAndMeta.Count)
                 {
                     campaignListings[i].SetVisible(false);
                     continue;
                 }
                 campaignListings[i].SetVisible(true);
-                campaignListings[i].levelTitle.text = Path.GetFileName(levels[ind].filePath);
-                campaignListings[i].elevatorText.text = levels[ind].data.levelTitle;
+                campaignListings[i].levelTitle.text = Path.GetFileName(campaignData.levelNamesAndMeta[ind].filePath);
+                campaignListings[i].elevatorText.text = campaignData.levelNamesAndMeta[ind].level.data.levelTitle;
             }
         }
 
@@ -178,8 +195,8 @@ namespace PlusLevelStudio.Menus
             if (message.StartsWith("discard"))
             {
                 int index = (int.Parse(message.Substring(7))) + (page * campaignListings.Count);
-                if (index >= levels.Count) return;
-                levels.RemoveAt(index);
+                if (index >= campaignData.levelNamesAndMeta.Count) return;
+                campaignData.levelNamesAndMeta.RemoveAt(index);
                 ChangePage(0);
                 Refresh();
                 return;
@@ -187,12 +204,12 @@ namespace PlusLevelStudio.Menus
             if (message.StartsWith("moveUp"))
             {
                 int index = (int.Parse(message.Substring(6))) + (page * campaignListings.Count);
-                if (index >= levels.Count) return;
-                PlayableEditorLevel level = levels[index];
+                if (index >= campaignData.levelNamesAndMeta.Count) return;
+                EditorCampaignDataEntry entry = campaignData.levelNamesAndMeta[index];
                 int indexToInsertAt = index - 1;
                 if (indexToInsertAt < 0) return;
-                levels.RemoveAt(index);
-                levels.Insert(indexToInsertAt, level);
+                campaignData.levelNamesAndMeta.RemoveAt(index);
+                campaignData.levelNamesAndMeta.Insert(indexToInsertAt, entry);
                 ChangePage(0);
                 Refresh();
                 return;
@@ -200,12 +217,12 @@ namespace PlusLevelStudio.Menus
             if (message.StartsWith("moveDown"))
             {
                 int index = (int.Parse(message.Substring(8))) + (page * campaignListings.Count);
-                if (index >= levels.Count) return;
-                PlayableEditorLevel level = levels[index];
+                if (index >= campaignData.levelNamesAndMeta.Count) return;
+                EditorCampaignDataEntry entry = campaignData.levelNamesAndMeta[index];
                 int indexToInsertAt = index + 1;
-                if (indexToInsertAt >= levels.Count) return;
-                levels.RemoveAt(index);
-                levels.Insert(indexToInsertAt, level);
+                if (indexToInsertAt >= campaignData.levelNamesAndMeta.Count) return;
+                campaignData.levelNamesAndMeta.RemoveAt(index);
+                campaignData.levelNamesAndMeta.Insert(indexToInsertAt, entry);
                 ChangePage(0);
                 Refresh();
                 return;
@@ -213,9 +230,9 @@ namespace PlusLevelStudio.Menus
             if (message.StartsWith("settings"))
             {
                 int index = (int.Parse(message.Substring(8))) + (page * campaignListings.Count);
-                if (index >= levels.Count) return;
+                if (index >= campaignData.levelNamesAndMeta.Count) return;
                 EditorCampaignEditorSettingsMenu menu = UIBuilder.BuildUIFromFile<EditorCampaignEditorSettingsMenu>(gameObject.GetComponent<RectTransform>(), "Settings", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "Titlescreen", "CampaignSettings.json"));
-                menu.AssignLevel(levels[index]);
+                menu.AssignLevel(campaignData.levelNamesAndMeta[index].level);
                 return;
             }
             GenericUIFileBrowser fileBrowser;
@@ -236,15 +253,21 @@ namespace PlusLevelStudio.Menus
                 case "pageDown":
                     ChangePage(1);
                     break;
+                case "save":
+                    Save();
+                    break;
+                case "load":
+                    Load();
+                    break;
                 case "export":
                     Export();
                     break;
                 case "nameChanged":
-                    campName = (string)data;
+                    campaignData.meta.name = (string)data;
                     Refresh();
                     break;
                 case "authorChanged":
-                    campAuthor = (string)data;
+                    campaignData.meta.author = (string)data;
                     Refresh();
                     break;
                 case "changeThumb":
@@ -252,16 +275,69 @@ namespace PlusLevelStudio.Menus
                     fileBrowser.Setup(LevelStudioPlugin.customThumbnailsPath, "png", string.Empty, false, CustomThumbnailSubmitted);
                     break;
                 case "clearThumb":
-                    if (thumbTexture != null)
-                    {
-                        GameObject.Destroy(thumbTexture);
-                    }
-                    thumbTexture = null;
-                    thumbData = null;
-                    currentThumbIsPlayerSelected = false;
+                    ClearThumbnail();
                     Refresh();
                     break;
+                case "prevPlayStyle":
+                    ChangeLifeMode(-1);
+                    break;
+                case "nextPlayStyle":
+                    ChangeLifeMode(1);
+                    break;
             }
+        }
+
+        void ClearThumbnail()
+        {
+            if (thumbTexture != null)
+            {
+                GameObject.Destroy(thumbTexture);
+            }
+            thumbTexture = null;
+            thumbData = null;
+            currentThumbIsPlayerSelected = false;
+            campaignData.thumbPath = string.Empty;
+        }
+
+        public void Save()
+        {
+            GenericUIFileBrowser fb = UIBuilder.BuildUIFromFile<GenericUIFileBrowser>(gameObject.GetComponent<RectTransform>(), "FileBrowser", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "FileBrowser.json"));
+            fb.Setup(LevelStudioPlugin.campaignFilePath, "ecbpl", currentFileName, true, SaveFile);
+        }
+
+        public void Load()
+        {
+            GenericUIFileBrowser fb = UIBuilder.BuildUIFromFile<GenericUIFileBrowser>(gameObject.GetComponent<RectTransform>(), "FileBrowser", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "FileBrowser.json"));
+            fb.Setup(LevelStudioPlugin.campaignFilePath, "ecbpl", currentFileName, false, LoadFile);
+        }
+
+        bool SaveFile(string path)
+        {
+            BinaryWriter writer = new BinaryWriter(File.Open(path, FileMode.OpenOrCreate, FileAccess.Write));
+            campaignData.Write(writer);
+            writer.Close();
+            currentFileName = Path.GetFileNameWithoutExtension(path);
+            return true;
+        }
+
+        bool LoadFile(string path)
+        {
+            BinaryReader reader = new BinaryReader(File.OpenRead(path));
+            campaignData = EditorCampaignData.Read(reader);
+            reader.Close();
+            campaignData.levelNamesAndMeta.ForEach(x => x.LoadLevelFromFilePath());
+            if (string.IsNullOrEmpty(campaignData.thumbPath))
+            {
+                ClearThumbnail();
+            }
+            else
+            {
+                CustomThumbnailSubmitted(Path.Combine(LevelStudioPlugin.customThumbnailsPath, campaignData.thumbPath));
+            }
+            Refresh();
+            ChangePage(0);
+            currentFileName = Path.GetFileNameWithoutExtension(path);
+            return true;
         }
 
         public void TriggerError(string error)
@@ -295,6 +371,7 @@ namespace PlusLevelStudio.Menus
             }
             thumbTexture = verifyTex;
             thumbData = fileData;
+            campaignData.thumbPath = PathHelpers.GetRelativePath(LevelStudioPlugin.customThumbnailsPath,path);
             currentThumbIsPlayerSelected = true;
             Refresh();
             return true;
@@ -304,7 +381,7 @@ namespace PlusLevelStudio.Menus
         {
             if (!currentThumbIsPlayerSelected)
             {
-                if (levels.Count == 0)
+                if (campaignData.levelNamesAndMeta.Count == 0)
                 {
                     if (thumbTexture != null)
                     {
@@ -315,12 +392,12 @@ namespace PlusLevelStudio.Menus
                     return;
                 }
                 string prevFall = (thumbTexture == null ? string.Empty : thumbTexture.name);
-                string levPath = Path.GetFileNameWithoutExtension(levels[0].filePath);
+                string levPath = Path.GetFileNameWithoutExtension(campaignData.levelNamesAndMeta[0].filePath);
                 if (levPath == prevFall) return; // dont bother
                 Texture2D thumb = new Texture2D(2, 2, TextureFormat.RGBA4444, false);
                 try
                 {
-                    ImageConversion.LoadImage(thumb, levels[0].meta.contentPackage.thumbnailEntry.GetData());
+                    ImageConversion.LoadImage(thumb, campaignData.levelNamesAndMeta[0].level.meta.contentPackage.thumbnailEntry.GetData());
                     thumb.filterMode = FilterMode.Point;
                     thumb.name = levPath;
                 }
@@ -336,7 +413,7 @@ namespace PlusLevelStudio.Menus
                     {
                         Destroy(thumbTexture);
                     }
-                    thumbData = levels[0].meta.contentPackage.thumbnailEntry.GetData();
+                    thumbData = campaignData.levelNamesAndMeta[0].level.meta.contentPackage.thumbnailEntry.GetData();
                     thumbTexture = thumb;
                 }
             }
@@ -345,29 +422,31 @@ namespace PlusLevelStudio.Menus
         public void Refresh()
         {
             SearchForAndUseFallbackThumb();
-            nameText.text = campName;
-            authorText.text = campAuthor;
+            nameText.text = campaignData.meta.name;
+            authorText.text = campaignData.meta.author;
             thumbImage.texture = thumbTexture == null ? LevelStudioPlugin.Instance.assetMan.Get<Texture2D>("IconMissing") : thumbTexture;
+            ChangeLifeMode(0);
         }
 
         public void Export()
         {
             PlayableEditorCampaign campLevel = new PlayableEditorCampaign();
-            campLevel.name = campName;
-            campLevel.author = campAuthor;
-            campLevel.ImportLevels(levels);
+            campLevel.meta.name = campaignData.meta.name;
+            campLevel.meta.author = campaignData.meta.author;
+            campLevel.meta.lifeMode = campaignData.meta.lifeMode;
+            campLevel.ImportLevels(campaignData.levelNamesAndMeta.Select(x => x.level).ToList());
             if (thumbData != null)
             {
                 campLevel.contentPackage.thumbnailEntry = new EditorCustomContentEntry("thumbnail", "thumbnnail", thumbData);
             }
-            BinaryWriter writer = new BinaryWriter(new FileStream(Path.Combine(LevelStudioPlugin.levelExportPath, "testCampaign.cbpl"), FileMode.Create, FileAccess.Write));
+            BinaryWriter writer = new BinaryWriter(new FileStream(Path.Combine(LevelStudioPlugin.levelExportPath, currentFileName + ".cbpl"), FileMode.Create, FileAccess.Write));
             campLevel.Write(writer);
             writer.Close();
         }
 
         public void ChangePage(int amount)
         {
-            int maxPage = Mathf.Max(Mathf.CeilToInt((float)levels.Count / campaignListings.Count) - 1, 0);
+            int maxPage = Mathf.Max(Mathf.CeilToInt((float)campaignData.levelNamesAndMeta.Count / campaignListings.Count) - 1, 0);
             page = Mathf.Clamp(page + amount, 0, maxPage);
             upButton.gameObject.SetActive(page != 0);
             downButton.gameObject.SetActive(page != maxPage);
@@ -378,10 +457,10 @@ namespace PlusLevelStudio.Menus
         public bool OnLevelSubmit(string path)
         {
             BinaryReader reader = new BinaryReader(File.OpenRead(path));
-            PlayableEditorLevel level = PlayableEditorLevel.Read(reader);
+            EditorCampaignDataEntry entry = new EditorCampaignDataEntry(path, PlayableEditorLevel.Read(reader));
             reader.Close();
-            levels.Add(level);
-            level.filePath = path;
+            campaignData.levelNamesAndMeta.Add(entry);
+            entry.filePath = path;
             ChangePage(0);
             Refresh();
             return true;

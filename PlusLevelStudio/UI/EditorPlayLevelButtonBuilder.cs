@@ -53,8 +53,8 @@ namespace PlusLevelStudio.UI
             modeText.rectTransform.anchorMin = center;
             modeText.rectTransform.anchorMax = center;
             modeText.rectTransform.pivot = new Vector2(0.5f, 0.5f);
-            modeText.rectTransform.sizeDelta = new Vector2(136f, 16f);
-            modeText.rectTransform.anchoredPosition = new Vector2(0f, -24f);
+            modeText.rectTransform.sizeDelta = new Vector2(170f, 16f);
+            modeText.rectTransform.anchoredPosition = new Vector2(17f, -24f);
             modeText.alignment = TextAlignmentOptions.Left;
 
 

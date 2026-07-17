@@ -184,7 +184,7 @@ namespace PlusLevelStudio
             }
         }
 
-        public static void LoadCampaign(PlayableEditorCampaign campaign, int lives, LifeMode mode)
+        public static void LoadCampaign(PlayableEditorCampaign campaign)
         {
             EditorPlayModeManager pmm = GameObject.Instantiate<EditorPlayModeManager>(LevelStudioPlugin.Instance.assetMan.Get<EditorPlayModeManager>("playModeManager"));
             pmm.waitingForCreation = true;
@@ -215,15 +215,17 @@ namespace PlusLevelStudio
             }
 
             // load stuff now
+            LifeModeData data = LevelStudioPlugin.Instance.lifeModes[campaign.meta.lifeMode];
+
             GameLoader loader = GameObject.Instantiate<GameLoader>(LevelStudioPlugin.Instance.assetMan.Get<GameLoader>("gameLoaderPrefab"));
             ElevatorScreen screen = GameObject.Instantiate<ElevatorScreen>(LevelStudioPlugin.Instance.assetMan.Get<ElevatorScreen>("elevatorScreenPrefab"));
             loader.AssignElevatorScreen(screen);
-            loader.Initialize(lives);
+            loader.Initialize(data.lifeCount);
             loader.SetMode(0);
             loader.LoadLevel(createdObjects[0]);
             screen.Initialize();
             loader.SetSave(false);
-            Singleton<CoreGameManager>.Instance.lifeMode = mode;
+            Singleton<CoreGameManager>.Instance.lifeMode = data.mode;
         }
 
         public static void LoadLevel(PlayableEditorLevel level, int lives, bool returnToEditor, string levelToLoad = null, string modeToLoad = "full")

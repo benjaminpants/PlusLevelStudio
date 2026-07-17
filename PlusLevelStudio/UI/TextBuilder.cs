@@ -30,7 +30,7 @@ namespace PlusLevelStudio.UI
                 {
                     TextLocalizer localizer = baseText.gameObject.AddComponent<TextLocalizer>();
                     localizer.key = baseText.text;
-                    localizer.GetLocalizedText(localizer.key);
+                    //localizer.GetLocalizedText(localizer.key);
                 }
             }
             if (data.ContainsKey("rich"))
