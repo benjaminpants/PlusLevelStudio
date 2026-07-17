@@ -84,7 +84,9 @@ namespace PlusLevelStudio.Menus
         public Texture2D thumbTexture;
         public byte[] thumbData = null;
         bool currentThumbIsPlayerSelected = false;
-        public string currentFileName = "MyAwesomeCampaign";
+        public string currentFileName = string.Empty;
+        bool unsavedChangesMade = false;
+        GenericUIFileBrowser currentFileBrowser;
 
         public EditorCampaignData campaignData = new EditorCampaignData();
 
@@ -112,6 +114,10 @@ namespace PlusLevelStudio.Menus
             LifeModeData data = LevelStudioPlugin.Instance.lifeModes[LevelStudioPlugin.Instance.selectableLifeModes[currentLifeModeIndex]];
             lifeModeText.text = LocalizationManager.Instance.GetLocalizedText(data.localizationKey);
             campaignData.meta.lifeMode = LevelStudioPlugin.Instance.selectableLifeModes[currentLifeModeIndex];
+            if (add != 0)
+            {
+                unsavedChangesMade = true;
+            }
         }
 
         protected void PlaySongIfNecessary()
@@ -167,6 +173,9 @@ namespace PlusLevelStudio.Menus
         void OnEnable()
         {
             Singleton<MusicManager>.Instance.StopMidi();
+            Refresh();
+            ChangePage(0);
+            ChangeLifeMode(0);
         }
 
         void Update()
@@ -190,6 +199,18 @@ namespace PlusLevelStudio.Menus
             }
         }
 
+        void ExitEditor()
+        {
+            Singleton<GlobalCam>.Instance.Transition(UiTransition.Dither, 0.0167f);
+            gameObject.SetActive(false);
+            menu.editorTypeParent.SetActive(true);
+            Singleton<MusicManager>.Instance.StopMidi();
+            campaignData = new EditorCampaignData();
+            ClearThumbnail();
+            unsavedChangesMade = false;
+            currentFileName = string.Empty;
+        }
+
         public override void SendInteractionMessage(string message, object data = null)
         {
             if (message.StartsWith("discard"))
@@ -199,6 +220,7 @@ namespace PlusLevelStudio.Menus
                 campaignData.levelNamesAndMeta.RemoveAt(index);
                 ChangePage(0);
                 Refresh();
+                unsavedChangesMade = true;
                 return;
             }
             if (message.StartsWith("moveUp"))
@@ -212,6 +234,7 @@ namespace PlusLevelStudio.Menus
                 campaignData.levelNamesAndMeta.Insert(indexToInsertAt, entry);
                 ChangePage(0);
                 Refresh();
+                unsavedChangesMade = true;
                 return;
             }
             if (message.StartsWith("moveDown"))
@@ -225,6 +248,7 @@ namespace PlusLevelStudio.Menus
                 campaignData.levelNamesAndMeta.Insert(indexToInsertAt, entry);
                 ChangePage(0);
                 Refresh();
+                unsavedChangesMade = true;
                 return;
             }
             if (message.StartsWith("settings"))
@@ -235,17 +259,19 @@ namespace PlusLevelStudio.Menus
                 menu.AssignLevel(campaignData.levelNamesAndMeta[index].level);
                 return;
             }
-            GenericUIFileBrowser fileBrowser;
             switch (message)
             {
                 case "exit":
-                    gameObject.SetActive(false);
-                    menu.editorTypeParent.SetActive(true);
-                    Singleton<MusicManager>.Instance.StopMidi();
+                    if (!unsavedChangesMade)
+                    {
+                        ExitEditor();
+                        return;
+                    }
+                    AskQuestion(LocalizationManager.Instance.GetLocalizedText("Ed_Menu_UnsavedChangesExit"), ExitEditor, null);
                     break;
                 case "browseLevels":
-                    fileBrowser = UIBuilder.BuildUIFromFile<GenericUIFileBrowser>(gameObject.GetComponent<RectTransform>(), "FileBrowser", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "FileBrowser.json"));
-                    fileBrowser.Setup(LevelStudioPlugin.levelExportPath, "pbpl", "MyFirstLevel", false, OnLevelSubmit);
+                    currentFileBrowser = UIBuilder.BuildUIFromFile<GenericUIFileBrowser>(gameObject.GetComponent<RectTransform>(), "FileBrowser", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "FileBrowser.json"));
+                    currentFileBrowser.Setup(LevelStudioPlugin.levelExportPath, "pbpl", "MyFirstLevel", false, OnLevelSubmit);
                     break;
                 case "pageUp":
                     ChangePage(-1);
@@ -260,7 +286,7 @@ namespace PlusLevelStudio.Menus
                     Load();
                     break;
                 case "export":
-                    Export();
+                    ExportWithChecks();
                     break;
                 case "nameChanged":
                     campaignData.meta.name = (string)data;
@@ -271,8 +297,8 @@ namespace PlusLevelStudio.Menus
                     Refresh();
                     break;
                 case "changeThumb":
-                    fileBrowser = UIBuilder.BuildUIFromFile<GenericUIFileBrowser>(gameObject.GetComponent<RectTransform>(), "FileBrowser", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "FileBrowser.json"));
-                    fileBrowser.Setup(LevelStudioPlugin.customThumbnailsPath, "png", string.Empty, false, CustomThumbnailSubmitted);
+                    currentFileBrowser = UIBuilder.BuildUIFromFile<GenericUIFileBrowser>(gameObject.GetComponent<RectTransform>(), "FileBrowser", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "FileBrowser.json"));
+                    currentFileBrowser.Setup(LevelStudioPlugin.customThumbnailsPath, "png", string.Empty, false, CustomThumbnailSubmitted);
                     break;
                 case "clearThumb":
                     ClearThumbnail();
@@ -297,26 +323,65 @@ namespace PlusLevelStudio.Menus
             thumbData = null;
             currentThumbIsPlayerSelected = false;
             campaignData.thumbPath = string.Empty;
+            unsavedChangesMade = true;
         }
 
-        public void Save()
+        void Save()
         {
-            GenericUIFileBrowser fb = UIBuilder.BuildUIFromFile<GenericUIFileBrowser>(gameObject.GetComponent<RectTransform>(), "FileBrowser", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "FileBrowser.json"));
-            fb.Setup(LevelStudioPlugin.campaignFilePath, "ecbpl", currentFileName, true, SaveFile);
+            currentFileBrowser = UIBuilder.BuildUIFromFile<GenericUIFileBrowser>(gameObject.GetComponent<RectTransform>(), "FileBrowser", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "FileBrowser.json"));
+            currentFileBrowser.Setup(LevelStudioPlugin.campaignFilePath, "ecbpl", currentFileName, true, SaveFile);
         }
 
-        public void Load()
+        void Load()
         {
-            GenericUIFileBrowser fb = UIBuilder.BuildUIFromFile<GenericUIFileBrowser>(gameObject.GetComponent<RectTransform>(), "FileBrowser", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "FileBrowser.json"));
-            fb.Setup(LevelStudioPlugin.campaignFilePath, "ecbpl", currentFileName, false, LoadFile);
+            currentFileBrowser = UIBuilder.BuildUIFromFile<GenericUIFileBrowser>(gameObject.GetComponent<RectTransform>(), "FileBrowser", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "FileBrowser.json"));
+            currentFileBrowser.Setup(LevelStudioPlugin.campaignFilePath, "ecbpl", currentFileName, false, LoadFile);
         }
 
         bool SaveFile(string path)
         {
+            return SaveFile(path, false);
+        }
+
+        void CloseBrowser()
+        {
+            if (currentFileBrowser != null)
+            {
+                currentFileBrowser.SendInteractionMessage("exit", null);
+                currentFileBrowser = null;
+            }
+        }
+
+        bool SaveFile(string path, bool confirmed)
+        {
+            if (File.Exists(path) && !confirmed)
+            {
+                AskQuestion(string.Format(LocalizationManager.Instance.GetLocalizedText("Ed_Menu_SaveConfirm"), Path.GetFileName(path)), () => {
+                    SaveFile(path, true);
+                    CloseBrowser();
+                }, null);
+                return false;
+            }
             BinaryWriter writer = new BinaryWriter(File.Open(path, FileMode.OpenOrCreate, FileAccess.Write));
             campaignData.Write(writer);
             writer.Close();
             currentFileName = Path.GetFileNameWithoutExtension(path);
+            unsavedChangesMade = false;
+            return true;
+        }
+
+        bool SaveFileAndExport(string path, bool confirmed)
+        {
+            if (File.Exists(path) && !confirmed)
+            {
+                AskQuestion(string.Format(LocalizationManager.Instance.GetLocalizedText("Ed_Menu_SaveConfirm"), Path.GetFileName(path)), () => {
+                    SaveFileAndExport(path, true);
+                    CloseBrowser();
+                }, null);
+                return false;
+            }
+            SaveFile(path, true);
+            Export();
             return true;
         }
 
@@ -337,12 +402,22 @@ namespace PlusLevelStudio.Menus
             Refresh();
             ChangePage(0);
             currentFileName = Path.GetFileNameWithoutExtension(path);
+            unsavedChangesMade = false;
             return true;
         }
 
         public void TriggerError(string error)
         {
+            GenericPopupExchangeHandler handler = UIBuilder.BuildUIFromFile<GenericPopupExchangeHandler>((RectTransform)transform, "ErrorPop", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "1ChoicePopup.json"));
+            handler.transform.Find("Title").GetComponent<TextMeshProUGUI>().text = LocalizationManager.Instance.GetLocalizedText(error);
+        }
 
+        public void AskQuestion(string text, Action onYes, Action onNo)
+        {
+            GenericPopupExchangeHandler handler = UIBuilder.BuildUIFromFile<GenericPopupExchangeHandler>((RectTransform)transform, "ChoicePop", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "2ChoicePopup.json"));
+            handler.transform.Find("Title").GetComponent<TextMeshProUGUI>().text = text;
+            handler.OnYes = onYes;
+            handler.OnNo = onNo;
         }
 
         public bool CustomThumbnailSubmitted(string path)
@@ -373,6 +448,7 @@ namespace PlusLevelStudio.Menus
             thumbData = fileData;
             campaignData.thumbPath = PathHelpers.GetRelativePath(LevelStudioPlugin.customThumbnailsPath,path);
             currentThumbIsPlayerSelected = true;
+            unsavedChangesMade = true;
             Refresh();
             return true;
         }
@@ -428,6 +504,25 @@ namespace PlusLevelStudio.Menus
             ChangeLifeMode(0);
         }
 
+        bool SaveFileAndExport(string path)
+        {
+            return SaveFileAndExport(path, false);
+        }
+
+        public void ExportWithChecks()
+        {
+            if (string.IsNullOrEmpty(currentFileName) || unsavedChangesMade)
+            {
+                AskQuestion(LocalizationManager.Instance.GetLocalizedText(string.IsNullOrEmpty(currentFileName) ? "Ed_Menu_NeedSaveToExport" : "Ed_Menu_UnsavedChangesExport"), () =>
+                {
+                    currentFileBrowser = UIBuilder.BuildUIFromFile<GenericUIFileBrowser>(gameObject.GetComponent<RectTransform>(), "FileBrowser", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "FileBrowser.json"));
+                    currentFileBrowser.Setup(LevelStudioPlugin.campaignFilePath, "ecbpl", currentFileName, true, SaveFileAndExport);
+                }, null);
+                return;
+            }
+            Export();
+        }
+
         public void Export()
         {
             PlayableEditorCampaign campLevel = new PlayableEditorCampaign();
@@ -437,11 +532,12 @@ namespace PlusLevelStudio.Menus
             campLevel.ImportLevels(campaignData.levelNamesAndMeta.Select(x => x.level).ToList());
             if (thumbData != null)
             {
-                campLevel.contentPackage.thumbnailEntry = new EditorCustomContentEntry("thumbnail", "thumbnnail", thumbData);
+                campLevel.contentPackage.thumbnailEntry = new EditorCustomContentEntry("thumbnail", "thumbnail", thumbData);
             }
             BinaryWriter writer = new BinaryWriter(new FileStream(Path.Combine(LevelStudioPlugin.levelExportPath, currentFileName + ".cbpl"), FileMode.Create, FileAccess.Write));
             campLevel.Write(writer);
             writer.Close();
+            Application.OpenURL("file://" + LevelStudioPlugin.levelExportPath);
         }
 
         public void ChangePage(int amount)
@@ -463,6 +559,7 @@ namespace PlusLevelStudio.Menus
             entry.filePath = path;
             ChangePage(0);
             Refresh();
+            unsavedChangesMade = true;
             return true;
         }
     }

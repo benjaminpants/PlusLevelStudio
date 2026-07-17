@@ -22,8 +22,7 @@
 			"pivot":"#topLeft",
 			"anchorMin":"#center",
 			"anchorMax":"#center",
-			"onPressed":"exit",
-			"transitionType":"Dither"
+			"onPressed":"exit"
 		},
 		{
 			"name":"OpenFolderButton",

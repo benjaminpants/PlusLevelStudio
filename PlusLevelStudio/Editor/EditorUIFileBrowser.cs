@@ -1,4 +1,5 @@
-﻿using PlusLevelStudio.UI;
+﻿using MTM101BaldAPI.AssetTools;
+using PlusLevelStudio.UI;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -218,10 +219,10 @@ namespace PlusLevelStudio.Editor
             base.SendInteractionMessage(message, data);
         }
 
-        // TODO: replace
         public override void TriggerError(string error)
         {
-            Debug.Log(LocalizationManager.Instance.GetLocalizedText(error));
+            GenericPopupExchangeHandler handler = UIBuilder.BuildUIFromFile<GenericPopupExchangeHandler>((RectTransform)transform, "ErrorPop", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "1ChoicePopup.json"));
+            handler.transform.Find("Title").GetComponent<TextMeshProUGUI>().text = LocalizationManager.Instance.GetLocalizedText(error);
         }
     }
 }
