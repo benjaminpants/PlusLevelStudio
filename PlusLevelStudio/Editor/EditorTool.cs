@@ -15,6 +15,8 @@ namespace PlusLevelStudio.Editor
         /// </summary>
         public abstract string id { get; }
 
+        public HashSet<string> tags = new HashSet<string>();
+
         public virtual string titleKey => "Ed_Tool_" + id + "_Title";
         public virtual string descKey => "Ed_Tool_" + id + "_Desc";
 

@@ -17,6 +17,7 @@ namespace PlusLevelStudio.Editor.Tools
         public TeleporterTool()
         {
             sprite = LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/structure_teleporter");
+            tags.Add("lvlt_lab");
         }
 
         public override void Begin()

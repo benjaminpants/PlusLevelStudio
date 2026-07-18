@@ -12,6 +12,7 @@ namespace PlusLevelStudio.Editor.Tools
         public PowerLeverBreakerTool()
         {
             sprite = LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/" + id);
+            tags.Add("lvlt_maintenance");
         }
 
         protected override bool TryPlace(IntVector2 position, Direction dir)

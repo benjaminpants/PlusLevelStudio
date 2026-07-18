@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PlusLevelStudio.Editor.Pages;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -31,7 +32,7 @@ namespace PlusLevelStudio.Editor
     public class EditorMode
     {
         public string id;
-        public Dictionary<string, List<EditorTool>> availableTools = new Dictionary<string, List<EditorTool>>();
+        public Dictionary<string, BaseToolboxPage> availableTools = new Dictionary<string, BaseToolboxPage>();
         public EditorController prefab;
         public string[] defaultTools = new string[0];
         public string[] categoryOrder = new string[0];
@@ -60,7 +61,7 @@ namespace PlusLevelStudio.Editor
             mode.globalRandomStructures = new List<GlobalStructurePage>(globalRandomStructures);
             foreach (var item in availableTools)
             {
-                mode.availableTools.Add(item.Key, new List<EditorTool>(item.Value));
+                mode.availableTools.Add(item.Key, (BaseToolboxPage)item.Value.MakeCopy());
             }
             return mode;
         }

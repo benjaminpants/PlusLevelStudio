@@ -15,6 +15,7 @@ namespace PlusLevelStudio.Editor.Tools
         public SteamValveTool()
         {
             sprite = LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/structure_steamvalves");
+            tags.Add("lvlt_maintenance");
         }
 
         public override void Begin()

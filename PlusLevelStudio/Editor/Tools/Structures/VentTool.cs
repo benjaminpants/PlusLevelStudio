@@ -11,6 +11,7 @@ namespace PlusLevelStudio.Editor.Tools
         public override string id => "structure_" + type;
         internal VentTool(string type) : this(type, LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/structure_" + type))
         {
+            tags.Add("lvlt_maintenance");
         }
 
         public VentTool(string type, Sprite sprite)

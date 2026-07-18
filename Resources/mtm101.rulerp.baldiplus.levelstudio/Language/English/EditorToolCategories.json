@@ -9,6 +9,16 @@
 {"key":"Ed_Category_objects","value":"Objects"},
 {"key":"Ed_Category_activities","value":"Activities"},
 {"key":"Ed_Category_structures","value":"Structures"},
-{"key":"Ed_Category_posters","value":"Posters"}
+{"key":"Ed_Category_posters","value":"Posters"},
+
+
+{"key":"Ed_SubCategory_All","value":"All"},
+{"key":"Ed_SubCategory_Tag_door","value":"Doors"},
+{"key":"Ed_SubCategory_Tag_window","value":"Windows"},
+{"key":"Ed_SubCategory_Tag_room_notpre","value":"Areas"},
+{"key":"Ed_SubCategory_Tag_room_pre","value":"Premade"},
+{"key":"Ed_SubCategory_Tag_lvlt_maintenance","value":"Maintenance"},
+{"key":"Ed_SubCategory_Tag_lvlt_lab","value":"Laboratory"},
+{"key":"Ed_SubCategory_Tag_lvlt_factory","value":"Factory"}
 
 ]}

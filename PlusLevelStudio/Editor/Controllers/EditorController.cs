@@ -5,6 +5,7 @@ using MTM101BaldAPI.AssetTools;
 using MTM101BaldAPI.Reflection;
 using MTM101BaldAPI.UI;
 using PlusLevelStudio.Editor.GlobalSettingsMenus;
+using PlusLevelStudio.Editor.Pages;
 using PlusLevelStudio.Editor.SettingsUI;
 using PlusLevelStudio.UI;
 using PlusStudioLevelFormat;
@@ -1165,14 +1166,15 @@ namespace PlusLevelStudio.Editor
                 {
                     continue;
                 }
-                foreach (List<EditorTool> list in currentMode.availableTools.Values)
+                foreach (BaseToolboxPage page in currentMode.availableTools.Values)
                 {
+                    EditorTool[] pageTools = page.GetAllToolsIncludingSubpages(this);
                     bool breakOut = false;
-                    for (int j = 0; j < list.Count; j++)
+                    for (int j = 0; j < pageTools.Length; j++)
                     {
-                        if (list[j].id == tools[i])
+                        if (pageTools[j].id == tools[i])
                         {
-                            hotSlots[i].currentTool = list[j];
+                            hotSlots[i].currentTool = pageTools[j];
                             breakOut = true;
                             break;
                         }

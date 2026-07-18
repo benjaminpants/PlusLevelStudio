@@ -2,6 +2,7 @@
 using MTM101BaldAPI;
 using MTM101BaldAPI.Reflection;
 using PlusLevelStudio.Editor;
+using PlusLevelStudio.Editor.Pages;
 using PlusLevelStudio.Editor.Tools;
 using PlusStudioLevelLoader;
 using System;
@@ -98,6 +99,36 @@ namespace PlusLevelStudio
                 new WindowTool("green"),
                 new WindowTool("caution"),
             }, true);
+        }
+
+        /// <summary>
+        /// Create the specified page for the category. This method will properly handle adding any extra subpages.
+        /// </summary>
+        /// <param name="categoryName"></param>
+        public static BaseToolboxPage CreatePageCategory(string categoryName)
+        {
+            BaseToolboxPage page = new BaseToolboxPage(categoryName);
+            switch (categoryName)
+            {
+                case "doors":
+                    page.AddSubpage(new TagToolboxSubPage("door"));
+                    page.AddSubpage(new TagToolboxSubPage("window"));
+                    break;
+                /*case "items":
+                    page.AddSubpage(new ItemTagSubPage("shape_key"));
+                    page.AddSubpage(new ItemTagSubPage("lost_item"));
+                    break;*/
+                case "structures":
+                    page.AddSubpage(new TagToolboxSubPage("lvlt_maintenance"));
+                    page.AddSubpage(new TagToolboxSubPage("lvlt_factory"));
+                    page.AddSubpage(new TagToolboxSubPage("lvlt_lab"));
+                    break;
+                case "rooms":
+                    page.AddSubpage(new TagToolboxSubPage("room_notpre"));
+                    page.AddSubpage(new TagToolboxSubPage("room_pre"));
+                    break;
+            }
+            return page;
         }
 
         /// <summary>
@@ -210,16 +241,32 @@ namespace PlusLevelStudio
         /// <param name="includeNonVanillaComplaintTools">If true, includes tools that require editor specific versions of the structures to work</param>
         public static void AddVanillaStructures(EditorMode modeToModify, bool includeNonVanillaComplaintTools)
         {
-            AddToolsToCategory(modeToModify, "structures", new EditorTool[]
+            EditorTool facultyOnlyDoorTool = new HallDoorStructureTool("facultyonlydoor");
+            facultyOnlyDoorTool.tags.Add("lvlt_lab");
+            AddToolToCategory(modeToModify, "structures", facultyOnlyDoorTool, true);
+            EditorTool[] factoryTools = new EditorTool[]
             {
-                new HallDoorStructureTool("facultyonlydoor"),
                 new HallDoorWithButtonsTool("lockdowndoor"),
                 new HallDoorWithButtonsTool("lockdowndoor_button", "lockdowndoor_shut_stayopen"),
                 new ConveyorBeltTool("conveyorbelt", true),
-                new ConveyorBeltTool("conveyorbelt", false),
-                new VentTool("vent")
-            }, true);
+                new ConveyorBeltTool("conveyorbelt", false)
+            };
+            factoryTools.Do(x => x.tags.Add("lvlt_factory"));
+            AddToolsToCategory(modeToModify, "structures", factoryTools, true);
+            AddToolToCategory(modeToModify, "structures", new VentTool("vent"), true);
             if (!includeNonVanillaComplaintTools) return;
+
+            EditorTool blackHoleTool = new ObjectToolNoRotation("wormhole", 5f);
+            blackHoleTool.tags.Add("lvlt_lab");
+            EditorTool[] regionDoors = new EditorTool[4]
+            {
+                new HallDoorStructureTool("regionlockdowndoors", "regionlockdowndoor_1"),
+                new HallDoorStructureTool("regionlockdowndoors", "regionlockdowndoor_2"),
+                new HallDoorStructureTool("regionlockdowndoors", "regionlockdowndoor_3"),
+                new HallDoorStructureTool("regionlockdowndoors", "regionlockdowndoor_4"),
+            };
+            regionDoors.Do(x => x.tags.Add("lvlt_lab"));
+
             AddToolsToCategory(modeToModify, "structures", new EditorTool[]
             {
                 new HallDoorStructureTool("preplaced_lockdown_door"),
@@ -243,11 +290,11 @@ namespace PlusLevelStudio
                 new PowerLeverBreakerTool(),
                 new PowerLeverResetButtonTool(),
                 new SteamValveTool(),
-                new ObjectToolNoRotation("wormhole", 5f), // not even a structure but i think its better categorized here
-                new HallDoorStructureTool("regionlockdowndoors", "regionlockdowndoor_1"),
-                new HallDoorStructureTool("regionlockdowndoors", "regionlockdowndoor_2"),
-                new HallDoorStructureTool("regionlockdowndoors", "regionlockdowndoor_3"),
-                new HallDoorStructureTool("regionlockdowndoors", "regionlockdowndoor_4"),
+                blackHoleTool, // not even a structure but i think its better categorized here
+                regionDoors[0],
+                regionDoors[1],
+                regionDoors[2],
+                regionDoors[3],
                 new TeleporterTool()
             }, true);
         }
@@ -498,13 +545,7 @@ namespace PlusLevelStudio
         public static bool InsertToolsInCategory(EditorMode modeToModify, string category, string idToInsertAt, IEnumerable<EditorTool> tools)
         {
             if (!modeToModify.availableTools.ContainsKey(category)) return false;
-            int index = modeToModify.availableTools[category].FindIndex(0, x => x.id == idToInsertAt);
-            if (index == -1)
-            {
-                return AddToolsToCategory(modeToModify, category, tools, false);
-            }
-            modeToModify.availableTools[category].InsertRange(index + 1, tools);
-            return true;
+            return modeToModify.availableTools[category].InsertRangeAfterId(idToInsertAt, tools);
         }
 
         /// <summary>
@@ -533,7 +574,7 @@ namespace PlusLevelStudio
             if (!modeToModify.availableTools.ContainsKey(category))
             {
                 if (!addCategoryIfDoesntExist) return false;
-                modeToModify.availableTools.Add(category, new List<EditorTool>());
+                modeToModify.availableTools.Add(category, CreatePageCategory(category));
                 if (!modeToModify.defaultTools.Contains(category))
                 {
                     modeToModify.defaultTools = modeToModify.defaultTools.AddToArray(category);

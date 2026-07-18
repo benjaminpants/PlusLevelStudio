@@ -26,6 +26,7 @@ namespace PlusLevelStudio.Editor.Tools
             this.room = room;
             this.doorId = doorId;
             this.sprite = sprite;
+            tags.Add("room_pre");
         }
 
         protected override bool TryPlace(IntVector2 position, Direction dir)

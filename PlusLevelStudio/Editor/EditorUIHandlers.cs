@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine;
 using TMPro;
 using System.Collections;
+using PlusLevelStudio.Editor.Pages;
 
 namespace PlusLevelStudio.Editor
 {
@@ -78,11 +79,13 @@ namespace PlusLevelStudio.Editor
     public class EditorUIToolboxHandler : UIExchangeHandler
     {
         public string currentCategory = "tools";
-        public int currentMaxPages => Mathf.CeilToInt((float)EditorController.Instance.currentMode.availableTools[currentCategory].Count / hotSlots.Length);
+        public int currentSubPage = 0;
+        public int currentMaxPages => Mathf.Max(Mathf.CeilToInt((float)EditorController.Instance.currentMode.availableTools[currentCategory].subPages[currentSubPage].GetCount(EditorController.Instance) / hotSlots.Length),1);
         public int currentPage = 0;
         public TextMeshProUGUI title;
         public TextMeshProUGUI description;
         public TextMeshProUGUI pageCountText;
+        public TextMeshProUGUI subPageText;
         public TextMeshProUGUI[] texts = new TextMeshProUGUI[10];
         public HotSlotScript[] hotSlots = new HotSlotScript[30];
 
@@ -103,6 +106,7 @@ namespace PlusLevelStudio.Editor
                 slot.usesToolOverride = true;
             }
             pageCountText = transform.Find("PageNumber").GetComponent<TextMeshProUGUI>();
+            subPageText = transform.Find("SubPageTitle").GetComponent<TextMeshProUGUI>();
             // this code is horrible
             texts[0] = transform.Find("Category0").GetComponent<TextMeshProUGUI>();
             texts[1] = transform.Find("Category1").GetComponent<TextMeshProUGUI>();
@@ -142,6 +146,7 @@ namespace PlusLevelStudio.Editor
                 return;
             }
             currentPage = 0;
+            currentSubPage = 0;
             currentCategory = EditorController.Instance.currentMode.categoryOrder[index];
             RefreshPage(0);
             SetTip(null);
@@ -156,17 +161,19 @@ namespace PlusLevelStudio.Editor
                     texts[i].text = "";
                     continue;
                 }
-                texts[i].text = LocalizationManager.Instance.GetLocalizedText("Ed_Category_" + EditorController.Instance.currentMode.categoryOrder[i]);
+
+                texts[i].text = EditorController.Instance.currentMode.availableTools[EditorController.Instance.currentMode.categoryOrder[i]].GetName();
             }
         }
 
         public void RefreshPage(int page)
         {
             int startIndex = page * hotSlots.Length;
-            List<EditorTool> toolList = EditorController.Instance.currentMode.availableTools[currentCategory];
+            AbstractToolboxSubPage subPage = EditorController.Instance.currentMode.availableTools[currentCategory].subPages[currentSubPage];
+            EditorTool[] toolList = subPage.GetTools(EditorController.Instance);
             for (int i = startIndex; i < startIndex + hotSlots.Length; i++)
             {
-                if (i >= toolList.Count)
+                if (i >= toolList.Length)
                 {
                     hotSlots[i - startIndex].currentTool = null;
                     continue;
@@ -174,6 +181,7 @@ namespace PlusLevelStudio.Editor
                 hotSlots[i - startIndex].currentTool = toolList[i];
             }
             pageCountText.text = (page + 1) + "/" + currentMaxPages;
+            subPageText.text = subPage.GetName();
         }
 
         public override void SendInteractionMessage(string message, object data = null)
@@ -212,6 +220,16 @@ namespace PlusLevelStudio.Editor
                     break;
                 case "prevPage":
                     currentPage = Mathf.Clamp(currentPage - 1, 0, currentMaxPages - 1);
+                    RefreshPage(currentPage);
+                    break;
+                case "nextSubPage":
+                    currentSubPage = Mathf.Clamp(currentSubPage + 1, 0, EditorController.Instance.currentMode.availableTools[currentCategory].subPages.Count - 1);
+                    currentPage = 0;
+                    RefreshPage(currentPage);
+                    break;
+                case "prevSubPage":
+                    currentSubPage = Mathf.Clamp(currentSubPage - 1, 0, EditorController.Instance.currentMode.availableTools[currentCategory].subPages.Count - 1);
+                    currentPage = 0;
                     RefreshPage(currentPage);
                     break;
             }

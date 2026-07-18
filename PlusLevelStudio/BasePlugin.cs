@@ -12,6 +12,7 @@ using PlusLevelStudio.Editor;
 using PlusLevelStudio.Editor.GlobalSettingsMenus;
 using PlusLevelStudio.Editor.GlobalSettingsMenus.Structures;
 using PlusLevelStudio.Editor.ModeSettings;
+using PlusLevelStudio.Editor.Pages;
 using PlusLevelStudio.Editor.Tools;
 using PlusLevelStudio.Editor.Tools.Customs;
 using PlusLevelStudio.Ingame;
@@ -447,7 +448,7 @@ namespace PlusLevelStudio
             EditorMode fullMode = new EditorMode()
             {
                 id = "full",
-                availableTools = new Dictionary<string, List<EditorTool>>(),
+                availableTools = new Dictionary<string, BaseToolboxPage>(),
                 categoryOrder = new string[] {
                     "rooms",
                     "doors",
@@ -578,7 +579,7 @@ namespace PlusLevelStudio
             EditorMode complaintMode = new EditorMode()
             {
                 id = "compliant",
-                availableTools = new Dictionary<string, List<EditorTool>>(),
+                availableTools = new Dictionary<string, BaseToolboxPage>(),
                 categoryOrder = new string[] {
                     "rooms",
                     "doors",
@@ -687,7 +688,7 @@ namespace PlusLevelStudio
             EditorMode roomsMode = new EditorMode()
             {
                 id = "rooms",
-                availableTools = new Dictionary<string, List<EditorTool>>(),
+                availableTools = new Dictionary<string, BaseToolboxPage>(),
                 categoryOrder = new string[] {
                     "rooms",
                     "lights",
@@ -719,18 +720,18 @@ namespace PlusLevelStudio
             };
 
             EditorInterfaceModes.AddVanillaRooms(roomsMode, false);
-            roomsMode.availableTools["rooms"].RemoveAt(roomsMode.availableTools["rooms"].FindIndex(x => x.id == "room_hall"));
-            roomsMode.availableTools["rooms"].RemoveAt(roomsMode.availableTools["rooms"].FindIndex(x => x.id == "room_hall_secondary"));
-            roomsMode.availableTools["rooms"].Insert(0, new RoomTool("hall"));
-            roomsMode.availableTools["rooms"].InsertRange(roomsMode.availableTools["rooms"].FindIndex(x => x.id == "room_class") + 1, new EditorTool[]
+            roomsMode.availableTools["rooms"].RemoveById("room_hall");
+            roomsMode.availableTools["rooms"].RemoveById("room_hall_secondary");
+            roomsMode.availableTools["rooms"].AddToStart(new RoomTool("hall"));
+            roomsMode.availableTools["rooms"].InsertRangeAfterId("room_class", new EditorTool[]
             {
                 new RoomTool("class_mathmachine", uiAssetMan.Get<Sprite>("Tools/room_class")),
                 new RoomTool("class_matchactivity", uiAssetMan.Get<Sprite>("Tools/room_class")),
                 new RoomTool("class_balloonbuster", uiAssetMan.Get<Sprite>("Tools/room_class"))
             });
-            int oldMysteryIndex = roomsMode.availableTools["rooms"].FindIndex(x => x.id == "room_mystery");
-            roomsMode.availableTools["rooms"].RemoveAt(oldMysteryIndex);
-            roomsMode.availableTools["rooms"].Insert(oldMysteryIndex, new RoomTool("mystery"));
+            int oldMysteryIndex = ((BaseToolboxPage)roomsMode.availableTools["rooms"]).tools.FindIndex(x => x.id == "room_mystery");
+            ((BaseToolboxPage)roomsMode.availableTools["rooms"]).tools.RemoveAt(oldMysteryIndex);
+            ((BaseToolboxPage)roomsMode.availableTools["rooms"]).tools.Insert(oldMysteryIndex, new RoomTool("mystery"));
             EditorInterfaceModes.AddVanillaObjects(roomsMode, false);
             EditorInterfaceModes.AddVanillaActivities(roomsMode, false);
             EditorInterfaceModes.AddToolsToCategory(roomsMode, "items", new EditorTool[]

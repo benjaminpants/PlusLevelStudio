@@ -19,6 +19,7 @@ namespace PlusLevelStudio.Editor.Tools
         {
             this.type = type;
             this.sprite = sprite;
+            tags.Add("door");
         }
 
         protected override void ValidLocationClicked()

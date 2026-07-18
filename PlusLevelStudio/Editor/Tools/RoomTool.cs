@@ -22,6 +22,7 @@ namespace PlusLevelStudio.Editor.Tools
         {
             roomType = roomId;
             this.sprite = sprite;
+            tags.Add("room_notpre");
         }
 
         public override void Begin()

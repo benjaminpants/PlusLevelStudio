@@ -16,6 +16,7 @@ namespace PlusLevelStudio.Editor.Tools
         {
             this.type = type;
             this.sprite = sprite;
+            tags.Add("window");
         }
 
         protected override bool TryPlace(IntVector2 position, Direction dir)

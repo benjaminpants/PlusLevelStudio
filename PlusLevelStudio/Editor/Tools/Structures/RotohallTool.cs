@@ -19,6 +19,7 @@ namespace PlusLevelStudio.Editor.Tools
         public RotohallTool()
         {
             sprite = LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/structure_rotohall");
+            tags.Add("lvlt_factory");
         }
 
         public override void Begin()

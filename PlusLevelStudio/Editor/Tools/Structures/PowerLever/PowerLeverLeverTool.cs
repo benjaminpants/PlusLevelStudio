@@ -22,6 +22,7 @@ namespace PlusLevelStudio.Editor.Tools
         {
             this.color = color;
             sprite = LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("Tools/" + id);
+            tags.Add("lvlt_maintenance");
         }
 
         public override void Begin()
