@@ -446,6 +446,8 @@
 {"key":"Ed_Tool_custom_bulletinposter_Title","value":"Custom Bulletin Board"},
 {"key":"Ed_Tool_custom_bulletinposter_Desc","value":"Write whatever you want on this bulletin board!"},
 {"key":"Ed_Tool_custom_bulletinsmallposter_Title","value":"Custom Bulletin Board (Small)"},
-{"key":"Ed_Tool_custom_bulletinsmallposter_Desc","value":"Write whatever you want on this bulletin board, but with a smaller font!"}
+{"key":"Ed_Tool_custom_bulletinsmallposter_Desc","value":"Write whatever you want on this bulletin board, but with a smaller font!"},
+
+{"key":"Ed_Tool_GenericCustomDesc","value":"A file from your computer!\n<i>Wowwwwww!"}
 
 ]}

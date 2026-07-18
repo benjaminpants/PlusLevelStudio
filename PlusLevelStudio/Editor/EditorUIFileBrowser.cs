@@ -32,12 +32,15 @@ namespace PlusLevelStudio.Editor
 
             public int CompareTo(object obj)
             {
-                if (obj is BrowserFile)
+                if (obj is BrowserFile file)
                 {
-                    if (((BrowserFile)obj).type == FileType.Special) return 1;
-                    if (((BrowserFile)obj).type == FileType.Folder && (type == FileType.File)) return 1;
-                    return ((BrowserFile)obj).lastModified.CompareTo(lastModified);
+                    if (file.type == FileType.Special) return 1;
+                    if (type == FileType.Special) return -1;
+                    if (file.type == FileType.Folder && (type == FileType.File)) return 1;
+                    if (type == FileType.Folder && (file.type == FileType.File)) return -1;
+                    return file.lastModified.CompareTo(lastModified);
                 }
+                Debug.Log("is not BrowserFile!");
                 return obj.ToString().CompareTo(name);
             }
         }

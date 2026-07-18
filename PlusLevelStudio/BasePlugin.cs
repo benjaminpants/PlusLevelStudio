@@ -185,9 +185,9 @@ namespace PlusLevelStudio
             return newPoster;
         }
 
-        public Sprite GenerateOrGetSmallPosterSprite(PosterObject obj)
+        public Sprite GenerateOrGetSmallPosterSprite(PosterObject obj, bool cache = true)
         {
-            if (smallIconsFromTextures.ContainsKey(obj.baseTexture))
+            if (smallIconsFromTextures.ContainsKey(obj.baseTexture) && cache)
             {
                 return smallIconsFromTextures[obj.baseTexture];
             }
@@ -203,7 +203,10 @@ namespace PlusLevelStudio
             smallTex.SetPixels(colors);
             smallTex.Apply();
             Sprite generatedSprite = AssetLoader.SpriteFromTexture2D(smallTex, 1f);
-            smallIconsFromTextures.Add(obj.baseTexture, generatedSprite);
+            if (cache)
+            {
+                smallIconsFromTextures.Add(obj.baseTexture, generatedSprite);
+            }
             return generatedSprite;
         }
 
@@ -560,7 +563,8 @@ namespace PlusLevelStudio
             EditorInterfaceModes.AddVanillaStructures(fullMode, true);
             EditorInterfaceModes.AddVanillaLights(fullMode);
             EditorInterfaceModes.AddVanillaPosters(fullMode);
-            EditorInterfaceModes.AddToolsToCategory(fullMode, "posters", new EditorTool[]
+            CustomPosterSubpage posterSubpage = new CustomPosterSubpage();
+            posterSubpage.AddRange(new EditorTool[]
             {
                 new CustomPosterTool(),
                 new BaldiSaysPosterTool(),
@@ -568,6 +572,15 @@ namespace PlusLevelStudio
                 new BulletinBoardPosterTool(),
                 new BulletinBoardSmallPosterTool()
             });
+            fullMode.availableTools["posters"].AddSubpage(posterSubpage);
+            /*EditorInterfaceModes.AddToolsToCategory(fullMode, "posters", new EditorTool[]
+            {
+                new CustomPosterTool(),
+                new BaldiSaysPosterTool(),
+                new ChalkboardPosterTool(),
+                new BulletinBoardPosterTool(),
+                new BulletinBoardSmallPosterTool()
+            });*/
             EditorInterfaceModes.AddVanillaToolTools(fullMode, true);
             EditorInterfaceModes.AddVanillaEvents(fullMode, true);
 

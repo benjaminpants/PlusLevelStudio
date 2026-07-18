@@ -470,6 +470,7 @@ namespace PlusLevelStudio.Editor
                 Debug.LogError(e);
                 throw new EditorLoadException("Ed_Exception_NonSpecific");
             }
+            ResetToolCatState();
             sidebarUpdatesSuppressed = false;
             RefreshCells(false);
             SetupVisualsForAllRooms(); // need to do this first before lighting
@@ -1157,6 +1158,17 @@ namespace PlusLevelStudio.Editor
             Shader.SetGlobalColor("_SkyboxColor", levelData.skyboxColor);
         }
 
+        public void PurgeFromToolbar(EditorTool tool)
+        {
+            for (int i = 0; i < hotSlots.Length; i++)
+            {
+                if (hotSlots[i].currentTool == tool)
+                {
+                    hotSlots[i].currentTool = null;
+                }
+            }
+        }
+
         public void LoadToolbar(string[] tools)
         {
             for (int i = 0; i < hotSlots.Length; i++)
@@ -1240,6 +1252,16 @@ namespace PlusLevelStudio.Editor
             customContent.CleanupContent();
             Singleton<AdditiveSceneManager>.Instance.LoadScene("MainMenu");
             gameObject.SetActive(false); // to prevent error spam
+            ResetToolCatState();
+        }
+
+        public void ResetToolCatState()
+        {
+            currentMode.availableTools.Values.Do(x =>
+            {
+                x.ResetState();
+                x.subPages.Do(z => z.ResetState());
+            });
         }
 
         /// <summary>
@@ -1268,6 +1290,7 @@ namespace PlusLevelStudio.Editor
             {
                 toolboxOnNullTool = false;
                 uiObjects[1].SetActive(true);
+                EditorController.Instance.uiObjects[1].GetComponent<EditorUIToolboxHandler>().Open();
                 CursorController.Instance.Blink(1);
             }
             ((EditorCursorController)CursorController.Instance).SetIcon((_currentTool == null) ? null : _currentTool.sprite);

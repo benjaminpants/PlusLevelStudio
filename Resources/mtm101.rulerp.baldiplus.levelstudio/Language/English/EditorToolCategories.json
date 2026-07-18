@@ -13,6 +13,7 @@
 
 
 {"key":"Ed_SubCategory_All","value":"All"},
+{"key":"Ed_SubCategory_Custom","value":"Custom"},
 {"key":"Ed_SubCategory_Tag_door","value":"Doors"},
 {"key":"Ed_SubCategory_Tag_window","value":"Windows"},
 {"key":"Ed_SubCategory_Tag_room_notpre","value":"Areas"},
