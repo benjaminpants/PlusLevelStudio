@@ -85,7 +85,7 @@ namespace PlusLevelStudio.Editor.Pages
             GameObject.Destroy(tool.sprite.texture);
             GameObject.Destroy(tool.sprite);
             customTools.Remove(tool);
-            EditorController.Instance?.PurgeFromToolbar(tool);
+            EditorController.Instance?.PurgeFromToolbar(tool); // TODO: undoing loads a file without purging the toolbar, due to this, undoing causes all of our custom tools to vanish.
         }
 
         public override EditorTool[] GetTools(EditorController controller)
@@ -123,7 +123,10 @@ namespace PlusLevelStudio.Editor.Pages
 
         public override void ResetState()
         {
-            customTools.Do(x => CleanupPoster(x));
+            while (customTools.Count > 0)
+            {
+                CleanupPoster(customTools[0]);
+            }
         }
 
         public override bool IncludeInAll()

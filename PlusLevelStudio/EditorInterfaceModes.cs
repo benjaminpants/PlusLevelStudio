@@ -127,6 +127,11 @@ namespace PlusLevelStudio
                     page.AddSubpage(new TagToolboxSubPage("room_notpre"));
                     page.AddSubpage(new TagToolboxSubPage("room_pre"));
                     break;
+                case "posters":
+                    page.AddSubpage(new PosterObjectNameSubpage("Chk_", "chalkposter"));
+                    page.AddSubpage(new PosterObjectNameSubpage("BLT_", "bulletinposter"));
+                    page.AddSubpage(new PosterObjectNameSubpage("CLS_BaldiSays", "baldisaysposter"));
+                    break;
             }
             return page;
         }
@@ -531,7 +536,7 @@ namespace PlusLevelStudio
             {
                 qMarkTools.Add(new ObjectToolNoRotation("qmark" + i, LevelLoaderPlugin.Instance.basicObjects["qmark" + i].GetComponent<SpriteRenderer>().sprite, 5f));
             }
-            InsertToolsInCategory(modeToModify, "objects", "mysterymarks", qMarkTools);
+            InsertToolsInCategory(modeToModify, "objects", "object_mysterymarks", qMarkTools);
         }
 
         /// <summary>
