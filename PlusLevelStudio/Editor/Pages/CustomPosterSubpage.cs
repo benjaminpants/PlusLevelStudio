@@ -10,18 +10,29 @@ namespace PlusLevelStudio.Editor.Pages
     public class PremadeCustomPosterTool : PosterTool, IDeletableTool
     {
         public string fileName;
+        public string assetType;
         public override string titleKey => fileName;
         public override string descKey => "Ed_Tool_GenericCustomDesc";
 
-        public PremadeCustomPosterTool(string fileName, string type, Sprite sprite) : base(type, sprite)
+        public PremadeCustomPosterTool(string fileName, string assetType, string type, Sprite sprite) : base(type, sprite)
         {
+            this.assetType = assetType;
             this.fileName = fileName;
             frameOverride = LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("SlotIndividualCustom");
         }
 
         public void RequestDelete(bool shouldConfirm)
         {
-            Debug.Log("Deleteme!");
+            EditorCustomContentHandler handler = EditorController.Instance.customContent.GetHandlerFor(assetType);
+            if (!shouldConfirm)
+            {
+                handler.EditorRemoveAllUsing(EditorController.Instance, EditorController.Instance.customContentPackage, type);
+                EditorController.Instance.ForceToolsRefresh();
+                return;
+            }
+            int usingCount = handler.EditorUsingElementCount(EditorController.Instance, type);
+            if (usingCount == 0) { RequestDelete(false); return; }
+            EditorController.Instance.CreateUIPopup(String.Format(LocalizationManager.Instance.GetLocalizedText("Ed_Menu_CustomAssetDeleteWarning"), usingCount), () => { RequestDelete(false); }, null);
         }
     }
 
@@ -68,7 +79,7 @@ namespace PlusLevelStudio.Editor.Pages
                     {
                         filePath = entry.filePath;
                     }
-                    customTools.Add(new PremadeCustomPosterTool(filePath, kvp.Key, LevelStudioPlugin.Instance.GenerateOrGetSmallPosterSprite(kvp.Value, false))
+                    customTools.Add(new PremadeCustomPosterTool(filePath, "imageposter", kvp.Key, LevelStudioPlugin.Instance.GenerateOrGetSmallPosterSprite(kvp.Value, false))
                     {
                         frameOverride = LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("SlotIndividualCustom")
                     });

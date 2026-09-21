@@ -27,6 +27,10 @@ namespace PlusLevelStudio
             return package.GetAllOfTypes(handledTypes);
         }
 
+        public abstract int EditorUsingElementCount(EditorController edCont, string id);
+
+        public abstract int EditorRemoveAllUsing(EditorController edCont, EditorCustomContentPackage package, string id);
+
         public abstract void ClearEntriesNotInEditor(EditorController edCont, EditorCustomContentPackage package);
 
         public abstract void ClearAndCleanupEntriesNotInPackage(EditorCustomContentPackage package);
@@ -122,6 +126,16 @@ namespace PlusLevelStudio
             }
             entriesQueuedForDeletion.Do(x => package.entries.Remove(x));
         }
+
+        public override int EditorUsingElementCount(EditorController edCont, string id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override int EditorRemoveAllUsing(EditorController edCont, EditorCustomContentPackage package, string id)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class CustomNPCContentHandler : EditorCustomContentHandler
@@ -178,6 +192,16 @@ namespace PlusLevelStudio
                 extend.dictionary.Add(entry.id, createdObjects[0].GetComponent<NPC>());
                 reader.Close();
             }
+        }
+
+        public override int EditorUsingElementCount(EditorController edCont, string id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override int EditorRemoveAllUsing(EditorController edCont, EditorCustomContentPackage package, string id)
+        {
+            throw new NotImplementedException();
         }
     }
 
@@ -273,6 +297,29 @@ namespace PlusLevelStudio
             }
             entriesQueuedForDeletion.Do(x => package.entries.Remove(x));
         }
+
+        public override int EditorUsingElementCount(EditorController edCont, string id)
+        {
+            return edCont.levelData.posters.Count(x => x.type == id);
+        }
+
+        public override int EditorRemoveAllUsing(EditorController edCont, EditorCustomContentPackage package, string id)
+        {
+            edCont.AddUndo();
+            int deleted = 0;
+            foreach (var item in edCont.levelData.posters.Where(x => x.type == id).ToList())
+            {
+                if (item.OnDelete(edCont.levelData))
+                {
+                    deleted++;
+                }
+            }
+            package.entries.RemoveAll(x => x.id == id);
+            UnityEngine.Object.Destroy(extend.dictionary[id]);
+            UnityEngine.Object.Destroy(extend.dictionary[id].baseTexture);
+            extend.dictionary.Remove(id);
+            return deleted;
+        }
     }
 
     public abstract class CustomTextPosterContentHandler : EditorCustomContentHandler
@@ -342,6 +389,17 @@ namespace PlusLevelStudio
                 }
             }
             entriesQueuedForDeletion.Do(x => package.entries.Remove(x));
+        }
+
+        public override int EditorUsingElementCount(EditorController edCont, string id)
+        {
+            return edCont.levelData.posters.Count(x => x.type == id);
+        }
+
+        public override int EditorRemoveAllUsing(EditorController edCont, EditorCustomContentPackage package, string id)
+        {
+            edCont.AddUndo();
+            return edCont.levelData.posters.RemoveAll(x => x.type == id);
         }
     }
 

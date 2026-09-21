@@ -57,7 +57,6 @@ namespace PlusLevelStudio
             return handlers.Find(x => x.handledTypes.Contains(type));
         }
 
-
         public List<BaseGameManager> gameManagerPre = new List<BaseGameManager>();
 
         public List<EditorCustomContentHandler> handlers = new List<EditorCustomContentHandler>();

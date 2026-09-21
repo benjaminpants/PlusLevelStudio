@@ -1175,6 +1175,18 @@ namespace PlusLevelStudio.Editor
             }
         }
 
+        public void ForceToolsRefresh()
+        {
+            foreach (BaseToolboxPage page in currentMode.availableTools.Values)
+            {
+                page.GetAllToolsIncludingSubpages(this);
+            }
+            if (uiObjects[1].activeSelf)
+            {
+                uiObjects[1].GetComponent<EditorUIToolboxHandler>().Open();
+            }
+        }
+
         public void LoadToolbar(string[] tools)
         {
             for (int i = 0; i < hotSlots.Length; i++)
