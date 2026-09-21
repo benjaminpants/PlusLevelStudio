@@ -260,7 +260,24 @@ namespace PlusLevelStudio.Editor
             currentUndoIndex = index;
             MemoryStream recentUndo = undoStreams[index];
             BinaryReader reader = new BinaryReader(recentUndo, Encoding.UTF8, true);
+
+            // attempt to preserve toolbar, as a reload may clear out some custom content tools
+            for (int i = 0; i < hotSlots.Length; i++)
+            {
+                if (hotSlots[i].currentTool == null)
+                {
+                    currentFile.meta.toolbarTools[i] = "";
+                }
+                else
+                {
+                    currentFile.meta.toolbarTools[i] = hotSlots[i].currentTool.id;
+                }
+            }
+
             LoadEditorLevel(EditorLevelData.ReadFrom(reader), false);
+            LoadToolbar(currentFile.meta.toolbarTools);
+
+
             recentUndo.Seek(0, SeekOrigin.Begin);
             reader.Dispose();
         }
@@ -377,7 +394,6 @@ namespace PlusLevelStudio.Editor
         public void SaveEditorLevelToFile(string path)
         {
             UpdateMeta();
-            CleanupUnusedContentFromData();
             Directory.CreateDirectory(LevelStudioPlugin.levelFilePath);
             BinaryWriter writer = new BinaryWriter(new FileStream(path, FileMode.Create, FileAccess.Write));
             currentFile.Write(writer);
@@ -388,7 +404,7 @@ namespace PlusLevelStudio.Editor
 
         public void LoadEditorLevel(EditorLevelData newData, bool wipeUndoHistory = true)
         {
-            customContent.ClearAndCleanupEntriesNotInPackage(newData.meta.contentPackage);
+            customContent.ClearAndCleanupEntriesNotInPackage(newData.meta.contentPackage); // cache, should stay
             customContent.LoadFromPackage(newData.meta.contentPackage); // load custom content before we do anything
             if (heldInteractable != null)
             {
@@ -485,16 +501,6 @@ namespace PlusLevelStudio.Editor
                 undoStreams.Add(null);
                 currentUndoIndex = 0;
             }
-        }
-
-        /// <summary>
-        /// Attempts to clean up all unused data.
-        /// </summary>
-        public void CleanupUnusedContentFromData()
-        {
-            if (customContentPackage.entries.Count == 0) return; // micro optimization. honestly probably doesn't help
-            customContent.ClearEntriesNotInEditor(this, customContentPackage);
-            customContent.ClearAndCleanupEntriesNotInPackage(customContentPackage);
         }
 
         protected bool sidebarUpdatesSuppressed = false;
@@ -884,12 +890,12 @@ namespace PlusLevelStudio.Editor
 
         public virtual void Export()
         {
-            CleanupUnusedContentFromData();
             BaldiLevel level = Compile();
             PlayableEditorLevel playableLevel = new PlayableEditorLevel();
             playableLevel.uniqueId = RandomUUID(new System.Random());
             playableLevel.data = level;
             playableLevel.meta = levelData.meta.CompileContent();
+            customContent.ClearEntriesNotInEditor(this, playableLevel.meta.contentPackage);
             if (playableLevel.meta.contentPackage.thumbnailEntry == null)
             {
                 playableLevel.meta.contentPackage.thumbnailEntry = new EditorCustomContentEntry()

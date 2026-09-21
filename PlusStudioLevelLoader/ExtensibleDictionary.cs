@@ -70,13 +70,6 @@ namespace PlusStudioLevelLoader
         {
             if (internalDict.TryGetValue(key, out T v))
             {
-                foreach (var item in extends)
-                {
-                    if (!item.canOverride) continue;
-                    if (!item.dictionary.ContainsKey(key)) continue;
-                    value = item.dictionary[key];
-                    return true;
-                }
                 value = v;
                 return true;
             }
@@ -131,21 +124,11 @@ namespace PlusStudioLevelLoader
             Dictionary<string, T> dict = new Dictionary<string, T>(internalDict);
             foreach (var item in extends)
             {
-                if (item.canOverride)
+                foreach (var kvp in item.dictionary)
                 {
-                    foreach (var kvp in item.dictionary)
+                    if (!dict.ContainsKey(kvp.Key))
                     {
-                        dict[kvp.Key] = kvp.Value;
-                    }
-                }
-                else
-                {
-                    foreach (var kvp in item.dictionary)
-                    {
-                        if (!dict.ContainsKey(kvp.Key))
-                        {
-                            dict.Add(kvp.Key, kvp.Value);
-                        }
+                        dict.Add(kvp.Key, kvp.Value);
                     }
                 }
             }
@@ -188,21 +171,17 @@ namespace PlusStudioLevelLoader
     public class ExtensibleDictionaryExtension<T>
     {
         protected Dictionary<string, T> _dictionary;
-        protected bool _canOverride;
 
-        public bool canOverride => _canOverride;
         public Dictionary<string, T> dictionary => _dictionary;
 
-        public ExtensibleDictionaryExtension(Dictionary<string, T> dictionary, bool canOverride)
+        public ExtensibleDictionaryExtension(Dictionary<string, T> dictionary)
         {
             _dictionary = dictionary;
-            _canOverride = canOverride;
         }
 
         public ExtensibleDictionaryExtension()
         {
             _dictionary = new Dictionary<string, T>();
-            _canOverride = false;
         }
     }
 }

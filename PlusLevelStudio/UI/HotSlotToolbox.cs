@@ -21,6 +21,38 @@ namespace PlusLevelStudio.UI
             DraggableHotslotScript drag = b.AddComponent<DraggableHotslotScript>();
             drag.hotSlot = hsc;
             drag.handler = handler;
+
+            GameObject deleteBGameObject = new GameObject("Delete");
+            deleteBGameObject.transform.SetParent(b.transform);
+            Image deleteImage = deleteBGameObject.AddComponent<Image>();
+            deleteImage.rectTransform.anchoredPosition3D = Vector3.zero;
+            deleteImage.transform.localPosition = Vector3.zero;
+            deleteImage.transform.localRotation = Quaternion.identity;
+            deleteImage.rectTransform.anchorMin = Vector2.zero;
+            deleteImage.rectTransform.anchorMax = Vector2.zero;
+            deleteImage.rectTransform.pivot = Vector2.zero;
+            deleteImage.rectTransform.anchoredPosition = new Vector2(0f, 0f);
+            deleteImage.sprite = GetSprite("SlotDelete");
+            deleteImage.rectTransform.sizeDelta = new Vector2(8f, 8f);
+            deleteImage.transform.localScale = Vector3.one; // unity what the fuck
+
+            StandardMenuButton smb = deleteBGameObject.ConvertToButton<StandardMenuButton>();
+            smb.highlightedSprite = GetSprite("SlotDeleteHover");
+            smb.unhighlightedSprite = GetSprite("SlotDelete");
+            smb.swapOnHigh = true;
+            smb.gameObject.SetActive(false);
+            hsc.deleteButton = smb;
+
+            /*deleteImage.rectTransform.localScale = Vector3.one;
+            deleteImage.rectTransform.sizeDelta = new Vector2(8,8);
+            deleteImage.rectTransform.anchorMin = new Vector2(0,1);
+            deleteImage.rectTransform.anchorMax = new Vector2(0,1);
+            deleteImage.rectTransform.pivot = new Vector2(0, 1);
+            deleteImage.rectTransform.anchoredPosition = Vector2.zero;
+            deleteImage.sprite = GetSprite("SlotDelete");*/
+
+            hsc.usesToolOverride = true;
+
             return b;
         }
     }

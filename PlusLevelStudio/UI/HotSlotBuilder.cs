@@ -70,11 +70,10 @@ namespace PlusLevelStudio.UI
             hotScript.iconImage = itemImage;
             hotScript.defaultSlotSprite = foregroundImage.sprite;
             hotScript.slotImage = foregroundImage;
-            hotScript.usesToolOverride = true;
+            hotScript.usesToolOverride = false;
             // ACK HACK! HACK!!
             if (data["type"].Value<string>() == "hotslot")
             {
-                hotScript.usesToolOverride = false;
                 button.OnHighlight.AddListener(() =>
                 {
                     if (hotScript.currentTool == null) return;

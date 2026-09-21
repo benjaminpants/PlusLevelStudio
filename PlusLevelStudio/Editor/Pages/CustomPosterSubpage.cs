@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace PlusLevelStudio.Editor.Pages
 {
-    public class PremadeCustomPosterTool : PosterTool
+    public class PremadeCustomPosterTool : PosterTool, IDeletableTool
     {
         public string fileName;
         public override string titleKey => fileName;
@@ -17,6 +17,11 @@ namespace PlusLevelStudio.Editor.Pages
         {
             this.fileName = fileName;
             frameOverride = LevelStudioPlugin.Instance.uiAssetMan.Get<Sprite>("SlotIndividualCustom");
+        }
+
+        public void RequestDelete(bool shouldConfirm)
+        {
+            Debug.Log("Deleteme!");
         }
     }
 
@@ -85,7 +90,7 @@ namespace PlusLevelStudio.Editor.Pages
             GameObject.Destroy(tool.sprite.texture);
             GameObject.Destroy(tool.sprite);
             customTools.Remove(tool);
-            EditorController.Instance?.PurgeFromToolbar(tool); // TODO: undoing loads a file without purging the toolbar, due to this, undoing causes all of our custom tools to vanish.
+            EditorController.Instance?.PurgeFromToolbar(tool);
         }
 
         public override EditorTool[] GetTools(EditorController controller)

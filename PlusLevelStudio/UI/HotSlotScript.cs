@@ -1,4 +1,5 @@
 ﻿using PlusLevelStudio.Editor;
+using PlusLevelStudio.Editor.Tools;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,6 +10,7 @@ namespace PlusLevelStudio.UI
 {
     public class HotSlotScript : MonoBehaviour
     {
+        public StandardMenuButton deleteButton;
         public int slotIndex = 0;
         private EditorTool _currentTool;
         public Image iconImage;
@@ -33,6 +35,18 @@ namespace PlusLevelStudio.UI
                         slotImage.sprite = defaultSlotSprite;
                     }
                     return;
+                }
+                if (deleteButton != null)
+                {
+                    deleteButton.gameObject.SetActive(_currentTool is IDeletableTool);
+                    deleteButton.OnPress.RemoveAllListeners();
+                    if (deleteButton.isActiveAndEnabled)
+                    {
+                        deleteButton.OnPress.AddListener(() =>
+                        {
+                            ((IDeletableTool)_currentTool).RequestDelete(true);
+                        });
+                    }
                 }
                 if (_currentTool.sprite == null)
                 {

@@ -174,7 +174,6 @@ namespace PlusLevelStudio.Editor.SettingsUI
             EditorController.Instance.levelData.windows.ForEach(x => EditorController.Instance.UpdateVisual(x));
             somethingChanged = true;
             UpdateTextures();
-            EditorController.Instance.CleanupUnusedContentFromData();
         }
 
         public override void OnElementsCreated()

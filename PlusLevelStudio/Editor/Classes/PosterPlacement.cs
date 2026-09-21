@@ -45,7 +45,6 @@ namespace PlusLevelStudio.Editor
         {
             data.posters.Remove(this);
             EditorController.Instance.RemoveVisual(this);
-            EditorController.Instance.CleanupUnusedContentFromData();
             return true;
         }
 
