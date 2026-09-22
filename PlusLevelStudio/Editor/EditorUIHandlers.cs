@@ -436,10 +436,10 @@ namespace PlusLevelStudio.Editor
                     break;
                 case "undo":
                     EditorController.Instance.PrepareForUndo();
-                    EditorController.Instance.SwitchToUndo(EditorController.Instance.currentUndoIndex - 1);
+                    EditorController.Instance.SwitchToUndo(EditorController.Instance.currentActionIndex - 1);
                     break;
                 case "redo":
-                    EditorController.Instance.SwitchToUndo(EditorController.Instance.currentUndoIndex + 1);
+                    EditorController.Instance.SwitchToUndo(EditorController.Instance.currentActionIndex + 1);
                     break;
                 case "toolbox":
                     EditorController.Instance.SwitchToTool(null);

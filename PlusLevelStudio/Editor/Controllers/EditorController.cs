@@ -25,6 +25,18 @@ using UnityEngine.UIElements;
 
 namespace PlusLevelStudio.Editor
 {
+    [Flags]
+    public enum EditorUpdatables
+    {
+        None=0,
+        CellsVisual=1,
+        CellsData=2,
+        Cells=CellsData | CellsVisual | Lights,
+        Lights=4,
+
+
+    }
+
     public class EditorController : Singleton<EditorController>
     {
         protected static FieldInfo _deltaThisFrame = AccessTools.Field(typeof(CursorController), "deltaThisFrame");
@@ -58,6 +70,9 @@ namespace PlusLevelStudio.Editor
                 return levelData.meta.contentPackage;
             }
         }
+
+        public EditorUpdatables toUpdate = EditorUpdatables.None;
+
         public Canvas canvas;
 
         public Tile[][] tiles = new Tile[0][];
@@ -158,90 +173,61 @@ namespace PlusLevelStudio.Editor
 
         protected IEditorInteractable heldInteractable = null;
 
-        public static int maxUndos = 15;
-        public int currentUndoIndex = 0;
-        public List<MemoryStream> undoStreams = new List<MemoryStream>() { null };
-        public MemoryStream currentlyHeldUndo = null;
+        public static int actionHistoryMaxLength = 15;
+        public int currentActionIndex = 0;
+        public List<AbstractEditorAction> actionHistory = new List<AbstractEditorAction>();
 
-        /// <summary>
-        /// Adds the current state to the undo memory.
-        /// Do this BEFORE you perform your operation!
-        /// </summary>
+        [Obsolete("Use PerformAction instead!", true)]
         public void AddUndo()
         {
-            if (currentlyHeldUndo != null)
-            {
-                Debug.LogWarning("Adding Undo while an Undo is being held! Discarding held undo...");
-            }
-            HoldUndo();
-            AddHeldUndo();
+            throw new NotImplementedException();
         }
 
-        /// <summary>
-        /// Creates an undo, but doesn't add it right away.
-        /// </summary>
+        [Obsolete("Use PerformAction instead!", true)]
         public void HoldUndo()
         {
-            MemoryStream newStream = new MemoryStream();
-            BinaryWriter writer = new BinaryWriter(newStream, Encoding.Default, true);
-            levelData.Write(writer);
-            newStream.Seek(0, SeekOrigin.Begin);
-            currentlyHeldUndo = newStream;
-            writer.Close();
+            throw new NotImplementedException();
         }
 
-        /// <summary>
-        /// Prepares for an undo by filling in the latest undo slot.
-        /// </summary>
         public void PrepareForUndo()
         {
-            if (undoStreams[undoStreams.Count - 1] != null) return;
-            MemoryStream newStream = new MemoryStream();
-            BinaryWriter writer = new BinaryWriter(newStream, Encoding.Default, true);
-            levelData.Write(writer);
-            newStream.Seek(0, SeekOrigin.Begin);
-            undoStreams[undoStreams.Count - 1] = newStream;
-            writer.Close();
         }
 
-        /// <summary>
-        /// Cancels the currently held undo.
-        /// </summary>
+        [Obsolete("Use PerformAction instead!", true)]
         public void CancelHeldUndo()
         {
-            currentlyHeldUndo = null;
+            throw new NotImplementedException();
         }
 
-        /// <summary>
-        /// Adds the currently held undo.
-        /// </summary>
-        public void AddHeldUndo()
+        public void PerformAction(AbstractEditorAction action)
         {
+            action.Perform(this);
             hasUnsavedChanges = true;
-            // if our undo index is in the past and we add an undo, wipe the previous undo history ahead of ours
-            while (undoStreams.Count > (currentUndoIndex + 1))
-            {
-                undoStreams.RemoveAt(undoStreams.Count - 1);
-            }
-            undoStreams[undoStreams.Count - 1] = currentlyHeldUndo;
-            undoStreams.Add(null);
-            currentUndoIndex += 1;
-            currentlyHeldUndo = null;
 
-            MemoryStream currentStream = undoStreams[currentUndoIndex];
-            if (undoStreams.Count > maxUndos)
+            // proper undo code here
+            while (currentActionIndex < (actionHistory.Count - 1))
             {
-                undoStreams.RemoveAt(0); // memory streams dont need .Dispose to be called
+                actionHistory.RemoveAt(actionHistory.Count - 1);
             }
-            currentUndoIndex = undoStreams.IndexOf(currentStream);
-            if (currentUndoIndex == -1)
+
+            actionHistory.Add(action);
+            if (actionHistory.Count == 1)
             {
-                Debug.Log("The fuck?");
-                currentUndoIndex = undoStreams.Count - 1;
+                currentActionIndex = 0;
+            }
+            else
+            {
+                currentActionIndex++;
             }
 
             RefreshSidebarDisplayInOneFrameIfIts(SidebarGridDisplay.EventUnsafe);
             RefreshSidebarDisplayInOneFrameIfIts(SidebarGridDisplay.EntityUnsafe);
+        }
+
+        [Obsolete("Use PerformAction instead!", true)]
+        public void AddHeldUndo()
+        {
+            throw new NotImplementedException();
         }
 
 
@@ -256,30 +242,22 @@ namespace PlusLevelStudio.Editor
         public void SwitchToUndo(int index)
         {
             if (index < 0) return;
-            if (index >= undoStreams.Count) return;
-            currentUndoIndex = index;
-            MemoryStream recentUndo = undoStreams[index];
-            BinaryReader reader = new BinaryReader(recentUndo, Encoding.UTF8, true);
-
-            // attempt to preserve toolbar, as a reload may clear out some custom content tools
-            for (int i = 0; i < hotSlots.Length; i++)
+            if (index >= actionHistory.Count) return;
+            if (index == currentActionIndex) return;
+            int off = index < currentActionIndex ? -1 : 1;
+            while (currentActionIndex != index)
             {
-                if (hotSlots[i].currentTool == null)
+                if (off > 0)
                 {
-                    currentFile.meta.toolbarTools[i] = "";
+                    actionHistory[currentActionIndex].Perform(this);
                 }
                 else
                 {
-                    currentFile.meta.toolbarTools[i] = hotSlots[i].currentTool.id;
+                    actionHistory[currentActionIndex].Undo(this);
                 }
+                currentActionIndex += off;
             }
-
-            LoadEditorLevel(EditorLevelData.ReadFrom(reader), false);
-            LoadToolbar(currentFile.meta.toolbarTools);
-
-
-            recentUndo.Seek(0, SeekOrigin.Begin);
-            reader.Dispose();
+            
         }
 
         static FieldInfo _TextTextureGenerator = AccessTools.Field(typeof(EnvironmentController), "TextTextureGenerator");
@@ -493,13 +471,11 @@ namespace PlusLevelStudio.Editor
             RefreshLights();
             UpdateSpawnVisual();
             UpdateSkybox();
-            CancelHeldUndo();
             if (wipeUndoHistory)
             {
                 hasUnsavedChanges = false;
-                undoStreams.Clear(); // memorystreams dont need .dispose
-                undoStreams.Add(null);
-                currentUndoIndex = 0;
+                actionHistory.Clear(); // memorystreams dont need .dispose
+                currentActionIndex = 0;
             }
         }
 

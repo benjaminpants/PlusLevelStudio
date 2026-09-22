@@ -239,15 +239,15 @@ namespace PlusLevelStudio
             Directory.CreateDirectory(customThumbnailsPath);
             Directory.CreateDirectory(campaignFilePath);
 
-            EditorController.maxUndos = Config.Bind("General",
+            EditorController.actionHistoryMaxLength = Config.Bind("General",
                 "Max Undos",
                 15,
                 "Determines the maximum amount of undos. 2 is the minimum, 0 or below will allow for infinite undos.\nNote that the higher this number is, the more memory the game will consume.").Value;
-            if (EditorController.maxUndos <= 0)
+            if (EditorController.actionHistoryMaxLength <= 0)
             {
-                EditorController.maxUndos = int.MaxValue;
+                EditorController.actionHistoryMaxLength = int.MaxValue;
             }
-            EditorController.maxUndos = Mathf.Max(EditorController.maxUndos, 2);
+            EditorController.actionHistoryMaxLength = Mathf.Max(EditorController.actionHistoryMaxLength, 2);
         }
 
         void AddSolidColorLightmap(string name, Color color)
