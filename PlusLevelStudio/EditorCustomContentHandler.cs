@@ -399,7 +399,18 @@ namespace PlusLevelStudio
         public override int EditorRemoveAllUsing(EditorController edCont, EditorCustomContentPackage package, string id)
         {
             edCont.AddUndo();
-            return edCont.levelData.posters.RemoveAll(x => x.type == id);
+            int deleted = 0;
+            foreach (var item in edCont.levelData.posters.Where(x => x.type == id).ToList())
+            {
+                if (item.OnDelete(edCont.levelData))
+                {
+                    deleted++;
+                }
+            }
+            package.entries.RemoveAll(x => x.id == id);
+            UnityEngine.Object.Destroy(extend.dictionary[id]);
+            extend.dictionary.Remove(id);
+            return deleted;
         }
     }
 
