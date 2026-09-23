@@ -34,6 +34,7 @@ namespace PlusLevelStudio
             handlers.Add(new BulletInPosterContentHandler("bulletinposter", BaldiFonts.ComicSans18));
             handlers.Add(new BulletInPosterContentHandler("bulletinsmallposter", BaldiFonts.ComicSans12));
             handlers.Add(new CustomNPCContentHandler());
+            handlers.Add(new CustomSkyboxContentHandler());
             foreach (var item in onCreation)
             {
                 item.Invoke(this);
@@ -295,14 +296,17 @@ namespace PlusLevelStudio
             return fromPath;
         }
 
+        // TODO: REWRITE TO NOT BE HARDCODED GARBAGE!
         protected byte[] GetDataFromFilePath()
         {
             switch (contentType)
             {
-                case "thumbnail":
-                    return File.ReadAllBytes(Path.Combine(LevelStudioPlugin.customThumbnailsPath, filePath));
                 case "texture":
                     return File.ReadAllBytes(Path.Combine(LevelStudioPlugin.customTexturePath, filePath));
+                case "thumbnail":
+                    return File.ReadAllBytes(Path.Combine(LevelStudioPlugin.customThumbnailsPath, filePath));
+                case "skybox":
+                    return File.ReadAllBytes(Path.Combine(LevelStudioPlugin.customSkyboxPath, filePath));
                 case "imageposter":
                     return File.ReadAllBytes(Path.Combine(LevelStudioPlugin.customPostersPath, filePath));
                 case "chalkboardposter":

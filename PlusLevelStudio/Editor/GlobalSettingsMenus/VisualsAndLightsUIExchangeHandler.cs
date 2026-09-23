@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using TMPro;
 using UnityEngine;
@@ -112,9 +113,15 @@ namespace PlusLevelStudio.Editor.GlobalSettingsMenus
         {
             for (int i = 0; i < skyboxButtons.Length; i++)
             {
-                if ((i + skyboxViewOffset) >= LevelStudioPlugin.Instance.selectableSkyboxes.Count)
+                if ((i + skyboxViewOffset) >= (LevelStudioPlugin.Instance.selectableSkyboxes.Count + 1))
                 {
                     skyboxButtons[i].image.color = Color.clear;
+                    continue;
+                }
+                if ((i + skyboxViewOffset) == LevelStudioPlugin.Instance.selectableSkyboxes.Count)
+                {
+                    skyboxButtons[i].image.sprite = LevelStudioPlugin.Instance.skyboxSprites["import_custom"];
+                    skyboxButtons[i].image.color = EditorController.Instance.levelData.skyboxColor;
                     continue;
                 }
                 skyboxButtons[i].image.color = EditorController.Instance.levelData.skyboxColor;
@@ -124,14 +131,51 @@ namespace PlusLevelStudio.Editor.GlobalSettingsMenus
             skyboxImage.color = EditorController.Instance.levelData.skyboxColor;
         }
 
+
+        string lastUsedFile = "skybox";
+        bool OnSkyboxSubmit(string path)
+        {
+            EditorCustomContentHelpers.GetRelativePathsAndID(LevelStudioPlugin.customSkyboxPath, path, out string relativePath, out string relativePathNoExtension, out string idSuff);
+            lastUsedFile = relativePathNoExtension;
+            string currentId = "cstm_skybox_" + idSuff;
+            if (EditorController.Instance.customContentPackage.entries.Find(x => x.id == currentId) != null)
+            {
+                EditorController.Instance.levelData.skybox = currentId;
+                EditorController.Instance.UpdateSkybox();
+                RefreshSkyboxView();
+                return true;
+            }
+            if (EditorController.Instance.customContentPackage.entries.Find(x => x.id == EditorController.Instance.levelData.skybox) != null)
+            {
+                EditorController.Instance.customContent.GetHandlerFor("skybox").EditorRemoveAllUsing(EditorController.Instance, EditorController.Instance.customContentPackage, EditorController.Instance.levelData.skybox);
+            }
+            EditorCustomContentEntry entry = new EditorCustomContentEntry("skybox", currentId, relativePath);
+            if (EditorController.Instance.customContent.GetHandlerFor("skybox").AddElementOfType(entry))
+            {
+                EditorController.Instance.levelData.skybox = currentId;
+                EditorController.Instance.customContentPackage.entries.Add(entry);
+                EditorController.Instance.UpdateSkybox();
+                RefreshSkyboxView();
+                return true;
+            }
+            return false;
+        }
+
         public override void SendInteractionMessage(string message, object data = null)
         {
             if (message.StartsWith("skybox"))
             {
                 int index = int.Parse(message.Replace("skybox", ""));
                 int selectableSkyboxIndex = index + skyboxViewOffset;
-                if (selectableSkyboxIndex >= LevelStudioPlugin.Instance.selectableSkyboxes.Count)
+                if (selectableSkyboxIndex >= (LevelStudioPlugin.Instance.selectableSkyboxes.Count + 1))
                 {
+                    return;
+                }
+                if (selectableSkyboxIndex == LevelStudioPlugin.Instance.selectableSkyboxes.Count)
+                {
+                    EditorController.Instance.CreateUIFileBrowser(LevelStudioPlugin.customSkyboxPath, lastUsedFile, "png", false, OnSkyboxSubmit);
+                    EditorController.Instance.UpdateSkybox();
+                    RefreshSkyboxView();
                     return;
                 }
                 EditorController.Instance.levelData.skybox = LevelStudioPlugin.Instance.selectableSkyboxes[index + skyboxViewOffset];
@@ -141,11 +185,11 @@ namespace PlusLevelStudio.Editor.GlobalSettingsMenus
             switch (message)
             {
                 case "nextSkybox":
-                    skyboxViewOffset = Mathf.Clamp(skyboxViewOffset + 1, 0, LevelStudioPlugin.Instance.selectableSkyboxes.Count - skyboxButtons.Length);
+                    skyboxViewOffset = Mathf.Clamp(skyboxViewOffset + 1, 0, (LevelStudioPlugin.Instance.selectableSkyboxes.Count + 1) - skyboxButtons.Length);
                     RefreshSkyboxView();
                     break;
                 case "prevSkybox":
-                    skyboxViewOffset = Mathf.Clamp(skyboxViewOffset - 1, 0, LevelStudioPlugin.Instance.selectableSkyboxes.Count - skyboxButtons.Length);
+                    skyboxViewOffset = Mathf.Clamp(skyboxViewOffset - 1, 0, (LevelStudioPlugin.Instance.selectableSkyboxes.Count + 1) - skyboxButtons.Length);
                     RefreshSkyboxView();
                     break;
                 case "red":

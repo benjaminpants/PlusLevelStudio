@@ -40,6 +40,161 @@ namespace PlusLevelStudio
         public abstract void CleanupContent();
     }
 
+    public class CustomSkyboxContentHandler : EditorCustomContentHandler
+    {
+        public ExtensibleDictionaryExtension<Cubemap> extend = new ExtensibleDictionaryExtension<Cubemap>();
+        public ExtensibleDictionaryExtension<Sprite> iconExtend = new ExtensibleDictionaryExtension<Sprite>();
+
+        public CustomSkyboxContentHandler()
+        {
+            handledTypes = new string[] { "skybox" };
+        }
+
+        public override bool AddElementOfType(EditorCustomContentEntry entry)
+        {
+            if (extend.dictionary.ContainsKey(entry.id)) return false;
+            LevelLoaderPlugin.Instance.skyboxAliases.AddExtensionIfNotPresent(extend);
+            LevelStudioPlugin.Instance.skyboxSprites.AddExtensionIfNotPresent(iconExtend);
+            extend.dictionary.Add(entry.id, CubemapFromPathOrData(entry, LevelStudioPlugin.customSkyboxPath, out Sprite selectIcon));
+            iconExtend.dictionary.Add(entry.id, selectIcon);
+            return true;
+        }
+
+        protected Texture2D LoadTextureFromPathOrData(EditorCustomContentEntry entry, string basePath)
+        {
+            Texture2D returnVal;
+            if (entry.usingFilePath)
+            {
+                returnVal = AssetLoader.TextureFromFile(Path.Combine(basePath, entry.filePath));
+            }
+            else
+            {
+                returnVal = new Texture2D(128, 128, TextureFormat.ARGB32, false);
+                returnVal.filterMode = FilterMode.Point;
+                returnVal.LoadImage(entry.data);
+                returnVal.name = entry.id;
+            }
+            return returnVal;
+        }
+
+        protected Cubemap CubemapFromPathOrData(EditorCustomContentEntry entry, string basePath, out Sprite selectIcon)
+        {
+            Texture2D tex = LoadTextureFromPathOrData(entry, basePath);
+            int texSize = tex.width / 4;
+
+            // generate the skybox icon
+            Color[] graphicPixels = tex.GetPixels(texSize, 0, texSize, texSize);
+
+            Texture2D selectTemp = new Texture2D(texSize, texSize, TextureFormat.ARGB32, false);
+            selectTemp.filterMode = FilterMode.Point;
+            selectTemp.SetPixels(graphicPixels); // dont apply as we will be destroying this graphic in a second
+
+            Color[] selectColors = MaterialModifier.GetColorsForTileTexture(selectTemp, 64);
+            GameObject.Destroy(selectTemp);
+
+            Texture2D selectTex = new Texture2D(64, 64, TextureFormat.ARGB32, false);
+            selectTex.filterMode = FilterMode.Point;
+            selectTex.SetPixels(selectColors);
+            selectTex.Apply();
+            selectIcon = AssetLoader.SpriteFromTexture2D(selectTex, 1f);
+
+            // make the actual cubemap lol
+            Cubemap cubeMap = AssetLoader.CubemapFromTexture(tex);
+            cubeMap.filterMode = FilterMode.Point;
+            GameObject.Destroy(tex);
+            return cubeMap;
+        }
+
+        public override void CleanupContent()
+        {
+            foreach (var item in extend.dictionary)
+            {
+                UnityEngine.Object.Destroy(item.Value);
+            }
+            foreach (var item in iconExtend.dictionary)
+            {
+                UnityEngine.Object.Destroy(item.Value.texture);
+                UnityEngine.Object.Destroy(item.Value);
+            }
+            extend.dictionary.Clear();
+            iconExtend.dictionary.Clear();
+            LevelLoaderPlugin.Instance.skyboxAliases.extends.Remove(extend);
+            LevelStudioPlugin.Instance.skyboxSprites.extends.Remove(iconExtend);
+        }
+
+        public override void ClearAndCleanupEntriesNotInPackage(EditorCustomContentPackage package)
+        {
+            List<EditorCustomContentEntry> textureEntries = package.GetAllOfType("skybox");
+            List<string> skyboxesKeyedForRemoval = new List<string>();
+            foreach (KeyValuePair<string, Cubemap> kvp in extend.dictionary)
+            {
+                if (textureEntries.Find(x => x.id == kvp.Key) == null)
+                {
+                    skyboxesKeyedForRemoval.Add(kvp.Key);
+                }
+            }
+            for (int i = 0; i < skyboxesKeyedForRemoval.Count; i++)
+            {
+                RemoveEntry(skyboxesKeyedForRemoval[i]);
+            }
+        }
+
+        protected void RemoveEntry(string id)
+        {
+            UnityEngine.Object.Destroy(extend.dictionary[id]);
+            UnityEngine.Object.Destroy(extend.dictionary[id]);
+            UnityEngine.Object.Destroy(iconExtend.dictionary[id].texture);
+            UnityEngine.Object.Destroy(iconExtend.dictionary[id]);
+            extend.dictionary.Remove(id);
+            iconExtend.dictionary.Remove(id);
+        }
+
+        public override void ClearEntriesNotInEditor(EditorController edCont, EditorCustomContentPackage package)
+        {
+            List<EditorCustomContentEntry> toDelete = new List<EditorCustomContentEntry>();
+            foreach (var item in package.GetAllOfType("skybox"))
+            {
+                if (edCont.levelData.skybox != item.id)
+                {
+                    toDelete.Add(item);
+                }
+            }
+            toDelete.Do(x => package.entries.Remove(x));
+        }
+
+        public override int EditorRemoveAllUsing(EditorController edCont, EditorCustomContentPackage package, string id)
+        {
+            if (edCont.levelData.skybox == id)
+            {
+                package.entries.RemoveAll(x => x.id == id);
+                edCont.levelData.skybox = "daystandard";
+                edCont.UpdateSkybox();
+                RemoveEntry(id);
+                return 1;
+            }
+            return 0;
+        }
+
+        public override int EditorUsingElementCount(EditorController edCont, string id)
+        {
+            if (edCont.levelData.skybox == id) return 1;
+            return 0;
+        }
+
+        public override void LoadFromPackage(EditorCustomContentPackage package)
+        {
+            LevelLoaderPlugin.Instance.skyboxAliases.AddExtensionIfNotPresent(extend);
+            LevelStudioPlugin.Instance.skyboxSprites.AddExtensionIfNotPresent(iconExtend);
+            List<EditorCustomContentEntry> textureEntries = package.GetAllOfType("skybox");
+            foreach (EditorCustomContentEntry entry in textureEntries)
+            {
+                if (extend.dictionary.ContainsKey(entry.id)) continue; // the texture is already loaded
+                extend.dictionary.Add(entry.id, CubemapFromPathOrData(entry, LevelStudioPlugin.customSkyboxPath, out Sprite selectIcon));
+                iconExtend.dictionary.Add(entry.id, selectIcon);
+            }
+        }
+    }
+
     public class CustomRoomTextureContentHandler : EditorCustomContentHandler
     {
         public ExtensibleDictionaryExtension<Texture2D> extend = new ExtensibleDictionaryExtension<Texture2D>();

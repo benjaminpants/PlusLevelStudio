@@ -75,7 +75,7 @@ namespace PlusLevelStudio
         public List<string> selectableShopItems = new List<string>();
         public List<string> selectableGeneratorItems = new List<string>();
         public Dictionary<string, Sprite> eventSprites = new Dictionary<string, Sprite>();
-        public Dictionary<string, Sprite> skyboxSprites = new Dictionary<string, Sprite>();
+        public ExtensibleDictionary<Sprite> skyboxSprites = new ExtensibleDictionary<Sprite>();
         public ExtensibleDictionary<Sprite> stickerSprites = new ExtensibleDictionary<Sprite>();
         public Dictionary<string, EditorRoomVisualManager> roomVisuals = new Dictionary<string, EditorRoomVisualManager>();
         public Dictionary<string, EditorGameMode> gameModeAliases = new Dictionary<string, EditorGameMode>();
@@ -108,6 +108,7 @@ namespace PlusLevelStudio
 
         public static string customContentPath => Path.Combine(basePath, "User Content");
         public static string customTexturePath => Path.Combine(customContentPath, "Textures");
+        public static string customSkyboxPath => Path.Combine(customContentPath, "Skyboxes");
         public static string customPostersPath => Path.Combine(customContentPath, "Posters");
         public static string customThumbnailsPath => Path.Combine(customContentPath, "Thumbnails");
 
@@ -238,6 +239,7 @@ namespace PlusLevelStudio
             Directory.CreateDirectory(customPostersPath);
             Directory.CreateDirectory(customThumbnailsPath);
             Directory.CreateDirectory(campaignFilePath);
+            Directory.CreateDirectory(customSkyboxPath);
 
             EditorController.maxUndos = Config.Bind("General",
                 "Max Undos",
@@ -2323,6 +2325,7 @@ namespace PlusLevelStudio
             skyboxSprites.Add("daystandard", uiAssetMan.Get<Sprite>("Skyboxes/daystandard"));
             skyboxSprites.Add("twilight", uiAssetMan.Get<Sprite>("Skyboxes/twilight"));
             skyboxSprites.Add("void", uiAssetMan.Get<Sprite>("Skyboxes/void"));
+            skyboxSprites.Add("import_custom", uiAssetMan.Get<Sprite>("Skyboxes/import_custom"));
 
             selectableSkyboxes.Add("daystandard");
             selectableSkyboxes.Add("twilight");
