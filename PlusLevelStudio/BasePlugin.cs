@@ -1155,6 +1155,10 @@ namespace PlusLevelStudio
             workerCgm.ReflectionSetVariable("destroyOnLoad", true);
             workerCgm.gameObject.SetActive(false);
             workerCgm.name = "WorkerCoreGameManager";
+            GameObject workerPlayer = new GameObject("WorkerDummyPlayer");
+            workerPlayer.gameObject.SetActive(false);
+            workerPlayer.AddComponent<PlayerManager>().pc = workerPlayer.AddComponent<DummyPlayerClick>();
+            workerPlayer.transform.SetParent(workerCgm.transform);
 
             yield return "Setting up EditorPlayModeManager...";
 

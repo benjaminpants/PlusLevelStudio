@@ -375,6 +375,11 @@ namespace PlusStudioLevelLoader
                 toRemove.AddRange(poster.multiPosterArray);
                 toRemove.Remove(poster);
             }
+            foreach (StandardDoorMats dm in Resources.FindObjectsOfTypeAll<StandardDoorMats>().Where(x => x.IsPrefab()))
+            {
+                toRemove.Add(dm.openPosterData);
+                toRemove.Add(dm.shutPosterData);
+            }
             allBasePosters.RemoveAll(x => toRemove.Contains(x));
             foreach (PosterObject poster in allBasePosters)
             {
