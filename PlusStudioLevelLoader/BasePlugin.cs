@@ -13,7 +13,7 @@ using System.IO;
 
 namespace PlusStudioLevelLoader
 {
-    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudioloader", "Plus Level Loader", "1.12.2.1")]
+    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudioloader", "Plus Level Loader", "1.12.3.0")]
     [BepInDependency("mtm101.rulerp.bbplus.baldidevapi")]
     public class LevelLoaderPlugin : BaseUnityPlugin
     {
