@@ -208,7 +208,7 @@ namespace PlusLevelStudio
             return entries.FindAll(x => types.Contains(x.contentType));
         }
 
-        public const byte version = 2;
+        public const byte version = 3;
 
         public void Write(BinaryWriter writer)
         {
@@ -234,6 +234,10 @@ namespace PlusLevelStudio
             if (version < 2)
             {
                 package.legacyFlags |= StudioLevelLegacyFlags.BeforeNPCCustom;
+            }
+            if (version < 3)
+            {
+                package.legacyFlags |= StudioLevelLegacyFlags.BeforeFloodFix;
             }
             int streamCount = reader.ReadInt32();
             for (int i = 0; i < streamCount; i++)

@@ -32,7 +32,7 @@ using UnityEngine.UI;
 
 namespace PlusLevelStudio
 {
-    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudio", "Plus Level Studio", "1.8.3.3")]
+    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudio", "Plus Level Studio", "1.8.4.0")]
     [BepInDependency("mtm101.rulerp.bbplus.baldidevapi")]
     [BepInDependency("mtm101.rulerp.baldiplus.levelstudioloader")]
     public class LevelStudioPlugin : BaseUnityPlugin
@@ -1192,6 +1192,10 @@ namespace PlusLevelStudio
             workerCgm.ReflectionSetVariable("destroyOnLoad", true);
             workerCgm.gameObject.SetActive(false);
             workerCgm.name = "WorkerCoreGameManager";
+            GameObject workerPlayer = new GameObject("WorkerDummyPlayer");
+            workerPlayer.gameObject.SetActive(false);
+            workerPlayer.AddComponent<PlayerManager>().pc = workerPlayer.AddComponent<DummyPlayerClick>();
+            workerPlayer.transform.SetParent(workerCgm.transform);
 
             yield return "Setting up EditorPlayModeManager...";
 

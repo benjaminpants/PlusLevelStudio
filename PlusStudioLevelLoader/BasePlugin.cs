@@ -13,7 +13,7 @@ using System.IO;
 
 namespace PlusStudioLevelLoader
 {
-    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudioloader", "Plus Level Loader", "1.12.2.0")]
+    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudioloader", "Plus Level Loader", "1.12.3.0")]
     [BepInDependency("mtm101.rulerp.bbplus.baldidevapi")]
     public class LevelLoaderPlugin : BaseUnityPlugin
     {
@@ -344,6 +344,11 @@ namespace PlusStudioLevelLoader
                 if (poster.multiPosterArray.Length == 0) continue;
                 toRemove.AddRange(poster.multiPosterArray);
                 toRemove.Remove(poster);
+            }
+            foreach (StandardDoorMats dm in Resources.FindObjectsOfTypeAll<StandardDoorMats>().Where(x => x.IsPrefab()))
+            {
+                toRemove.Add(dm.openPosterData);
+                toRemove.Add(dm.shutPosterData);
             }
             allBasePosters.RemoveAll(x => toRemove.Contains(x));
             foreach (PosterObject poster in allBasePosters)

@@ -1633,6 +1633,22 @@ namespace PlusLevelStudio.Editor
             return workerRc.textureAtlas;
         }
 
+        protected Dictionary<StandardDoorMats, Material[]> generatedDoorMats = new Dictionary<StandardDoorMats, Material[]>();
+
+        public Material[] GetDoorShutMaterials(StandardDoorMats dm)
+        {
+            if (generatedDoorMats.ContainsKey(dm))
+            {
+                return generatedDoorMats[dm];
+            }    
+            workerRc.doorMats = dm;
+            workerRc.generatedDoorShutMaterial = new Material[2];
+            workerRc.generatedDoorOpenMaterial = new Material[2];
+            workerRc.GenerateDoorTextures();
+            generatedDoorMats.Add(dm, workerRc.generatedDoorShutMaterial);
+            return workerRc.generatedDoorShutMaterial;
+        }
+
 
         static FieldInfo _initialized = AccessTools.Field(typeof(Cell), "initalized"); // seriously mystman? "initalized"?
         public void RefreshCells(bool refreshLights = true, bool updateDataCells = true)
@@ -1752,6 +1768,8 @@ namespace PlusLevelStudio.Editor
             workerCgm = GameObject.Instantiate(cgmPrefab);
             workerCgm.gameObject.SetActive(true);
             workerCgm.gameObject.SetActive(false);
+            workerCgm.ReflectionSetVariable("players", new PlayerManager[] { workerCgm.transform.Find("WorkerDummyPlayer").GetComponent<PlayerManager>(), null, null, null });
+
             RegenerateGridAndCells();
         }
     }

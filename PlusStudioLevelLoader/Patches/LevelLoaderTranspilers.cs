@@ -28,8 +28,18 @@ namespace PlusStudioLevelLoader.Patches
             { "Level loader blocking tiles marked to be blocked.", "ApplyCellCoverages" },
             { "Tile data loaded.", "ApplyCellSecrets" },
             { "Level loader loading tile based objects.", "PoolItemSpawns" }, // this runs after "Level loader placing items"
-            { "Level loader loading tile data.", "AddEventSpawners" }
+            { "Level loader loading tile data.", "AddEventSpawners" },
+            { "Level loader finished loading!", "FinalizeStrange"}
         };
+
+        public static void FinalizeStrange(LevelLoader loader, LevelData data)
+        {
+            Debug.Log("Level loader removing mainHall from rooms list... (Loader Extension)");
+            if (!loader.Ec.rooms.Remove(loader.Ec.mainHall))
+            {
+                Debug.LogWarning("No mainHall? What?");
+            }
+        }
 
         public static void AddEventSpawners(LevelLoader loader, LevelData data)
         {

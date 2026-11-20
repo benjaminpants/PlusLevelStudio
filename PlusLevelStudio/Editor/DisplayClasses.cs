@@ -30,10 +30,13 @@ namespace PlusLevelStudio.Editor
             base.UpdateSides(position, dir);
             IntVector2 posB = position + Directions.ToIntVector2(dir);
             IntVector2 posA = position;
+
             StandardDoorMats doorMatA = LevelLoaderPlugin.Instance.roomSettings[EditorController.Instance.levelData.RoomFromId(EditorController.Instance.levelData.cells[posA.x, posA.z].roomId).roomType].doorMat;
             StandardDoorMats doorMatB = LevelLoaderPlugin.Instance.roomSettings[EditorController.Instance.levelData.RoomFromId(EditorController.Instance.levelData.cells[posB.x, posB.z].roomId).roomType].doorMat;
-            MaterialModifier.ChangeOverlay(sideB, doorMatA.shut);
-            MaterialModifier.ChangeOverlay(sideA, doorMatB.shut);
+            Material[] doorMatsA = EditorController.Instance.GetDoorShutMaterials(doorMatA);
+            Material[] doorMatsB = EditorController.Instance.GetDoorShutMaterials(doorMatB);
+            MaterialModifier.ChangeOverlay(sideB, doorMatsA[1]);
+            MaterialModifier.ChangeOverlay(sideA, doorMatsB[0]);
         }
     }
 

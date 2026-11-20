@@ -87,7 +87,7 @@ namespace PlusLevelStudio.Lua
         }
     }
 
-    public class CustomChallengeManager : BaseChallengeGameManager
+    public class CustomChallengeManager : BaseChallengeGameManager, IStudioLegacyKnowledgable
     {
         public string luaScript;
         public Script script;
@@ -311,6 +311,10 @@ namespace PlusLevelStudio.Lua
 
         bool finalExitsTriggered = false;
 
+        private StudioLevelLegacyFlags _legacyFlags;
+
+        public StudioLevelLegacyFlags legacyFlags { get => _legacyFlags; set => _legacyFlags = value; }
+
         public void ActivateExits(bool performEscape)
         {
             if (finalExitsTriggered) return;
@@ -495,7 +499,24 @@ namespace PlusLevelStudio.Lua
 
         public List<RoomProxy> GetAllRooms()
         {
+            if (myManager.legacyFlags.HasFlag(StudioLevelLegacyFlags.BeforeFloodFix))
+            {
+                return GetAllRoomsIncludingMainHall();
+            }
+            List<RoomProxy> retV = myManager.Ec.rooms.Select(x => new RoomProxy(x)).ToList();
             return myManager.Ec.rooms.Select(x => new RoomProxy(x)).ToList();
+        }
+
+        public List<RoomProxy> GetAllRoomsIncludingMainHall()
+        {
+            List<RoomProxy> retV = myManager.Ec.rooms.Select(x => new RoomProxy(x)).ToList();
+            retV.Insert(0, new RoomProxy(myManager.Ec.mainHall));
+            return retV;
+        }
+
+        public RoomProxy GetMainHall()
+        {
+            return new RoomProxy(myManager.Ec.mainHall);
         }
 
         public void ForceLose()

@@ -20,5 +20,6 @@ namespace PlusLevelStudio
     {
         None = 0,
         BeforeNPCCustom = 1,
+        BeforeFloodFix = 2
     }
 }
