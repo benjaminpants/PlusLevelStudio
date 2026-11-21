@@ -22,6 +22,9 @@ namespace PlusLevelStudio.UI
             collision.gameObject.tag = "Button";
             collision.GetComponent<Image>().color = Color.clear;
             EditorTextBox box = collision.AddComponent<EditorTextBox>();
+            //TMP_InputField inputField = b.AddComponent<TMP_InputField>();
+            //inputField.textComponent = b.GetComponent<TextMeshProUGUI>();
+            //box.input = inputField;
             box.text = b.GetComponent<TextMeshProUGUI>();
             box.characterLimit = data["characterLimit"].Value<int>();
             box.upperAll = data["upper"].Value<bool>();
@@ -65,6 +68,7 @@ namespace PlusLevelStudio.UI
     // TODO: replace with proper text box?
     public class EditorTextBox : MenuButton
     {
+        public TMP_InputField input;
         public TextMeshProUGUI text;
         bool typing = false;
         public int characterLimit = 8;
@@ -83,6 +87,7 @@ namespace PlusLevelStudio.UI
             //base.Press();
             CursorController.Instance.Hide(true);
             typing = true;
+            //input.Select();
         }
 
         public override void Highlight()

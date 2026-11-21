@@ -1741,8 +1741,16 @@ namespace PlusLevelStudio.Editor
             }
         }
 
+        public void SetupEventSystem()
+        {
+            EventSystem eventSystem = gameObject.AddComponent<EventSystem>();
+            eventSystem.gameObject.AddComponent<BaldiStandaloneInputModule>();
+            eventSystem.enabled = true;
+        }
+
         protected override void AwakeFunction()
         {
+            //SetupEventSystem();
             currentFile = new EditorFileContainer();
             currentFile.meta = new EditorFileMeta();
             customContent = new EditorCustomContent();
