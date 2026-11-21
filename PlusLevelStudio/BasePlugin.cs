@@ -2220,6 +2220,7 @@ namespace PlusLevelStudio
             UIBuilder.elementBuilders.Add("rawimagebutton", new RawImageButtonBuilder());
             UIBuilder.elementBuilders.Add("segment", new DigitalNumberBuilder());
             UIBuilder.elementBuilders.Add("checkbox", new CheckboxBuilder());
+            UIBuilder.elementBuilders.Add("colorpicker", new ColorPickerBuilder());
             SpritesFromPath(Path.Combine(AssetLoader.GetModPath(this), "UI", "Editor"), "");
 
             string[] eventSpritesToPrepare = new string[]
