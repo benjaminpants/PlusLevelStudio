@@ -185,7 +185,7 @@ namespace PlusLevelStudio.UI
             }
         }
 
-        public static UIExchangeHandler BuildUIFromFile(Type type, RectTransform parent, string name, string path)
+        public static UIExchangeHandler BuildUIFromFile(Type type, RectTransform parent, string name, string path, Dictionary<string, JToken> extraDefines = null)
         {
             GameObject obj = new GameObject(name);
             obj.transform.SetParent(parent.transform, false);
@@ -198,6 +198,13 @@ namespace PlusLevelStudio.UI
 
             // handle defines
             Dictionary<string, JToken> defines = new Dictionary<string, JToken>(globalDefines);
+            if (extraDefines != null)
+            {
+                foreach (KeyValuePair<string, JToken> item in extraDefines)
+                {
+                    defines[item.Key] = item.Value;
+                }
+            }
             JToken definesToken = parsedFile["defines"];
 
             foreach (JProperty child in definesToken.Children())
@@ -214,9 +221,9 @@ namespace PlusLevelStudio.UI
             return handler;
         }
 
-        public static T BuildUIFromFile<T>(RectTransform parent, string name, string path) where T : UIExchangeHandler
+        public static T BuildUIFromFile<T>(RectTransform parent, string name, string path, Dictionary<string, JToken> extraDefines = null) where T : UIExchangeHandler
         {
-            return (T)BuildUIFromFile(typeof(T), parent, name, path);
+            return (T)BuildUIFromFile(typeof(T), parent, name, path, extraDefines);
         }
     }
 }
