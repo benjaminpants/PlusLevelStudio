@@ -13,7 +13,7 @@ using System.IO;
 
 namespace PlusStudioLevelLoader
 {
-    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudioloader", "Plus Level Loader", "1.12.3.0")]
+    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudioloader", "Plus Level Loader", "1.12.3.1")]
     [BepInDependency("mtm101.rulerp.bbplus.baldidevapi")]
     public class LevelLoaderPlugin : BaseUnityPlugin
     {
@@ -124,7 +124,7 @@ namespace PlusStudioLevelLoader
             assetMan.AddFromResourcesNoClones<StandardDoorMats>();
             yield return "Defining room categories...";
             List<RoomFunctionContainer> roomFunctions = Resources.FindObjectsOfTypeAll<RoomFunctionContainer>().ToList();
-            roomSettings.Add("hall", new RoomSettings(RoomCategory.Hall, RoomType.Hall, Color.white, assetMan.Get<StandardDoorMats>("ClassDoorSet")));
+            roomSettings.Add("hall", new RoomSettings(RoomCategory.Hall, RoomType.Hall, Color.white, assetMan.Get<StandardDoorMats>("DefaultDoorSet")));
             roomSettings.Add("class", new RoomSettings(RoomCategory.Class, RoomType.Room, Color.green, assetMan.Get<StandardDoorMats>("ClassDoorSet"), assetMan.Get<Material>("MapTile_Classroom")));
             roomSettings.Add("faculty", new RoomSettings(RoomCategory.Faculty, RoomType.Room, Color.red, assetMan.Get<StandardDoorMats>("FacultyDoorSet"), assetMan.Get<Material>("MapTile_Faculty")));
             roomSettings.Add("office", new RoomSettings(RoomCategory.Office, RoomType.Room, new Color(1f, 1f, 0f), assetMan.Get<StandardDoorMats>("PrincipalDoorSet"), assetMan.Get<Material>("MapTile_Office")));
