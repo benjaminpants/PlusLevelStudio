@@ -410,8 +410,8 @@
 {"key":"Ed_RandomEvent_mysteryroom","value":"Mystery Room\nThe mystery room appears!\nPlace whatever you want inside!"},
 {"key":"Ed_RandomEvent_testprocedure","value":"Test Procedure\nAll Test Procedure lockdown doors will close!\n(Requires either Global Random Structure, or specially placed doors.)"},
 {"key":"Ed_RandomEvent_gravitychaos","value":"Gravity Chaos\nShapes appear all around the school, flipping gravity!\nNPCs on different gravities can't interact."},
-{"key":"Ed_RandomEvent_studentshuffle","value":"Student Shuffle\nA massive crowd of students barges into the school through the elevators,\n pushing anything in their way!"},
-{"key":"Ed_RandomEvent_balderdash","value":"Balder Dash\nBalders (Boulders) will appear at the elevators, and squish whatever gets in the way!"},
+{"key":"Ed_RandomEvent_studentshuffle","value":"Student Shuffle\nA massive crowd of students barges into the school from the curtains,\n pushing anything in their way!"},
+{"key":"Ed_RandomEvent_balderdash","value":"Balder Dash\nBalders (Boulders) will come from the curtains, and squish whatever gets in the way!"},
 
 {"key":"Ed_Tool_technical_lightspot_Title","value":"Light Spot"},
 {"key":"Ed_Tool_technical_lightspot_Desc","value":"<b>USE THIS ONE!</b> This light automatically matches the color and prefab of the level it's used in. In the editor, it always shows as light group 1."},
