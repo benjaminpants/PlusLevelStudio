@@ -1,7 +1,11 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using MTM101BaldAPI.AssetTools;
+using Newtonsoft.Json.Linq;
+using PlusLevelStudio.Editor;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -69,7 +73,97 @@ namespace PlusLevelStudio.UI
             colorPicker.colorPreview = colorPreviewImage;
             colorPicker.Initialize();
 
+            GameObject typableObjects = new GameObject("Typables");
+            typableObjects.transform.SetParent(builtImage.transform, false);
+            RectTransform tf = typableObjects.AddComponent<RectTransform>();
+            tf.pivot = new Vector2(0f, 1f);
+            tf.anchoredPosition = new Vector2(colorPicker.baseImage.rectTransform.sizeDelta.x / 2 + 28, colorPicker.baseImage.rectTransform.sizeDelta.y / 2f - 24f);
+            ColorPickerExchangeHandler hand = UIBuilder.BuildUIFromFile<ColorPickerExchangeHandler>(tf, "ActualElements", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "Elements", "ColorPickerClickables.json"), new Dictionary<string, JToken>()
+            {
+                { "localColor", data["textColor"] }
+            });
+            hand.colorPicker = colorPicker;
+            colorPicker.pickerHandler = hand;
+            colorPicker.parentHandler = handler;
+            colorPicker.parentMessage = data["onChange"].Value<string>();
             return builtImage;
+        }
+    }
+
+    public class ColorPickerExchangeHandler : UIExchangeHandler
+    {
+        public ColorPicker colorPicker;
+        TextMeshProUGUI hexText;
+        TextMeshProUGUI redText;
+        TextMeshProUGUI greenText;
+        TextMeshProUGUI blueText;
+        public override bool GetStateBoolean(string key)
+        {
+            return false;
+        }
+
+        public override void OnElementsCreated()
+        {
+            hexText = transform.Find("HexCodeDisplay").GetComponent<TextMeshProUGUI>();
+            redText = transform.Find("RedDisplay").GetComponent<TextMeshProUGUI>();
+            greenText = transform.Find("GreenDisplay").GetComponent<TextMeshProUGUI>();
+            blueText = transform.Find("BlueDisplay").GetComponent<TextMeshProUGUI>();
+        }
+
+        public void Refresh(bool refreshHex, bool refreshR = true, bool refreshG = true, bool refreshB = true)
+        {
+            if (refreshHex)
+            {
+                hexText.text = ColorUtility.ToHtmlStringRGB(colorPicker.outputColor);
+            }
+            if (refreshR)
+            {
+                redText.text = Mathf.RoundToInt(colorPicker.outputColor.r * 255f).ToString();
+            }
+            if (refreshG)
+            {
+                greenText.text = Mathf.RoundToInt(colorPicker.outputColor.g * 255f).ToString();
+            }
+            if (refreshB)
+            {
+                blueText.text = Mathf.RoundToInt(colorPicker.outputColor.b * 255f).ToString();
+            }
+        }
+
+        public override void SendInteractionMessage(string message, object data = null)
+        {
+            switch (message)
+            {
+                case "red":
+                case "redDone":
+                    int r = 0;
+                    int.TryParse((string)data, out r);
+                    colorPicker.outputColor = new Color(Mathf.Clamp01(r / 255f), colorPicker.outputColor.g, colorPicker.outputColor.b);
+                    Refresh(true, refreshR: message == "redDone");
+                    break;
+                case "green":
+                case "greenDone":
+                    int g = 0;
+                    int.TryParse((string)data, out g);
+                    colorPicker.outputColor = new Color(colorPicker.outputColor.r, Mathf.Clamp01(g / 255f), colorPicker.outputColor.b);
+                    Refresh(true, refreshG: message == "greenDone");
+                    break;
+                case "blue":
+                case "blueDone":
+                    int b = 0;
+                    int.TryParse((string)data, out b);
+                    colorPicker.outputColor = new Color(colorPicker.outputColor.r, colorPicker.outputColor.g, Mathf.Clamp01(b / 255f));
+                    Refresh(true, refreshB: message == "blueDone");
+                    break;
+                case "hexDone":
+                case "hex":
+                    if (ColorUtility.TryParseHtmlString("#" + (hexText.text.PadRight(6, '0')), out Color c))
+                    {
+                        colorPicker.outputColor = c;
+                        Refresh(message == "hexDone");
+                    }
+                    break;
+            }
         }
     }
 
@@ -81,6 +175,9 @@ namespace PlusLevelStudio.UI
         public Image colorPreview;
         public Image picker;
         public Image brightnessPicker;
+        public ColorPickerExchangeHandler pickerHandler;
+        public UIExchangeHandler parentHandler;
+        public string parentMessage;
         bool initialized = false;
         Color[] pixels;
         int size = 0;
@@ -91,6 +188,10 @@ namespace PlusLevelStudio.UI
             get
             {
                 return chosenColor * baseImage.color;
+            }
+            set
+            {
+                RefreshColor(value);
             }
         }
 
@@ -114,7 +215,8 @@ namespace PlusLevelStudio.UI
             float brightness = (Mathf.Clamp((pos.y + 64f), 3f, 125f) - 3f) / 122f;
             baseImage.color = new Color(brightness,brightness,brightness,1f);
             UpdateBrightnessSelector();
-            UpdateColorPreview();
+            UpdateColorPreviewAndSendMessage();
+            pickerHandler.Refresh(true);
         }
 
         void RefreshColor(Color color)
@@ -140,7 +242,7 @@ namespace PlusLevelStudio.UI
                 }    
             }
             UpdatePicker(closestIndex);
-            UpdateColorPreview();
+            UpdateColorPreviewAndSendMessage();
         }
 
         // Compares two colors, closer to 0 = closer.
@@ -171,7 +273,8 @@ namespace PlusLevelStudio.UI
             }
             UpdatePicker(attemptedIndex);
             chosenColor = pixels[attemptedIndex];
-            UpdateColorPreview();
+            UpdateColorPreviewAndSendMessage();
+            pickerHandler.Refresh(true);
             //picker.color = pixels[attemptedIndex];
         }
 
@@ -181,9 +284,10 @@ namespace PlusLevelStudio.UI
             picker.rectTransform.anchoredPosition = chosenPixel - (baseImage.rectTransform.sizeDelta / 2);
         }
 
-        void UpdateColorPreview()
+        void UpdateColorPreviewAndSendMessage()
         {
             colorPreview.color = outputColor;
+            parentHandler.SendMessage(parentMessage, outputColor);
         }
     }
 }

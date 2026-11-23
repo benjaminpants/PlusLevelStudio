@@ -16,15 +16,6 @@
 			"onPressed":"exit"
 		},
 		{
-			"name":"ColorPicker",
-			"type":"colorpicker",
-			"anchoredPosition":[0,0],
-			"size":128,
-			"pivot":"#center",
-			"anchorMin":"#center",
-			"anchorMax":"#center"
-		},
-		{
 			"name":"undoButton",
 			"type":"imageButton",
 			"graphic":"UndoButton",
