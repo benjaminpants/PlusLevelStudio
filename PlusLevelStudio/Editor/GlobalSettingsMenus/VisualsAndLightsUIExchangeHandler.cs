@@ -152,6 +152,16 @@ namespace PlusLevelStudio.Editor.GlobalSettingsMenus
                     skyboxViewOffset = Mathf.Clamp(skyboxViewOffset - 1, 0, (LevelStudioPlugin.Instance.selectableSkyboxes.Count + 1) - skyboxButtons.Length);
                     RefreshSkyboxView();
                     break;
+                case "openSkyboxColorMenu":
+                    Color oldColor = EditorController.Instance.levelData.skyboxColor;
+                    EditorController.Instance.CreateUIColorPickerMenu(EditorController.Instance.levelData.skyboxColor, (Color c) =>
+                    {
+                        EditorController.Instance.levelData.skyboxColor = c;
+                        handler.somethingChanged = c != oldColor;
+                        RefreshSkyboxView();
+                        EditorController.Instance.UpdateSkybox();
+                    }, "Ed_ColorPicker_SkyboxColor");
+                    break;
                 case "setColor":
                 case "setColorDone":
                     EditorController.Instance.levelData.minLightColor = (Color)data;

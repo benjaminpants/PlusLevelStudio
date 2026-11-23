@@ -29,6 +29,18 @@
 			"anchorMax":"#center",
 		},
 		{
+			"name":"ChangeSkyboxColor",
+			"type":"imageButton",
+			"graphic":"ColorPickerButton",
+			"hoverGraphic":"ColorPickerButtonHover",
+			"anchoredPosition":[-156,-32],
+			"size":[16,16],
+			"pivot":"#bottomLeft",
+			"anchorMin":"#center",
+			"anchorMax":"#center",
+			"onPressed":"openSkyboxColorMenu"
+		},
+		{
 			"name":"Skybox0",
 			"type":"imageButton",
 			"graphic":"Skyboxes/default",
