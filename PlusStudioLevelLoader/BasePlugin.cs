@@ -13,7 +13,7 @@ using System.IO;
 
 namespace PlusStudioLevelLoader
 {
-    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudioloader", "Plus Level Loader", "1.12.3.1")]
+    [BepInPlugin("mtm101.rulerp.baldiplus.levelstudioloader", "Plus Level Loader", "1.12.3.2")]
     [BepInDependency("mtm101.rulerp.bbplus.baldidevapi")]
     public class LevelLoaderPlugin : BaseUnityPlugin
     {
@@ -130,9 +130,9 @@ namespace PlusStudioLevelLoader
             roomSettings.Add("office", new RoomSettings(RoomCategory.Office, RoomType.Room, new Color(1f, 1f, 0f), assetMan.Get<StandardDoorMats>("PrincipalDoorSet"), assetMan.Get<Material>("MapTile_Office")));
             roomSettings.Add("closet", new RoomSettings(RoomCategory.Special, RoomType.Room, new Color(1f, 0.6214f, 0f), assetMan.Get<StandardDoorMats>("SuppliesDoorSet")));
             roomSettings.Add("reflex", new RoomSettings(RoomCategory.Null, RoomType.Room, new Color(1f, 1f, 1f), assetMan.Get<StandardDoorMats>("DoctorDoorSet")));
-            roomSettings.Add("library", new RoomSettings(RoomCategory.Special, RoomType.Room, new Color(0f, 1f, 1f), assetMan.Get<StandardDoorMats>("ClassDoorSet")));
-            roomSettings.Add("cafeteria", new RoomSettings(RoomCategory.Special, RoomType.Room, new Color(0f, 1f, 1f), assetMan.Get<StandardDoorMats>("ClassDoorSet")));
-            roomSettings.Add("outside", new RoomSettings(RoomCategory.Special, RoomType.Room, new Color(0f, 1f, 1f), assetMan.Get<StandardDoorMats>("ClassDoorSet")));
+            roomSettings.Add("library", new RoomSettings(RoomCategory.Special, RoomType.Room, new Color(0f, 1f, 1f), assetMan.Get<StandardDoorMats>("DefaultDoorSet")));
+            roomSettings.Add("cafeteria", new RoomSettings(RoomCategory.Special, RoomType.Room, new Color(0f, 1f, 1f), assetMan.Get<StandardDoorMats>("DefaultDoorSet")));
+            roomSettings.Add("outside", new RoomSettings(RoomCategory.Special, RoomType.Room, new Color(0f, 1f, 1f), assetMan.Get<StandardDoorMats>("DefaultDoorSet")));
             roomSettings.Add("shop", new RoomSettings(RoomCategory.Store, RoomType.Room, new Color(1f, 1f, 1f), assetMan.Get<StandardDoorMats>("ClassDoorSet")));
             roomSettings.Add("lightbulbtesting", new RoomSettings(RoomCategory.Special, RoomType.Room, new Color(1f, 1f, 1f), assetMan.Get<StandardDoorMats>("ClassDoorSet")));
             roomSettings.Add("mystery", new RoomSettings(RoomCategory.Mystery, RoomType.Room, new Color(0f, 1f, 0f), assetMan.Get<StandardDoorMats>("MysteryDoorMats")));
