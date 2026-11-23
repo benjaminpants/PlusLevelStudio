@@ -170,7 +170,8 @@
 			"anchorMin":"#center",
 			"anchorMax":"#center",
 			"onChange":"setColor",
-			"onChangeConfirm":"setColorDone"
+			"onChangeConfirm":"setColorDone",
+			"expandedTitle":"Ed_ColorPicker_LightColor"
 		},
 		{
 			"name":"ExitButton",

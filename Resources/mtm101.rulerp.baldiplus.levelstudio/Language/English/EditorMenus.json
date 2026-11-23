@@ -36,6 +36,11 @@
 {"key":"Ed_Menu_StoreItemCount","value":"Store Item Count:"},
 {"key":"Ed_Menu_NoTrip","value":"None"},
 
+{"key":"Ed_ColorPicker_Generic","value":"Pick A Color:"},
+{"key":"Ed_ColorPicker_MinLightLevel","value":"Minimum Light Color:"},
+{"key":"Ed_ColorPicker_LightColor","value":"Light Color:"},
+{"key":"Ed_ColorPicker_SkyboxColor","value":"Skybox Color:"},
+
 {"key":"Ed_Menu_ElevatorTitle","value":"Elevator Title:"},
 {"key":"Ed_Menu_InitialEventGap","value":"Initial Event Gap:"},
 {"key":"Ed_Menu_MinEventGap","value":"Minimum Event Gap:"},
