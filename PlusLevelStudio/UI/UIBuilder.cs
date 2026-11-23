@@ -185,7 +185,12 @@ namespace PlusLevelStudio.UI
             }
         }
 
-        public static UIExchangeHandler BuildUIFromFile(Type type, RectTransform parent, string name, string path, Dictionary<string, JToken> extraDefines = null)
+        public static UIExchangeHandler BuildUIFromFile(Type type, RectTransform parent, string name, string path)
+        {
+            return BuildUIFromFile(type, parent, name, path, null);
+        }
+
+        public static UIExchangeHandler BuildUIFromFile(Type type, RectTransform parent, string name, string path, Dictionary<string, JToken> extraDefines)
         {
             GameObject obj = new GameObject(name);
             obj.transform.SetParent(parent.transform, false);
@@ -221,9 +226,14 @@ namespace PlusLevelStudio.UI
             return handler;
         }
 
-        public static T BuildUIFromFile<T>(RectTransform parent, string name, string path, Dictionary<string, JToken> extraDefines = null) where T : UIExchangeHandler
+        public static T BuildUIFromFile<T>(RectTransform parent, string name, string path, Dictionary<string, JToken> extraDefines) where T : UIExchangeHandler
         {
             return (T)BuildUIFromFile(typeof(T), parent, name, path, extraDefines);
+        }
+
+        public static T BuildUIFromFile<T>(RectTransform parent, string name, string path) where T : UIExchangeHandler
+        {
+            return BuildUIFromFile<T>(parent, name, path, null);
         }
     }
 }
