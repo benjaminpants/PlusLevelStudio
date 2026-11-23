@@ -1001,9 +1001,17 @@ namespace PlusLevelStudio.Editor
             handler.OnNo = onClose;
         }
 
+        public void CreateUIColorPickerMenu(Color startingColor, Action<Color> onSubmit, string title = "Ed_ColorPicker_Generic")
+        {
+            ExpandedColorPickerMenuExchangeHandler expandedPickerMenu = CreateUI<ExpandedColorPickerMenuExchangeHandler>("ColorPickerExpanded", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "Elements", "ColorPickerExpanded.json"));
+            expandedPickerMenu.SetColor(startingColor);
+            expandedPickerMenu.SetTitle(title);
+            expandedPickerMenu.onExit = onSubmit;
+        }
+
         public EditorUIFileBrowser CreateUIFileBrowser(string path, string startingFile, string extension, bool allowNonExistantFiles, Func<string, bool> onSubmit)
         {
-            EditorUIFileBrowser fileBrowser = EditorController.Instance.CreateUI<EditorUIFileBrowser>("FileBrowser");
+            EditorUIFileBrowser fileBrowser = CreateUI<EditorUIFileBrowser>("FileBrowser");
             fileBrowser.Setup(path, extension, startingFile, allowNonExistantFiles, onSubmit);
             return fileBrowser;
         }

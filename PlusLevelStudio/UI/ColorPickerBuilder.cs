@@ -1,4 +1,5 @@
 ﻿using MTM101BaldAPI.AssetTools;
+using MTM101BaldAPI.UI;
 using Newtonsoft.Json.Linq;
 using PlusLevelStudio.Editor;
 using System;
@@ -15,11 +16,12 @@ namespace PlusLevelStudio.UI
     {
         public override GameObject Build(GameObject parent, UIExchangeHandler handler, Dictionary<string, JToken> data)
         {
+            float size = data["size"].Value<float>();
             if (!data.ContainsKey("graphic"))
             {
-                data["graphic"] = data["size"].Value<float>() < 256 ? "HSVWheelSmall" : "HSVWheel";
+                data["graphic"] = size < 256 ? "HSVWheelSmall" : "HSVWheel";
             }
-            data["size"] = new JArray(data["size"].Value<float>(), data["size"].Value<float>());
+            data["size"] = new JArray(size, size);
             GameObject builtImage = base.Build(parent, handler, data);
             GameObject pickerObject = new GameObject();
             pickerObject.transform.SetParent(builtImage.transform, false);
@@ -71,6 +73,45 @@ namespace PlusLevelStudio.UI
             colorPreviewImage.rectTransform.anchoredPosition = new Vector2(colorPicker.baseImage.rectTransform.sizeDelta.x / 2 + 40, colorPicker.baseImage.rectTransform.sizeDelta.y / 2f - 12f);
             colorPreviewImage.rectTransform.sizeDelta = new Vector2(24f,24f);
             colorPicker.colorPreview = colorPreviewImage;
+
+            bool canExpand = (size < 256f) && EditorController.Instance != null;
+            if (data.ContainsKey("expandable"))
+            {
+                canExpand &= data["expandable"].Value<bool>();
+            }
+
+            if (canExpand)
+            {
+                // the color picker expand button
+                bool inverted = ConvertToColor(data["textColor"]).r < 0.5f;
+                GameObject expandObject = new GameObject("ExpandButton");
+                expandObject.transform.SetParent(builtImage.transform, false);
+                expandObject.transform.localScale = Vector3.one;
+                expandObject.transform.localPosition = Vector3.zero;
+                Image expandImage = expandObject.AddComponent<Image>();
+                expandImage.sprite = GetSprite(inverted ? "ThreeDotsInvert" : "ThreeDots");
+                expandImage.rectTransform.pivot = new Vector2(0f, 1f);
+                expandImage.rectTransform.sizeDelta = new Vector2(16f, 16f);
+                expandImage.rectTransform.anchoredPosition = new Vector2(-colorPicker.baseImage.rectTransform.sizeDelta.x / 2, colorPicker.baseImage.rectTransform.sizeDelta.y / 2);
+                StandardMenuButton expandButton = expandImage.gameObject.ConvertToButton<StandardMenuButton>();
+                expandButton.swapOnHigh = true;
+                expandButton.highlightedSprite = GetSprite(!inverted ? "ThreeDotsInvert" : "ThreeDots");
+                expandButton.unhighlightedSprite = GetSprite(inverted ? "ThreeDotsInvert" : "ThreeDots");
+                string expandedTitle = "Ed_ColorPicker_Generic";
+                if (data.ContainsKey("expandedTitle"))
+                {
+                    expandedTitle = data["expandedTitle"].Value<string>();
+                }
+                expandButton.OnPress.AddListener(() =>
+                {
+                    ExpandedColorPickerMenuExchangeHandler expandedPickerMenu = EditorController.Instance.CreateUI<ExpandedColorPickerMenuExchangeHandler>("ColorPickerExpanded", Path.Combine(AssetLoader.GetModPath(LevelStudioPlugin.Instance), "Data", "UI", "Elements", "ColorPickerExpanded.json"));
+                    expandedPickerMenu.SetColor(colorPicker.outputColor);
+                    expandedPickerMenu.targetColorPicker = colorPicker;
+                    expandedPickerMenu.SetTitle(expandedTitle);
+                });
+            }
+
+
             colorPicker.Initialize();
 
             GameObject typableObjects = new GameObject("Typables");
@@ -94,6 +135,54 @@ namespace PlusLevelStudio.UI
                 colorPicker.parentMessageConfirm = data["onChangeConfirm"].Value<string>();
             }
             return builtImage;
+        }
+    }
+
+    public class ExpandedColorPickerMenuExchangeHandler : EditorOverlayUIExchangeHandler
+    {
+        TextMeshProUGUI title;
+        ColorPicker ourColorPicker;
+        public ColorPicker targetColorPicker;
+        public Action<Color> onExit;
+        public override void OnElementsCreated()
+        {
+            ourColorPicker = transform.Find("ColorPicker").GetComponent<ColorPicker>();
+            title = transform.Find("TitleText").GetComponent<TextMeshProUGUI>();
+        }
+
+        public void SetTitle(string text)
+        {
+            title.text = LocalizationManager.Instance.GetLocalizedText(text);
+        }
+
+        public void SetColor(Color color)
+        {
+            ourColorPicker.outputColor = color;
+        }
+
+        public override void SendInteractionMessage(string message, object data)
+        {
+            switch (message)
+            {
+                case "changeBase":
+                case "changeBaseDone":
+                    if (targetColorPicker != null)
+                    {
+                        targetColorPicker.outputColor = (Color)data;
+                        targetColorPicker.SendUpdateMessage(message == "changeBaseDone");
+                    }
+                    return;
+            }
+            base.SendInteractionMessage(message, data);
+        }
+
+        public override bool OnExit()
+        {
+            if (onExit != null)
+            {
+                onExit(ourColorPicker.outputColor);
+            }
+            return true;
         }
     }
 
