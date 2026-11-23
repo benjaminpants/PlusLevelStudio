@@ -85,7 +85,14 @@ namespace PlusLevelStudio.UI
             hand.colorPicker = colorPicker;
             colorPicker.pickerHandler = hand;
             colorPicker.parentHandler = handler;
-            colorPicker.parentMessage = data["onChange"].Value<string>();
+            if (data.ContainsKey("onChange"))
+            {
+                colorPicker.parentMessage = data["onChange"].Value<string>();
+            }
+            if (data.ContainsKey("onChangeConfirm"))
+            {
+                colorPicker.parentMessageConfirm = data["onChangeConfirm"].Value<string>();
+            }
             return builtImage;
         }
     }
@@ -140,6 +147,7 @@ namespace PlusLevelStudio.UI
                     int.TryParse((string)data, out r);
                     colorPicker.outputColor = new Color(Mathf.Clamp01(r / 255f), colorPicker.outputColor.g, colorPicker.outputColor.b);
                     Refresh(true, refreshR: message == "redDone");
+                    colorPicker.SendUpdateMessage(message == "redDone");
                     break;
                 case "green":
                 case "greenDone":
@@ -147,6 +155,7 @@ namespace PlusLevelStudio.UI
                     int.TryParse((string)data, out g);
                     colorPicker.outputColor = new Color(colorPicker.outputColor.r, Mathf.Clamp01(g / 255f), colorPicker.outputColor.b);
                     Refresh(true, refreshG: message == "greenDone");
+                    colorPicker.SendUpdateMessage(message == "greenDone");
                     break;
                 case "blue":
                 case "blueDone":
@@ -154,14 +163,20 @@ namespace PlusLevelStudio.UI
                     int.TryParse((string)data, out b);
                     colorPicker.outputColor = new Color(colorPicker.outputColor.r, colorPicker.outputColor.g, Mathf.Clamp01(b / 255f));
                     Refresh(true, refreshB: message == "blueDone");
+                    colorPicker.SendUpdateMessage(message == "blueDone");
                     break;
                 case "hexDone":
                 case "hex":
                     if (ColorUtility.TryParseHtmlString("#" + (hexText.text.PadRight(6, '0')), out Color c))
                     {
-                        colorPicker.outputColor = c;
+                        colorPicker.RefreshColor(c, false);
                         Refresh(message == "hexDone");
+                        colorPicker.SendUpdateMessage(message == "hexDone");
                     }
+                    break;
+                case "randomColor":
+                    colorPicker.outputColor = new Color(UnityEngine.Random.Range(0f,1f), UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f));
+                    colorPicker.SendUpdateMessage(true);
                     break;
             }
         }
@@ -178,6 +193,7 @@ namespace PlusLevelStudio.UI
         public ColorPickerExchangeHandler pickerHandler;
         public UIExchangeHandler parentHandler;
         public string parentMessage;
+        public string parentMessageConfirm;
         bool initialized = false;
         Color[] pixels;
         int size = 0;
@@ -191,7 +207,7 @@ namespace PlusLevelStudio.UI
             }
             set
             {
-                RefreshColor(value);
+                RefreshColor(value, true);
             }
         }
 
@@ -215,11 +231,12 @@ namespace PlusLevelStudio.UI
             float brightness = (Mathf.Clamp((pos.y + 64f), 3f, 125f) - 3f) / 122f;
             baseImage.color = new Color(brightness,brightness,brightness,1f);
             UpdateBrightnessSelector();
-            UpdateColorPreviewAndSendMessage();
+            UpdateColorPreview();
             pickerHandler.Refresh(true);
+            SendUpdateMessage(true);
         }
 
-        void RefreshColor(Color color)
+        public void RefreshColor(Color color, bool sendRefresh)
         {
             Color.RGBToHSV(color, out float h, out float s, out float v);
             baseImage.color = new Color(v, v, v);
@@ -242,7 +259,11 @@ namespace PlusLevelStudio.UI
                 }    
             }
             UpdatePicker(closestIndex);
-            UpdateColorPreviewAndSendMessage();
+            UpdateColorPreview();
+            if (sendRefresh)
+            {
+                pickerHandler.Refresh(true);
+            }
         }
 
         // Compares two colors, closer to 0 = closer.
@@ -273,8 +294,9 @@ namespace PlusLevelStudio.UI
             }
             UpdatePicker(attemptedIndex);
             chosenColor = pixels[attemptedIndex];
-            UpdateColorPreviewAndSendMessage();
+            UpdateColorPreview();
             pickerHandler.Refresh(true);
+            SendUpdateMessage(true);
             //picker.color = pixels[attemptedIndex];
         }
 
@@ -284,10 +306,21 @@ namespace PlusLevelStudio.UI
             picker.rectTransform.anchoredPosition = chosenPixel - (baseImage.rectTransform.sizeDelta / 2);
         }
 
-        void UpdateColorPreviewAndSendMessage()
+        void UpdateColorPreview()
         {
             colorPreview.color = outputColor;
-            parentHandler.SendMessage(parentMessage, outputColor);
+        }
+
+        public void SendUpdateMessage(bool confirm)
+        {
+            if (confirm && !string.IsNullOrEmpty(parentMessageConfirm))
+            {
+                parentHandler.SendInteractionMessage(parentMessageConfirm, outputColor);
+            }
+            else if (!confirm && !string.IsNullOrEmpty(parentMessage))
+            {
+                parentHandler.SendInteractionMessage(parentMessage, outputColor);
+            }
         }
     }
 }

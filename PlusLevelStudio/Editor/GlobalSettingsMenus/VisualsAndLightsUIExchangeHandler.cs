@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PlusLevelStudio.UI;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using TMPro;
@@ -10,36 +11,12 @@ namespace PlusLevelStudio.Editor.GlobalSettingsMenus
     public class VisualsAndLightsUIExchangeHandler : GlobalSettingsUIExchangeHandler
     {
         public static float minHideLevel = 0.05f;
-        // color stuff
-        public float redTickStartY = 0f;
-        public float greenTickStartY = 0f;
-        public float blueTickStartY = 0f;
-        public RectTransform redTick;
-        public RectTransform greenTick;
-        public RectTransform blueTick;
-
-        public TextMeshProUGUI redText;
-        public TextMeshProUGUI greenText;
-        public TextMeshProUGUI blueText;
-        public Image hexDisplay;
-        public TextMeshProUGUI hexText;
-        public void ChangeRed(float newVal)
-        {
-            EditorController.Instance.levelData.minLightColor = new Color(newVal, EditorController.Instance.levelData.minLightColor.g, EditorController.Instance.levelData.minLightColor.b);
-        }
-        public void ChangeGreen(float newVal)
-        {
-            EditorController.Instance.levelData.minLightColor = new Color(EditorController.Instance.levelData.minLightColor.r, newVal, EditorController.Instance.levelData.minLightColor.b);
-        }
-        public void ChangeBlue(float newVal)
-        {
-            EditorController.Instance.levelData.minLightColor = new Color(EditorController.Instance.levelData.minLightColor.r, EditorController.Instance.levelData.minLightColor.g, newVal);
-        }
 
         StandardMenuButton[] skyboxButtons;
         GameObject warningButton;
         Image skyboxImage;
         int skyboxViewOffset = 0;
+        ColorPicker colorPicker;
 
         public TextMeshProUGUI additiveButton;
         public TextMeshProUGUI greatestButton;
@@ -63,17 +40,7 @@ namespace PlusLevelStudio.Editor.GlobalSettingsMenus
             greatestButton = transform.Find("LightModeGreatest").GetComponent<TextMeshProUGUI>();
 
             // color stuff
-            redTick = transform.Find("RedSliderTick").GetComponent<RectTransform>();
-            greenTick = transform.Find("GreenSliderTick").GetComponent<RectTransform>();
-            blueTick = transform.Find("BlueSliderTick").GetComponent<RectTransform>();
-            redTickStartY = redTick.anchoredPosition.y;
-            blueTickStartY = blueTick.anchoredPosition.y;
-            greenTickStartY = greenTick.anchoredPosition.y;
-            redText = transform.Find("RedText").GetComponent<TextMeshProUGUI>();
-            greenText = transform.Find("GreenText").GetComponent<TextMeshProUGUI>();
-            blueText = transform.Find("BlueText").GetComponent<TextMeshProUGUI>();
-            hexDisplay = transform.Find("HexDisplay").GetComponent<Image>();
-            hexText = transform.Find("HexCodeDisplay").GetComponent<TextMeshProUGUI>();
+            colorPicker = transform.Find("ColorPicker").GetComponent<ColorPicker>();
             warningButton = transform.Find("UnhideableWarning").gameObject;
         }
 
@@ -94,16 +61,9 @@ namespace PlusLevelStudio.Editor.GlobalSettingsMenus
         public void RefreshColorStuff(bool updateHex = true)
         {
             Color currentColor = EditorController.Instance.levelData.minLightColor;
-            redTick.anchoredPosition = new Vector2(redTick.anchoredPosition.x, redTickStartY + Mathf.Round(currentColor.r * 128));
-            greenTick.anchoredPosition = new Vector2(greenTick.anchoredPosition.x, greenTickStartY + Mathf.Round(currentColor.g * 128));
-            blueTick.anchoredPosition = new Vector2(blueTick.anchoredPosition.x, blueTickStartY + Mathf.Round(currentColor.b * 128));
-            redText.text = Mathf.RoundToInt(currentColor.r * 255f).ToString();
-            greenText.text = Mathf.RoundToInt(currentColor.g * 255f).ToString();
-            blueText.text = Mathf.RoundToInt(currentColor.b * 255f).ToString();
-            hexDisplay.color = currentColor;
             if (updateHex)
             {
-                hexText.text = ColorUtility.ToHtmlStringRGB(currentColor);
+                colorPicker.outputColor = currentColor;
             }
             warningButton.gameObject.SetActive(Mathf.Max(currentColor.r, currentColor.g, currentColor.b) > minHideLevel);
         }
@@ -147,33 +107,12 @@ namespace PlusLevelStudio.Editor.GlobalSettingsMenus
                     skyboxViewOffset = Mathf.Clamp(skyboxViewOffset - 1, 0, LevelStudioPlugin.Instance.selectableSkyboxes.Count - skyboxButtons.Length);
                     RefreshSkyboxView();
                     break;
-                case "red":
-                    ChangeRed(Mathf.Clamp(((Vector3)data).y / 128f, 0f, 1f));
+                case "setColor":
+                case "setColorDone":
+                    EditorController.Instance.levelData.minLightColor = (Color)data;
                     EditorController.Instance.RefreshLights();
                     handler.somethingChanged = true;
-                    RefreshColorStuff();
-                    break;
-                case "green":
-                    ChangeGreen(Mathf.Clamp(((Vector3)data).y / 128f, 0f, 1f));
-                    EditorController.Instance.RefreshLights();
-                    handler.somethingChanged = true;
-                    RefreshColorStuff();
-                    break;
-                case "blue":
-                    ChangeBlue(Mathf.Clamp(((Vector3)data).y / 128f, 0f, 1f));
-                    EditorController.Instance.RefreshLights();
-                    handler.somethingChanged = true;
-                    RefreshColorStuff();
-                    break;
-                case "hexDone":
-                case "hex":
-                    if (ColorUtility.TryParseHtmlString("#" + (hexText.text.PadRight(6, '0')), out Color c))
-                    {
-                        EditorController.Instance.levelData.minLightColor = c;
-                        EditorController.Instance.RefreshLights();
-                        handler.somethingChanged = true;
-                        RefreshColorStuff(message == "hexDone");
-                    }
+                    RefreshColorStuff(message == "setColorDone");
                     break;
                 case "fixLight":
                     EditorController.Instance.levelData.minLightColor = new Color(Mathf.Min(EditorController.Instance.levelData.minLightColor.r, minHideLevel), Mathf.Min(EditorController.Instance.levelData.minLightColor.g, minHideLevel), Mathf.Min(EditorController.Instance.levelData.minLightColor.b, minHideLevel), EditorController.Instance.levelData.minLightColor.a);
