@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using PlusLevelStudio.CustomContent;
 using PlusStudioLevelFormat;
 using PlusStudioLevelLoader;
 using UnityEngine;

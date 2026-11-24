@@ -1,5 +1,6 @@
 ﻿using MTM101BaldAPI.AssetTools;
 using PlusLevelStudio.Campaigns;
+using PlusLevelStudio.CustomContent;
 using PlusLevelStudio.Editor;
 using PlusLevelStudio.UI;
 using System;

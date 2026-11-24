@@ -11,7 +11,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace PlusLevelStudio
+namespace PlusLevelStudio.CustomContent
 {
     /// <summary>
     /// A class containg all custom content for the specified floor.
@@ -191,7 +191,7 @@ namespace PlusLevelStudio
                 catch (Exception E)
                 {
                     Debug.LogWarning(E);
-                    GameObject.Destroy(returnVal);
+                    UnityEngine.Object.Destroy(returnVal);
                     return null;
                 }
             }
@@ -222,7 +222,7 @@ namespace PlusLevelStudio
                 {
                     writer.Write(entries[i].usingFilePath);
                 }
-                entries[i].Write(writer, (entries[i].usingFilePath) && allowingFilePaths);
+                entries[i].Write(writer, entries[i].usingFilePath && allowingFilePaths);
             }
         }
 
@@ -242,7 +242,7 @@ namespace PlusLevelStudio
             int streamCount = reader.ReadInt32();
             for (int i = 0; i < streamCount; i++)
             {
-                if ((version == 0) || (!package.allowingFilePaths))
+                if (version == 0 || !package.allowingFilePaths)
                 {
                     package.entries.Add(EditorCustomContentEntry.Read(reader, entryVersion, package.allowingFilePaths));
                 }
