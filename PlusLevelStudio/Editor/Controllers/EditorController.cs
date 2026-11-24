@@ -4,6 +4,7 @@ using MTM101BaldAPI;
 using MTM101BaldAPI.AssetTools;
 using MTM101BaldAPI.Reflection;
 using MTM101BaldAPI.UI;
+using PlusLevelStudio.CustomContent;
 using PlusLevelStudio.Editor.GlobalSettingsMenus;
 using PlusLevelStudio.Editor.Pages;
 using PlusLevelStudio.Editor.SettingsUI;

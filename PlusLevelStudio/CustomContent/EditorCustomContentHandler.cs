@@ -12,7 +12,7 @@ using System.Text;
 using TMPro;
 using UnityEngine;
 
-namespace PlusLevelStudio
+namespace PlusLevelStudio.CustomContent
 {
     public abstract class EditorCustomContentHandler
     {
@@ -90,7 +90,7 @@ namespace PlusLevelStudio
             selectTemp.SetPixels(graphicPixels); // dont apply as we will be destroying this graphic in a second
 
             Color[] selectColors = MaterialModifier.GetColorsForTileTexture(selectTemp, 64);
-            GameObject.Destroy(selectTemp);
+            UnityEngine.Object.Destroy(selectTemp);
 
             Texture2D selectTex = new Texture2D(64, 64, TextureFormat.ARGB32, false);
             selectTex.filterMode = FilterMode.Point;
@@ -101,7 +101,7 @@ namespace PlusLevelStudio
             // make the actual cubemap lol
             Cubemap cubeMap = AssetLoader.CubemapFromTexture(tex);
             cubeMap.filterMode = FilterMode.Point;
-            GameObject.Destroy(tex);
+            UnityEngine.Object.Destroy(tex);
             return cubeMap;
         }
 
@@ -312,7 +312,7 @@ namespace PlusLevelStudio
         {
             foreach (var item in gameObjects)
             {
-                GameObject.Destroy(item);
+                UnityEngine.Object.Destroy(item);
             }
             gameObjects.Clear();
             extend.dictionary.Clear();

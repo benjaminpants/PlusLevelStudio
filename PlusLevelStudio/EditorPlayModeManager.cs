@@ -10,6 +10,7 @@ using TMPro;
 using PlusLevelStudio.Campaigns;
 using System.Reflection;
 using HarmonyLib;
+using PlusLevelStudio.CustomContent;
 
 namespace PlusLevelStudio
 {
